@@ -3,132 +3,309 @@
     {
       "id": "pc",
       "type": "register",
-      "position": { "x": 50, "y": 250 },
-      "data": { "label": "PC", "name": "Program Counter", "value": 0 }
-    },
-    {
-      "id": "imem",
-      "type": "instruction-memory",
-      "position": { "x": 200, "y": 250 },
+      "position": { "x": 100, "y": 100 },
       "data": {
-        "label": "Instruction Memory",
-        "contents": {
-          "0": "0x00500113",
-          "4": "0x00500193",
-          "8": "0x002081b3"
-        }
+        "label": "PC",
+        "width": 32
       }
     },
     {
-      "id": "registers",
-      "type": "register",
-      "position": { "x": 400, "y": 250 },
+      "id": "pcPlus4Adder",
+      "type": "adder",
+      "position": { "x": 300, "y": 100 },
       "data": {
-        "label": "Registers",
-        "name": "Register File",
-        "contents": {
-          "x0": 0,
-          "x1": 0,
-          "x2": 2,
-          "x3": 3
-        }
+        "label": "Adder (PC + 4)",
+        "operation": "add"
       }
     },
     {
-      "id": "alu",
-      "type": "alu",
-      "position": { "x": 600, "y": 250 },
-      "data": { "label": "ALU", "operation": "Add" }
+      "id": "pcMux",
+      "type": "mux",
+      "position": { "x": 500, "y": 100 },
+      "data": {
+        "label": "PCSrc MUX"
+      }
     },
     {
-      "id": "dmem",
+      "id": "instrMem",
       "type": "memory",
-      "position": { "x": 800, "y": 250 },
+      "position": { "x": 100, "y": 200 },
       "data": {
-        "label": "Data Memory",
-        "size": 1024,
-        "contents": {
-          "0": 10,
-          "4": 20,
-          "8": 30
-        }
+        "label": "Instruction Memory"
       }
     },
     {
       "id": "control",
       "type": "control",
-      "position": { "x": 400, "y": 100 },
+      "position": { "x": 400, "y": 200 },
       "data": {
-        "label": "Control Unit",
-        "regWrite": true,
-        "memRead": false,
-        "memWrite": false,
-        "aluOp": "00"
+        "label": "Control"
       }
     },
     {
-      "id": "immgen",
-      "type": "imm-gen",
-      "position": { "x": 400, "y": 400 },
-      "data": { "label": "Immediate Generator" }
+      "id": "regDstMux",
+      "type": "mux",
+      "position": { "x": 300, "y": 300 },
+      "data": {
+        "label": "RegDst MUX"
+      }
+    },
+    {
+      "id": "registerFile",
+      "type": "register-file",
+      "position": { "x": 500, "y": 300 },
+      "data": {
+        "label": "Registers"
+      }
+    },
+    {
+      "id": "aluSrcMux",
+      "type": "mux",
+      "position": { "x": 700, "y": 300 },
+      "data": {
+        "label": "ALUSrc MUX"
+      }
+    },
+    {
+      "id": "alu",
+      "type": "alu",
+      "position": { "x": 900, "y": 300 },
+      "data": {
+        "label": "ALU",
+        "operation": "various"
+      }
+    },
+    {
+      "id": "dataMem",
+      "type": "memory",
+      "position": { "x": 1100, "y": 300 },
+      "data": {
+        "label": "Data Memory"
+      }
+    },
+    {
+      "id": "memToRegMux",
+      "type": "mux",
+      "position": { "x": 1300, "y": 300 },
+      "data": {
+        "label": "MemToReg MUX"
+      }
+    },
+    {
+      "id": "signExtend",
+      "type": "extender",
+      "position": { "x": 700, "y": 400 },
+      "data": {
+        "label": "Sign Extend"
+      }
+    },
+    {
+      "id": "shiftLeft2",
+      "type": "shift",
+      "position": { "x": 900, "y": 400 },
+      "data": {
+        "label": "Shift Left 2"
+      }
+    },
+    {
+      "id": "branchAdder",
+      "type": "adder",
+      "position": { "x": 700, "y": 100 },
+      "data": {
+        "label": "Branch Adder",
+        "operation": "add"
+      }
     }
   ],
   "edges": [
     {
-      "id": "e1",
+      "id": "e_pc_pcPlus4Adder",
       "source": "pc",
-      "target": "imem",
-      "sourceHandle": "output",
+      "target": "pcPlus4Adder",
+      "sourceHandle": "out",
+      "targetHandle": "in1"
+    },
+    {
+      "id": "e_pcPlus4Adder_pcMux",
+      "source": "pcPlus4Adder",
+      "target": "pcMux",
+      "sourceHandle": "out",
+      "targetHandle": "in0"
+    },
+    {
+      "id": "e_pcMux_pc",
+      "source": "pcMux",
+      "target": "pc",
+      "sourceHandle": "out",
+      "targetHandle": "in"
+    },
+    {
+      "id": "e_pc_instrMem",
+      "source": "pc",
+      "target": "instrMem",
+      "sourceHandle": "out",
       "targetHandle": "address"
     },
     {
-      "id": "e2",
-      "source": "imem",
-      "target": "registers",
-      "sourceHandle": "instruction",
-      "targetHandle": "readReg1"
+      "id": "e_instrMem_control",
+      "source": "instrMem",
+      "target": "control",
+      "sourceHandle": "out",
+      "targetHandle": "in"
     },
     {
-      "id": "e3",
-      "source": "registers",
+      "id": "e_instrMem_registerFile",
+      "source": "instrMem",
+      "target": "registerFile",
+      "sourceHandle": "out",
+      "targetHandle": "in"
+    },
+    {
+      "id": "e_instrMem_signExtend",
+      "source": "instrMem",
+      "target": "signExtend",
+      "sourceHandle": "out",
+      "targetHandle": "in"
+    },
+    {
+      "id": "e_control_regDstMux",
+      "source": "control",
+      "target": "regDstMux",
+      "sourceHandle": "out",
+      "targetHandle": "control"
+    },
+    {
+      "id": "e_control_aluSrcMux",
+      "source": "control",
+      "target": "aluSrcMux",
+      "sourceHandle": "out",
+      "targetHandle": "control"
+    },
+    {
+      "id": "e_control_memToRegMux",
+      "source": "control",
+      "target": "memToRegMux",
+      "sourceHandle": "out",
+      "targetHandle": "control"
+    },
+    {
+      "id": "e_control_registerFile",
+      "source": "control",
+      "target": "registerFile",
+      "sourceHandle": "out",
+      "targetHandle": "control"
+    },
+    {
+      "id": "e_control_dataMem",
+      "source": "control",
+      "target": "dataMem",
+      "sourceHandle": "out",
+      "targetHandle": "control"
+    },
+    {
+      "id": "e_control_alu",
+      "source": "control",
       "target": "alu",
-      "sourceHandle": "readData1",
-      "targetHandle": "a"
+      "sourceHandle": "out",
+      "targetHandle": "control"
     },
     {
-      "id": "e4",
-      "source": "registers",
+      "id": "e_regDstMux_registerFile",
+      "source": "regDstMux",
+      "target": "registerFile",
+      "sourceHandle": "out",
+      "targetHandle": "writeRegister"
+    },
+    {
+      "id": "e_registerFile_alu_in1",
+      "source": "registerFile",
       "target": "alu",
-      "sourceHandle": "readData2",
-      "targetHandle": "b"
+      "sourceHandle": "out1",
+      "targetHandle": "in1"
     },
     {
-      "id": "e5",
+      "id": "e_registerFile_aluSrcMux_in0",
+      "source": "registerFile",
+      "target": "aluSrcMux",
+      "sourceHandle": "out2",
+      "targetHandle": "in0"
+    },
+    {
+      "id": "e_aluSrcMux_alu_in2",
+      "source": "aluSrcMux",
+      "target": "alu",
+      "sourceHandle": "out",
+      "targetHandle": "in2"
+    },
+    {
+      "id": "e_alu_dataMem",
       "source": "alu",
-      "target": "dmem",
-      "sourceHandle": "result",
+      "target": "dataMem",
+      "sourceHandle": "out",
       "targetHandle": "address"
     },
     {
-      "id": "e6",
-      "source": "control",
-      "target": "registers",
-      "sourceHandle": "regWrite",
-      "targetHandle": "regWrite"
+      "id": "e_registerFile_dataMem_writeData",
+      "source": "registerFile",
+      "target": "dataMem",
+      "sourceHandle": "out2",
+      "targetHandle": "writeData"
     },
     {
-      "id": "e7",
-      "source": "control",
-      "target": "dmem",
-      "sourceHandle": "memWrite",
-      "targetHandle": "memWrite"
+      "id": "e_dataMem_memToRegMux",
+      "source": "dataMem",
+      "target": "memToRegMux",
+      "sourceHandle": "out",
+      "targetHandle": "in1"
     },
     {
-      "id": "e8",
-      "source": "control",
-      "target": "dmem",
-      "sourceHandle": "memRead",
-      "targetHandle": "memRead"
+      "id": "e_alu_memToRegMux",
+      "source": "alu",
+      "target": "memToRegMux",
+      "sourceHandle": "out",
+      "targetHandle": "in0"
+    },
+    {
+      "id": "e_memToRegMux_registerFile",
+      "source": "memToRegMux",
+      "target": "registerFile",
+      "sourceHandle": "out",
+      "targetHandle": "writeData"
+    },
+    {
+      "id": "e_signExtend_aluSrcMux",
+      "source": "signExtend",
+      "target": "aluSrcMux",
+      "sourceHandle": "out",
+      "targetHandle": "in1"
+    },
+    {
+      "id": "e_signExtend_shiftLeft2",
+      "source": "signExtend",
+      "target": "shiftLeft2",
+      "sourceHandle": "out",
+      "targetHandle": "in"
+    },
+    {
+      "id": "e_shiftLeft2_branchAdder",
+      "source": "shiftLeft2",
+      "target": "branchAdder",
+      "sourceHandle": "out",
+      "targetHandle": "in2"
+    },
+    {
+      "id": "e_pc_branchAdder",
+      "source": "pc",
+      "target": "branchAdder",
+      "sourceHandle": "out",
+      "targetHandle": "in1"
+    },
+    {
+      "id": "e_branchAdder_pcMux",
+      "source": "branchAdder",
+      "target": "pcMux",
+      "sourceHandle": "out",
+      "targetHandle": "in1"
     }
   ]
 }

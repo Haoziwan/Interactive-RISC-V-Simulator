@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import ReactFlow, {
   Background,
   Controls,
@@ -9,7 +9,9 @@ import ReactFlow, {
   OnNodesChange,
   OnEdgesChange,
   applyNodeChanges,
-  applyEdgeChanges
+  applyEdgeChanges,
+  MarkerType,
+  ConnectionMode,
 } from 'reactflow';
 import 'reactflow/dist/style.css';
 
@@ -185,11 +187,56 @@ export function CircuitCanvas() {
     [setSelectedNode]
   );
 
+  const [edgeType, setEdgeType] = useState('smoothstep');
+  const [connectionMode, setConnectionMode] = useState<ConnectionMode>(ConnectionMode.Loose);
+  const [edgeAnimated, setEdgeAnimated] = useState(false);
+  const [edgeColor, setEdgeColor] = useState('#999');
+  const [edgeWidth, setEdgeWidth] = useState(2);
+  const [showEdgeSettings, setShowEdgeSettings] = useState(false);
+  
+  const edgeOptions = [
+    { value: 'default', label: '直线' },
+    { value: 'step', label: '阶梯线' },
+    { value: 'smoothstep', label: '平滑阶梯线' },
+  ];
+
+  const connectionModeOptions = [
+    { value: ConnectionMode.Strict, label: '严格模式' },
+    { value: ConnectionMode.Loose, label: '自由模式' },
+  ];
+  
+  const defaultEdgeOptions = {
+    type: edgeType,
+    animated: edgeAnimated,
+    style: {
+      stroke: edgeColor,
+      strokeWidth: edgeWidth,
+    },
+    markerEnd: {
+      type: 'arrow' as MarkerType,
+      width: 20,
+      height: 20,
+      color: edgeColor,
+    },
+  };
+  
   return (
     <div className="w-full h-full">
       <ReactFlow
         nodes={nodes}
-        edges={edges}
+        edges={edges.map(edge => ({
+          ...edge,
+          style: {
+            ...defaultEdgeOptions.style,
+            stroke: selectedEdge?.id === edge.id ? '#3b82f6' : edgeColor,
+          },
+          markerEnd: {
+            type: 'arrow' as MarkerType,
+            width: 20,
+            height: 20,
+            color: selectedEdge?.id === edge.id ? '#3b82f6' : edgeColor,
+          }
+        }))}
         onConnect={onConnect}
         onDrop={onDrop}
         onDragOver={onDragOver}
@@ -204,57 +251,130 @@ export function CircuitCanvas() {
         edgesUpdatable={true}
         edgesFocusable={true}
         selectNodesOnDrag={false}
+        defaultEdgeOptions={defaultEdgeOptions}
+        connectionMode={connectionMode}
         fitView
       >
         <Background />
         <Controls />
         <Panel position="top-right" className="bg-white p-2 rounded-lg shadow-lg mr-4 mt-4">
-          <div className="flex space-x-2">
-            <button
-              onClick={toggleSimulation}
-              className="p-2 rounded hover:bg-gray-100 transition-colors"
-              title={isSimulating ? 'Pause Simulation' : 'Start Simulation'}
-            >
-              {isSimulating ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5" />}
-            </button>
-            <button
-              onClick={stepSimulation}
-              className="p-2 rounded hover:bg-gray-100 transition-colors"
-              title="Step Forward"
-              disabled={isSimulating}
-            >
-              <StepForward className="w-5 h-5" />
-            </button>
-            <button
-              onClick={resetSimulation}
-              className="p-2 rounded hover:bg-gray-100 transition-colors"
-              title="Reset Simulation"
-            >
-              <RotateCcw className="w-5 h-5" />
-            </button>
-            <button
-              onClick={validateCircuit}
-              className="p-2 rounded hover:bg-gray-100 transition-colors"
-              title="验证数据通路"
-            >
-              <CheckCircle className="w-5 h-5" />
-            </button>
-            <button
-              onClick={() => {
-                if (selectedEdge) {
-                  removeEdge(selectedEdge.id);
-                  setSelectedEdge(null);
-                } else if (selectedNode) {
-                  removeNode(selectedNode.id);
-                  setSelectedNode(null);
-                }
-              }}
-              className="p-2 rounded hover:bg-gray-100 transition-colors"
-              title="删除选中的组件或连线"
-              disabled={!selectedEdge && !selectedNode}
-            >
-              <Trash2 className="w-5 h-5" />
-            </button>
+          <div className="flex flex-col space-y-2">
+            <div className="flex items-center justify-between mb-1">
+              <button
+                onClick={() => setShowEdgeSettings(!showEdgeSettings)}
+                className="text-sm text-gray-600 hover:text-gray-900 flex items-center"
+              >
+                连线设置 {showEdgeSettings ? '▼' : '▶'}
+              </button>
+            </div>
+            {showEdgeSettings && (
+              <div className="space-y-2 p-2 bg-gray-50 rounded">
+                <div className="flex flex-col space-y-1">
+                  <label className="text-xs text-gray-600">连线类型</label>
+                  <select
+                    value={edgeType}
+                    onChange={(e) => setEdgeType(e.target.value)}
+                    className="px-2 py-1 rounded border border-gray-200 text-sm"
+                  >
+                    {edgeOptions.map((option) => (
+                      <option key={option.value} value={option.value}>
+                        {option.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="flex flex-col space-y-1">
+                  <label className="text-xs text-gray-600">连接模式</label>
+                  <select
+                    value={connectionMode}
+                    onChange={(e) => setConnectionMode(e.target.value as ConnectionMode)}
+                    className="px-2 py-1 rounded border border-gray-200 text-sm"
+                  >
+                    {connectionModeOptions.map((option) => (
+                      <option key={option.value} value={option.value}>
+                        {option.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="flex flex-col space-y-1">
+                  <label className="text-xs text-gray-600">连线颜色</label>
+                  <input
+                    type="color"
+                    value={edgeColor}
+                    onChange={(e) => setEdgeColor(e.target.value)}
+                    className="w-full h-6 rounded border border-gray-200"
+                  />
+                </div>
+                <div className="flex flex-col space-y-1">
+                  <label className="text-xs text-gray-600">连线宽度</label>
+                  <input
+                    type="range"
+                    min="1"
+                    max="5"
+                    value={edgeWidth}
+                    onChange={(e) => setEdgeWidth(parseInt(e.target.value))}
+                    className="w-full"
+                  />
+                </div>
+                <div className="flex items-center space-x-2">
+                  <input
+                    type="checkbox"
+                    checked={edgeAnimated}
+                    onChange={(e) => setEdgeAnimated(e.target.checked)}
+                    className="rounded border-gray-300"
+                  />
+                  <label className="text-xs text-gray-600">动画效果</label>
+                </div>
+              </div>
+            )}
+            <div className="flex space-x-2">
+              <button
+                onClick={toggleSimulation}
+                className="p-2 rounded hover:bg-gray-100 transition-colors"
+                title={isSimulating ? 'Pause Simulation' : 'Start Simulation'}
+              >
+                {isSimulating ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5" />}
+              </button>
+              <button
+                onClick={stepSimulation}
+                className="p-2 rounded hover:bg-gray-100 transition-colors"
+                title="Step Forward"
+                disabled={isSimulating}
+              >
+                <StepForward className="w-5 h-5" />
+              </button>
+              <button
+                onClick={resetSimulation}
+                className="p-2 rounded hover:bg-gray-100 transition-colors"
+                title="Reset Simulation"
+              >
+                <RotateCcw className="w-5 h-5" />
+              </button>
+              <button
+                onClick={validateCircuit}
+                className="p-2 rounded hover:bg-gray-100 transition-colors"
+                title="验证数据通路"
+              >
+                <CheckCircle className="w-5 h-5" />
+              </button>
+              <button
+                onClick={() => {
+                  if (selectedEdge) {
+                    removeEdge(selectedEdge.id);
+                    setSelectedEdge(null);
+                  } else if (selectedNode) {
+                    removeNode(selectedNode.id);
+                    setSelectedNode(null);
+                  }
+                }}
+                className="p-2 rounded hover:bg-gray-100 transition-colors"
+                title="删除选中的组件或连线"
+                disabled={!selectedEdge && !selectedNode}
+              >
+                <Trash2 className="w-5 h-5" />
+              </button>
+            </div>
           </div>
         </Panel>
       </ReactFlow>
