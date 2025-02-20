@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { Connection, Edge, Node } from 'reactflow';
-import { Circuit, Component } from '../types/Circuit';
+import { Circuit } from '../types/Circuit';
 
 interface CircuitState {
   nodes: Node[];
@@ -9,6 +9,8 @@ interface CircuitState {
   selectedEdge: Edge | null;
   circuit: Circuit;
   isSimulating: boolean;
+  assembledInstructions: Array<{hex: string; binary: string; assembly?: string}>;
+  editorCode: string;
   updateNodeData: (nodeId: string, data: any) => void;
   setSelectedNode: (node: Node | null) => void;
   setSelectedEdge: (edge: Edge | null) => void;
@@ -22,6 +24,8 @@ interface CircuitState {
   resetSimulation: () => void;
   stepSimulation: () => void;
   updateNodes: (changes: Node[]) => void;
+  setAssembledInstructions: (instructions: Array<{hex: string; binary: string; assembly?: string}>) => void;
+  setEditorCode: (code: string) => void;
 }
 
 const initialCircuit: Circuit = {
@@ -38,6 +42,8 @@ export const useCircuitStore = create<CircuitState>()((set, get) => ({
   selectedEdge: null,
   circuit: initialCircuit,
   isSimulating: false,
+  assembledInstructions: [],
+  editorCode: '',
 
   updateNodeData: (nodeId: string, newData: any) =>
     set((state) => ({
@@ -71,9 +77,9 @@ export const useCircuitStore = create<CircuitState>()((set, get) => ({
     })),
 
   saveCircuit: () => {
-    const { nodes, edges, isSimulating } = get();
+    const state = get();
     const circuitState = {
-      nodes: nodes.map(node => ({
+      nodes: state.nodes.map(node => ({
         ...node,
         data: {
           ...node.data,
@@ -89,8 +95,10 @@ export const useCircuitStore = create<CircuitState>()((set, get) => ({
           pc: node.data.pc
         }
       })),
-      edges,
-      isSimulating
+      edges: state.edges,
+      isSimulating: state.isSimulating,
+      editorCode: state.editorCode,
+      assembledInstructions: state.assembledInstructions
     };
     return JSON.stringify(circuitState, null, 2);
   },
@@ -98,27 +106,16 @@ export const useCircuitStore = create<CircuitState>()((set, get) => ({
   loadCircuit: (jsonData: string) => {
     try {
       const circuitState = JSON.parse(jsonData);
-      const nodes = circuitState.nodes.map((node: Node) => ({
-        ...node,
-        data: {
-          ...node.data,
-          instructions: node.type === 'instruction-memory' ? node.data.instructions : undefined,
-          contents: node.type === 'memory' ? node.data.contents : undefined,
-          value: node.data.value || 0,
-          operation: node.data.operation,
-          format: node.data.format,
-          regWrite: node.data.regWrite || false,
-          memRead: node.data.memRead || false,
-          memWrite: node.data.memWrite || false,
-          aluOp: node.data.aluOp || '00',
-          pc: node.data.pc || 0
-        }
+      set((state) => ({
+        ...state,
+        nodes: circuitState.nodes || [],
+        edges: circuitState.edges || [],
+        isSimulating: circuitState.isSimulating || false,
+        editorCode: circuitState.editorCode || '',
+        assembledInstructions: circuitState.assembledInstructions || [],
+        selectedNode: null,
+        selectedEdge: null
       }));
-      set({
-        nodes,
-        edges: circuitState.edges,
-        isSimulating: circuitState.isSimulating || false
-      });
     } catch (error) {
       console.error('加载电路数据失败:', error);
       throw new Error('无效的电路数据文件');
@@ -152,11 +149,23 @@ export const useCircuitStore = create<CircuitState>()((set, get) => ({
     set((state) => ({
       nodes: state.nodes.map((node) => {
         if (node.type === 'instruction-memory') {
+          const currentPc = node.data.pc || 0;
+          const instructions = node.data.instructions || [];
+          
+          // 检查是否到达指令末尾
+          if (currentPc >= instructions.length) {
+            return node; // 不再增加PC
+          }
+
+          // 获取当前指令
+          const currentInstruction = instructions[currentPc];
+          
           return {
             ...node,
             data: {
               ...node.data,
-              pc: (node.data.pc || 0) + 1,
+              pc: currentPc + 1,
+              currentInstruction,
             },
           };
         }
@@ -174,6 +183,10 @@ export const useCircuitStore = create<CircuitState>()((set, get) => ({
     });
     return { nodes: nextNodes };
   }),
+
+  setAssembledInstructions: (instructions) => set({ assembledInstructions: instructions }),
+
+  setEditorCode: (code) => set({ editorCode: code }),
 
   removeNode: (nodeId: string) => set((state) => ({
     nodes: state.nodes.filter((node) => node.id !== nodeId),

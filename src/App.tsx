@@ -54,14 +54,16 @@ function App() {
     switch (activeTab) {
       case 'code':
         return (
-          <div className="h-full flex flex-col">
-            <AssemblyEditor />
+          <div className="h-full flex">
+            <div className="flex-1">
+              <AssemblyEditor />
+            </div>
           </div>
         );
       case 'memory':
         return (
-          <div className="h-full flex flex-col">
-            <div className="p-4 flex-1">
+          <div className="h-full flex">
+            <div className="flex-1 p-4">
               <h2 className="text-lg font-semibold mb-4">内存视图</h2>
               <MemoryView />
             </div>
@@ -74,13 +76,11 @@ function App() {
             <div className="w-64 bg-white border-r border-gray-200 flex-shrink-0 overflow-auto">
               <ComponentLibrary />
             </div>
-            <div className="flex-1 flex flex-col">
-              <div className="flex-1 relative">
+            <div className="flex-1 relative">
+              <div className="absolute inset-0">
                 <CircuitCanvas />
               </div>
-              <div className="h-48 border-t border-gray-200">
-                <ConfigPanel />
-              </div>
+              <ConfigPanel />
             </div>
           </div>
         );
@@ -89,7 +89,7 @@ function App() {
 
   return (
     <div className="flex flex-col h-screen bg-gray-100">
-      <header className="bg-white border-b border-gray-200">
+      <header className="bg-white border-b border-gray-200 flex-shrink-0">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between h-16">
             <h1 className="text-2xl font-bold">RISC-V Simulator</h1>
@@ -99,14 +99,7 @@ function App() {
                 onClick={() => setActiveTab('code')}
               >
                 <Code className="w-5 h-5" />
-                <span>代码</span>
-              </TabButton>
-              <TabButton
-                isActive={activeTab === 'memory'}
-                onClick={() => setActiveTab('memory')}
-              >
-                <Database className="w-5 h-5" />
-                <span>内存</span>
+                <span>代码编辑器</span>
               </TabButton>
               <TabButton
                 isActive={activeTab === 'datapath'}
@@ -115,15 +108,22 @@ function App() {
                 <Cpu className="w-5 h-5" />
                 <span>数据通路</span>
               </TabButton>
+              <TabButton
+                isActive={activeTab === 'memory'}
+                onClick={() => setActiveTab('memory')}
+              >
+                <Database className="w-5 h-5" />
+                <span>内存视图</span>
+              </TabButton>
             </div>
           </div>
         </div>
       </header>
       <main className="flex-1 overflow-hidden flex">
-        <div className="flex-1 overflow-auto">
+        <div className="flex-1 overflow-hidden">
           {renderContent()}
         </div>
-        <div className="w-64 bg-white border-l border-gray-200 flex-shrink-0">
+        <div className="w-64 bg-white border-l border-gray-200 flex-shrink-0 overflow-y-auto">
           <RegPanel registers={{}} />
         </div>
       </main>

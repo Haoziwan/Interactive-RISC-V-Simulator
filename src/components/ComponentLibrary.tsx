@@ -12,7 +12,6 @@ import {
   Plus,
   GitBranch
 } from 'lucide-react';
-import exampleCircuit from '../examples/basic-pipeline.json';
 import { useCircuitStore } from '../store/circuitStore';
 
 const components = [

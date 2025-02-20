@@ -113,6 +113,12 @@ export function CircuitCanvas() {
     }
   }, [nodes, edges]);
 
+  // Handle clicking on empty space
+  const handlePaneClick = useCallback(() => {
+    setSelectedNode(null);
+    setSelectedEdge(null);
+  }, [setSelectedNode, setSelectedEdge]);
+
   const onNodesChange: OnNodesChange = useCallback(
     (changes) => {
       const nextNodes = applyNodeChanges(changes, nodes);
@@ -191,6 +197,7 @@ export function CircuitCanvas() {
         onEdgeClick={onEdgeClick}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
+        onPaneClick={handlePaneClick}
         nodeTypes={nodeTypes}
         nodesConnectable={true}
         nodesDraggable={true}

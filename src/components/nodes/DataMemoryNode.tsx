@@ -32,11 +32,59 @@ export function DataMemoryNode({ data, selected }: { data: DataMemoryNodeData; s
     <div className={`px-4 py-2 shadow-md rounded-md bg-white border-2 ${
       selected ? 'border-blue-500' : 'border-gray-200'
     }`}>
-      <Handle type="target" position={Position.Left} id="address" className="w-2 h-2" />
-      <Handle type="target" position={Position.Left} id="writeData" className="w-2 h-2 mt-4" />
-      <Handle type="target" position={Position.Left} id="memRead" className="w-2 h-2 mt-8" />
-      <Handle type="target" position={Position.Left} id="memWrite" className="w-2 h-2 mt-12" />
-      <Handle type="target" position={Position.Left} id="clock" className="w-2 h-2 mt-16" />
+      {/* Input ports on left */}
+      <Handle 
+        type="target" 
+        position={Position.Left} 
+        id="address" 
+        className="w-3 h-3 bg-blue-400" 
+        style={{ top: '30%' }}
+        title="内存地址"
+      />
+      <Handle 
+        type="target" 
+        position={Position.Left} 
+        id="writeData" 
+        className="w-3 h-3 bg-blue-400" 
+        style={{ top: '70%' }}
+        title="写入数据"
+      />
+
+      {/* Output port on right */}
+      <Handle 
+        type="source" 
+        position={Position.Right} 
+        id="readData" 
+        className="w-3 h-3 bg-green-400" 
+        style={{ top: '50%' }}
+        title="读出数据"
+      />
+
+      {/* Control ports at bottom */}
+      <Handle 
+        type="target" 
+        position={Position.Bottom} 
+        id="memRead" 
+        className="w-3 h-3 bg-yellow-400" 
+        style={{ left: '20%' }}
+        title="内存读使能"
+      />
+      <Handle 
+        type="target" 
+        position={Position.Bottom} 
+        id="memWrite" 
+        className="w-3 h-3 bg-yellow-400" 
+        style={{ left: '50%' }}
+        title="内存写使能"
+      />
+      <Handle 
+        type="target" 
+        position={Position.Bottom} 
+        id="clock" 
+        className="w-3 h-3 bg-yellow-400" 
+        style={{ left: '80%' }}
+        title="时钟信号"
+      />
       
       <div className="flex items-center">
         <div className="ml-2">
@@ -51,8 +99,6 @@ export function DataMemoryNode({ data, selected }: { data: DataMemoryNodeData; s
           </div>
         </div>
       </div>
-
-      <Handle type="source" position={Position.Right} id="readData" className="w-2 h-2" />
     </div>
   );
 }
