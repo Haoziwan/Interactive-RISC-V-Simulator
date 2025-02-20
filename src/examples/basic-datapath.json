@@ -1,0 +1,239 @@
+{
+  "nodes": [
+    {
+      "id": "pc-1",
+      "type": "pc",
+      "position": { "x": 100, "y": 200 },
+      "data": { "label": "PC" }
+    },
+    {
+      "id": "instruction-memory-1",
+      "type": "instruction-memory",
+      "position": { "x": 250, "y": 200 },
+      "data": { "label": "Instruction Memory" }
+    },
+    {
+      "id": "control-1",
+      "type": "control",
+      "position": { "x": 400, "y": 100 },
+      "data": { "label": "Control" }
+    },
+    {
+      "id": "register-1",
+      "type": "register",
+      "position": { "x": 400, "y": 300 },
+      "data": { "label": "Registers" }
+    },
+    {
+      "id": "imm-gen-1",
+      "type": "imm-gen",
+      "position": { "x": 400, "y": 400 },
+      "data": { "label": "Immediate Gen" }
+    },
+    {
+      "id": "alu-control-1",
+      "type": "alu-control",
+      "position": { "x": 550, "y": 200 },
+      "data": { "label": "ALU Control" }
+    },
+    {
+      "id": "mux-1",
+      "type": "mux",
+      "position": { "x": 600, "y": 350 },
+      "data": { "label": "MUX" }
+    },
+    {
+      "id": "alu-1",
+      "type": "alu",
+      "position": { "x": 700, "y": 300 },
+      "data": { "label": "ALU" }
+    },
+    {
+      "id": "memory-1",
+      "type": "memory",
+      "position": { "x": 850, "y": 300 },
+      "data": { "label": "Data Memory" }
+    },
+    {
+      "id": "mux-2",
+      "type": "mux",
+      "position": { "x": 1000, "y": 300 },
+      "data": { "label": "MUX" }
+    },
+    {
+      "id": "branch-adder-1",
+      "type": "branch-adder",
+      "position": { "x": 700, "y": 100 },
+      "data": { "label": "Branch Adder" }
+    },
+    {
+      "id": "pc-mux-1",
+      "type": "pc-mux",
+      "position": { "x": 850, "y": 100 },
+      "data": { "label": "PC MUX" }
+    }
+  ],
+  "edges": [
+    {
+      "id": "e1",
+      "source": "pc-1",
+      "target": "instruction-memory-1",
+      "sourceHandle": "address",
+      "targetHandle": "address"
+    },
+    {
+      "id": "e2",
+      "source": "instruction-memory-1",
+      "target": "control-1",
+      "sourceHandle": "opcode",
+      "targetHandle": "opcode"
+    },
+    {
+      "id": "e3",
+      "source": "instruction-memory-1",
+      "target": "register-1",
+      "sourceHandle": "rs1",
+      "targetHandle": "readReg1"
+    },
+    {
+      "id": "e4",
+      "source": "instruction-memory-1",
+      "target": "register-1",
+      "sourceHandle": "rs2",
+      "targetHandle": "readReg2"
+    },
+    {
+      "id": "e5",
+      "source": "instruction-memory-1",
+      "target": "imm-gen-1",
+      "sourceHandle": "instruction",
+      "targetHandle": "instruction"
+    },
+    {
+      "id": "e6",
+      "source": "control-1",
+      "target": "alu-control-1",
+      "sourceHandle": "aluOp",
+      "targetHandle": "aluOp"
+    },
+    {
+      "id": "e7",
+      "source": "register-1",
+      "target": "alu-1",
+      "sourceHandle": "readData1",
+      "targetHandle": "a"
+    },
+    {
+      "id": "e8",
+      "source": "mux-1",
+      "target": "alu-1",
+      "sourceHandle": "output",
+      "targetHandle": "b"
+    },
+    {
+      "id": "e9",
+      "source": "alu-control-1",
+      "target": "alu-1",
+      "sourceHandle": "control",
+      "targetHandle": "control"
+    },
+    {
+      "id": "e10",
+      "source": "alu-1",
+      "target": "memory-1",
+      "sourceHandle": "result",
+      "targetHandle": "address"
+    },
+    {
+      "id": "e11",
+      "source": "memory-1",
+      "target": "mux-2",
+      "sourceHandle": "readData",
+      "targetHandle": "in1"
+    },
+    {
+      "id": "e12",
+      "source": "alu-1",
+      "target": "mux-2",
+      "sourceHandle": "result",
+      "targetHandle": "in0"
+    },
+    {
+      "id": "e13",
+      "source": "control-1",
+      "target": "mux-2",
+      "sourceHandle": "memToReg",
+      "targetHandle": "sel"
+    },
+    {
+      "id": "e14",
+      "source": "mux-2",
+      "target": "register-1",
+      "sourceHandle": "output",
+      "targetHandle": "writeData"
+    },
+    {
+      "id": "e15",
+      "source": "control-1",
+      "target": "register-1",
+      "sourceHandle": "regWrite",
+      "targetHandle": "regWrite"
+    },
+    {
+      "id": "e16",
+      "source": "control-1",
+      "target": "memory-1",
+      "sourceHandle": "memWrite",
+      "targetHandle": "writeEnable"
+    },
+    {
+      "id": "e17",
+      "source": "control-1",
+      "target": "memory-1",
+      "sourceHandle": "memRead",
+      "targetHandle": "readEnable"
+    },
+    {
+      "id": "e18",
+      "source": "pc-1",
+      "target": "branch-adder-1",
+      "sourceHandle": "address",
+      "targetHandle": "pc"
+    },
+    {
+      "id": "e19",
+      "source": "imm-gen-1",
+      "target": "branch-adder-1",
+      "sourceHandle": "immediate",
+      "targetHandle": "offset"
+    },
+    {
+      "id": "e20",
+      "source": "branch-adder-1",
+      "target": "pc-mux-1",
+      "sourceHandle": "result",
+      "targetHandle": "in1"
+    },
+    {
+      "id": "e21",
+      "source": "pc-1",
+      "target": "pc-mux-1",
+      "sourceHandle": "next",
+      "targetHandle": "in0"
+    },
+    {
+      "id": "e22",
+      "source": "control-1",
+      "target": "pc-mux-1",
+      "sourceHandle": "branch",
+      "targetHandle": "sel"
+    },
+    {
+      "id": "e23",
+      "source": "pc-mux-1",
+      "target": "pc-1",
+      "sourceHandle": "output",
+      "targetHandle": "next"
+    }
+  ]
+}

@@ -1,0 +1,134 @@
+{
+  "nodes": [
+    {
+      "id": "pc",
+      "type": "register",
+      "position": { "x": 50, "y": 250 },
+      "data": { "label": "PC", "name": "Program Counter", "value": 0 }
+    },
+    {
+      "id": "imem",
+      "type": "instruction-memory",
+      "position": { "x": 200, "y": 250 },
+      "data": {
+        "label": "Instruction Memory",
+        "contents": {
+          "0": "0x00500113",
+          "4": "0x00500193",
+          "8": "0x002081b3"
+        }
+      }
+    },
+    {
+      "id": "registers",
+      "type": "register",
+      "position": { "x": 400, "y": 250 },
+      "data": {
+        "label": "Registers",
+        "name": "Register File",
+        "contents": {
+          "x0": 0,
+          "x1": 0,
+          "x2": 2,
+          "x3": 3
+        }
+      }
+    },
+    {
+      "id": "alu",
+      "type": "alu",
+      "position": { "x": 600, "y": 250 },
+      "data": { "label": "ALU", "operation": "Add" }
+    },
+    {
+      "id": "dmem",
+      "type": "memory",
+      "position": { "x": 800, "y": 250 },
+      "data": {
+        "label": "Data Memory",
+        "size": 1024,
+        "contents": {
+          "0": 10,
+          "4": 20,
+          "8": 30
+        }
+      }
+    },
+    {
+      "id": "control",
+      "type": "control",
+      "position": { "x": 400, "y": 100 },
+      "data": {
+        "label": "Control Unit",
+        "regWrite": true,
+        "memRead": false,
+        "memWrite": false,
+        "aluOp": "00"
+      }
+    },
+    {
+      "id": "immgen",
+      "type": "imm-gen",
+      "position": { "x": 400, "y": 400 },
+      "data": { "label": "Immediate Generator" }
+    }
+  ],
+  "edges": [
+    {
+      "id": "e1",
+      "source": "pc",
+      "target": "imem",
+      "sourceHandle": "output",
+      "targetHandle": "address"
+    },
+    {
+      "id": "e2",
+      "source": "imem",
+      "target": "registers",
+      "sourceHandle": "instruction",
+      "targetHandle": "readReg1"
+    },
+    {
+      "id": "e3",
+      "source": "registers",
+      "target": "alu",
+      "sourceHandle": "readData1",
+      "targetHandle": "a"
+    },
+    {
+      "id": "e4",
+      "source": "registers",
+      "target": "alu",
+      "sourceHandle": "readData2",
+      "targetHandle": "b"
+    },
+    {
+      "id": "e5",
+      "source": "alu",
+      "target": "dmem",
+      "sourceHandle": "result",
+      "targetHandle": "address"
+    },
+    {
+      "id": "e6",
+      "source": "control",
+      "target": "registers",
+      "sourceHandle": "regWrite",
+      "targetHandle": "regWrite"
+    },
+    {
+      "id": "e7",
+      "source": "control",
+      "target": "dmem",
+      "sourceHandle": "memWrite",
+      "targetHandle": "memWrite"
+    },
+    {
+      "id": "e8",
+      "source": "control",
+      "target": "dmem",
+      "sourceHandle": "memRead",
+      "targetHandle": "memRead"
+    }
+  ]
+}
