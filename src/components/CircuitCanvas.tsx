@@ -28,6 +28,7 @@ import { BranchAdderNode } from './nodes/BranchAdderNode';
 import { PCMuxNode } from './nodes/PCMuxNode';
 import { ConstantNode } from './nodes/ConstantNode';
 import { SingleRegisterNode } from './nodes/SingleRegisterNode';
+import { LabelNode } from './nodes/LabelNode';
 import { useCircuitStore } from '../store/circuitStore';
 import { Play, Pause, RotateCcw, StepForward, CheckCircle, Trash2 } from 'lucide-react';
 
@@ -45,6 +46,7 @@ const nodeTypes = {
   'pc-mux': PCMuxNode,
   constant: ConstantNode,
   'single-register': SingleRegisterNode,
+  label: LabelNode,
 };
 
 // 定义必需的组件和它们允许的数量

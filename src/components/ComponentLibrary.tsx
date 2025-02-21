@@ -11,11 +11,18 @@ import {
   Timer,
   Plus,
   GitBranch,
+  Tag,
   Hash as HashIcon
 } from 'lucide-react';
 import { useCircuitStore } from '../store/circuitStore';
 
 const components = [
+  {
+    type: 'label',
+    label: 'Label',
+    icon: <Tag className="w-6 h-6" />,
+    description: '标签显示组件',
+  },
   {
     type: 'constant',
     label: 'Constant',
