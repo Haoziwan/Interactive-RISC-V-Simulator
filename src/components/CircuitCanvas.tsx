@@ -26,6 +26,8 @@ import { ALUControlNode } from './nodes/ALUControlNode';
 import { PCNode } from './nodes/PCNode';
 import { BranchAdderNode } from './nodes/BranchAdderNode';
 import { PCMuxNode } from './nodes/PCMuxNode';
+import { ConstantNode } from './nodes/ConstantNode';
+import { SingleRegisterNode } from './nodes/SingleRegisterNode';
 import { useCircuitStore } from '../store/circuitStore';
 import { Play, Pause, RotateCcw, StepForward, CheckCircle, Trash2 } from 'lucide-react';
 
@@ -41,6 +43,8 @@ const nodeTypes = {
   pc: PCNode,
   'branch-adder': BranchAdderNode,
   'pc-mux': PCMuxNode,
+  constant: ConstantNode,
+  'single-register': SingleRegisterNode,
 };
 
 // 定义必需的组件和它们允许的数量
@@ -186,7 +190,6 @@ export function CircuitCanvas() {
     },
     [setSelectedNode]
   );
-
   const [edgeType, setEdgeType] = useState('smoothstep');
   const [connectionMode, setConnectionMode] = useState<ConnectionMode>(ConnectionMode.Loose);
   const [edgeAnimated, setEdgeAnimated] = useState(false);
@@ -199,12 +202,10 @@ export function CircuitCanvas() {
     { value: 'step', label: '阶梯线' },
     { value: 'smoothstep', label: '平滑阶梯线' },
   ];
-
   const connectionModeOptions = [
     { value: ConnectionMode.Strict, label: '严格模式' },
     { value: ConnectionMode.Loose, label: '自由模式' },
   ];
-  
   const defaultEdgeOptions = {
     type: edgeType,
     animated: edgeAnimated,
@@ -219,7 +220,6 @@ export function CircuitCanvas() {
       color: edgeColor,
     },
   };
-  
   return (
     <div className="w-full h-full">
       <ReactFlow

@@ -10,9 +10,34 @@ export function ConfigPanel() {
   if (!selectedNode) {
     return null;
   }
-
   const renderConfig = () => {
     switch (selectedNode.type) {
+      case 'constant':
+        return (
+          <div className="space-y-4">
+            <h3 className="font-medium">常量配置</h3>
+            <div className="space-y-2">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  数值
+                </label>
+                <input
+                  type="number"
+                  className="w-full p-2 border rounded"
+                  value={selectedNode.data.value === undefined ? '' : selectedNode.data.value}
+                  step="1"
+                  onChange={(e) => {
+                    const newValue = e.target.value === '' ? undefined : Number(e.target.value);
+                    if (newValue === undefined || !isNaN(newValue)) {
+                      updateNodeData(selectedNode.id, { value: newValue });
+                    }
+                  }}
+                />
+              </div>
+            </div>
+          </div>
+        );
+
       case 'pc-mux':
         return (
           <div className="space-y-4">
@@ -119,16 +144,16 @@ export function ConfigPanel() {
       case 'register':
         return (
           <div className="space-y-4">
-            <h3 className="font-medium">Register Configuration</h3>
+            <h3 className="font-medium">单个寄存器配置</h3>
             <div className="space-y-2">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Register Name
+                  寄存器名称
                 </label>
                 <input
                   type="text"
                   className="w-full p-2 border rounded"
-                  value={selectedNode.data.name || ''}
+                  value={selectedNode.data.name || 'R'}
                   onChange={(e) =>
                     updateNodeData(selectedNode.id, { name: e.target.value })
                   }
@@ -136,7 +161,7 @@ export function ConfigPanel() {
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Initial Value
+                  初始值
                 </label>
                 <input
                   type="number"
@@ -152,7 +177,6 @@ export function ConfigPanel() {
             </div>
           </div>
         );
-
       case 'instruction-memory':
         return (
           <div className="space-y-4">

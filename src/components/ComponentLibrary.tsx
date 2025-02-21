@@ -10,11 +10,24 @@ import {
   BookOpen,
   Timer,
   Plus,
-  GitBranch
+  GitBranch,
+  Hash as HashIcon
 } from 'lucide-react';
 import { useCircuitStore } from '../store/circuitStore';
 
 const components = [
+  {
+    type: 'constant',
+    label: 'Constant',
+    icon: <HashIcon className="w-6 h-6" />,
+    description: '常量输出组件',
+  },
+  {
+    type: 'single-register',
+    label: 'Single Register',
+    icon: <Database className="w-6 h-6" />,
+    description: '单个寄存器组件',
+  },
   {
     type: 'pc',
     label: 'Program Counter',
