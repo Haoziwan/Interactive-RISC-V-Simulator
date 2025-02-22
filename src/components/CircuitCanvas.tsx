@@ -78,7 +78,13 @@ export function CircuitCanvas() {
     stepSimulation,
     updateNodes
   } = useCircuitStore();
-
+  const [edgeType, setEdgeType] = useState('smoothstep');
+  const [connectionMode, setConnectionMode] = useState<ConnectionMode>(ConnectionMode.Loose);
+  const [edgeAnimated, setEdgeAnimated] = useState(false);
+  const [edgeColor, setEdgeColor] = useState('#999');
+  const [edgeWidth, setEdgeWidth] = useState(2);
+  const [showEdgeSettings, setShowEdgeSettings] = useState(false);
+  
   const validateCircuit = useCallback(() => {
     const errors: string[] = [];
     const componentCounts: { [key: string]: number } = {};
@@ -149,14 +155,27 @@ export function CircuitCanvas() {
     },
     [setSelectedEdge]
   );
-
   const onConnect = useCallback(
     (params: Connection) => {
-      addEdge(params);
+      const newEdge = {
+        ...params,
+        type: edgeType,
+        animated: edgeAnimated,
+        style: {
+          stroke: edgeColor,
+          strokeWidth: edgeWidth,
+        },
+        markerEnd: {
+          type: 'arrow' as MarkerType,
+          width: 20,
+          height: 20,
+          color: edgeColor,
+        },
+      };
+      addEdge(newEdge);
     },
-    [addEdge]
+    [addEdge, edgeType, edgeAnimated, edgeColor, edgeWidth]
   );
-
   const onDrop = useCallback(
     (event: React.DragEvent) => {
       event.preventDefault();
@@ -192,21 +211,10 @@ export function CircuitCanvas() {
     },
     [setSelectedNode]
   );
-  const [edgeType, setEdgeType] = useState('smoothstep');
-  const [connectionMode, setConnectionMode] = useState<ConnectionMode>(ConnectionMode.Loose);
-  const [edgeAnimated, setEdgeAnimated] = useState(false);
-  const [edgeColor, setEdgeColor] = useState('#999');
-  const [edgeWidth, setEdgeWidth] = useState(2);
-  const [showEdgeSettings, setShowEdgeSettings] = useState(false);
-  
   const edgeOptions = [
     { value: 'default', label: '直线' },
     { value: 'step', label: '阶梯线' },
     { value: 'smoothstep', label: '平滑阶梯线' },
-  ];
-  const connectionModeOptions = [
-    { value: ConnectionMode.Strict, label: '严格模式' },
-    { value: ConnectionMode.Loose, label: '自由模式' },
   ];
   const defaultEdgeOptions = {
     type: edgeType,
@@ -222,6 +230,10 @@ export function CircuitCanvas() {
       color: edgeColor,
     },
   };
+  const connectionModeOptions = [
+    { value: ConnectionMode.Strict, label: '严格模式' },
+    { value: ConnectionMode.Loose, label: '自由模式' },
+  ];
   return (
     <div className="w-full h-full">
       <ReactFlow
@@ -275,7 +287,10 @@ export function CircuitCanvas() {
                   <label className="text-xs text-gray-600">连线类型</label>
                   <select
                     value={edgeType}
-                    onChange={(e) => setEdgeType(e.target.value)}
+                    onChange={(e) => {
+                      setEdgeType(e.target.value);
+                      useCircuitStore.getState().updateEdgeType(e.target.value);
+                    }}
                     className="px-2 py-1 rounded border border-gray-200 text-sm"
                   >
                     {edgeOptions.map((option) => (
@@ -289,7 +304,10 @@ export function CircuitCanvas() {
                   <label className="text-xs text-gray-600">连接模式</label>
                   <select
                     value={connectionMode}
-                    onChange={(e) => setConnectionMode(e.target.value as ConnectionMode)}
+                    onChange={(e) => {
+                      setConnectionMode(e.target.value as ConnectionMode);
+                      useCircuitStore.getState().updateConnectionMode(e.target.value as ConnectionMode);
+                    }}
                     className="px-2 py-1 rounded border border-gray-200 text-sm"
                   >
                     {connectionModeOptions.map((option) => (
@@ -323,7 +341,10 @@ export function CircuitCanvas() {
                   <input
                     type="checkbox"
                     checked={edgeAnimated}
-                    onChange={(e) => setEdgeAnimated(e.target.checked)}
+                    onChange={(e) => {
+                      setEdgeAnimated(e.target.checked);
+                      useCircuitStore.getState().updateEdgeAnimated(e.target.checked);
+                    }}
                     className="rounded border-gray-300"
                   />
                   <label className="text-xs text-gray-600">动画效果</label>

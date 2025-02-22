@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { Connection, Edge, Node } from 'reactflow';
+import { Connection, Edge, Node, ConnectionMode } from 'reactflow';
 import { Circuit } from '../types/Circuit';
 
 interface CircuitState {
@@ -24,6 +24,9 @@ interface CircuitState {
   resetSimulation: () => void;
   stepSimulation: () => void;
   updateNodes: (changes: Node[]) => void;
+  updateEdgeType: (type: string) => void;
+  updateEdgeAnimated: (animated: boolean) => void;
+  updateConnectionMode: (mode: ConnectionMode) => void;
   setAssembledInstructions: (instructions: Array<{hex: string; binary: string; assembly?: string}>) => void;
   setEditorCode: (code: string) => void;
 }
@@ -61,17 +64,29 @@ export const useCircuitStore = create<CircuitState>()((set, get) => ({
       nodes: [...state.nodes, node],
     })),
 
-  addEdge: (connection: Connection) =>
+  addEdge: (connection: any) =>
     set((state) => ({
       edges: [
         ...state.edges,
         {
+          ...connection,
           id: `e${connection.source}-${connection.target}`,
           source: connection.source || '',
           target: connection.target || '',
           sourceHandle: connection.sourceHandle,
           targetHandle: connection.targetHandle,
-          type: 'smoothstep',
+          type: connection.type || 'smoothstep',
+          animated: connection.animated || false,
+          style: connection.style || {
+            stroke: '#999',
+            strokeWidth: 2
+          },
+          markerEnd: connection.markerEnd || {
+            type: 'arrow',
+            width: 20,
+            height: 20,
+            color: '#999'
+          }
         },
       ],
     })),
@@ -197,5 +212,26 @@ export const useCircuitStore = create<CircuitState>()((set, get) => ({
 
   removeEdge: (edgeId: string) => set((state) => ({
     edges: state.edges.filter((edge) => edge.id !== edgeId),
+  })),
+
+  updateEdgeType: (type: string) => set((state) => ({
+    edges: state.edges.map((edge) => ({
+      ...edge,
+      type
+    }))
+  })),
+
+  updateEdgeAnimated: (animated: boolean) => set((state) => ({
+    edges: state.edges.map((edge) => ({
+      ...edge,
+      animated
+    }))
+  })),
+
+  updateConnectionMode: (mode: ConnectionMode) => set((state) => ({
+    edges: state.edges.map((edge) => ({
+      ...edge,
+      connectionMode: mode
+    }))
   })),
 }));
