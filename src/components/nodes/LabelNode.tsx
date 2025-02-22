@@ -24,17 +24,17 @@ export function LabelNode({ data, id, selected }: { data: LabelNodeData; id: str
       outputValue: newValue  // 同步更新输出值
     });
 
-    // 获取所有边
-    const edges = useCircuitStore.getState().edges;
-    // 找到所有以当前节点为源的边
-    const connectedEdges = edges.filter(edge => edge.source === id);
+    // // 获取所有边
+    // const edges = useCircuitStore.getState().edges;
+    // // 找到所有以当前节点为源的边
+    // const connectedEdges = edges.filter(edge => edge.source === id);
     
-    // 更新所有直接连接的目标节点的输入值
-    connectedEdges.forEach(edge => {
-      useCircuitStore.getState().updateNodeData(edge.target, {
-        value: newValue  // 更新目标节点的输入值
-      });
-    });
+    // // 更新所有直接连接的目标节点的输入值
+    // connectedEdges.forEach(edge => {
+    //   useCircuitStore.getState().updateNodeData(edge.target, {
+    //     value: newValue  // 更新目标节点的输入值
+    //   });
+    // });
   };
 
   useEffect(() => {
