@@ -147,8 +147,13 @@ export const useCircuitStore = create<CircuitState>()((set, get) => ({
     const state = get();
     const newIsSimulating = !state.isSimulating;
     
+    // 清除现有的定时器（如果存在）
+    if (state.simulationTimer !== null) {
+      window.clearInterval(state.simulationTimer);
+    }
+    
     if (newIsSimulating) {
-      // 启动定时器
+      // 启动新的定时器
       const timer = window.setInterval(() => {
         get().stepSimulation();
       }, state.simulationInterval);
@@ -158,11 +163,7 @@ export const useCircuitStore = create<CircuitState>()((set, get) => ({
         simulationTimer: timer
       });
     } else {
-      // 清除定时器
-      if (state.simulationTimer !== null) {
-        window.clearInterval(state.simulationTimer);
-      }
-      
+      // 暂停模拟
       set({
         isSimulating: false,
         simulationTimer: null
