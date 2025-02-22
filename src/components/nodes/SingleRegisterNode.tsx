@@ -14,6 +14,19 @@ export function SingleRegisterNode({ data, id, selected }: { data: SingleRegiste
   const name = data.name || 'R';
 
   const handleValueChange = (newValue: number) => {
+    // 获取所有边
+    const edges = useCircuitStore.getState().edges;
+    // 找到所有以当前节点为源的边
+    const connectedEdges = edges.filter(edge => edge.source === id);
+    
+    // 更新所有连接的目标节点的值
+    connectedEdges.forEach(edge => {
+      useCircuitStore.getState().updateNodeData(edge.target, {
+        value: newValue
+      });
+    });
+
+    // 更新节点自身的值（在实际应用中，这里应该根据时钟信号来决定是否更新）
     updateNodeData(id, {
       ...data,
       value: newValue

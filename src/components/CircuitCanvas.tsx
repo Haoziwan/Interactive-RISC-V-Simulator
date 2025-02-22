@@ -157,6 +157,20 @@ export function CircuitCanvas() {
   );
   const onConnect = useCallback(
     (params: Connection) => {
+      const sourceNode = nodes.find(node => node.id === params.source);
+      const targetNode = nodes.find(node => node.id === params.target);
+
+      // 同步节点数据
+      if (sourceNode && targetNode) {
+        if (sourceNode.type === 'constant' && targetNode.type === 'label') {
+          const sourceValue = sourceNode.data.value ?? 0;
+          useCircuitStore.getState().updateNodeData(targetNode.id, {
+            ...targetNode.data,
+            value: sourceValue
+          });
+        }
+      }
+
       const newEdge = {
         ...params,
         type: edgeType,
@@ -174,7 +188,7 @@ export function CircuitCanvas() {
       };
       addEdge(newEdge);
     },
-    [addEdge, edgeType, edgeAnimated, edgeColor, edgeWidth]
+    [addEdge, edgeType, edgeAnimated, edgeColor, edgeWidth, nodes]
   );
   const onDrop = useCallback(
     (event: React.DragEvent) => {

@@ -16,6 +16,18 @@ export function ConstantNode({ data, id, selected }: { data: ConstantNodeData; i
       ...data,
       value: newValue
     });
+
+    // 获取所有边
+    const edges = useCircuitStore.getState().edges;
+    // 找到所有以当前节点为源的边
+    const connectedEdges = edges.filter(edge => edge.source === id);
+    
+    // 更新所有连接的目标节点的值
+    connectedEdges.forEach(edge => {
+      useCircuitStore.getState().updateNodeData(edge.target, {
+        value: newValue
+      });
+    });
   };
 
   React.useEffect(() => {
