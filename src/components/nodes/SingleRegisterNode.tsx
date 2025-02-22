@@ -6,38 +6,56 @@ interface SingleRegisterNodeData {
   label: string;
   value?: number;
   name?: string;
+  reset?: boolean;
 }
 
 export function SingleRegisterNode({ data, id, selected }: { data: SingleRegisterNodeData; id: string; selected?: boolean }) {
   const updateNodeData = useCircuitStore((state) => state.updateNodeData);
+  const stepCount = useCircuitStore((state) => state.stepCount);
   const value = data.value ?? 0;
   const name = data.name || 'R';
+  const reset = data.reset ?? false;
+  const [inputValue, setInputValue] = React.useState<number>(0);
 
   const handleValueChange = (newValue: number) => {
-    // 获取所有边
-    const edges = useCircuitStore.getState().edges;
-    // 找到所有以当前节点为源的边
-    const connectedEdges = edges.filter(edge => edge.source === id);
-    
-    // 更新所有连接的目标节点的值
-    connectedEdges.forEach(edge => {
-      useCircuitStore.getState().updateNodeData(edge.target, {
-        value: newValue
-      });
-    });
-
-    // 更新节点自身的值（在实际应用中，这里应该根据时钟信号来决定是否更新）
     updateNodeData(id, {
       ...data,
       value: newValue
     });
   };
 
+  // 监听复位信号
   React.useEffect(() => {
-    if (data.value !== value) {
-      handleValueChange(data.value ?? 0);
+    if (reset) {
+      handleValueChange(0);
+      setInputValue(0);
     }
-  }, [data.value, value]);
+  }, [reset]);
+
+  // 监听时钟信号(stepCount)
+  React.useEffect(() => {
+    if (!reset) {
+      // 首先将当前保存的输入值更新为寄存器的值
+      handleValueChange(inputValue);
+      
+      // 在下一个事件循环中更新输入值
+      setTimeout(() => {
+        // 获取所有边
+        const edges = useCircuitStore.getState().edges;
+        // 找到所有连接到当前节点输入端口的边
+        const inputEdges = edges.filter(edge => edge.target === id && edge.targetHandle === 'input');
+        
+        // 如果有输入连接，获取输入值并保存
+        if (inputEdges.length > 0) {
+          const inputEdge = inputEdges[0]; // 获取第一个输入连接
+          const sourceNode = useCircuitStore.getState().nodes.find(node => node.id === inputEdge.source);
+          if (sourceNode && sourceNode.data && typeof sourceNode.data.value === 'number') {
+            setInputValue(sourceNode.data.value);
+          }
+        }
+      }, 0);
+    }
+  }, [stepCount]);
 
   return (
     <div className={`px-4 py-2 shadow-md rounded-md bg-white border-2 ${selected ? 'border-blue-500' : 'border-gray-200'}`}>

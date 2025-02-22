@@ -9,6 +9,7 @@ interface CircuitState {
   selectedEdge: Edge | null;
   circuit: Circuit;
   isSimulating: boolean;
+  stepCount: number;
   assembledInstructions: Array<{hex: string; binary: string; assembly?: string}>;
   editorCode: string;
   updateNodeData: (nodeId: string, data: any) => void;
@@ -45,6 +46,7 @@ export const useCircuitStore = create<CircuitState>()((set, get) => ({
   selectedEdge: null,
   circuit: initialCircuit,
   isSimulating: false,
+  stepCount: 0,
   assembledInstructions: [],
   editorCode: '',
 
@@ -154,6 +156,7 @@ export const useCircuitStore = create<CircuitState>()((set, get) => ({
         },
       })),
       isSimulating: false,
+      stepCount: 0,
     }));
   },
 
@@ -162,6 +165,7 @@ export const useCircuitStore = create<CircuitState>()((set, get) => ({
     if (state.isSimulating) return;
 
     set((state) => ({
+      stepCount: state.stepCount + 1,
       nodes: state.nodes.map((node) => {
         if (node.type === 'instruction-memory') {
           const currentPc = node.data.pc || 0;
