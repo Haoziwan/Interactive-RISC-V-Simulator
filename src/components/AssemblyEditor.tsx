@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useCircuitStore } from '../store/circuitStore';
 import { Assembler } from '../assembler/assembler';
 import { InstructionFormatPanel } from './InstructionFormatPanel';
+import Editor from '@monaco-editor/react';
 
 export function AssemblyEditor() {
   const [error, setError] = useState<string | null>(null);
@@ -162,6 +163,44 @@ end:`
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-lg font-semibold">汇编代码编辑器</h2>
             <div className="flex items-center gap-2">
+              <button
+                onClick={() => {
+                  const input = document.createElement('input');
+                  input.type = 'file';
+                  input.accept = '.txt,.s';
+                  input.onchange = (e) => {
+                    const file = (e.target as HTMLInputElement).files?.[0];
+                    if (file) {
+                      const reader = new FileReader();
+                      reader.onload = (e) => {
+                        const content = e.target?.result as string;
+                        setEditorCode(content);
+                      };
+                      reader.readAsText(file);
+                    }
+                  };
+                  input.click();
+                }}
+                className="px-3 py-1 text-sm bg-gray-100 hover:bg-gray-200 rounded"
+                title="导入.txt或.s格式的汇编代码文件"
+              >
+                导入程序
+              </button>
+              <button
+                onClick={() => {
+                  const blob = new Blob([editorCode], { type: 'text/plain' });
+                  const url = URL.createObjectURL(blob);
+                  const a = document.createElement('a');
+                  a.href = url;
+                  a.download = 'assembly_code.txt';
+                  a.click();
+                  URL.revokeObjectURL(url);
+                }}
+                className="px-3 py-1 text-sm bg-gray-100 hover:bg-gray-200 rounded"
+                title="将当前编辑器中的代码保存为文本文件"
+              >
+                导出程序
+              </button>
               <select
                 className="px-3 py-1 text-sm bg-gray-100 hover:bg-gray-200 rounded"
                 onChange={(e) => loadTestProgram(e.target.value as 'sort' | 'fibonacci' | 'gcd')}
@@ -181,11 +220,22 @@ end:`
             </div>
           </div>
           
-          <textarea
+          <Editor
+            height="calc(100vh - 200px)"
+            defaultLanguage="plaintext"
             value={editorCode}
-            onChange={(e) => setEditorCode(e.target.value)}
-            className="w-full h-[calc(100vh-200px)] p-4 font-mono text-sm border rounded"
-            placeholder="在此输入RISC-V汇编代码..."
+            onChange={(value) => setEditorCode(value || '')}
+            theme="vs-light"
+            options={{
+              minimap: { enabled: false },
+              fontSize: 14,
+              lineNumbers: 'on',
+              scrollBeyondLastLine: false,
+              wordWrap: 'on',
+              automaticLayout: true,
+              tabSize: 2,
+              renderWhitespace: 'all',
+            }}
           />
 
           <InstructionFormatPanel />
@@ -239,7 +289,7 @@ end:`
                         <td className="py-2 px-4 font-mono text-blue-600">{inst.hex}</td>
                         <td className="py-2 px-4 font-mono">{inst.assembly}</td>
                       </tr>
-                    ))}
+                    ))}                  
                   </tbody>
                 </table>
               </div>
