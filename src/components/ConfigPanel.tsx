@@ -17,27 +17,10 @@ export function ConfigPanel() {
           <div className="space-y-4">
             <h3 className="font-medium">常量配置</h3>
             <div className="space-y-2">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  数值
-                </label>
-                <input
-                  type="number"
-                  className="w-full p-2 border rounded"
-                  value={selectedNode.data.value === undefined ? '' : selectedNode.data.value}
-                  step="1"
-                  onChange={(e) => {
-                    const newValue = e.target.value === '' ? undefined : Number(e.target.value);
-                    if (newValue === undefined || !isNaN(newValue)) {
-                      updateNodeData(selectedNode.id, { value: newValue });
-                    }
-                  }}
-                />
-              </div>
+              <p className="text-sm text-gray-500">无需配置</p>
             </div>
           </div>
         );
-
       case 'pc-mux':
         return (
           <div className="space-y-4">
