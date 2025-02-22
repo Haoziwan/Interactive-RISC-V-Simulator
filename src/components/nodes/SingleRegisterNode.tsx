@@ -1,4 +1,4 @@
-import { Handle, Position } from 'reactflow';
+import { Handle, Position, useNodes, useEdges } from 'reactflow';
 import { useCircuitStore } from '../../store/circuitStore';
 import React from 'react';
 
@@ -16,6 +16,8 @@ export function SingleRegisterNode({ data, id, selected }: { data: SingleRegiste
   const name = data.name || 'R';
   const reset = data.reset ?? false;
   const [inputValue, setInputValue] = React.useState<number>(0);
+  const nodes = useNodes();
+  const edges = useEdges();
 
   const handleValueChange = (newValue: number) => {
     updateNodeData(id, {
@@ -31,6 +33,19 @@ export function SingleRegisterNode({ data, id, selected }: { data: SingleRegiste
       setInputValue(0);
     }
   }, [reset]);
+
+  // 监听输入连接的变化
+  React.useEffect(() => {
+    // 找到连接到此节点的边
+    const inputEdge = edges.find(edge => edge.target === id && edge.targetHandle === 'input');
+    if (inputEdge) {
+      // 找到源节点
+      const sourceNode = nodes.find(node => node.id === inputEdge.source);
+      if (sourceNode?.data && typeof sourceNode.data === 'object' && 'value' in sourceNode.data && typeof sourceNode.data.value === 'number') {
+        setInputValue(sourceNode.data.value);
+      }
+    }
+  }, [nodes, edges, id]);
 
   // 监听时钟信号(stepCount)
   React.useEffect(() => {
