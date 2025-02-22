@@ -71,7 +71,7 @@ export const useCircuitStore = create<CircuitState>()((set, get) => ({
           target: connection.target || '',
           sourceHandle: connection.sourceHandle,
           targetHandle: connection.targetHandle,
-          type: 'default',
+          type: 'smoothstep',
         },
       ],
     })),
