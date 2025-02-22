@@ -84,6 +84,7 @@ export function CircuitCanvas() {
   const [edgeColor, setEdgeColor] = useState('#999');
   const [edgeWidth, setEdgeWidth] = useState(2);
   const [showEdgeSettings, setShowEdgeSettings] = useState(false);
+  const [simulationInterval, setSimulationInterval] = useState(1000);
   
   const validateCircuit = useCallback(() => {
     const errors: string[] = [];
@@ -292,7 +293,7 @@ export function CircuitCanvas() {
                 onClick={() => setShowEdgeSettings(!showEdgeSettings)}
                 className="text-sm text-gray-600 hover:text-gray-900 flex items-center"
               >
-                连线设置 {showEdgeSettings ? '▼' : '▶'}
+                设置 {showEdgeSettings ? '▼' : '▶'}
               </button>
             </div>
             {showEdgeSettings && (
@@ -362,6 +363,23 @@ export function CircuitCanvas() {
                     className="rounded border-gray-300"
                   />
                   <label className="text-xs text-gray-600">动画效果</label>
+                </div>
+                <div className="flex flex-col space-y-1">
+                  <label className="text-xs text-gray-600">模拟间隔 (ms)</label>
+                  <input
+                    type="range"
+                    min="50"
+                    max="5000"
+                    step="50"
+                    value={simulationInterval}
+                    onChange={(e) => {
+                      const newInterval = parseInt(e.target.value);
+                      setSimulationInterval(newInterval);
+                      useCircuitStore.getState().simulationInterval = newInterval;
+                    }}
+                    className="w-full"
+                  />
+                  <span className="text-xs text-gray-600">{simulationInterval}ms</span>
                 </div>
               </div>
             )}

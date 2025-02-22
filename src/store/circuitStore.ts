@@ -12,6 +12,8 @@ interface CircuitState {
   stepCount: number;
   assembledInstructions: Array<{hex: string; binary: string; assembly?: string}>;
   editorCode: string;
+  simulationInterval: number;
+  simulationTimer: number | null;
   updateNodeData: (nodeId: string, data: any) => void;
   setSelectedNode: (node: Node | null) => void;
   setSelectedEdge: (edge: Edge | null) => void;
@@ -49,6 +51,8 @@ export const useCircuitStore = create<CircuitState>()((set, get) => ({
   stepCount: 0,
   assembledInstructions: [],
   editorCode: '',
+  simulationInterval: 1000, // 默认1秒间隔
+  simulationTimer: null,
 
   updateNodeData: (nodeId: string, newData: any) =>
     set((state) => ({
@@ -139,7 +143,32 @@ export const useCircuitStore = create<CircuitState>()((set, get) => ({
     }
   },
 
-  toggleSimulation: () => set((state) => ({ isSimulating: !state.isSimulating })),
+  toggleSimulation: () => {
+    const state = get();
+    const newIsSimulating = !state.isSimulating;
+    
+    if (newIsSimulating) {
+      // 启动定时器
+      const timer = window.setInterval(() => {
+        get().stepSimulation();
+      }, state.simulationInterval);
+      
+      set({
+        isSimulating: true,
+        simulationTimer: timer
+      });
+    } else {
+      // 清除定时器
+      if (state.simulationTimer !== null) {
+        window.clearInterval(state.simulationTimer);
+      }
+      
+      set({
+        isSimulating: false,
+        simulationTimer: null
+      });
+    }
+  },
 
   resetSimulation: () => {
     set((state) => ({
@@ -162,7 +191,6 @@ export const useCircuitStore = create<CircuitState>()((set, get) => ({
 
   stepSimulation: () => {
     const state = get();
-    if (state.isSimulating) return;
 
     set((state) => ({
       stepCount: state.stepCount + 1,
