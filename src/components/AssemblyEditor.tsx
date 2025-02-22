@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useCircuitStore } from '../store/circuitStore';
 import { Assembler } from '../assembler/assembler';
+import { InstructionFormatPanel } from './InstructionFormatPanel';
 
 export function AssemblyEditor() {
   const [error, setError] = useState<string | null>(null);
@@ -187,28 +188,7 @@ end:`
             placeholder="在此输入RISC-V汇编代码..."
           />
 
-          <div className="mt-4">
-            <h3 className="font-semibold mb-2">支持的指令格式</h3>
-            <div className="grid grid-cols-2 gap-4 text-sm">
-              <div>
-                <h4 className="font-medium">R型指令</h4>
-                <ul className="list-disc list-inside">
-                  <li>add rd, rs1, rs2</li>
-                  <li>sub rd, rs1, rs2</li>
-                  <li>and/or/xor rd, rs1, rs2</li>
-                  <li>sll/srl/sra rd, rs1, rs2</li>
-                </ul>
-              </div>
-              <div>
-                <h4 className="font-medium">I型指令</h4>
-                <ul className="list-disc list-inside">
-                  <li>addi rd, rs1, imm</li>
-                  <li>andi/ori/xori rd, rs1, imm</li>
-                  <li>lw rd, offset(rs1)</li>
-                </ul>
-              </div>
-            </div>
-          </div>
+          <InstructionFormatPanel />
         </div>
 
         {/* 右侧结果部分 */}
