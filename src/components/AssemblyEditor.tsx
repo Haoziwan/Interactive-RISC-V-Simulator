@@ -250,10 +250,10 @@ end:`
             </div>
           )}
 
-          {assembledInstructions.length > 0 && (
-            <div>
-              <div className="flex justify-between items-center mb-4">
-                <h3 className="text-lg font-semibold">汇编结果</h3>
+          <div>
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-semibold">汇编结果</h3>
+              {assembledInstructions.length > 0 && (
                 <button
                   onClick={() => {
                     const machineCode = assembledInstructions.map(inst => inst.hex).join('\n');
@@ -269,19 +269,21 @@ end:`
                 >
                   导出机器码
                 </button>
-              </div>
+              )}
+            </div>
 
-              <div className="overflow-auto h-[calc(100vh-250px)]">
-                <table className="w-full text-sm">
-                  <thead className="bg-gray-50">
-                    <tr>
-                      <th className="text-left py-2 px-4 font-medium">地址</th>
-                      <th className="text-left py-2 px-4 font-medium">机器码</th>
-                      <th className="text-left py-2 px-4 font-medium">汇编指令</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {assembledInstructions.map((inst, i) => (
+            <div className="overflow-auto h-[calc(100vh-200px)]">
+              <table className="w-full text-sm">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th className="text-left py-2 px-4 font-medium">地址</th>
+                    <th className="text-left py-2 px-4 font-medium">机器码</th>
+                    <th className="text-left py-2 px-4 font-medium">汇编指令</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {assembledInstructions.length > 0 ? (
+                    assembledInstructions.map((inst, i) => (
                       <tr key={i} className="border-t border-gray-100">
                         <td className="py-2 px-4 font-mono text-gray-600">
                           {`0x${(i * 4).toString(16).padStart(8, '0')}`}
@@ -289,12 +291,18 @@ end:`
                         <td className="py-2 px-4 font-mono text-blue-600">{inst.hex}</td>
                         <td className="py-2 px-4 font-mono">{inst.assembly}</td>
                       </tr>
-                    ))}                  
-                  </tbody>
-                </table>
-              </div>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan={3} className="py-8 text-center text-gray-500">
+                        暂无汇编结果，请编写代码并点击"汇编代码"
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
             </div>
-          )}
+          </div>
         </div>
       </div>
     </div>
