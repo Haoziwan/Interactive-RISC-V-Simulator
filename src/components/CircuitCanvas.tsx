@@ -24,8 +24,6 @@ import { DataMemoryNode } from './nodes/DataMemoryNode';
 import { InstructionMemoryNode } from './nodes/InstructionMemoryNode';
 import { ALUControlNode } from './nodes/ALUControlNode';
 import { PCNode } from './nodes/PCNode';
-import { BranchAdderNode } from './nodes/BranchAdderNode';
-import { PCMuxNode } from './nodes/PCMuxNode';
 import { ConstantNode } from './nodes/ConstantNode';
 import { SingleRegisterNode } from './nodes/SingleRegisterNode';
 import { LabelNode } from './nodes/LabelNode';
@@ -45,8 +43,6 @@ const nodeTypes = {
   'instruction-memory': InstructionMemoryNode,
   'alu-control': ALUControlNode,
   pc: PCNode,
-  'branch-adder': BranchAdderNode,
-  'pc-mux': PCMuxNode,
   constant: ConstantNode,
   'single-register': SingleRegisterNode,
   label: LabelNode,

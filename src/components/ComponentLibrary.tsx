@@ -47,18 +47,7 @@ const components = [
     icon: <Timer className="w-6 h-6" />,
     description: '程序计数器',
   },
-  {
-    type: 'branch-adder',
-    label: 'Branch Adder',
-    icon: <Plus className="w-6 h-6" />,
-    description: '分支目标地址加法器',
-  },
-  {
-    type: 'pc-mux',
-    label: 'PC Multiplexer',
-    icon: <GitBranch className="w-6 h-6" />,
-    description: 'PC多路选择器',
-  },
+
   {
     type: 'fork',
     label: 'Fork',
