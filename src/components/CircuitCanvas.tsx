@@ -31,6 +31,7 @@ import { SingleRegisterNode } from './nodes/SingleRegisterNode';
 import { LabelNode } from './nodes/LabelNode';
 import { AddNode } from './nodes/AddNode';
 import { ForkNode } from './nodes/ForkNode';
+import { InstrDistributerNode } from './nodes/InstrDistributerNode';
 import { useCircuitStore } from '../store/circuitStore';
 import { Play, Pause, RotateCcw, StepForward, CheckCircle, Trash2 } from 'lucide-react';
 
@@ -51,6 +52,7 @@ const nodeTypes = {
   label: LabelNode,
   add: AddNode,
   fork: ForkNode,
+  'instr-distributer': InstrDistributerNode,
 };
 
 // 定义必需的组件和它们允许的数量

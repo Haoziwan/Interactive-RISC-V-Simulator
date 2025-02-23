@@ -2,14 +2,19 @@ import { Handle, Position, useNodes, useEdges } from 'reactflow';
 import { useEffect } from 'react';
 import { useCircuitStore } from '../../store/circuitStore';
 
-interface LabelNodeData {
+interface NodeData {
+  [key: string]: number | string | undefined;
+}
+
+interface LabelNodeData extends NodeData {
   label: string;
   value?: number | string;
+  outputValue?: number | string;
 }
 
 export function LabelNode({ data, id, selected }: { data: LabelNodeData; id: string; selected?: boolean }) {
   const updateNodeData = useCircuitStore((state) => state.updateNodeData);
-  const value = data.value ?? '';
+  const value = data.value ?? 0;
   const nodes = useNodes();
   const edges = useEdges();
 
@@ -27,7 +32,7 @@ export function LabelNode({ data, id, selected }: { data: LabelNodeData; id: str
 
   useEffect(() => {
     if (data.value !== value) {
-      handleValueChange(data.value ?? '');
+      handleValueChange(data.value ?? 0);
     }
   }, [data.value]); // 移除value依赖，避免循环更新
 
@@ -35,16 +40,36 @@ export function LabelNode({ data, id, selected }: { data: LabelNodeData; id: str
   useEffect(() => {
     // 找到连接到此节点的边
     const inputEdge = edges.find(edge => edge.target === id);
-    if (inputEdge) {
-      // 找到源节点
-      const sourceNode = nodes.find(node => node.id === inputEdge.source);
-      if (sourceNode?.data && typeof sourceNode.data === 'object' && 'value' in sourceNode.data) {
-        const sourceValue = sourceNode.data.value;
-        // 确保值为string或number类型
-        if (typeof sourceValue === 'string' || typeof sourceValue === 'number') {
-          handleValueChange(sourceValue);
-        }
+    if (!inputEdge) {
+      // 如果没有输入连接，设置默认值0
+      handleValueChange(0);
+      return;
+    }
+    // 找到源节点
+    const sourceNode = nodes.find(node => node.id === inputEdge.source);
+    
+    if (sourceNode?.data && typeof sourceNode.data === 'object') {
+      // 首先尝试根据输入端口ID查找对应字段
+      const portId = inputEdge.sourceHandle;
+      
+      let sourceValue: number | string | undefined;
+      
+      if (portId && sourceNode.data[portId as keyof typeof sourceNode.data] !== undefined) {
+        // 如果存在对应端口ID的字段，使用该字段值
+        sourceValue = sourceNode.data[portId as keyof typeof sourceNode.data] as number | string;
+      } else if ('value' in sourceNode.data) {
+        // 否则使用默认的value字段
+        sourceValue = (sourceNode.data as { value?: number | string }).value;
       }
+
+      // 确保值为string或number类型，如果无效则使用默认值0
+      if (typeof sourceValue === 'string' || typeof sourceValue === 'number') {
+        handleValueChange(sourceValue);
+      } else {
+        handleValueChange(0);
+      }
+    } else {
+      handleValueChange(0);
     }
   }, [nodes, edges, id]); // 移除value依赖，避免循环更新
 

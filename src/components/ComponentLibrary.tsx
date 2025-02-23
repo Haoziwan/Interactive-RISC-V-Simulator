@@ -66,6 +66,12 @@ const components = [
     description: '信号分叉组件',
   },
   {
+    type: 'instr-distributer',
+    label: 'Instruction Distributer',
+    icon: <FileInput className="w-6 h-6" />,
+    description: '指令分发器组件',
+  },
+  {
     type: 'instruction-memory',
     label: 'Instruction Memory',
     icon: <BookOpen className="w-6 h-6" />,
