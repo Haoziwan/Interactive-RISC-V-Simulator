@@ -48,12 +48,12 @@ export function InstrDistributerNode({ data, id }: { data: InstrDistributerNodeD
           updateNodeData(id, {
             ...data,
             value: newValue,
-            opcode: opcode,
-            rd: rd,
-            funct3: funct3,
-            rs1: rs1,
-            rs2: rs2,
-            funct7: funct7
+            opcode: parseInt(opcode, 2),
+            rd: parseInt(rd, 2),
+            funct3: parseInt(funct3, 2),
+            rs1: parseInt(rs1, 2),
+            rs2: parseInt(rs2, 2),
+            funct7: parseInt(funct7, 2)
           });
         }
       }
