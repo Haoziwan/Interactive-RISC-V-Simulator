@@ -14,6 +14,8 @@ interface CircuitState {
   editorCode: string;
   simulationInterval: number;
   simulationTimer: number | null;
+  registers: { [key: number]: number };
+  updateRegisters: (registers: { [key: number]: number }) => void;
   updateNodeData: (nodeId: string, data: any) => void;
   setSelectedNode: (node: Node | null) => void;
   setSelectedEdge: (edge: Edge | null) => void;
@@ -51,9 +53,15 @@ export const useCircuitStore = create<CircuitState>()((set, get) => ({
   stepCount: 0,
   assembledInstructions: [],
   editorCode: '',
-  simulationInterval: 1000, // 默认1秒间隔
+  simulationInterval: 1000,
   simulationTimer: null,
-
+  registers: {},
+  updateRegisters: (registers) => set((state) => ({
+    registers: {
+      ...state.registers,
+      ...registers
+    }
+  })),
   updateNodeData: (nodeId: string, newData: any) =>
     set((state) => ({
       nodes: state.nodes.map((node) =>

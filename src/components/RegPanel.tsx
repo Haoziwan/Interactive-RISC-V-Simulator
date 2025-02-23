@@ -1,13 +1,12 @@
 import React, { useState } from 'react';
-
-interface RegPanelProps {
-  registers: { [key: number]: number };
-}
+import { useCircuitStore } from '../store/circuitStore';
 
 type BaseType = 'dec' | 'hex' | 'bin';
 
-export function RegPanel({ registers }: RegPanelProps) {
+export function RegPanel() {
   const [base, setBase] = useState<BaseType>('dec');
+  const registers = useCircuitStore((state) => state.registers);
+  const updateRegisters = useCircuitStore((state) => state.updateRegisters);
 
   const formatValue = (value: number) => {
     switch (base) {
@@ -20,6 +19,26 @@ export function RegPanel({ registers }: RegPanelProps) {
       default:
         return value.toString();
     }
+  };
+
+  const parseValue = (value: string): number => {
+    try {
+      if (value.startsWith('0x')) {
+        return parseInt(value.slice(2), 16);
+      } else if (value.startsWith('0b')) {
+        return parseInt(value.slice(2), 2);
+      } else {
+        return parseInt(value);
+      }
+    } catch {
+      return 0;
+    }
+  };
+
+  const handleRegisterChange = (regIndex: number, value: string) => {
+    if (regIndex === 0) return; // x0 寄存器始终为0
+    const numValue = parseValue(value);
+    updateRegisters({ [regIndex]: numValue });
   };
 
   return (
@@ -50,7 +69,16 @@ export function RegPanel({ registers }: RegPanelProps) {
               </div>
               <div className="text-gray-600">{i}</div>
               <div className="font-mono text-gray-600">
-                {formatValue(registers[i] || 0)}
+                {i === 0 ? (
+                  formatValue(0)
+                ) : (
+                  <input
+                    type="text"
+                    value={formatValue(registers[i] || 0)}
+                    onChange={(e) => handleRegisterChange(i, e.target.value)}
+                    className="w-full bg-transparent border-b border-transparent hover:border-gray-300 focus:border-blue-500 outline-none px-1"
+                  />
+                )}
               </div>
             </div>
           ))}
