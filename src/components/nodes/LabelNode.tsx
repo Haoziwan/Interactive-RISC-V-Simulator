@@ -4,16 +4,16 @@ import { useCircuitStore } from '../../store/circuitStore';
 
 interface LabelNodeData {
   label: string;
-  value?: number;
+  value?: number | string;
 }
 
 export function LabelNode({ data, id, selected }: { data: LabelNodeData; id: string; selected?: boolean }) {
   const updateNodeData = useCircuitStore((state) => state.updateNodeData);
-  const value = data.value ?? 0;
+  const value = data.value ?? '';
   const nodes = useNodes();
   const edges = useEdges();
 
-  const handleValueChange = (newValue: number) => {
+  const handleValueChange = (newValue: number | string) => {
     // 避免重复更新相同的值
     if (value === newValue) return;
 
@@ -23,23 +23,11 @@ export function LabelNode({ data, id, selected }: { data: LabelNodeData; id: str
       value: newValue,
       outputValue: newValue  // 同步更新输出值
     });
-
-    // // 获取所有边
-    // const edges = useCircuitStore.getState().edges;
-    // // 找到所有以当前节点为源的边
-    // const connectedEdges = edges.filter(edge => edge.source === id);
-    
-    // // 更新所有直接连接的目标节点的输入值
-    // connectedEdges.forEach(edge => {
-    //   useCircuitStore.getState().updateNodeData(edge.target, {
-    //     value: newValue  // 更新目标节点的输入值
-    //   });
-    // });
   };
 
   useEffect(() => {
     if (data.value !== value) {
-      handleValueChange(data.value ?? 0);
+      handleValueChange(data.value ?? '');
     }
   }, [data.value]); // 移除value依赖，避免循环更新
 
@@ -50,8 +38,12 @@ export function LabelNode({ data, id, selected }: { data: LabelNodeData; id: str
     if (inputEdge) {
       // 找到源节点
       const sourceNode = nodes.find(node => node.id === inputEdge.source);
-      if (sourceNode?.data && typeof sourceNode.data === 'object' && 'value' in sourceNode.data && typeof sourceNode.data.value === 'number') {
-        handleValueChange(sourceNode.data.value);
+      if (sourceNode?.data && typeof sourceNode.data === 'object' && 'value' in sourceNode.data) {
+        const sourceValue = sourceNode.data.value;
+        // 确保值为string或number类型
+        if (typeof sourceValue === 'string' || typeof sourceValue === 'number') {
+          handleValueChange(sourceValue);
+        }
       }
     }
   }, [nodes, edges, id]); // 移除value依赖，避免循环更新
@@ -70,7 +62,7 @@ export function LabelNode({ data, id, selected }: { data: LabelNodeData; id: str
       />
       
       <div className="flex items-center justify-center">
-        <div className="text-base font-medium">{value}</div>
+        <div className="text-base font-medium">{typeof value === 'number' ? value : String(value)}</div>
       </div>
 
       <Handle 

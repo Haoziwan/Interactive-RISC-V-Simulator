@@ -191,34 +191,8 @@ export const useCircuitStore = create<CircuitState>()((set, get) => ({
   },
 
   stepSimulation: () => {
-    const state = get();
-
     set((state) => ({
-      stepCount: state.stepCount + 1,
-      nodes: state.nodes.map((node) => {
-        if (node.type === 'instruction-memory') {
-          const currentPc = node.data.pc || 0;
-          const instructions = node.data.instructions || [];
-          
-          // 检查是否到达指令末尾
-          if (currentPc >= instructions.length) {
-            return node; // 不再增加PC
-          }
-
-          // 获取当前指令
-          const currentInstruction = instructions[currentPc];
-          
-          return {
-            ...node,
-            data: {
-              ...node.data,
-              pc: currentPc + 1,
-              currentInstruction,
-            },
-          };
-        }
-        return node;
-      }),
+      stepCount: state.stepCount + 1
     }));
   },
   updateNodes: (changes) => set((state) => {
