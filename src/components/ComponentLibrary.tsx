@@ -18,6 +18,12 @@ import { useCircuitStore } from '../store/circuitStore';
 
 const components = [
   {
+    type: 'add',
+    label: 'Add',
+    icon: <Plus className="w-6 h-6" />,
+    description: '加法器组件',
+  },
+  {
     type: 'label',
     label: 'Label',
     icon: <Tag className="w-6 h-6" />,
