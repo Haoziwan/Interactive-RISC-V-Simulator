@@ -16,25 +16,21 @@ export function DataMemoryNode({ data, id, selected }: { data: DataMemoryNodeDat
   const memory = useCircuitStore((state) => state.memory);
   const updateMemory = useCircuitStore((state) => state.updateMemory);
   const updateNodeData = useCircuitStore((state) => state.updateNodeData);
+  const stepCount = useCircuitStore((state) => state.stepCount);
   const nodes = useNodes();
   const edges = useEdges();
 
-  const address = data.address || 0;
-  const writeData = data.writeData || 0;
-  const memRead = data.memRead || 0;
-  const memWrite = data.memWrite || 0;
   const size = data.size || 1024; // 默认1KB
-  const stepCount = useCircuitStore((state) => state.stepCount);
-  const [inputAddress, setInputAddress] = React.useState<number>(0);
-  const [inputWriteData, setInputWriteData] = React.useState<number>(0);
-  const [inputMemRead, setInputMemRead] = React.useState<number>(0);
-  const [inputMemWrite, setInputMemWrite] = React.useState<number>(0);
 
-  // 监听输入连接的变化
+  // 监听输入连接的变化（组合逻辑部分：读取操作）
   React.useEffect(() => {
     // 找到连接到此节点的所有边
     const inputEdges = edges.filter(edge => edge.target === id);
     
+    let newAddress = data.address || 0;
+    let newMemRead = data.memRead || 0;
+    let hasChanges = false;
+
     inputEdges.forEach(edge => {
       // 找到源节点
       const sourceNode = nodes.find(node => node.id === edge.source);
@@ -49,66 +45,103 @@ export function DataMemoryNode({ data, id, selected }: { data: DataMemoryNodeDat
           sourceValue = (sourceNode.data as { value?: number | boolean }).value;
         }
 
-        // 根据端口类型更新输入缓存
+        // 根据端口类型更新对应的值
         if (sourceValue !== undefined) {
           switch (portId) {
             case 'address':
-              if (typeof sourceValue === 'number') setInputAddress(sourceValue);
-              break;
-            case 'writeData':
-              if (typeof sourceValue === 'number') setInputWriteData(sourceValue);
+              if (typeof sourceValue === 'number' && sourceValue !== newAddress) {
+                newAddress = sourceValue;
+                hasChanges = true;
+              }
               break;
             case 'memRead':
-              if (typeof sourceValue === 'number') setInputMemRead(sourceValue);
-              break;
-            case 'memWrite':
-              if (typeof sourceValue === 'number') setInputMemWrite(sourceValue);
+              if (typeof sourceValue === 'number' && sourceValue !== newMemRead) {
+                newMemRead = sourceValue;
+                hasChanges = true;
+              }
               break;
           }
         }
       }
     });
-  }, [nodes, edges, id]);
 
-  // 监听时钟信号(stepCount)
+    if (hasChanges) {
+      // 更新节点数据（只更新读取相关的状态）
+      const addressHex = `0x${newAddress.toString(16).padStart(8, '0')}`;
+      const readData = newMemRead > 0 ? (memory[addressHex] || 0) : 0;
+
+      updateNodeData(id, {
+        ...data,
+        address: newAddress,
+        memRead: newMemRead,
+        readData: readData
+      });
+    }
+  }, [edges, id, nodes, memory]);
+
+  // 监听时钟信号（时序逻辑部分：写入操作）
   React.useEffect(() => {
-    // 更新当前值
-    updateNodeData(id, {
-      ...data,
-      address: inputAddress,
-      writeData: inputWriteData,
-      memRead: inputMemRead,
-      memWrite: inputMemWrite
+    // 找到连接到此节点的所有边
+    const inputEdges = edges.filter(edge => edge.target === id);
+    
+    let newAddress = data.address || 0;
+    let newWriteData = data.writeData || 0;
+    let newMemWrite = data.memWrite || 0;
+    let hasChanges = false;
+
+    inputEdges.forEach(edge => {
+      // 找到源节点
+      const sourceNode = nodes.find(node => node.id === edge.source);
+      if (sourceNode?.data && typeof sourceNode.data === 'object') {
+        const portId = edge.targetHandle;
+        let sourceValue: number | boolean | undefined;
+
+        // 根据端口ID获取对应的值
+        if (portId && sourceNode.data[portId as keyof typeof sourceNode.data] !== undefined) {
+          sourceValue = sourceNode.data[portId as keyof typeof sourceNode.data] as number | boolean;
+        } else if ('value' in sourceNode.data) {
+          sourceValue = (sourceNode.data as { value?: number | boolean }).value;
+        }
+
+        // 根据端口类型更新对应的值
+        if (sourceValue !== undefined) {
+          switch (portId) {
+            case 'writeData':
+              if (typeof sourceValue === 'number' && sourceValue !== newWriteData) {
+                newWriteData = sourceValue;
+                hasChanges = true;
+              }
+              break;
+            case 'memWrite':
+              if (typeof sourceValue === 'number' && sourceValue !== newMemWrite) {
+                newMemWrite = sourceValue;
+                hasChanges = true;
+              }
+              break;
+          }
+        }
+      }
     });
 
-    // 写入数据（时序逻辑）
-    if (inputMemWrite > 0) {
-      const addressHex = `0x${inputAddress.toString(16).padStart(8, '0')}`;
-      updateMemory({
-        [addressHex]: inputWriteData
+    if (hasChanges) {
+      // 更新节点数据（写入相关的状态）
+      const addressHex = `0x${newAddress.toString(16).padStart(8, '0')}`;
+
+      // 写入数据
+      if (newMemWrite > 0 && newWriteData !== memory[addressHex]) {
+        updateMemory({
+          [addressHex]: newWriteData
+        });
+      }
+
+      // 更新节点状态
+      updateNodeData(id, {
+        ...data,
+        writeData: newWriteData,
+        memWrite: newMemWrite
       });
     }
   }, [stepCount]);
-
-  // 读取数据（组合逻辑）
-  const addressHex = `0x${address.toString(16).padStart(8, '0')}`;
-  const readData = memRead > 0 ? (memory[addressHex] || 0) : 0;
-
-  // 更新readData到节点数据
-  React.useEffect(() => {
-    if (data.readData !== readData) {
-      updateNodeData(id, { ...data, readData });
-    }
-  }, [readData, data.readData, id]);
-
-  // 写入数据（组合逻辑）
-  React.useEffect(() => {
-    if (memWrite > 0) {
-      updateMemory({
-        [addressHex]: writeData
-      });
-    }
-  }, [memWrite, addressHex, writeData, updateMemory]);
 
   return (
     <div className={`px-4 py-2 shadow-md rounded-md bg-white border-2 ${
@@ -161,11 +194,11 @@ export function DataMemoryNode({ data, id, selected }: { data: DataMemoryNodeDat
       <div className="flex items-center">
         <div className="ml-2">
           <div className="text-lg font-bold">Data Memory</div>
-          <div className="text-gray-500">Address: 0x{address.toString(16).padStart(8, '0')}</div>
-          <div className="text-gray-500">Write Data: {writeData}</div>
-          <div className="text-gray-500">Read Data: {readData}</div>
-          <div className="text-gray-500">MemRead: {memRead}</div>
-          <div className="text-gray-500">MemWrite: {memWrite}</div>
+          <div className="text-gray-500">Address: 0x{(data.address || 0).toString(16).padStart(8, '0')}</div>
+          <div className="text-gray-500">Write Data: {data.writeData || 0}</div>
+          <div className="text-gray-500">Read Data: {data.readData || 0}</div>
+          <div className="text-gray-500">MemRead: {data.memRead || 0}</div>
+          <div className="text-gray-500">MemWrite: {data.memWrite || 0}</div>
           <div className="text-xs text-gray-400 mt-2">
             Size: {size} bytes
           </div>
