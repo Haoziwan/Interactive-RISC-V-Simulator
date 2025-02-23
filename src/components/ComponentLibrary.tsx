@@ -60,6 +60,12 @@ const components = [
     description: 'PC多路选择器',
   },
   {
+    type: 'fork',
+    label: 'Fork',
+    icon: <GitBranch className="w-6 h-6" />,
+    description: '信号分叉组件',
+  },
+  {
     type: 'instruction-memory',
     label: 'Instruction Memory',
     icon: <BookOpen className="w-6 h-6" />,

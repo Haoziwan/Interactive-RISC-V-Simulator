@@ -30,6 +30,7 @@ import { ConstantNode } from './nodes/ConstantNode';
 import { SingleRegisterNode } from './nodes/SingleRegisterNode';
 import { LabelNode } from './nodes/LabelNode';
 import { AddNode } from './nodes/AddNode';
+import { ForkNode } from './nodes/ForkNode';
 import { useCircuitStore } from '../store/circuitStore';
 import { Play, Pause, RotateCcw, StepForward, CheckCircle, Trash2 } from 'lucide-react';
 
@@ -49,6 +50,7 @@ const nodeTypes = {
   'single-register': SingleRegisterNode,
   label: LabelNode,
   add: AddNode,
+  fork: ForkNode,
 };
 
 // 定义必需的组件和它们允许的数量
