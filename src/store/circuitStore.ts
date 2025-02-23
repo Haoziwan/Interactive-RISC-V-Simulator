@@ -15,6 +15,8 @@ interface CircuitState {
   simulationInterval: number;
   simulationTimer: number | null;
   registers: { [key: number]: number };
+  memory: { [key: string]: number };
+  updateMemory: (memory: { [key: string]: number }) => void;
   updateRegisters: (registers: { [key: number]: number }) => void;
   updateNodeData: (nodeId: string, data: any) => void;
   setSelectedNode: (node: Node | null) => void;
@@ -56,6 +58,13 @@ export const useCircuitStore = create<CircuitState>()((set, get) => ({
   simulationInterval: 1000,
   simulationTimer: null,
   registers: {},
+  memory: {},
+  updateMemory: (memory) => set((state) => ({
+    memory: {
+      ...state.memory,
+      ...memory
+    }
+  })),
   updateRegisters: (registers) => set((state) => ({
     registers: {
       ...state.registers,
@@ -68,16 +77,12 @@ export const useCircuitStore = create<CircuitState>()((set, get) => ({
         node.id === nodeId ? { ...node, data: { ...node.data, ...newData } } : node
       ),
     })),
-
   setSelectedNode: (node: Node | null) => set({ selectedNode: node }),
-
   setSelectedEdge: (edge: Edge | null) => set({ selectedEdge: edge }),
-
   addNode: (node: Node) =>
     set((state) => ({
       nodes: [...state.nodes, node],
     })),
-
   addEdge: (connection: any) =>
     set((state) => ({
       edges: [
@@ -104,7 +109,6 @@ export const useCircuitStore = create<CircuitState>()((set, get) => ({
         },
       ],
     })),
-
   saveCircuit: () => {
     const state = get();
     const circuitState = {
@@ -131,7 +135,6 @@ export const useCircuitStore = create<CircuitState>()((set, get) => ({
     };
     return JSON.stringify(circuitState, null, 2);
   },
-
   loadCircuit: (jsonData: string) => {
     try {
       const circuitState = JSON.parse(jsonData);
@@ -150,7 +153,6 @@ export const useCircuitStore = create<CircuitState>()((set, get) => ({
       throw new Error('无效的电路数据文件');
     }
   },
-
   toggleSimulation: () => {
     const state = get();
     const newIsSimulating = !state.isSimulating;
@@ -178,7 +180,6 @@ export const useCircuitStore = create<CircuitState>()((set, get) => ({
       });
     }
   },
-
   resetSimulation: () => {
     set((state) => ({
       nodes: state.nodes.map((node) => ({
@@ -197,7 +198,6 @@ export const useCircuitStore = create<CircuitState>()((set, get) => ({
       stepCount: 0,
     }));
   },
-
   stepSimulation: () => {
     set((state) => ({
       stepCount: state.stepCount + 1
@@ -213,36 +213,29 @@ export const useCircuitStore = create<CircuitState>()((set, get) => ({
     });
     return { nodes: nextNodes };
   }),
-
   setAssembledInstructions: (instructions) => set({ assembledInstructions: instructions }),
-
   setEditorCode: (code) => set({ editorCode: code }),
-
   removeNode: (nodeId: string) => set((state) => ({
     nodes: state.nodes.filter((node) => node.id !== nodeId),
     edges: state.edges.filter(
       (edge) => edge.source !== nodeId && edge.target !== nodeId
     ),
   })),
-
   removeEdge: (edgeId: string) => set((state) => ({
     edges: state.edges.filter((edge) => edge.id !== edgeId),
   })),
-
   updateEdgeType: (type: string) => set((state) => ({
     edges: state.edges.map((edge) => ({
       ...edge,
       type
     }))
   })),
-
   updateEdgeAnimated: (animated: boolean) => set((state) => ({
     edges: state.edges.map((edge) => ({
       ...edge,
       animated
     }))
   })),
-
   updateConnectionMode: (mode: ConnectionMode) => set((state) => ({
     edges: state.edges.map((edge) => ({
       ...edge,

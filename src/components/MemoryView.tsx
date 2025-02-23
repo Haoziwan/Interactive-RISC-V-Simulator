@@ -1,31 +1,24 @@
 import React, { useState } from 'react';
 import { Save, FileInput, RefreshCw } from 'lucide-react';
+import { useCircuitStore } from '../store/circuitStore';
 
-interface MemoryViewProps {
-  memory?: { [address: string]: number };
-  onMemoryChange?: (address: string, value: number) => void;
-}
-
-export function MemoryView({ memory = {}, onMemoryChange }: MemoryViewProps) {
-  const [displayFormat, setDisplayFormat] = useState<'hex' | 'dec'>('hex');
+export function MemoryView() {
+  const memory = useCircuitStore((state) => state.memory);
+  const updateMemory = useCircuitStore((state) => state.updateMemory);
+  const [displayFormat, setDisplayFormat] = useState<'hex' | 'dec'>('dec');
   const [startAddress, setStartAddress] = useState(0);
   const rowCount = 16;
   const colCount = 16;
-
   const formatValue = (value: number) => {
     if (displayFormat === 'hex') {
       return `0x${value.toString(16).padStart(8, '0')}`;
     }
     return value.toString();
   };
-
   const formatAddress = (address: number) => {
     return `0x${address.toString(16).padStart(8, '0')}`;
   };
-
   const handleValueChange = (address: number, value: string) => {
-    if (!onMemoryChange) return;
-    
     let numValue: number;
     if (value.startsWith('0x')) {
       numValue = parseInt(value.slice(2), 16);
@@ -34,10 +27,11 @@ export function MemoryView({ memory = {}, onMemoryChange }: MemoryViewProps) {
     }
 
     if (!isNaN(numValue)) {
-      onMemoryChange(formatAddress(address), numValue);
+      updateMemory({
+        [formatAddress(address)]: numValue
+      });
     }
   };
-
   const handleExport = () => {
     const data = JSON.stringify(memory, null, 2);
     const blob = new Blob([data], { type: 'application/json' });
@@ -48,19 +42,16 @@ export function MemoryView({ memory = {}, onMemoryChange }: MemoryViewProps) {
     a.click();
     URL.revokeObjectURL(url);
   };
-
   const handleImport = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-    if (file && onMemoryChange) {
+    if (file) {
       const reader = new FileReader();
       reader.onload = (e) => {
         try {
           const content = e.target?.result;
           if (typeof content === 'string') {
             const importedMemory = JSON.parse(content);
-            Object.entries(importedMemory).forEach(([address, value]) => {
-              onMemoryChange(address, value as number);
-            });
+            updateMemory(importedMemory);
           }
         } catch (error) {
           console.error('导入内存数据失败:', error);
@@ -69,7 +60,6 @@ export function MemoryView({ memory = {}, onMemoryChange }: MemoryViewProps) {
       reader.readAsText(file);
     }
   };
-
   return (
     <div className="h-full flex flex-col">
       <div className="flex justify-between items-center mb-4">
