@@ -1,17 +1,69 @@
-import { Handle, Position } from 'reactflow';
+import { Handle, Position, useNodes, useEdges } from 'reactflow';
+import React from 'react';
+import { useCircuitStore } from '../../store/circuitStore';
 
 interface ALUControlNodeData {
   label: string;
-  aluOp?: string;
-  funct3?: string;
-  funct7?: string;
+  aluOp?: number;
+  funct3?: number;
+  funct7?: number;
   onDelete?: (e: React.MouseEvent) => void;
 }
 
-export function ALUControlNode({ data, selected }: { data: ALUControlNodeData; selected?: boolean }) {
-  const aluOp = data.aluOp || '00';
-  const funct3 = data.funct3 || '000';
-  const funct7 = data.funct7 || '0000000';
+export function ALUControlNode({ data, id, selected }: { data: ALUControlNodeData; id: string; selected?: boolean }) {
+  const updateNodeData = useCircuitStore((state) => state.updateNodeData);
+  const nodes = useNodes();
+  const edges = useEdges();
+  
+  const [inputAluOp, setInputAluOp] = React.useState<number>(0);
+  const [inputFunct3, setInputFunct3] = React.useState<number>(0);
+  const [inputFunct7, setInputFunct7] = React.useState<number>(0);
+
+  // 监听输入连接的变化
+  React.useEffect(() => {
+    const inputEdges = edges.filter(edge => edge.target === id);
+    
+    inputEdges.forEach(edge => {
+      const sourceNode = nodes.find(node => node.id === edge.source);
+      if (sourceNode?.data && typeof sourceNode.data === 'object') {
+        const portId = edge.targetHandle;
+        let sourceValue: number | undefined;
+
+        if (portId && sourceNode.data[portId as keyof typeof sourceNode.data] !== undefined) {
+          sourceValue = Number(sourceNode.data[portId as keyof typeof sourceNode.data]);
+        } else if ('value' in sourceNode.data) {
+          sourceValue = Number((sourceNode.data as { value?: number | string }).value);
+        }
+
+        if (!isNaN(sourceValue!)) {
+          switch (portId) {
+            case 'aluOp':
+              setInputAluOp(sourceValue!);
+              break;
+            case 'funct3':
+              setInputFunct3(sourceValue!);
+              break;
+            case 'funct7':
+              setInputFunct7(sourceValue!);
+              break;
+          }
+        }
+      }
+    });
+  }, [nodes, edges, id]);
+
+  React.useEffect(() => {
+    updateNodeData(id, {
+      ...data,
+      aluOp: inputAluOp,
+      funct3: inputFunct3,
+      funct7: inputFunct7
+    });
+  }, [inputAluOp, inputFunct3, inputFunct7]);
+
+  const aluOp = data.aluOp?.toString(2).padStart(2, '0') || '00';
+  const funct3 = data.funct3?.toString(2).padStart(3, '0') || '000';
+  const funct7 = data.funct7?.toString(2).padStart(7, '0') || '0000000';
 
   // 根据ALUOp和funct字段生成ALU控制信号
   const generateALUControl = (aluOp: string, funct3: string, funct7: string): string => {
@@ -60,6 +112,15 @@ export function ALUControlNode({ data, selected }: { data: ALUControlNodeData; s
   };
 
   const aluControl = generateALUControl(aluOp, funct3, funct7);
+  
+  // 将二进制字符串转换为数字并更新节点数据
+  React.useEffect(() => {
+    const aluControlValue = parseInt(aluControl, 2);
+    updateNodeData(id, {
+      ...data,
+      aluControl: aluControlValue
+    });
+  }, [aluControl]);
 
   return (
     <div className={`relative px-4 py-2 shadow-md rounded-md bg-white border-2 ${
@@ -68,10 +129,10 @@ export function ALUControlNode({ data, selected }: { data: ALUControlNodeData; s
       
       <Handle 
         type="target" 
-        position={Position.Left} 
+        position={Position.Top} 
         id="aluOp" 
         className="w-3 h-3 bg-blue-400" 
-        style={{ top: '30%' }} 
+        style={{ left: '50%' }} 
         title="ALU操作码" 
       />
       <Handle 
@@ -79,7 +140,7 @@ export function ALUControlNode({ data, selected }: { data: ALUControlNodeData; s
         position={Position.Left} 
         id="funct3" 
         className="w-3 h-3 bg-blue-400" 
-        style={{ top: '50%' }} 
+        style={{ top: '40%' }} 
         title="功能码3" 
       />
       <Handle 
@@ -87,7 +148,7 @@ export function ALUControlNode({ data, selected }: { data: ALUControlNodeData; s
         position={Position.Left} 
         id="funct7" 
         className="w-3 h-3 bg-blue-400" 
-        style={{ top: '70%' }} 
+        style={{ top: '60%' }} 
         title="功能码7" 
       />
       
@@ -104,7 +165,7 @@ export function ALUControlNode({ data, selected }: { data: ALUControlNodeData; s
       <Handle 
         type="source" 
         position={Position.Right} 
-        id="control" 
+        id="aluControl" 
         className="w-3 h-3 bg-green-400" 
         style={{ top: '50%' }} 
         title="ALU控制信号" 
