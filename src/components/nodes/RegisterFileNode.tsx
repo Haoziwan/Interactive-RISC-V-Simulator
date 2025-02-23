@@ -25,12 +25,6 @@ export function RegisterFileNode({ data, id, selected }: { data: RegisterFileNod
   const regWrite = data.regWrite || false;
   const reset = data.reset || false;
   
-  const [inputReadReg1, setInputReadReg1] = React.useState<number>(0);
-  const [inputReadReg2, setInputReadReg2] = React.useState<number>(0);
-  const [inputWriteReg, setInputWriteReg] = React.useState<number>(0);
-  const [inputWriteData, setInputWriteData] = React.useState<number>(0);
-  const [inputRegWrite, setInputRegWrite] = React.useState<boolean>(false);
-  
   const nodes = useNodes();
   const edges = useEdges();
 
@@ -38,81 +32,65 @@ export function RegisterFileNode({ data, id, selected }: { data: RegisterFileNod
   const readData1 = readReg1 === 0 ? 0 : (registers[readReg1] || 0);
   const readData2 = readReg2 === 0 ? 0 : (registers[readReg2] || 0);
 
-  // 监听复位信号
-  React.useEffect(() => {
-    if (reset) {
-      updateNodeData(id, {
-        ...data,
-        readReg1: 0,
-        readReg2: 0,
-        writeReg: 0,
-        writeData: 0,
-        regWrite: false
-      });
-      updateRegisters({});
-      setInputReadReg1(0);
-      setInputReadReg2(0);
-      setInputWriteReg(0);
-      setInputWriteData(0);
-      setInputRegWrite(false);
-    }
-  }, [reset]);
+  // 获取输入端口的值（组合逻辑）
+  const getInputValue = (portId: string): number | boolean => {
+    const inputEdge = edges.find(edge => edge.target === id && edge.targetHandle === portId);
+    if (!inputEdge) return 0;
 
-  // 监听输入连接的变化
-  React.useEffect(() => {
-    edges.forEach(edge => {
-      if (edge.target === id) {
-        const sourceNode = nodes.find(node => node.id === edge.source);
-        if (sourceNode?.data && typeof sourceNode.data === 'object' && 'value' in sourceNode.data) {
-          const value = sourceNode.data.value;
-          
-          switch (edge.targetHandle) {
-            case 'readReg1':
-              if (typeof value === 'number') setInputReadReg1(value);
-              break;
-            case 'readReg2':
-              if (typeof value === 'number') setInputReadReg2(value);
-              break;
-            case 'writeReg':
-              if (typeof value === 'number') setInputWriteReg(value);
-              break;
-            case 'writeData':
-              if (typeof value === 'number') setInputWriteData(value);
-              break;
-            case 'regWrite':
-              setInputRegWrite(Boolean(value));
-              break;
-          }
-        }
+    const sourceNode = nodes.find(node => node.id === inputEdge.source);
+    if (!sourceNode?.data || typeof sourceNode.data !== 'object') return 0;
+
+    if ('value' in sourceNode.data) {
+      const value = sourceNode.data.value;
+      if (typeof value === 'number' || typeof value === 'boolean') {
+        return value;
       }
-    });
-  }, [nodes, edges, id]);
+    }
+    return 0;
+  };
 
-  // 监听时钟信号(stepCount)
+  // 更新输入值和读取数据（组合逻辑）
   React.useEffect(() => {
-    if (!reset) {
-      // 更新当前值，同时更新输出端口的值
+    const newReadReg1 = Number(getInputValue('readReg1'));
+    const newReadReg2 = Number(getInputValue('readReg2'));
+    const newWriteReg = Number(getInputValue('writeReg'));
+    const newWriteData = Number(getInputValue('writeData'));
+    const newRegWrite = Boolean(getInputValue('regWrite'));
+
+    // 只在输入值发生变化时更新节点数据
+    if (newReadReg1 !== readReg1 ||
+        newReadReg2 !== readReg2 ||
+        newWriteReg !== writeReg ||
+        newWriteData !== writeData ||
+        newRegWrite !== regWrite) {
+      
       updateNodeData(id, {
         ...data,
-        readReg1: inputReadReg1,
-        readReg2: inputReadReg2,
-        writeReg: inputWriteReg,
-        writeData: inputWriteData,
-        regWrite: inputRegWrite,
-        readData1: readData1,  // 添加输出端口的值
-        readData2: readData2   // 添加输出端口的值
+        readReg1: newReadReg1,
+        readReg2: newReadReg2,
+        writeReg: newWriteReg,
+        writeData: newWriteData,
+        regWrite: newRegWrite,
+        readData1: newReadReg1 === 0 ? 0 : (registers[newReadReg1] || 0),
+        readData2: newReadReg2 === 0 ? 0 : (registers[newReadReg2] || 0)
       });
     }
-  }, [stepCount, readData1, readData2]);
+  }, [edges, nodes, id, registers]);
 
-  // 监听寄存器写入
+  // 监听时钟信号(stepCount)，处理寄存器写入（时序逻辑）
   React.useEffect(() => {
-    if (regWrite && writeReg !== 0) {
+    // 获取最新的输入值
+    const currentWriteReg = Number(getInputValue('writeReg'));
+    const currentWriteData = Number(getInputValue('writeData'));
+    const currentRegWrite = Boolean(getInputValue('regWrite'));
+
+    // 在时钟上升沿且未复位时进行写入操作
+    if (!reset && currentRegWrite && currentWriteReg !== 0) {
       updateRegisters({
-        [writeReg]: writeData
+        [currentWriteReg]: currentWriteData
       });
     }
-  }, [writeData, writeReg, regWrite]);
+  }, [stepCount]);
 
   return (
     <div className={`px-4 py-2 shadow-md rounded-md bg-white border-2 ${
