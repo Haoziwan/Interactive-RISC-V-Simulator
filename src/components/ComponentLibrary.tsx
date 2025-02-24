@@ -18,6 +18,12 @@ import { useCircuitStore } from '../store/circuitStore';
 
 const components = [
   {
+    type: 'jump-control',
+    label: 'Jump Control',
+    icon: <GitBranch className="w-6 h-6" />,
+    description: '跳转控制单元',
+  },
+  {
     type: 'add',
     label: 'Add',
     icon: <Plus className="w-6 h-6" />,
