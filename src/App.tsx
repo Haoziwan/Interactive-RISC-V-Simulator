@@ -51,40 +51,34 @@ function App() {
   const [activeTab, setActiveTab] = useState('code');
 
   const renderContent = () => {
-    switch (activeTab) {
-      case 'code':
-        return (
-          <div className="h-full flex">
-            <div className="flex-1">
-              <AssemblyEditor />
-            </div>
+    return (
+      <div className="h-full">
+        <div style={{ display: activeTab === 'code' ? 'flex' : 'none' }} className="h-full">
+          <div className="flex-1">
+            <AssemblyEditor />
           </div>
-        );
-      case 'memory':
-        return (
-          <div className="h-full flex">
-            <div className="flex-1 p-4">
-              <h2 className="text-lg font-semibold mb-4">内存视图</h2>
-              <MemoryView />
-            </div>
+        </div>
+
+        <div style={{ display: activeTab === 'memory' ? 'flex' : 'none' }} className="h-full">
+          <div className="flex-1 p-4">
+            <h2 className="text-lg font-semibold mb-4">内存视图</h2>
+            <MemoryView />
           </div>
-        );
-      case 'datapath':
-      default:
-        return (
-          <div className="h-full flex">
-            <div className="w-64 bg-white border-r border-gray-200 flex-shrink-0 overflow-auto">
-              <ComponentLibrary />
-            </div>
-            <div className="flex-1 relative">
-              <div className="absolute inset-0">
-                <CircuitCanvas />
-              </div>
-              <ConfigPanel />
-            </div>
+        </div>
+
+        <div style={{ display: activeTab === 'datapath' ? 'flex' : 'none' }} className="h-full">
+          <div className="w-64 bg-white border-r border-gray-200 flex-shrink-0 overflow-auto">
+            <ComponentLibrary />
           </div>
-        );
-    }
+          <div className="flex-1 relative">
+            <div className="absolute inset-0">
+              <CircuitCanvas />
+            </div>
+            <ConfigPanel />
+          </div>
+        </div>
+      </div>
+    )
   };
 
   return (

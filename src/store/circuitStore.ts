@@ -154,6 +154,10 @@ export const useCircuitStore = create<CircuitState>()((set, get) => ({
         selectedNode: null,
         selectedEdge: null
       }));
+      // 延迟到下一个更新周期重置模拟状态
+      setTimeout(() => {
+        get().resetSimulation();
+      }, 0);
     } catch (error) {
       console.error('加载电路数据失败:', error);
       throw new Error('无效的电路数据文件');
