@@ -208,9 +208,28 @@ export const useCircuitStore = create<CircuitState>()((set, get) => ({
     }));
   },
   stepSimulation: () => {
-    set((state) => ({
-      stepCount: state.stepCount + 1
-    }));
+    set((state) => {
+      // 检查当前指令是否执行完毕
+      const currentPc = state.pcValue;
+      const nextPc = currentPc + 4;
+      const maxPc = (state.assembledInstructions.length * 4) - 4;
+      
+      // 如果已经执行到最后一条指令，自动暂停模拟
+      if (currentPc >= maxPc) {
+        if (state.simulationTimer !== null) {
+          window.clearInterval(state.simulationTimer);
+        }
+        return {
+          stepCount: state.stepCount + 1,
+          isSimulating: false,
+          simulationTimer: null
+        };
+      }
+      
+      return {
+        stepCount: state.stepCount + 1
+      };
+    });
   },
   updateNodes: (changes) => set((state) => {
     const nextNodes = state.nodes.map(node => {

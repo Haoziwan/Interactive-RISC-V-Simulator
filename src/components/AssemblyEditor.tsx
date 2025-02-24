@@ -52,107 +52,15 @@ export function AssemblyEditor() {
     }
   };
 
-  const loadTestProgram = (programType: 'sort' | 'fibonacci' | 'gcd') => {
-    const programs = {
-      sort: `# 冒泡排序程序
-# 对内存中的5个数字进行排序
-# 初始数据在内存0-16中
+  const loadTestProgram = async (programType: string) => {
+    try {
+      const response = await fetch(`/src/examples/test-programs/${programType}.s`);
+      const programText = await response.text();
+      setEditorCode(programText);
+    } catch (err) {
+      setError('加载示例程序失败');
+    }
 
-# 外层循环 i 从 4 到 1
-addi x1, x0, 4     # i = 4
-
-loop_i:
-beq x1, x0, end    # if i == 0, 结束排序
-addi x2, x0, 0     # j = 0
-
-# 内层循环 j 从 0 到 i-1
-loop_j:
-beq x2, x1, next_i # if j == i, 进入下一轮外层循环
-
-# 加载相邻元素
-slli x3, x2, 2     # x3 = j * 4
-lw x4, 0(x3)       # 加载 arr[j]
-lw x5, 4(x3)       # 加载 arr[j+1]
-
-# 比较并交换
-bge x4, x5, skip   # if arr[j] >= arr[j+1], 跳过交换
-add x6, x0, x4     # temp = arr[j]
-add x4, x0, x5     # arr[j] = arr[j+1]
-add x5, x0, x6     # arr[j+1] = temp
-sw x4, 0(x3)       # 保存 arr[j]
-sw x5, 4(x3)       # 保存 arr[j+1]
-
-skip:
-addi x2, x2, 1     # j++
-jal x0, loop_j     # 继续内层循环
-
-next_i:
-addi x1, x1, -1    # i--
-jal x0, loop_i     # 继续外层循环
-
-end:`,
-      fibonacci: `# 斐波那契数列程序
-# 计算斐波那契数列的前n个数
-# n存储在x1中，结果存储在内存中
-
-# 初始化
-addi x1, x0, 10    # n = 10 (计算前10个数)
-addi x2, x0, 0     # 地址索引
-addi x3, x0, 0     # f(n-2)
-addi x4, x0, 1     # f(n-1)
-addi x5, x0, 0     # 当前计算的f(n)
-
-# 存储前两个数
-sw x3, 0(x2)       # 存储f(0)
-addi x2, x2, 4     # 地址+4
-sw x4, 0(x2)       # 存储f(1)
-addi x2, x2, 4     # 地址+4
-addi x6, x0, 2     # i = 2
-
-loop:
-beq x6, x1, end    # if i == n, 结束
-
-# 计算f(n) = f(n-1) + f(n-2)
-add x5, x3, x4     # f(n) = f(n-2) + f(n-1)
-sw x5, 0(x2)       # 存储f(n)
-
-# 更新变量
-add x3, x0, x4     # f(n-2) = f(n-1)
-add x4, x0, x5     # f(n-1) = f(n)
-addi x2, x2, 4     # 地址+4
-addi x6, x6, 1     # i++
-jal x0, loop       # 继续循环
-
-end:`,
-      gcd: `# GCD程序
-# 计算两个数的最大公约数
-# 输入：x1 = 48, x2 = 36
-# 使用辗转相除法
-
-# 初始化输入
-addi x1, x0, 48    # a = 48
-addi x2, x0, 36    # b = 36
-
-loop:
-beq x2, x0, end    # if b == 0, 结束
-
-# 计算 a % b
-add x3, x0, x1     # x3 = a
-add x4, x0, x2     # x4 = b (除数)
-
-divide:
-blt x3, x4, next   # if a < b, 结束除法
-sub x3, x3, x4     # a = a - b
-jal x0, divide     # 继续除法
-
-next:
-add x1, x0, x2     # a = b
-add x2, x0, x3     # b = a % b
-jal x0, loop       # 继续循环
-
-end:`
-    };
-    setEditorCode(programs[programType]);
   };
 
   return (
@@ -210,6 +118,11 @@ end:`
                 <option value="sort">排序程序</option>
                 <option value="fibonacci">斐波那契程序</option>
                 <option value="gcd">GCD程序</option>
+                <option value="r_type_test">R型指令测试</option>
+                <option value="i_type_test">I型指令测试</option>
+                <option value="s_type_test">S型指令测试</option>
+                <option value="b_type_test">B型指令测试</option>
+                <option value="u_type_test">U型指令测试</option>
               </select>
               <button
                 onClick={assembleCode}

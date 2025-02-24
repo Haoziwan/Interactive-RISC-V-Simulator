@@ -89,7 +89,6 @@ export function InstructionMemoryNode({ data, id, selected }: {
           <div className="text-lg font-bold">Instruction Memory</div>
           <div className="text-sm text-gray-500">
             <div>Size: {data.size || 4096} bytes</div>
-            <div>PC: 0x{(data.pc || 0).toString(16).padStart(8, '0')}</div>
             <div>Output: {data.value || 'No instruction'}</div>
             <div className="mt-2 space-y-1 font-mono">
               {displayInstructions.map((inst, idx) => {
