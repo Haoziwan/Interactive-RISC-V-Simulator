@@ -14,7 +14,7 @@ interface InstrDistributerNodeData {
   [key: string]: string | undefined;
 }
 
-export function InstrDistributerNode({ data, id }: { data: InstrDistributerNodeData; id: string }) {
+export function InstrDistributerNode({ data, id, selected }: { data: InstrDistributerNodeData; id: string; selected?: boolean }) {
   const updateNodeData = useCircuitStore((state) => state.updateNodeData);
   const nodes = useNodes();
   const edges = useEdges();
@@ -73,7 +73,7 @@ export function InstrDistributerNode({ data, id }: { data: InstrDistributerNodeD
   const funct7 = instruction.slice(-32, -25);
 
   return (
-    <div className="w-40 py-4 shadow-md rounded-md bg-white border-2 border-gray-200">
+    <div className={`w-40 py-4 shadow-md rounded-md bg-white border-2 ${selected ? 'border-blue-500' : 'border-gray-200'}`}>
       <Handle
         type="target"
         position={Position.Left}
