@@ -119,15 +119,43 @@ export function ComponentLibrary() {
     event.dataTransfer.effectAllowed = 'move';
   };
 
-  const handleSave = () => {
-    const data = saveCircuit();
-    const blob = new Blob([data], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'circuit.json';
-    a.click();
-    URL.revokeObjectURL(url);
+  const handleSave = async () => {
+    try {
+      // 检查浏览器是否支持 File System Access API
+      if ('showSaveFilePicker' in window) {
+        const handle = await (window as unknown as { 
+          showSaveFilePicker: (options: { 
+            suggestedName: string; 
+            types: { description: string; accept: { [key: string]: string[] } }[] 
+          }) => Promise<FileSystemFileHandle> 
+        }).showSaveFilePicker({
+          suggestedName: `circuit-${new Date().toISOString().replace(/[:.]/g, '-')}.json`,
+          types: [{
+            description: 'JSON Files',
+            accept: { 'application/json': ['.json'] }
+          }]
+        });
+        const data = saveCircuit();
+        const writable = await handle.createWritable();
+        await writable.write(data);
+        await writable.close();
+      } else {
+        // 如果 showSaveFilePicker 不支持，使用传统下载方式
+        const data = saveCircuit();
+        const blob = new Blob([data], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `circuit-${new Date().toISOString().replace(/[:.]/g, '-')}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+      }
+    } catch (err: unknown) {
+      // 使用类型守卫处理错误
+      if (err instanceof Error && err.name !== 'AbortError') {
+        console.error('保存文件失败:', err);
+      }
+    }
   };
 
   const handleLoad = (event: React.ChangeEvent<HTMLInputElement>) => {

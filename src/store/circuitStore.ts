@@ -109,9 +109,10 @@ export const useCircuitStore = create<CircuitState>()((set, get) => ({
         },
       ],
     })),
-  saveCircuit: () => {
+  saveCircuit: (filename?: string) => {
     const state = get();
     const circuitState = {
+      name: filename || `circuit-${new Date().toISOString().replace(/[:.]/g, '-')}`,
       nodes: state.nodes.map(node => ({
         ...node,
         data: {
@@ -131,7 +132,8 @@ export const useCircuitStore = create<CircuitState>()((set, get) => ({
       edges: state.edges,
       isSimulating: state.isSimulating,
       editorCode: state.editorCode,
-      assembledInstructions: state.assembledInstructions
+      assembledInstructions: state.assembledInstructions,
+      savedAt: new Date().toISOString()
     };
     return JSON.stringify(circuitState, null, 2);
   },

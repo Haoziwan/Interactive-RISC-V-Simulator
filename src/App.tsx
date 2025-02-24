@@ -124,7 +124,7 @@ function App() {
           {renderContent()}
         </div>
         <div className="w-64 bg-white border-l border-gray-200 flex-shrink-0 overflow-y-auto">
-          <RegPanel registers={{}} />
+          <RegPanel />
         </div>
       </main>
     </div>
