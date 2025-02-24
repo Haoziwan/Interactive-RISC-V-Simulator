@@ -23,35 +23,45 @@ export function ALUControlNode({ data, id, selected }: { data: ALUControlNodeDat
   React.useEffect(() => {
     const inputEdges = edges.filter(edge => edge.target === id);
     
-    inputEdges.forEach(edge => {
+    const getSourceNodeValue = (edge: any) => {
+      if (!edge) return null;
       const sourceNode = nodes.find(node => node.id === edge.source);
       if (sourceNode?.data && typeof sourceNode.data === 'object') {
-        const portId = edge.targetHandle;
+        const portId = edge.sourceHandle;
         let sourceValue: number | undefined;
 
         if (portId && sourceNode.data[portId as keyof typeof sourceNode.data] !== undefined) {
-          sourceValue = Number(sourceNode.data[portId as keyof typeof sourceNode.data]);
+          const value = sourceNode.data[portId as keyof typeof sourceNode.data];
+          sourceValue = typeof value === 'number' ? value : undefined;
         } else if ('value' in sourceNode.data) {
-          sourceValue = Number((sourceNode.data as { value?: number | string }).value);
+          const value = (sourceNode.data as { value?: number | string }).value;
+          sourceValue = typeof value === 'number' ? Number(value) : undefined;
         }
 
-        if (!isNaN(sourceValue!)) {
-          switch (portId) {
-            case 'aluOp':
-              setInputAluOp(sourceValue!);
-              break;
-            case 'funct3':
-              setInputFunct3(sourceValue!);
-              break;
-            case 'funct7':
-              setInputFunct7(sourceValue!);
-              break;
-          }
+        return sourceValue ?? null;
+      }
+      return null;
+    };
+    
+    inputEdges.forEach(edge => {
+      const sourceValue = getSourceNodeValue(edge);
+      const portId = edge.targetHandle;
+
+      if (sourceValue !== null && !isNaN(sourceValue)) {
+        switch (portId) {
+          case 'aluOp':
+            setInputAluOp(sourceValue);
+            break;
+          case 'funct3':
+            setInputFunct3(sourceValue);
+            break;
+          case 'funct7':
+            setInputFunct7(sourceValue);
+            break;
         }
       }
     });
   }, [nodes, edges, id]);
-
   React.useEffect(() => {
     updateNodeData(id, {
       ...data,

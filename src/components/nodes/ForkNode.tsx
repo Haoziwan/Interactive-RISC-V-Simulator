@@ -1,6 +1,6 @@
 import { Handle, Position, useNodes, useEdges } from 'reactflow';
 import { useCircuitStore } from '../../store/circuitStore';
-import React, { useRef } from 'react';
+import React from 'react';
 
 interface ForkNodeData {
   label: string;
@@ -11,28 +11,50 @@ export function ForkNode({ data, id, selected }: { data: ForkNodeData; id: strin
   const updateNodeData = useCircuitStore((state) => state.updateNodeData);
   const nodes = useNodes();
   const edges = useEdges();
-  const prevInputRef = useRef<number | null>(null);
+  const inputsRef = React.useRef<{ value: number }>({ value: 0 });
+
+  // 获取源节点的值
+  const getSourceNodeValue = (edge: any) => {
+    if (!edge) return null;
+    const sourceNode = nodes.find(node => node.id === edge.source);
+    if (sourceNode?.data && typeof sourceNode.data === 'object') {
+      // 首先尝试根据输入端口ID查找对应字段
+      const portId = edge.sourceHandle;
+      let sourceValue: number | undefined;
+
+      if (portId && sourceNode.data[portId as keyof typeof sourceNode.data] !== undefined) {
+        // 如果存在对应端口ID的字段，使用该字段值
+        const value = sourceNode.data[portId as keyof typeof sourceNode.data];
+        sourceValue = typeof value === 'number' ? value : undefined;
+      } else if ('value' in sourceNode.data) {
+        // 否则使用默认的value字段
+        const value = (sourceNode.data as { value?: number }).value;
+        sourceValue = typeof value === 'number' ? value : undefined;
+      }
+
+      return sourceValue ?? null;
+    }
+    return null;
+  };
 
   // 监听输入连接的变化
   React.useEffect(() => {
     // 找到连接到此节点的边
     const inputEdge = edges.find(edge => edge.target === id && edge.targetHandle === 'input');
-    if (inputEdge) {
-      // 找到源节点
-      const sourceNode = nodes.find(node => node.id === inputEdge.source);
-      if (sourceNode?.data && typeof sourceNode.data === 'object' && 'value' in sourceNode.data && typeof sourceNode.data.value === 'number') {
-        const newValue = sourceNode.data.value;
-        // 只在值真正改变时才更新
-        if (prevInputRef.current !== newValue) {
-          prevInputRef.current = newValue;
-          updateNodeData(id, {
-            ...data,
-            value: newValue
-          });
-        }
-      }
+    const newValue = getSourceNodeValue(inputEdge);
+
+    // 只有当输入值发生实际变化时才更新
+    if (newValue !== null && newValue !== inputsRef.current.value) {
+      // 更新ref中的值
+      inputsRef.current.value = newValue;
+
+      // 更新节点数据
+      updateNodeData(id, {
+        ...data,
+        value: newValue
+      });
     }
-  }, [edges, id, nodes]);
+  }, [edges, id, nodes, data]);
 
   return (
     <div className={`w-8 h-8 shadow-md rounded-full bg-white border-2 ${selected ? 'border-blue-500' : 'border-gray-200'}`}>

@@ -41,8 +41,24 @@ export function SingleRegisterNode({ data, id, selected }: { data: SingleRegiste
     if (inputEdge) {
       // 找到源节点
       const sourceNode = nodes.find(node => node.id === inputEdge.source);
-      if (sourceNode?.data && typeof sourceNode.data === 'object' && 'value' in sourceNode.data && typeof sourceNode.data.value === 'number') {
-        setInputValue(sourceNode.data.value);
+      if (sourceNode?.data && typeof sourceNode.data === 'object') {
+        // 首先尝试根据输入端口ID查找对应字段
+        const portId = inputEdge.sourceHandle;
+        let sourceValue: number | undefined;
+
+        if (portId && sourceNode.data[portId as keyof typeof sourceNode.data] !== undefined) {
+          // 如果存在对应端口ID的字段，使用该字段值
+          const value = sourceNode.data[portId as keyof typeof sourceNode.data];
+          sourceValue = typeof value === 'number' ? value : undefined;
+        } else if ('value' in sourceNode.data) {
+          // 否则使用默认的value字段
+          const value = (sourceNode.data as { value?: number }).value;
+          sourceValue = typeof value === 'number' ? value : undefined;
+        }
+
+        if (sourceValue !== undefined) {
+          setInputValue(sourceValue);
+        }
       }
     }
   }, [nodes, edges, id]);

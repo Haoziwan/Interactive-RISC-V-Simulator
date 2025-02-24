@@ -31,8 +31,22 @@ export function MuxNode({ data, id, selected }: {
     const getSourceNodeValue = (edge: any) => {
       if (!edge) return null;
       const sourceNode = nodes.find(node => node.id === edge.source);
-      if (sourceNode?.data && typeof sourceNode.data === 'object' && 'value' in sourceNode.data) {
-        return sourceNode.data.value;
+      if (sourceNode?.data && typeof sourceNode.data === 'object') {
+        // 首先尝试根据输入端口ID查找对应字段
+        const portId = edge.sourceHandle;
+        let sourceValue: number | undefined;
+
+        if (portId && sourceNode.data[portId as keyof typeof sourceNode.data] !== undefined) {
+          // 如果存在对应端口ID的字段，使用该字段值
+          const value = sourceNode.data[portId as keyof typeof sourceNode.data];
+          sourceValue = typeof value === 'number' ? value : undefined;
+        } else if ('value' in sourceNode.data) {
+          // 否则使用默认的value字段
+          const value = (sourceNode.data as { value?: number }).value;
+          sourceValue = typeof value === 'number' ? value : undefined;
+        }
+
+        return sourceValue ?? null;
       }
       return null;
     };

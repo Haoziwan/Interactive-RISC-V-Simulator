@@ -25,8 +25,22 @@ export function AddNode({ data, id, selected }: { data: AddNodeData; id: string;
     const getSourceNodeValue = (edge: any) => {
       if (!edge) return null;
       const sourceNode = nodes.find(node => node.id === edge.source);
-      if (sourceNode?.data && typeof sourceNode.data === 'object' && 'value' in sourceNode.data && typeof sourceNode.data.value === 'number') {
-        return sourceNode.data.value;
+      if (sourceNode?.data && typeof sourceNode.data === 'object') {
+        // 首先尝试根据输入端口ID查找对应字段
+        const portId = edge.sourceHandle;
+        let sourceValue: number | undefined;
+
+        if (portId && sourceNode.data[portId as keyof typeof sourceNode.data] !== undefined) {
+          // 如果存在对应端口ID的字段，使用该字段值
+          const value = sourceNode.data[portId as keyof typeof sourceNode.data];
+          sourceValue = typeof value === 'number' ? value : undefined;
+        } else if ('value' in sourceNode.data) {
+          // 否则使用默认的value字段
+          const value = (sourceNode.data as { value?: number | string }).value;
+          sourceValue = typeof value === 'number' ? Number(value) : undefined;
+        }
+
+        return sourceValue ?? null;
       }
       return null;
     };
@@ -46,13 +60,17 @@ export function AddNode({ data, id, selected }: { data: AddNodeData; id: string;
       // 更新ref中的值
       inputsRef.current = { a: finalInputA, b: finalInputB };
 
-      // 只更新一次节点数据
+      // 更新状态
+      setInputA(finalInputA);
+      setInputB(finalInputB);
+
+      // 更新节点数据
       updateNodeData(id, {
         ...data,
         value: sum
       });
     }
-  }, [edges, id, nodes, data]); // 添加data作为依赖
+  }, [edges, id, nodes, data]);
 
   return (
     <div className={`px-4 py-2 shadow-md rounded-md bg-white border-2 ${selected ? 'border-blue-500' : 'border-gray-200'}`}>

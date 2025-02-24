@@ -10,6 +10,8 @@ interface RegisterFileNodeData {
   writeData?: number;
   regWrite?: boolean;
   reset?: boolean;
+  readData1?: number;
+  readData2?: number;
 }
 
 export function RegisterFileNode({ data, id, selected }: { data: RegisterFileNodeData; id: string; selected?: boolean }) {
@@ -27,43 +29,75 @@ export function RegisterFileNode({ data, id, selected }: { data: RegisterFileNod
   
   const nodes = useNodes();
   const edges = useEdges();
-
-  // 读取寄存器数据（组合逻辑）
-  const readData1 = readReg1 === 0 ? 0 : (registers[readReg1] || 0);
-  const readData2 = readReg2 === 0 ? 0 : (registers[readReg2] || 0);
+  const inputsRef = React.useRef({
+    readReg1: 0,
+    readReg2: 0,
+    writeReg: 0,
+    writeData: 0,
+    regWrite: false
+  });
 
   // 获取输入端口的值（组合逻辑）
-  const getInputValue = (portId: string): number | boolean => {
-    const inputEdge = edges.find(edge => edge.target === id && edge.targetHandle === portId);
-    if (!inputEdge) return 0;
+  const getInputValue = (edge: any) => {
+    if (!edge) return null;
+    const sourceNode = nodes.find(node => node.id === edge.source);
+    if (sourceNode?.data && typeof sourceNode.data === 'object') {
+      // 首先尝试根据输入端口ID查找对应字段
+      const portId = edge.sourceHandle;
+      let sourceValue: number | boolean | undefined;
 
-    const sourceNode = nodes.find(node => node.id === inputEdge.source);
-    if (!sourceNode?.data || typeof sourceNode.data !== 'object') return 0;
-
-    if ('value' in sourceNode.data) {
-      const value = sourceNode.data.value;
-      if (typeof value === 'number' || typeof value === 'boolean') {
-        return value;
+      if (portId && sourceNode.data[portId as keyof typeof sourceNode.data] !== undefined) {
+        // 如果存在对应端口ID的字段，使用该字段值
+        const value = sourceNode.data[portId as keyof typeof sourceNode.data];
+        sourceValue = typeof value === 'number' || typeof value === 'boolean' ? value : undefined;
+      } else if ('value' in sourceNode.data) {
+        // 否则使用默认的value字段
+        const value = (sourceNode.data as { value?: number | boolean }).value;
+        sourceValue = typeof value === 'number' || typeof value === 'boolean' ? value : undefined;
       }
+
+      return sourceValue ?? null;
     }
-    return 0;
+    return null;
   };
 
   // 更新输入值和读取数据（组合逻辑）
   React.useEffect(() => {
-    const newReadReg1 = Number(getInputValue('readReg1'));
-    const newReadReg2 = Number(getInputValue('readReg2'));
-    const newWriteReg = Number(getInputValue('writeReg'));
-    const newWriteData = Number(getInputValue('writeData'));
-    const newRegWrite = Boolean(getInputValue('regWrite'));
+    // 找到连接到此节点的边
+    const readReg1Edge = edges.find(edge => edge.target === id && edge.targetHandle === 'readReg1');
+    const readReg2Edge = edges.find(edge => edge.target === id && edge.targetHandle === 'readReg2');
+    const writeRegEdge = edges.find(edge => edge.target === id && edge.targetHandle === 'writeReg');
+    const writeDataEdge = edges.find(edge => edge.target === id && edge.targetHandle === 'writeData');
+    const regWriteEdge = edges.find(edge => edge.target === id && edge.targetHandle === 'regWrite');
 
-    // 只在输入值发生变化时更新节点数据
-    if (newReadReg1 !== readReg1 ||
-        newReadReg2 !== readReg2 ||
-        newWriteReg !== writeReg ||
-        newWriteData !== writeData ||
-        newRegWrite !== regWrite) {
-      
+    const newReadReg1 = Number(getInputValue(readReg1Edge) ?? inputsRef.current.readReg1);
+    const newReadReg2 = Number(getInputValue(readReg2Edge) ?? inputsRef.current.readReg2);
+    const newWriteReg = Number(getInputValue(writeRegEdge) ?? inputsRef.current.writeReg);
+    const newWriteData = Number(getInputValue(writeDataEdge) ?? inputsRef.current.writeData);
+    const newRegWrite = Boolean(getInputValue(regWriteEdge) ?? inputsRef.current.regWrite);
+
+    // 只有当输入值发生实际变化时才更新
+    const hasChanges = newReadReg1 !== inputsRef.current.readReg1 ||
+                      newReadReg2 !== inputsRef.current.readReg2 ||
+                      newWriteReg !== inputsRef.current.writeReg ||
+                      newWriteData !== inputsRef.current.writeData ||
+                      newRegWrite !== inputsRef.current.regWrite;
+
+    if (hasChanges) {
+      // 更新ref中的值
+      inputsRef.current = {
+        readReg1: newReadReg1,
+        readReg2: newReadReg2,
+        writeReg: newWriteReg,
+        writeData: newWriteData,
+        regWrite: newRegWrite
+      };
+
+      // 计算读出的数据
+      const readData1 = newReadReg1 === 0 ? 0 : (registers[newReadReg1] || 0);
+      const readData2 = newReadReg2 === 0 ? 0 : (registers[newReadReg2] || 0);
+
+      // 更新节点数据
       updateNodeData(id, {
         ...data,
         readReg1: newReadReg1,
@@ -71,26 +105,20 @@ export function RegisterFileNode({ data, id, selected }: { data: RegisterFileNod
         writeReg: newWriteReg,
         writeData: newWriteData,
         regWrite: newRegWrite,
-        readData1: newReadReg1 === 0 ? 0 : (registers[newReadReg1] || 0),
-        readData2: newReadReg2 === 0 ? 0 : (registers[newReadReg2] || 0)
+        readData1,
+        readData2
       });
     }
   }, [edges, nodes, id, registers]);
 
   // 监听时钟信号(stepCount)，处理寄存器写入（时序逻辑）
   React.useEffect(() => {
-    // 获取最新的输入值
-    const currentWriteReg = Number(getInputValue('writeReg'));
-    const currentWriteData = Number(getInputValue('writeData'));
-    const currentRegWrite = Boolean(getInputValue('regWrite'));
-
-    // 在时钟上升沿且未复位时进行写入操作
-    if (!reset && currentRegWrite && currentWriteReg !== 0) {
+    if (!reset && inputsRef.current.regWrite && inputsRef.current.writeReg !== 0) {
       updateRegisters({
-        [currentWriteReg]: currentWriteData
+        [inputsRef.current.writeReg]: inputsRef.current.writeData
       });
     }
-  }, [stepCount]);
+  }, [stepCount, reset]);
 
   return (
     <div className={`px-4 py-2 shadow-md rounded-md bg-white border-2 ${
@@ -161,8 +189,8 @@ export function RegisterFileNode({ data, id, selected }: { data: RegisterFileNod
       <div className="flex items-center">
         <div className="ml-2">
           <div className="text-lg font-bold">Register File</div>
-          <div className="text-gray-500">Read Reg 1: x{readReg1} = {readData1}</div>
-          <div className="text-gray-500">Read Reg 2: x{readReg2} = {readData2}</div>
+          <div className="text-gray-500">Read Reg 1: x{readReg1} = {data.readData1 || 0}</div>
+          <div className="text-gray-500">Read Reg 2: x{readReg2} = {data.readData2 || 0}</div>
           <div className="text-gray-500">Write Reg: x{writeReg}</div>
           <div className="text-gray-500">Write Data: {writeData}</div>
           <div className="text-gray-500">RegWrite: {regWrite ? '1' : '0'}</div>

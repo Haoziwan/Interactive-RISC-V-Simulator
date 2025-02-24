@@ -19,7 +19,7 @@ export function ALUNode({ data, id, selected }: { data: ALUNodeData; id: string;
   const updateNodeData = useCircuitStore((state) => state.updateNodeData);
   const nodes = useNodes();
   const edges = useEdges();
-  const prevValuesRef = useRef({ a: data.a, b: data.b, operation: data.operation });
+  const inputsRef = useRef({ a: data.a ?? 0, b: data.b ?? 0, operation: data.operation ?? 2 });
 
   const calculateResult = (a: number, b: number, operation: ALUOperation): number => {
     a = a | 0;
@@ -44,47 +44,62 @@ export function ALUNode({ data, id, selected }: { data: ALUNodeData; id: string;
   }
 
   // 获取输入端口的值
-  const getInputValue = (portId: string) => {
-    const inputEdge = edges.find(edge => edge.target === id && edge.targetHandle === portId);
-    if (!inputEdge) return 0;
+  const getInputValue = (edge: any) => {
+    if (!edge) return null;
+    const sourceNode = nodes.find(node => node.id === edge.source);
+    if (sourceNode?.data && typeof sourceNode.data === 'object') {
+      // 首先尝试根据输入端口ID查找对应字段
+      const portId = edge.sourceHandle;
+      let sourceValue: number | undefined;
 
-    const sourceNode = nodes.find(node => node.id === inputEdge.source);
-    if (!sourceNode?.data) return 0;
+      if (portId && sourceNode.data[portId as keyof typeof sourceNode.data] !== undefined) {
+        // 如果存在对应端口ID的字段，使用该字段值
+        const value = sourceNode.data[portId as keyof typeof sourceNode.data];
+        sourceValue = typeof value === 'number' ? value : undefined;
+      } else if ('value' in sourceNode.data) {
+        // 否则使用默认的value字段
+        const value = (sourceNode.data as { value?: number }).value;
+        sourceValue = typeof value === 'number' ? value : undefined;
+      }
 
-    const sourcePortId = inputEdge.sourceHandle;
-    if (sourcePortId && typeof (sourceNode.data as NodeData)[sourcePortId] === 'number') {
-      return (sourceNode.data as NodeData)[sourcePortId] as number;
+      return sourceValue ?? null;
     }
-    return 0;
+    return null;
   };
 
   // 更新节点数据
   const updateNodeValues = () => {
-    const a = getInputValue('a');
-    const b = getInputValue('b');
-    const controlInput = getInputValue('control');
-    const operation = controlInput !== 0 ? controlInput as ALUOperation : data.operation ?? 2;
+    const inputAEdge = edges.find(edge => edge.target === id && edge.targetHandle === 'a');
+    const inputBEdge = edges.find(edge => edge.target === id && edge.targetHandle === 'b');
+    const controlEdge = edges.find(edge => edge.target === id && edge.targetHandle === 'control');
+
+    const newA = getInputValue(inputAEdge);
+    const newB = getInputValue(inputBEdge);
+    const newControl = getInputValue(controlEdge);
 
     // 检查值是否发生变化
-    const hasChanged = 
-      a !== prevValuesRef.current.a || 
-      b !== prevValuesRef.current.b || 
-      operation !== prevValuesRef.current.operation;
+    const hasChanges = 
+      (newA !== null && newA !== inputsRef.current.a) ||
+      (newB !== null && newB !== inputsRef.current.b) ||
+      (newControl !== null && newControl !== inputsRef.current.operation);
 
-    if (hasChanged) {
-      const result = calculateResult(a, b, operation);
-      // 确保零标志位正确反映结果是否为零
+    if (hasChanges) {
+      const finalA = newA ?? inputsRef.current.a;
+      const finalB = newB ?? inputsRef.current.b;
+      const finalOperation = (newControl ?? inputsRef.current.operation) as ALUOperation;
+
+      // 更新ref中的值
+      inputsRef.current = { a: finalA, b: finalB, operation: finalOperation };
+
+      const result = calculateResult(finalA, finalB, finalOperation);
       const zero = result === 0 ? 1 : 0;
 
-      // 更新引用值
-      prevValuesRef.current = { a, b, operation };
-
-      // 立即更新节点数据，包括零标志位
+      // 更新节点数据
       updateNodeData(id, {
         ...data,
-        a,
-        b,
-        operation,
+        a: finalA,
+        b: finalB,
+        operation: finalOperation,
         result,
         zero
       });

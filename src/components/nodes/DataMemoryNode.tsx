@@ -22,48 +22,41 @@ export function DataMemoryNode({ data, id, selected }: { data: DataMemoryNodeDat
 
   const size = data.size || 1024; // 默认1KB
 
+  // 获取输入端口的值
+  const getInputValue = (edge: any) => {
+    if (!edge) return null;
+    const sourceNode = nodes.find(node => node.id === edge.source);
+    if (sourceNode?.data && typeof sourceNode.data === 'object') {
+      // 首先尝试根据输入端口ID查找对应字段
+      const portId = edge.sourceHandle;
+      let sourceValue: number | boolean | undefined;
+
+      if (portId && sourceNode.data[portId as keyof typeof sourceNode.data] !== undefined) {
+        // 如果存在对应端口ID的字段，使用该字段值
+        const value = sourceNode.data[portId as keyof typeof sourceNode.data];
+        sourceValue = typeof value === 'number' || typeof value === 'boolean' ? value : undefined;
+      } else if ('value' in sourceNode.data) {
+        // 否则使用默认的value字段
+        const value = (sourceNode.data as { value?: number | boolean }).value;
+        sourceValue = typeof value === 'number' || typeof value === 'boolean' ? value : undefined;
+      }
+
+      return sourceValue ?? null;
+    }
+    return null;
+  };
+
   // 监听输入连接的变化（组合逻辑部分：读取操作）
   React.useEffect(() => {
-    // 找到连接到此节点的所有边
-    const inputEdges = edges.filter(edge => edge.target === id);
-    
-    let newAddress = data.address || 0;
-    let newMemRead = data.memRead || 0;
-    let hasChanges = false;
+    // 找到连接到此节点的边
+    const addressEdge = edges.find(edge => edge.target === id && edge.targetHandle === 'address');
+    const memReadEdge = edges.find(edge => edge.target === id && edge.targetHandle === 'memRead');
 
-    inputEdges.forEach(edge => {
-      // 找到源节点
-      const sourceNode = nodes.find(node => node.id === edge.source);
-      if (sourceNode?.data && typeof sourceNode.data === 'object') {
-        const portId = edge.targetHandle;
-        let sourceValue: number | boolean | undefined;
+    const newAddress = Number(getInputValue(addressEdge) ?? data.address ?? 0);
+    const newMemRead = Number(getInputValue(memReadEdge) ?? data.memRead ?? 0);
 
-        // 根据端口ID获取对应的值
-        if (portId && sourceNode.data[portId as keyof typeof sourceNode.data] !== undefined) {
-          sourceValue = sourceNode.data[portId as keyof typeof sourceNode.data] as number | boolean;
-        } else if ('value' in sourceNode.data) {
-          sourceValue = (sourceNode.data as { value?: number | boolean }).value;
-        }
-
-        // 根据端口类型更新对应的值
-        if (sourceValue !== undefined) {
-          switch (portId) {
-            case 'address':
-              if (typeof sourceValue === 'number' && sourceValue !== newAddress) {
-                newAddress = sourceValue;
-                hasChanges = true;
-              }
-              break;
-            case 'memRead':
-              if (typeof sourceValue === 'number' && sourceValue !== newMemRead) {
-                newMemRead = sourceValue;
-                hasChanges = true;
-              }
-              break;
-          }
-        }
-      }
-    });
+    // 只有当输入值发生实际变化时才更新
+    const hasChanges = newAddress !== (data.address || 0) || newMemRead !== (data.memRead || 0);
 
     if (hasChanges) {
       // 更新节点数据（只更新读取相关的状态）
@@ -81,47 +74,16 @@ export function DataMemoryNode({ data, id, selected }: { data: DataMemoryNodeDat
 
   // 监听时钟信号（时序逻辑部分：写入操作）
   React.useEffect(() => {
-    // 找到连接到此节点的所有边
-    const inputEdges = edges.filter(edge => edge.target === id);
-    
-    let newAddress = data.address || 0;
-    let newWriteData = data.writeData || 0;
-    let newMemWrite = data.memWrite || 0;
-    let hasChanges = false;
+    // 找到连接到此节点的边
+    const writeDataEdge = edges.find(edge => edge.target === id && edge.targetHandle === 'writeData');
+    const memWriteEdge = edges.find(edge => edge.target === id && edge.targetHandle === 'memWrite');
 
-    inputEdges.forEach(edge => {
-      // 找到源节点
-      const sourceNode = nodes.find(node => node.id === edge.source);
-      if (sourceNode?.data && typeof sourceNode.data === 'object') {
-        const portId = edge.targetHandle;
-        let sourceValue: number | boolean | undefined;
+    const newWriteData = Number(getInputValue(writeDataEdge) ?? data.writeData ?? 0);
+    const newMemWrite = Number(getInputValue(memWriteEdge) ?? data.memWrite ?? 0);
+    const newAddress = data.address || 0;
 
-        // 根据端口ID获取对应的值
-        if (portId && sourceNode.data[portId as keyof typeof sourceNode.data] !== undefined) {
-          sourceValue = sourceNode.data[portId as keyof typeof sourceNode.data] as number | boolean;
-        } else if ('value' in sourceNode.data) {
-          sourceValue = (sourceNode.data as { value?: number | boolean }).value;
-        }
-
-        // 根据端口类型更新对应的值
-        if (sourceValue !== undefined) {
-          switch (portId) {
-            case 'writeData':
-              if (typeof sourceValue === 'number' && sourceValue !== newWriteData) {
-                newWriteData = sourceValue;
-                hasChanges = true;
-              }
-              break;
-            case 'memWrite':
-              if (typeof sourceValue === 'number' && sourceValue !== newMemWrite) {
-                newMemWrite = sourceValue;
-                hasChanges = true;
-              }
-              break;
-          }
-        }
-      }
-    });
+    // 只有当输入值发生实际变化时才更新
+    const hasChanges = newWriteData !== (data.writeData || 0) || newMemWrite !== (data.memWrite || 0);
 
     if (hasChanges) {
       // 更新节点数据（写入相关的状态）

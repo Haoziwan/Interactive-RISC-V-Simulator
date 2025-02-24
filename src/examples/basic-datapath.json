@@ -1,239 +1,1031 @@
 {
   "nodes": [
     {
-      "id": "pc-1",
+      "id": "pc-1740369575927",
       "type": "pc",
-      "position": { "x": 100, "y": 200 },
-      "data": { "label": "PC" }
+      "position": {
+        "x": 100.40934817675657,
+        "y": 257.3067834291352
+      },
+      "data": {
+        "label": "PC",
+        "value": 0,
+        "pc": 0,
+        "regWrite": false,
+        "memRead": false,
+        "memWrite": false,
+        "aluOp": "00"
+      },
+      "width": 202,
+      "height": 95,
+      "selected": false,
+      "positionAbsolute": {
+        "x": 100.40934817675657,
+        "y": 257.3067834291352
+      },
+      "dragging": false
     },
     {
-      "id": "instruction-memory-1",
+      "id": "instruction-memory-1740369637052",
       "type": "instruction-memory",
-      "position": { "x": 250, "y": 200 },
-      "data": { "label": "Instruction Memory" }
+      "position": {
+        "x": 17.567583560094135,
+        "y": 598.1333847519785
+      },
+      "data": {
+        "label": "INSTRUCTION-MEMORY",
+        "pc": 0,
+        "instructions": [
+          "0x00400093",
+          "0x08008063",
+          "0x00000113",
+          "0x06110063",
+          "0x00211193",
+          "0x0001a203",
+          "0x0041a283",
+          "0x02525863",
+          "0x00400333",
+          "0x00500233",
+          "0x006002b3",
+          "0x0041a023",
+          "0x0051a223",
+          "0x00110113",
+          "0xfa9ff06f",
+          "0xfff08093",
+          "0xf89ff06f"
+        ],
+        "value": "0x00400093",
+        "regWrite": false,
+        "memRead": false,
+        "memWrite": false,
+        "aluOp": "00"
+      },
+      "width": 304,
+      "height": 207,
+      "selected": false,
+      "positionAbsolute": {
+        "x": 17.567583560094135,
+        "y": 598.1333847519785
+      },
+      "dragging": false
     },
     {
-      "id": "control-1",
+      "id": "instr-distributer-1740369647749",
+      "type": "instr-distributer",
+      "position": {
+        "x": 467.6847840923135,
+        "y": 374.0563727038308
+      },
+      "data": {
+        "label": "INSTR-DISTRIBUTER",
+        "value": "0x00400093",
+        "opcode": 19,
+        "rd": 1,
+        "funct3": 0,
+        "rs1": 0,
+        "rs2": 4,
+        "funct7": 0,
+        "pc": 0,
+        "regWrite": false,
+        "memRead": false,
+        "memWrite": false,
+        "aluOp": "00"
+      },
+      "width": 160,
+      "height": 171,
+      "selected": false,
+      "positionAbsolute": {
+        "x": 467.6847840923135,
+        "y": 374.0563727038308
+      },
+      "dragging": false
+    },
+    {
+      "id": "control-1740369675154",
       "type": "control",
-      "position": { "x": 400, "y": 100 },
-      "data": { "label": "Control" }
+      "position": {
+        "x": 767.7789808465612,
+        "y": 118.0621929595456
+      },
+      "data": {
+        "label": "CONTROL",
+        "regWrite": 1,
+        "memRead": 0,
+        "memWrite": 0,
+        "aluOp": 3,
+        "branch": 0,
+        "jump": 0,
+        "aluSrc": 1,
+        "memToReg": 0,
+        "opcode": "0010011",
+        "value": 0,
+        "pc": 0
+      },
+      "width": 160,
+      "height": 401,
+      "selected": false,
+      "positionAbsolute": {
+        "x": 767.7789808465612,
+        "y": 118.0621929595456
+      },
+      "dragging": false
     },
     {
-      "id": "register-1",
-      "type": "register",
-      "position": { "x": 400, "y": 300 },
-      "data": { "label": "Registers" }
-    },
-    {
-      "id": "imm-gen-1",
+      "id": "imm-gen-1740369747042",
       "type": "imm-gen",
-      "position": { "x": 400, "y": 400 },
-      "data": { "label": "Immediate Gen" }
+      "position": {
+        "x": 485.08996090307846,
+        "y": 883.8593700807584
+      },
+      "data": {
+        "label": "IMM-GEN",
+        "instruction": "00000000010000000000000010010011",
+        "immediate": 4,
+        "format": "I",
+        "value": 0,
+        "pc": 0,
+        "regWrite": false,
+        "memRead": false,
+        "memWrite": false,
+        "aluOp": "00"
+      },
+      "width": 182,
+      "height": 95,
+      "selected": false,
+      "positionAbsolute": {
+        "x": 485.08996090307846,
+        "y": 883.8593700807584
+      },
+      "dragging": false
     },
     {
-      "id": "alu-control-1",
-      "type": "alu-control",
-      "position": { "x": 550, "y": 200 },
-      "data": { "label": "ALU Control" }
+      "id": "register-1740369761632",
+      "type": "register",
+      "position": {
+        "x": 719.3416473376624,
+        "y": 607.9473894317082
+      },
+      "data": {
+        "label": "REGISTER",
+        "value": 0,
+        "pc": 0,
+        "regWrite": false,
+        "memRead": false,
+        "memWrite": false,
+        "aluOp": "00"
+      },
+      "width": 186,
+      "height": 167,
+      "selected": false,
+      "positionAbsolute": {
+        "x": 719.3416473376624,
+        "y": 607.9473894317082
+      },
+      "dragging": false
     },
     {
-      "id": "mux-1",
-      "type": "mux",
-      "position": { "x": 600, "y": 350 },
-      "data": { "label": "MUX" }
-    },
-    {
-      "id": "alu-1",
+      "id": "alu-1740369910295",
       "type": "alu",
-      "position": { "x": 700, "y": 300 },
-      "data": { "label": "ALU" }
+      "position": {
+        "x": 1158.2649639176566,
+        "y": 503.47159753998324
+      },
+      "data": {
+        "label": "ALU",
+        "a": 0,
+        "b": 0,
+        "operation": 2,
+        "result": 0,
+        "zero": 1,
+        "value": 0,
+        "pc": 0,
+        "regWrite": false,
+        "memRead": false,
+        "memWrite": false,
+        "aluOp": "00"
+      },
+      "width": 118,
+      "height": 167,
+      "selected": false,
+      "positionAbsolute": {
+        "x": 1158.2649639176566,
+        "y": 503.47159753998324
+      },
+      "dragging": false
     },
     {
-      "id": "memory-1",
-      "type": "memory",
-      "position": { "x": 850, "y": 300 },
-      "data": { "label": "Data Memory" }
+      "id": "alu-control-1740370493221",
+      "type": "alu-control",
+      "position": {
+        "x": 980.2238618313556,
+        "y": 942.1807656910714
+      },
+      "data": {
+        "label": "ALU-CONTROL",
+        "aluOp": 3,
+        "funct3": 0,
+        "funct7": 0,
+        "aluControl": 2,
+        "value": 0,
+        "pc": 0,
+        "regWrite": false,
+        "memRead": false,
+        "memWrite": false
+      },
+      "width": 182,
+      "height": 143,
+      "selected": false,
+      "positionAbsolute": {
+        "x": 980.2238618313556,
+        "y": 942.1807656910714
+      },
+      "dragging": false
     },
     {
-      "id": "mux-2",
+      "id": "mux-1740370581520",
       "type": "mux",
-      "position": { "x": 1000, "y": 300 },
-      "data": { "label": "MUX" }
+      "position": {
+        "x": 975.0780059782398,
+        "y": 738.3065104296967
+      },
+      "data": {
+        "label": "MUX",
+        "value": 0,
+        "pc": 0,
+        "regWrite": false,
+        "memRead": false,
+        "memWrite": false,
+        "aluOp": "00"
+      },
+      "width": 116,
+      "height": 143,
+      "selected": false,
+      "positionAbsolute": {
+        "x": 975.0780059782398,
+        "y": 738.3065104296967
+      },
+      "dragging": false
     },
     {
-      "id": "branch-adder-1",
-      "type": "branch-adder",
-      "position": { "x": 700, "y": 100 },
-      "data": { "label": "Branch Adder" }
+      "id": "memory-1740370710951",
+      "type": "memory",
+      "position": {
+        "x": 1391.4839164705302,
+        "y": 573.5340731595904
+      },
+      "data": {
+        "label": "MEMORY",
+        "address": 0,
+        "memRead": false,
+        "readData": 0,
+        "writeData": 0,
+        "memWrite": false,
+        "value": 0,
+        "pc": 0,
+        "regWrite": false,
+        "aluOp": "00"
+      },
+      "width": 206,
+      "height": 191,
+      "selected": false,
+      "positionAbsolute": {
+        "x": 1391.4839164705302,
+        "y": 573.5340731595904
+      },
+      "dragging": false
     },
     {
-      "id": "pc-mux-1",
-      "type": "pc-mux",
-      "position": { "x": 850, "y": 100 },
-      "data": { "label": "PC MUX" }
+      "id": "mux-1740370805319",
+      "type": "mux",
+      "position": {
+        "x": 1681.0942993990625,
+        "y": 275.43388124241216
+      },
+      "data": {
+        "label": "MUX",
+        "value": 0,
+        "pc": 0,
+        "regWrite": false,
+        "memRead": false,
+        "memWrite": false,
+        "aluOp": "00"
+      },
+      "width": 116,
+      "height": 143,
+      "selected": false,
+      "positionAbsolute": {
+        "x": 1681.0942993990625,
+        "y": 275.43388124241216
+      },
+      "dragging": false
+    },
+    {
+      "id": "add-1740370988063",
+      "type": "add",
+      "position": {
+        "x": 309,
+        "y": 1.1999969482421875
+      },
+      "data": {
+        "label": "ADD",
+        "value": 4,
+        "pc": 0,
+        "regWrite": false,
+        "memRead": false,
+        "memWrite": false,
+        "aluOp": "00"
+      },
+      "width": 66,
+      "height": 75,
+      "selected": false,
+      "positionAbsolute": {
+        "x": 309,
+        "y": 1.1999969482421875
+      },
+      "dragging": false
+    },
+    {
+      "id": "constant-1740370991312",
+      "type": "constant",
+      "position": {
+        "x": 110,
+        "y": 77.19999694824219
+      },
+      "data": {
+        "label": "CONSTANT",
+        "value": 4,
+        "pc": 0,
+        "regWrite": false,
+        "memRead": false,
+        "memWrite": false,
+        "aluOp": "00"
+      },
+      "width": 96,
+      "height": 39,
+      "selected": false,
+      "dragging": false,
+      "positionAbsolute": {
+        "x": 110,
+        "y": 77.19999694824219
+      }
     }
   ],
   "edges": [
     {
-      "id": "e1",
-      "source": "pc-1",
-      "target": "instruction-memory-1",
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 2
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "pc-1740369575927",
       "sourceHandle": "address",
-      "targetHandle": "address"
+      "target": "instruction-memory-1740369637052",
+      "targetHandle": "pc",
+      "id": "epc-1740369575927-instruction-memory-1740369637052",
+      "selected": false,
+      "connectionMode": "strict"
     },
     {
-      "id": "e2",
-      "source": "instruction-memory-1",
-      "target": "control-1",
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 2
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "instr-distributer-1740369647749",
       "sourceHandle": "opcode",
-      "targetHandle": "opcode"
+      "target": "control-1740369675154",
+      "targetHandle": "opcode",
+      "id": "einstr-distributer-1740369647749-control-1740369675154",
+      "selected": false,
+      "connectionMode": "strict"
     },
     {
-      "id": "e3",
-      "source": "instruction-memory-1",
-      "target": "register-1",
-      "sourceHandle": "rs1",
-      "targetHandle": "readReg1"
-    },
-    {
-      "id": "e4",
-      "source": "instruction-memory-1",
-      "target": "register-1",
-      "sourceHandle": "rs2",
-      "targetHandle": "readReg2"
-    },
-    {
-      "id": "e5",
-      "source": "instruction-memory-1",
-      "target": "imm-gen-1",
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 2
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "instruction-memory-1740369637052",
       "sourceHandle": "instruction",
-      "targetHandle": "instruction"
+      "target": "instr-distributer-1740369647749",
+      "targetHandle": null,
+      "id": "einstruction-memory-1740369637052-instr-distributer-1740369647749",
+      "selected": false,
+      "connectionMode": "strict"
     },
     {
-      "id": "e6",
-      "source": "control-1",
-      "target": "alu-control-1",
-      "sourceHandle": "aluOp",
-      "targetHandle": "aluOp"
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 2
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "instruction-memory-1740369637052",
+      "sourceHandle": "instruction",
+      "target": "imm-gen-1740369747042",
+      "targetHandle": "instruction",
+      "id": "einstruction-memory-1740369637052-imm-gen-1740369747042",
+      "selected": false,
+      "connectionMode": "strict"
     },
     {
-      "id": "e7",
-      "source": "register-1",
-      "target": "alu-1",
-      "sourceHandle": "readData1",
-      "targetHandle": "a"
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 2
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "instr-distributer-1740369647749",
+      "sourceHandle": "rs1",
+      "target": "register-1740369761632",
+      "targetHandle": "readReg1",
+      "id": "einstr-distributer-1740369647749-register-1740369761632",
+      "selected": false,
+      "connectionMode": "strict"
     },
     {
-      "id": "e8",
-      "source": "mux-1",
-      "target": "alu-1",
-      "sourceHandle": "output",
-      "targetHandle": "b"
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 2
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "instr-distributer-1740369647749",
+      "sourceHandle": "rs2",
+      "target": "register-1740369761632",
+      "targetHandle": "readReg2",
+      "id": "einstr-distributer-1740369647749-register-1740369761632",
+      "selected": false,
+      "connectionMode": "strict"
     },
     {
-      "id": "e9",
-      "source": "alu-control-1",
-      "target": "alu-1",
-      "sourceHandle": "control",
-      "targetHandle": "control"
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 2
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "instr-distributer-1740369647749",
+      "sourceHandle": "rd",
+      "target": "register-1740369761632",
+      "targetHandle": "writeReg",
+      "id": "einstr-distributer-1740369647749-register-1740369761632",
+      "connectionMode": "strict",
+      "selected": false
     },
     {
-      "id": "e10",
-      "source": "alu-1",
-      "target": "memory-1",
-      "sourceHandle": "result",
-      "targetHandle": "address"
-    },
-    {
-      "id": "e11",
-      "source": "memory-1",
-      "target": "mux-2",
-      "sourceHandle": "readData",
-      "targetHandle": "in1"
-    },
-    {
-      "id": "e12",
-      "source": "alu-1",
-      "target": "mux-2",
-      "sourceHandle": "result",
-      "targetHandle": "in0"
-    },
-    {
-      "id": "e13",
-      "source": "control-1",
-      "target": "mux-2",
-      "sourceHandle": "memToReg",
-      "targetHandle": "sel"
-    },
-    {
-      "id": "e14",
-      "source": "mux-2",
-      "target": "register-1",
-      "sourceHandle": "output",
-      "targetHandle": "writeData"
-    },
-    {
-      "id": "e15",
-      "source": "control-1",
-      "target": "register-1",
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 2
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "control-1740369675154",
       "sourceHandle": "regWrite",
-      "targetHandle": "regWrite"
+      "target": "register-1740369761632",
+      "targetHandle": "regWrite",
+      "id": "econtrol-1740369675154-register-1740369761632",
+      "selected": false
     },
     {
-      "id": "e16",
-      "source": "control-1",
-      "target": "memory-1",
-      "sourceHandle": "memWrite",
-      "targetHandle": "writeEnable"
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 2
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "control-1740369675154",
+      "sourceHandle": "aluOp",
+      "target": "alu-control-1740370493221",
+      "targetHandle": "aluOp",
+      "id": "econtrol-1740369675154-alu-control-1740370493221",
+      "selected": false
     },
     {
-      "id": "e17",
-      "source": "control-1",
-      "target": "memory-1",
-      "sourceHandle": "memRead",
-      "targetHandle": "readEnable"
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 2
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "instr-distributer-1740369647749",
+      "sourceHandle": "funct3",
+      "target": "alu-control-1740370493221",
+      "targetHandle": "funct3",
+      "id": "einstr-distributer-1740369647749-alu-control-1740370493221",
+      "selected": false
     },
     {
-      "id": "e18",
-      "source": "pc-1",
-      "target": "branch-adder-1",
-      "sourceHandle": "address",
-      "targetHandle": "pc"
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 2
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "instr-distributer-1740369647749",
+      "sourceHandle": "funct7",
+      "target": "alu-control-1740370493221",
+      "targetHandle": "funct7",
+      "id": "einstr-distributer-1740369647749-alu-control-1740370493221",
+      "selected": false
     },
     {
-      "id": "e19",
-      "source": "imm-gen-1",
-      "target": "branch-adder-1",
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 2
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "alu-control-1740370493221",
+      "sourceHandle": "aluControl",
+      "target": "alu-1740369910295",
+      "targetHandle": "control",
+      "id": "ealu-control-1740370493221-alu-1740369910295",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 2
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "register-1740369761632",
+      "sourceHandle": "readData1",
+      "target": "alu-1740369910295",
+      "targetHandle": "a",
+      "id": "eregister-1740369761632-alu-1740369910295",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 2
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "register-1740369761632",
+      "sourceHandle": "readData2",
+      "target": "mux-1740370581520",
+      "targetHandle": "in0",
+      "id": "eregister-1740369761632-mux-1740370581520",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 2
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "control-1740369675154",
+      "sourceHandle": "aluSrc",
+      "target": "mux-1740370581520",
+      "targetHandle": "select",
+      "id": "econtrol-1740369675154-mux-1740370581520",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 2
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "imm-gen-1740369747042",
       "sourceHandle": "immediate",
-      "targetHandle": "offset"
+      "target": "mux-1740370581520",
+      "targetHandle": "in1",
+      "id": "eimm-gen-1740369747042-mux-1740370581520",
+      "selected": false
     },
     {
-      "id": "e20",
-      "source": "branch-adder-1",
-      "target": "pc-mux-1",
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 2
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "mux-1740370581520",
+      "sourceHandle": "out",
+      "target": "alu-1740369910295",
+      "targetHandle": "b",
+      "id": "emux-1740370581520-alu-1740369910295",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 2
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "alu-1740369910295",
       "sourceHandle": "result",
-      "targetHandle": "in1"
+      "target": "memory-1740370710951",
+      "targetHandle": "address",
+      "id": "ealu-1740369910295-memory-1740370710951",
+      "selected": false
     },
     {
-      "id": "e21",
-      "source": "pc-1",
-      "target": "pc-mux-1",
-      "sourceHandle": "next",
-      "targetHandle": "in0"
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 2
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "register-1740369761632",
+      "sourceHandle": "readData2",
+      "target": "memory-1740370710951",
+      "targetHandle": "writeData",
+      "id": "eregister-1740369761632-memory-1740370710951",
+      "selected": false
     },
     {
-      "id": "e22",
-      "source": "control-1",
-      "target": "pc-mux-1",
-      "sourceHandle": "branch",
-      "targetHandle": "sel"
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 2
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "control-1740369675154",
+      "sourceHandle": "memRead",
+      "target": "memory-1740370710951",
+      "targetHandle": "memRead",
+      "id": "econtrol-1740369675154-memory-1740370710951",
+      "selected": false
     },
     {
-      "id": "e23",
-      "source": "pc-mux-1",
-      "target": "pc-1",
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 2
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "control-1740369675154",
+      "sourceHandle": "memWrite",
+      "target": "memory-1740370710951",
+      "targetHandle": "memWrite",
+      "id": "econtrol-1740369675154-memory-1740370710951",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 2
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "control-1740369675154",
+      "sourceHandle": "memToReg",
+      "target": "mux-1740370805319",
+      "targetHandle": "select",
+      "id": "econtrol-1740369675154-mux-1740370805319",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 2
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "alu-1740369910295",
+      "sourceHandle": "result",
+      "target": "mux-1740370805319",
+      "targetHandle": "in0",
+      "id": "ealu-1740369910295-mux-1740370805319",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 2
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "memory-1740370710951",
+      "sourceHandle": "readData",
+      "target": "mux-1740370805319",
+      "targetHandle": "in1",
+      "id": "ememory-1740370710951-mux-1740370805319",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 2
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "mux-1740370805319",
+      "sourceHandle": "out",
+      "target": "register-1740369761632",
+      "targetHandle": "writeData",
+      "id": "emux-1740370805319-register-1740369761632",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 2
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "constant-1740370991312",
+      "sourceHandle": "value",
+      "target": "add-1740370988063",
+      "targetHandle": "input-b",
+      "id": "econstant-1740370991312-add-1740370988063",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 2
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "pc-1740369575927",
+      "sourceHandle": "address",
+      "target": "add-1740370988063",
+      "targetHandle": "input-a",
+      "id": "epc-1740369575927-add-1740370988063",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 2
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "add-1740370988063",
       "sourceHandle": "output",
-      "targetHandle": "next"
+      "target": "pc-1740369575927",
+      "targetHandle": "next",
+      "id": "eadd-1740370988063-pc-1740369575927",
+      "selected": false
+    }
+  ],
+  "isSimulating": false,
+  "editorCode": "# 冒泡排序程序\n# 对内存中的5个数字进行排序\n# 初始数据在内存0-16中\n\n# 外层循环 i 从 4 到 1\naddi x1, x0, 4     # i = 4\n\nloop_i:\nbeq x1, x0, end    # if i == 0, 结束排序\naddi x2, x0, 0     # j = 0\n\n# 内层循环 j 从 0 到 i-1\nloop_j:\nbeq x2, x1, next_i # if j == i, 进入下一轮外层循环\n\n# 加载相邻元素\nslli x3, x2, 2     # x3 = j * 4\nlw x4, 0(x3)       # 加载 arr[j]\nlw x5, 4(x3)       # 加载 arr[j+1]\n\n# 比较并交换\nbge x4, x5, skip   # if arr[j] >= arr[j+1], 跳过交换\nadd x6, x0, x4     # temp = arr[j]\nadd x4, x0, x5     # arr[j] = arr[j+1]\nadd x5, x0, x6     # arr[j+1] = temp\nsw x4, 0(x3)       # 保存 arr[j]\nsw x5, 4(x3)       # 保存 arr[j+1]\n\nskip:\naddi x2, x2, 1     # j++\njal x0, loop_j     # 继续内层循环\n\nnext_i:\naddi x1, x1, -1    # i--\njal x0, loop_i     # 继续外层循环\n\nend:",
+  "assembledInstructions": [
+    {
+      "hex": "0x00400093",
+      "binary": "00000000010000000000000010010011",
+      "assembly": "addi x1, x0, 4"
+    },
+    {
+      "hex": "0x08008063",
+      "binary": "00001000000000001000000001100011",
+      "assembly": "beq x1, x0, end"
+    },
+    {
+      "hex": "0x00000113",
+      "binary": "00000000000000000000000100010011",
+      "assembly": "addi x2, x0, 0"
+    },
+    {
+      "hex": "0x06110063",
+      "binary": "00000110000100010000000001100011",
+      "assembly": "beq x2, x1, next_i"
+    },
+    {
+      "hex": "0x00211193",
+      "binary": "00000000001000010001000110010011",
+      "assembly": "slli x3, x2, 2"
+    },
+    {
+      "hex": "0x0001a203",
+      "binary": "00000000000000011010001000000011",
+      "assembly": "lw x4, 0(x3)"
+    },
+    {
+      "hex": "0x0041a283",
+      "binary": "00000000010000011010001010000011",
+      "assembly": "lw x5, 4(x3)"
+    },
+    {
+      "hex": "0x02525863",
+      "binary": "00000010010100100101100001100011",
+      "assembly": "bge x4, x5, skip"
+    },
+    {
+      "hex": "0x00400333",
+      "binary": "00000000010000000000001100110011",
+      "assembly": "add x6, x0, x4"
+    },
+    {
+      "hex": "0x00500233",
+      "binary": "00000000010100000000001000110011",
+      "assembly": "add x4, x0, x5"
+    },
+    {
+      "hex": "0x006002b3",
+      "binary": "00000000011000000000001010110011",
+      "assembly": "add x5, x0, x6"
+    },
+    {
+      "hex": "0x0041a023",
+      "binary": "00000000010000011010000000100011",
+      "assembly": "sw x4, 0(x3)"
+    },
+    {
+      "hex": "0x0051a223",
+      "binary": "00000000010100011010001000100011",
+      "assembly": "sw x5, 4(x3)"
+    },
+    {
+      "hex": "0x00110113",
+      "binary": "00000000000100010000000100010011",
+      "assembly": "addi x2, x2, 1"
+    },
+    {
+      "hex": "0xfa9ff06f",
+      "binary": "11111010100111111111000001101111",
+      "assembly": "jal x0, loop_j"
+    },
+    {
+      "hex": "0xfff08093",
+      "binary": "11111111111100001000000010010011",
+      "assembly": "addi x1, x1, -1"
+    },
+    {
+      "hex": "0xf89ff06f",
+      "binary": "11111000100111111111000001101111",
+      "assembly": "jal x0, loop_i"
     }
   ]
 }
