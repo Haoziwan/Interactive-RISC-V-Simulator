@@ -182,20 +182,23 @@ export const useCircuitStore = create<CircuitState>()((set, get) => ({
   },
   resetSimulation: () => {
     set((state) => ({
-      nodes: state.nodes.map((node) => ({
-        ...node,
-        data: {
-          ...node.data,
-          value: 0,
-          pc: 0,
-          regWrite: false,
-          memRead: false,
-          memWrite: false,
-          aluOp: '00',
-        },
-      })),
+      nodes: state.nodes.map((node) => {
+        if (node.type === 'pc') {
+          return {
+            ...node,
+            data: {
+              ...node.data,
+              value: 0,
+              reset: true
+            }
+          };
+        }
+        return node;
+      }),
       isSimulating: false,
       stepCount: 0,
+      registers: {},
+      memory: {}
     }));
   },
   stepSimulation: () => {

@@ -29,8 +29,13 @@ export function PCNode({ data, id, selected }: { data: PCNodeData; id: string; s
     if (reset) {
       handleValueChange(0);
       setInputValue(0);
+      // 重置reset标志
+      updateNodeData(id, {
+        ...data,
+        reset: false
+      });
     }
-  }, [reset]);
+  }, [reset, handleValueChange, id, data, updateNodeData]);
 
   // 监听输入连接的变化
   React.useEffect(() => {
