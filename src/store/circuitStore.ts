@@ -16,6 +16,8 @@ interface CircuitState {
   simulationTimer: number | null;
   registers: { [key: number]: number };
   memory: { [key: string]: number };
+  pcValue: number;
+  updatePcValue: (value: number) => void;
   updateMemory: (memory: { [key: string]: number }) => void;
   updateRegisters: (registers: { [key: number]: number }) => void;
   updateNodeData: (nodeId: string, data: any) => void;
@@ -59,6 +61,8 @@ export const useCircuitStore = create<CircuitState>()((set, get) => ({
   simulationTimer: null,
   registers: {},
   memory: {},
+  pcValue: 0,
+  updatePcValue: (value: number) => set({ pcValue: value }),
   updateMemory: (memory) => set((state) => ({
     memory: {
       ...state.memory,

@@ -11,31 +11,36 @@ interface PCNodeData {
 export function PCNode({ data, id, selected }: { data: PCNodeData; id: string; selected?: boolean }) {
   const updateNodeData = useCircuitStore((state) => state.updateNodeData);
   const stepCount = useCircuitStore((state) => state.stepCount);
-  const value = data.value ?? 0;
+  const updatePcValue = useCircuitStore((state) => state.updatePcValue);
+  const pcValue = useCircuitStore((state) => state.pcValue);
+  const value = pcValue ?? 0;
   const reset = data.reset ?? false;
-  const [inputValue, setInputValue] = React.useState<number>(0);
+  const [inputValue, setInputValue] = React.useState<number>(pcValue ?? 0);
   const nodes = useNodes();
   const edges = useEdges();
 
   const handleValueChange = (newValue: number) => {
-    updateNodeData(id, {
-      ...data,
-      value: newValue
-    });
+    if (newValue !== value) {
+      updateNodeData(id, {
+        ...data,
+        value: newValue
+      });
+      updatePcValue(newValue);
+    }
   };
 
   // 监听复位信号
   React.useEffect(() => {
     if (reset) {
-      handleValueChange(0);
       setInputValue(0);
+      updatePcValue(0);
       // 重置reset标志
       updateNodeData(id, {
         ...data,
         reset: false
       });
     }
-  }, [reset, handleValueChange, id, data, updateNodeData]);
+  }, [reset, id, data, updateNodeData, updatePcValue]);
 
   // 监听输入连接的变化
   React.useEffect(() => {
@@ -60,7 +65,7 @@ export function PCNode({ data, id, selected }: { data: PCNodeData; id: string; s
       setTimeout(() => {
         // 获取所有边
         const edges = useCircuitStore.getState().edges;
-        // 找到所有连接到当前节点输入端口的边
+        // 找到所有连接到当前节点末端口的边
         const inputEdges = edges.filter(edge => edge.target === id && edge.targetHandle === 'next');
         
         // 如果有输入连接，获取输入值并保存
