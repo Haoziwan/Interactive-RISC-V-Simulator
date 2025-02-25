@@ -284,7 +284,9 @@ export const generateMachineCode = (inst: Instruction): string => {
 export class Assembler {
   private labelMap: Record<string, number> = {};
   private currentAddress = 0;
-
+  public getLabelMap(): Record<string, number> {
+    return this.labelMap;
+  }
   public assemble(code: string): AssembledInstruction[] {
     this.labelMap = {};
     this.currentAddress = 0;

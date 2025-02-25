@@ -17,6 +17,7 @@ interface CircuitState {
   registers: { [key: number]: number };
   memory: { [key: string]: number };
   pcValue: number;
+  currentInstructionIndex: number;
   updatePcValue: (value: number) => void;
   updateMemory: (memory: { [key: string]: number }) => void;
   updateRegisters: (registers: { [key: number]: number }) => void;
@@ -62,7 +63,11 @@ export const useCircuitStore = create<CircuitState>()((set, get) => ({
   registers: {},
   memory: {},
   pcValue: 0,
-  updatePcValue: (value: number) => set({ pcValue: value }),
+  currentInstructionIndex: 0,
+  updatePcValue: (value: number) => set({ 
+    pcValue: value,
+    currentInstructionIndex: value / 4
+  }),
   updateMemory: (memory) => set((state) => ({
     memory: {
       ...state.memory,

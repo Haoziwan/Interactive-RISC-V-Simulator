@@ -24,13 +24,30 @@ export function AssemblyEditor() {
       // 将代码按行分割并过滤掉注释和空行
       const assemblyLines = editorCode
         .split('\n')
-        .map(line => line.split('#')[0].trim())
-        .filter(line => line && !line.endsWith(':'));
+        .map(line => {
+          let trimmedLine = line.split('#')[0].trim();
+          if (!trimmedLine || trimmedLine.endsWith(':')) return null;
+          
+          // 替换标签为地址
+          Object.entries(assemblerInstance.getLabelMap()).forEach(([label, address]) => {
+            const labelRegex = new RegExp(`\\b${label}\\b`, 'g');
+            trimmedLine = trimmedLine.replace(labelRegex, `0x${address.toString(16).padStart(8, '0')}`);
+          });
+          
+          // 格式化其他立即数
+          trimmedLine = trimmedLine.replace(/\b0x[0-9a-fA-F]+\b/g, match => {
+            const num = parseInt(match, 16);
+            return `0x${num.toString(16).padStart(8, '0')}`;
+          });
+          
+          return trimmedLine;
+        })
+        .filter(Boolean);
       
       // 将汇编指令与机器码对应
       const instructionsWithAssembly = instructions.map((inst, i) => ({
         ...inst,
-        assembly: assemblyLines[i]
+        assembly: assemblyLines[i] || ''
       }));
       
       setAssembledInstructions(instructionsWithAssembly);
@@ -197,10 +214,11 @@ export function AssemblyEditor() {
                 <tbody>
                   {assembledInstructions.length > 0 ? (
                     assembledInstructions.map((inst, i) => (
-                      <tr key={i} className="border-t border-gray-100">
-                        <td className="py-2 px-4 font-mono text-gray-600">
-                          {`0x${(i * 4).toString(16).padStart(8, '0')}`}
-                        </td>
+                      <tr 
+                        key={i} 
+                        className={`border-t border-gray-100 ${i === useCircuitStore.getState().currentInstructionIndex ? 'bg-yellow-100' : ''}`}
+                      >
+                        <td className="py-2 px-4 font-mono text-gray-600">{`0x${(i * 4).toString(16).padStart(8, '0')}`}</td>
                         <td className="py-2 px-4 font-mono text-blue-600">{inst.hex}</td>
                         <td className="py-2 px-4 font-mono">{inst.assembly}</td>
                       </tr>
