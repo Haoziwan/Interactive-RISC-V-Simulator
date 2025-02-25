@@ -86,7 +86,7 @@ export function CircuitCanvas() {
   const [connectionMode, setConnectionMode] = useState<ConnectionMode>(ConnectionMode.Loose);
   const [edgeAnimated, setEdgeAnimated] = useState(false);
   const [edgeColor, setEdgeColor] = useState('#999');
-  const [edgeWidth, setEdgeWidth] = useState(2);
+  const [edgeWidth, setEdgeWidth] = useState(3);
   const [showEdgeSettings, setShowEdgeSettings] = useState(false);
   const [simulationInterval, setSimulationInterval] = useState(1000);
   
@@ -374,9 +374,9 @@ export function CircuitCanvas() {
                   <label className="text-xs text-gray-600">模拟间隔 (ms)</label>
                   <input
                     type="range"
-                    min="50"
+                    min="10"
                     max="5000"
-                    step="50"
+                    step="10"
                     value={simulationInterval}
                     onChange={(e) => {
                       const newInterval = parseInt(e.target.value);

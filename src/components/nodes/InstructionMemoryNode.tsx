@@ -41,10 +41,18 @@ export function InstructionMemoryNode({ data, id, selected }: {
         if (pcValue !== data.pc) {
           updateNodeData(id, {
             ...data,
-            pc: pcValue
+            pc: pcValue,
+            value: data.instructions?.[pcValue] // 直接更新当前指令值
           });
         }
       }
+    } else if (data.instructions && data.instructions.length > 0 && !data.value) {
+      // 如果有指令但没有当前值，说明可能是刚重置，设置为第一条指令
+      updateNodeData(id, {
+        ...data,
+        pc: 0,
+        value: data.instructions?.[0]
+      });
     }
   }, [nodes, edges, id]);
   

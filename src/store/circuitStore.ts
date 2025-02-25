@@ -230,6 +230,16 @@ export const useCircuitStore = create<CircuitState>()((set, get) => ({
             }
           };
         }
+        if (node.type === 'instruction-memory') {
+          return {
+            ...node,
+            data: {
+              ...node.data,
+              pc: 0,
+              value: node.data.instructions?.[0] || null
+            }
+          };
+        }
         return node;
       }),
       isSimulating: false,
