@@ -46,13 +46,6 @@ export function InstructionMemoryNode({ data, id, selected }: {
           });
         }
       }
-    } else if (data.instructions && data.instructions.length > 0 && !data.value) {
-      // 如果有指令但没有当前值，说明可能是刚重置，设置为第一条指令
-      updateNodeData(id, {
-        ...data,
-        pc: 0,
-        value: data.instructions?.[0]
-      });
     }
   }, [nodes, edges, id]);
   
