@@ -286,6 +286,8 @@ export function CircuitCanvas() {
         selectNodesOnDrag={false}
         defaultEdgeOptions={defaultEdgeOptions}
         connectionMode={connectionMode}
+        minZoom={0.2}
+        maxZoom={3}
         fitView
       >
         <Background />
