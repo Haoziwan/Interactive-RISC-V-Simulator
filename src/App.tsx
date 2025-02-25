@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { ResizablePanels } from './components/ResizablePanels';
 import { ComponentLibrary } from './components/ComponentLibrary';
 import { CircuitCanvas } from './components/CircuitCanvas';
 import { ConfigPanel } from './components/ConfigPanel';
@@ -52,30 +53,39 @@ function App() {
 
   const renderContent = () => {
     return (
-      <div className="h-full">
-        <div style={{ display: activeTab === 'code' ? 'flex' : 'none' }} className="h-full">
-          <div className="flex-1">
-            <AssemblyEditor />
-          </div>
-        </div>
-
-        <div style={{ display: activeTab === 'memory' ? 'flex' : 'none' }} className="h-full">
-          <div className="flex-1 p-4">
-            <h2 className="text-lg font-semibold mb-4">内存视图</h2>
-            <MemoryView />
-          </div>
-        </div>
-
-        <div style={{ display: activeTab === 'datapath' ? 'flex' : 'none' }} className="h-full">
-          <div className="w-64 bg-white border-r border-gray-200 flex-shrink-0 overflow-auto">
-            <ComponentLibrary />
-          </div>
-          <div className="flex-1 relative">
-            <div className="absolute inset-0">
-              <CircuitCanvas />
+      <div className="h-full flex">
+        <div className="flex-1">
+          <div style={{ display: activeTab === 'code' ? 'flex' : 'none' }} className="h-full">
+            <div className="flex-1">
+              <AssemblyEditor />
             </div>
-            <ConfigPanel />
           </div>
+
+          <div style={{ display: activeTab === 'memory' ? 'flex' : 'none' }} className="h-full">
+            <div className="flex-1 p-4">
+              <h2 className="text-lg font-semibold mb-4">内存视图</h2>
+              <MemoryView />
+            </div>
+          </div>
+
+          <div style={{ display: activeTab === 'datapath' ? 'flex' : 'none' }} className="h-full">
+            <ResizablePanels
+              leftPanel={<ComponentLibrary />}
+              centerPanel={
+                <div className="h-full relative">
+                  <div className="absolute inset-0">
+                    <CircuitCanvas />
+                  </div>
+                  <ConfigPanel />
+                </div>
+              }
+              defaultLeftSize={20}
+              defaultRightSize={0}
+            />
+          </div>
+        </div>
+        <div className="w-64 border-l border-gray-200 bg-white">
+          <RegPanel />
         </div>
       </div>
     )
@@ -113,13 +123,8 @@ function App() {
           </div>
         </div>
       </header>
-      <main className="flex-1 overflow-hidden flex">
-        <div className="flex-1 overflow-hidden">
-          {renderContent()}
-        </div>
-        <div className="w-64 bg-white border-l border-gray-200 flex-shrink-0 overflow-y-auto">
-          <RegPanel />
-        </div>
+      <main className="flex-1 overflow-hidden">
+        {renderContent()}
       </main>
     </div>
   );

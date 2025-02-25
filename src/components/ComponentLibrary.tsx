@@ -182,17 +182,17 @@ export function ComponentLibrary() {
     <div className="flex flex-col h-full">
       <div className="bg-white p-4 rounded-lg shadow-lg mb-4">
         <h2 className="text-lg font-semibold mb-2">Components</h2>
-        <div className="flex space-x-1 mb-3">
+        <div className="flex flex-wrap gap-1 mb-3">
           <button
             onClick={handleSave}
-            className="flex items-center px-1.5 py-0.5 text-xs bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+            className="flex items-center px-1.5 py-0.5 text-xs bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors min-w-0 whitespace-nowrap overflow-hidden"
           >
-            <Save className="w-3 h-3 mr-0.5" />
-            保存
+            <Save className="w-3 h-3 mr-0.5 flex-shrink-0" />
+            <span className="truncate">保存</span>
           </button>
-          <label className="flex items-center px-1.5 py-0.5 text-xs bg-gray-500 text-white rounded hover:bg-gray-600 transition-colors cursor-pointer">
-            <FileInput className="w-3 h-3 mr-0.5" />
-            加载
+          <label className="flex items-center px-1.5 py-0.5 text-xs bg-gray-500 text-white rounded hover:bg-gray-600 transition-colors cursor-pointer min-w-0 whitespace-nowrap overflow-hidden">
+            <FileInput className="w-3 h-3 mr-0.5 flex-shrink-0" />
+            <span className="truncate">加载</span>
             <input
               type="file"
               accept=".json"
@@ -200,7 +200,7 @@ export function ComponentLibrary() {
               className="hidden"
             />
           </label>
-          <div className="relative">
+          <div className="relative min-w-0 flex-1">
             <select
               onChange={(e) => {
                 const selectedExample = e.target.value;
@@ -214,7 +214,7 @@ export function ComponentLibrary() {
                   });
                 }
               }}
-              className="flex items-center px-1.5 py-0.5 text-xs bg-green-500 text-white rounded hover:bg-green-600 transition-colors appearance-none cursor-pointer pr-6"
+              className="w-full flex items-center px-1.5 py-0.5 text-xs bg-green-500 text-white rounded hover:bg-green-600 transition-colors appearance-none cursor-pointer pr-6 truncate"
               title="选择示例电路"
               aria-label="选择要加载的示例电路"
             >
