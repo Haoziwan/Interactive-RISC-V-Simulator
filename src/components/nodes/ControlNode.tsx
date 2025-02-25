@@ -9,8 +9,6 @@ interface ControlNodeData {
   memRead?: number;
   memWrite?: number;
   aluOp?: number;
-  branch?: number;
-  jump?: number;
   aluSrc?: number;
   memToReg?: number;
 }
@@ -60,8 +58,6 @@ export function ControlNode({ data, id, selected }: { data: ControlNodeData; id:
           memRead: 0,
           memWrite: 0,
           aluOp: parseInt('10', 2),
-          branch: 0,
-          jump: 0,
           aluSrc: 0,
           memToReg: 0
         };
@@ -71,8 +67,6 @@ export function ControlNode({ data, id, selected }: { data: ControlNodeData; id:
           memRead: 0,
           memWrite: 0,
           aluOp: parseInt('11', 2),
-          branch: 0,
-          jump: 0,
           aluSrc: 1,
           memToReg: 0
         };
@@ -82,8 +76,6 @@ export function ControlNode({ data, id, selected }: { data: ControlNodeData; id:
           memRead: 1,
           memWrite: 0,
           aluOp: parseInt('00', 2),
-          branch: 0,
-          jump: 0,
           aluSrc: 1,
           memToReg: 1
         };
@@ -93,8 +85,6 @@ export function ControlNode({ data, id, selected }: { data: ControlNodeData; id:
           memRead: 0,
           memWrite: 1,
           aluOp: parseInt('00', 2),
-          branch: 0,
-          jump: 0,
           aluSrc: 1,
           memToReg: 0
         };
@@ -104,30 +94,16 @@ export function ControlNode({ data, id, selected }: { data: ControlNodeData; id:
           memRead: 0,
           memWrite: 0,
           aluOp: parseInt('01', 2),
-          branch: 1,
-          jump: 0,
           aluSrc: 0,
           memToReg: 0
         };
       case '1101111': // J-type (jal)
-        return {
-          regWrite: 1,
-          memRead: 0,
-          memWrite: 0,
-          aluOp: parseInt('00', 2),
-          branch: 0,
-          jump: 1,
-          aluSrc: 0,
-          memToReg: 0
-        };
       case '1100111': // I-type (jalr)
         return {
           regWrite: 1,
           memRead: 0,
           memWrite: 0,
           aluOp: parseInt('00', 2),
-          branch: 0,
-          jump: 1,
           aluSrc: 1,
           memToReg: 0
         };
@@ -138,8 +114,6 @@ export function ControlNode({ data, id, selected }: { data: ControlNodeData; id:
           memRead: 0,
           memWrite: 0,
           aluOp: parseInt('00', 2),
-          branch: 0,
-          jump: 0,
           aluSrc: 1,
           memToReg: 0
         };
@@ -149,8 +123,6 @@ export function ControlNode({ data, id, selected }: { data: ControlNodeData; id:
           memRead: 0,
           memWrite: 0,
           aluOp: parseInt('00', 2),
-          branch: 0,
-          jump: 0,
           aluSrc: 0,
           memToReg: 0
         };
@@ -182,65 +154,55 @@ export function ControlNode({ data, id, selected }: { data: ControlNodeData; id:
       />
       <div className="flex flex-col items-start">
         <div className="text-lg font-bold mb-2">Control Unit</div>
-        <div className="text-xs text-gray-500 space-y-2 w-full">
-            <div>{(() => {
-              switch (displayOpcode.slice(0, 7)) {
-                case '0110011': return 'R-type';
-                case '0010011': return 'I-type ALU';
-                case '0000011': return 'I-type Load';
-                case '0100011': return 'S-type';
-                case '1100011': return 'B-type';
-                case '1101111': return 'J-type (jal)';
-                case '1100111': return 'I-type (jalr)';
-                case '0110111': return 'U-type (lui)';
-                case '0010111': return 'U-type (auipc)';
-                default: return 'Unknown';
-              }
-            })()}</div>
-            <div className="flex flex-col gap-y-6">
-              <div className="flex justify-between items-center relative" style={{ marginTop: '10px' }}>
-                <span>RegWrite:</span>
-                <span>{controlSignals.regWrite}</span>
-              </div>
-              <div className="flex justify-between items-center relative">
-                <span>ALUSrc:</span>
-                <span>{controlSignals.aluSrc}</span>
-              </div>
-              <div className="flex justify-between items-center relative">
-                <span>MemRead:</span>
-                <span>{controlSignals.memRead}</span>
-              </div>
-              <div className="flex justify-between items-center relative">
-                <span>MemWrite:</span>
-                <span>{controlSignals.memWrite}</span>
-              </div>
-              <div className="flex justify-between items-center relative">
-                <span>Branch:</span>
-                <span>{controlSignals.branch}</span>
-              </div>
-              <div className="flex justify-between items-center relative">
-                <span>Jump:</span>
-                <span>{controlSignals.jump}</span>
-              </div>
-              <div className="flex justify-between items-center relative">
-                <span>ALUOp:</span>
-                <span>{controlSignals.aluOp}</span>
-              </div>
-              <div className="flex justify-between items-center relative">
-                <span>MemToReg:</span>
-                <span>{controlSignals.memToReg}</span>
-              </div>
+        <div className="text-xs text-gray-500 space-y-1 w-full">
+          <div>{(() => {
+            switch (displayOpcode.slice(0, 7)) {
+              case '0110011': return 'R-type';
+              case '0010011': return 'I-type ALU';
+              case '0000011': return 'I-type Load';
+              case '0100011': return 'S-type';
+              case '1100011': return 'B-type';
+              case '1101111': return 'J-type (jal)';
+              case '1100111': return 'I-type (jalr)';
+              case '0110111': return 'U-type (lui)';
+              case '0010111': return 'U-type (auipc)';
+              default: return 'Unknown';
+            }
+          })()}</div>
+          <div className="flex flex-col gap-y-4">
+            <div className="flex justify-between items-center relative">
+              <span>RegWrite:</span>
+              <span>{controlSignals.regWrite}</span>
             </div>
+            <div className="flex justify-between items-center relative">
+              <span>ALUSrc:</span>
+              <span>{controlSignals.aluSrc}</span>
+            </div>
+            <div className="flex justify-between items-center relative">
+              <span>MemRead:</span>
+              <span>{controlSignals.memRead}</span>
+            </div>
+            <div className="flex justify-between items-center relative">
+              <span>MemWrite:</span>
+              <span>{controlSignals.memWrite}</span>
+            </div>
+            <div className="flex justify-between items-center relative">
+              <span>ALUOp:</span>
+              <span>{controlSignals.aluOp}</span>
+            </div>
+            <div className="flex justify-between items-center relative">
+              <span>MemToReg:</span>
+              <span>{controlSignals.memToReg}</span>
+            </div>
+          </div>
         </div>
       </div>
-      <Handle type="source" position={Position.Right} id="regWrite" className="w-3 h-3 bg-green-400" style={{ top: '23%' }} title="RegWrite" />
-      <Handle type="source" position={Position.Right} id="aluSrc" className="w-3 h-3 bg-green-400" style={{ top: '33%' }} title="ALUSrc" />
-      <Handle type="source" position={Position.Right} id="memRead" className="w-3 h-3 bg-green-400" style={{ top: '43%' }} title="MemRead" />
-      <Handle type="source" position={Position.Right} id="memWrite" className="w-3 h-3 bg-green-400" style={{ top: '53%' }} title="MemWrite" />
-      <Handle type="source" position={Position.Right} id="branch" className="w-3 h-3 bg-green-400" style={{ top: '63%' }} title="Branch" />
-      <Handle type="source" position={Position.Right} id="jump" className="w-3 h-3 bg-green-400" style={{ top: '73%' }} title="Jump" />
-      <Handle type="source" position={Position.Right} id="aluOp" className="w-3 h-3 bg-green-400" style={{ top: '83%' }} title="ALUOp" />
-      <Handle type="source" position={Position.Right} id="memToReg" className="w-3 h-3 bg-green-400" style={{ top: '93%' }} title="写回数据选择" />
+      <Handle type="source" position={Position.Right} id="regWrite" className="w-3 h-3 bg-green-400" style={{ top: '30%' }} title="RegWrite" />
+      <Handle type="source" position={Position.Right} id="aluSrc" className="w-3 h-3 bg-green-400" style={{ top: '42%' }} title="ALUSrc" />
+      <Handle type="source" position={Position.Right} id="memRead" className="w-3 h-3 bg-green-400" style={{ top: '54%' }} title="MemRead" />
+      <Handle type="source" position={Position.Right} id="memWrite" className="w-3 h-3 bg-green-400" style={{ top: '66%' }} title="MemWrite" />
+      <Handle type="source" position={Position.Right} id="aluOp" className="w-3 h-3 bg-green-400" style={{ top: '78%' }} title="ALUOp" />
+      <Handle type="source" position={Position.Right} id="memToReg" className="w-3 h-3 bg-green-400" style={{ top: '90%' }} title="MemToReg" />
     </div>
   );
 }
