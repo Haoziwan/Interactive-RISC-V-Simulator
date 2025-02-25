@@ -55,30 +55,33 @@ export function ResizablePanels({
         <div className="h-full relative">{centerPanel}</div>
       </Panel>
 
-      <PanelResizeHandle className="w-1 bg-gray-200 hover:bg-blue-500 transition-colors" />
-
-      <Panel
-        defaultSize={defaultRightSize}
-        collapsible
-        collapsedSize={0}
-        minSize={0}
-        maxSize={30}
-        className={`bg-white border-l border-gray-200 transition-all duration-300 ${isRightCollapsed ? 'w-0' : ''}`}
-      >
-        <div className="relative h-full">
-          {rightPanel}
-          <button
-            onClick={() => setIsRightCollapsed(!isRightCollapsed)}
-            className="absolute -left-3 top-1/2 transform -translate-y-1/2 z-10 w-6 h-12 bg-white border border-gray-200 rounded-l flex items-center justify-center hover:bg-gray-50"
+      {rightPanel && (
+        <>
+          <PanelResizeHandle className="w-1 bg-gray-200 hover:bg-blue-500 transition-colors" />
+          <Panel
+            defaultSize={defaultRightSize}
+            collapsible
+            collapsedSize={0}
+            minSize={0}
+            maxSize={30}
+            className={`bg-white border-l border-gray-200 transition-all duration-300 ${isRightCollapsed ? 'w-0' : ''}`}
           >
-            {isRightCollapsed ? (
-              <ChevronLeft className="w-4 h-4 text-gray-600" />
-            ) : (
-              <ChevronRight className="w-4 h-4 text-gray-600" />
-            )}
-          </button>
-        </div>
-      </Panel>
+            <div className="relative h-full">
+              {rightPanel}
+              <button
+                onClick={() => setIsRightCollapsed(!isRightCollapsed)}
+                className="absolute -left-3 top-1/2 transform -translate-y-1/2 z-10 w-6 h-12 bg-white border border-gray-200 rounded-l flex items-center justify-center hover:bg-gray-50"
+              >
+                {isRightCollapsed ? (
+                  <ChevronLeft className="w-4 h-4 text-gray-600" />
+                ) : (
+                  <ChevronRight className="w-4 h-4 text-gray-600" />
+                )}
+              </button>
+            </div>
+          </Panel>
+        </>
+      )}
     </PanelGroup>
   );
 }

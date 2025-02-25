@@ -63,7 +63,6 @@ function App() {
 
           <div style={{ display: activeTab === 'memory' ? 'flex' : 'none' }} className="h-full">
             <div className="flex-1 p-4">
-              <h2 className="text-lg font-semibold mb-4">内存视图</h2>
               <MemoryView />
             </div>
           </div>

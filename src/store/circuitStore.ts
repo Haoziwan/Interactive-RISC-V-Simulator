@@ -233,10 +233,15 @@ export const useCircuitStore = create<CircuitState>()((set, get) => ({
         return node;
       }),
       isSimulating: false,
-      stepCount: 0,
-      registers: {},
-      memory: {}
+      stepCount: 0
     }));
+    // 延迟到下一个事件循环清空寄存器和内存
+    setTimeout(() => {
+      set({
+        registers: {},
+        memory: {}
+      });
+    }, 0);
   },
   stepSimulation: () => {
     set((state) => {
