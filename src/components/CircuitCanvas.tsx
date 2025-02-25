@@ -231,9 +231,9 @@ export function CircuitCanvas() {
     [setSelectedNode]
   );
   const edgeOptions = [
-    { value: 'default', label: '直线' },
-    { value: 'step', label: '阶梯线' },
-    { value: 'smoothstep', label: '平滑阶梯线' },
+    { value: 'default', label: 'default' },
+    { value: 'step', label: 'step' },
+    { value: 'smoothstep', label: 'smoothstep' },
   ];
   const defaultEdgeOptions = {
     type: edgeType,
@@ -250,8 +250,8 @@ export function CircuitCanvas() {
     },
   };
   const connectionModeOptions = [
-    { value: ConnectionMode.Strict, label: '严格模式' },
-    { value: ConnectionMode.Loose, label: '自由模式' },
+    { value: ConnectionMode.Strict, label: 'Strict' },
+    { value: ConnectionMode.Loose, label: 'Loose' },
   ];
   return (
     <div className="w-full h-full">
@@ -299,7 +299,7 @@ export function CircuitCanvas() {
                 onClick={() => setShowEdgeSettings(!showEdgeSettings)}
                 className="text-sm text-gray-600 hover:text-gray-900 flex items-center"
               >
-                设置 {showEdgeSettings ? '▼' : '▶'}
+                Setting {showEdgeSettings ? '▼' : '▶'}
               </button>
             </div>
             {showEdgeSettings && (

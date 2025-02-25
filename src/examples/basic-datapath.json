@@ -1,12 +1,12 @@
 {
-  "name": "circuit-2025-02-25T04-40-23-269Z",
+  "name": "circuit-2025-02-25T06-29-41-225Z",
   "nodes": [
     {
       "id": "register-1740456812349",
       "type": "register",
       "position": {
-        "x": 337.15765666357595,
-        "y": 445.284781357758
+        "x": 319.73134542502146,
+        "y": 423.2788314014151
       },
       "data": {
         "label": "REGISTER",
@@ -22,8 +22,8 @@
       "height": 167,
       "selected": false,
       "positionAbsolute": {
-        "x": 337.15765666357595,
-        "y": 445.284781357758
+        "x": 319.73134542502146,
+        "y": 423.2788314014151
       },
       "dragging": false
     },
@@ -36,9 +36,9 @@
       },
       "data": {
         "label": "IMM-GEN",
-        "instruction": "00000000010000000000000010010011",
-        "immediate": 4,
-        "format": "I"
+        "instruction": "11111100100111111111000001101111",
+        "immediate": -112,
+        "format": "J"
       },
       "width": 182,
       "height": 95,
@@ -84,10 +84,10 @@
       },
       "data": {
         "label": "PC",
-        "value": 0,
+        "value": -44,
         "reset": false
       },
-      "width": 202,
+      "width": 198,
       "height": 95,
       "selected": false,
       "positionAbsolute": {
@@ -100,38 +100,39 @@
       "id": "instruction-memory-1740456942935",
       "type": "instruction-memory",
       "position": {
-        "x": -623.5078264189049,
-        "y": 485.4343185152052
+        "x": -565.2175230188503,
+        "y": 459.0209698777617
       },
       "data": {
         "label": "INSTRUCTION-MEMORY",
         "instructions": [
-          "0x00400093",
-          "0x08008063",
+          "0x00a00093",
           "0x00000113",
-          "0x06110063",
-          "0x00211193",
-          "0x0001a203",
-          "0x0041a283",
-          "0x02525863",
-          "0x00400333",
+          "0x00000193",
+          "0x00100213",
+          "0x00000293",
+          "0x00312023",
+          "0x00410113",
+          "0x00412023",
+          "0x00410113",
+          "0x00200313",
+          "0x04130063",
+          "0x004182b3",
+          "0x00512023",
+          "0x004001b3",
           "0x00500233",
-          "0x006002b3",
-          "0x0041a023",
-          "0x0051a223",
-          "0x00110113",
-          "0xfa9ff06f",
-          "0xfff08093",
-          "0xf89ff06f"
+          "0x00410113",
+          "0x00130313",
+          "0xfc9ff06f"
         ],
-        "pc": 0
+        "pc": -11
       },
-      "width": 304,
-      "height": 187,
+      "width": 297,
+      "height": 355,
       "selected": false,
       "positionAbsolute": {
-        "x": -623.5078264189049,
-        "y": 485.4343185152052
+        "x": -565.2175230188503,
+        "y": 459.0209698777617
       },
       "dragging": false
     },
@@ -139,8 +140,8 @@
       "id": "control-1740456985517",
       "type": "control",
       "position": {
-        "x": 328.4566595288329,
-        "y": -12.62038146344662
+        "x": 353.4453443735348,
+        "y": -25.356957690569516
       },
       "data": {
         "label": "CONTROL",
@@ -158,8 +159,8 @@
       "height": 401,
       "selected": false,
       "positionAbsolute": {
-        "x": 328.4566595288329,
-        "y": -12.62038146344662
+        "x": 353.4453443735348,
+        "y": -25.356957690569516
       },
       "dragging": false
     },
@@ -219,7 +220,7 @@
         "value": 0,
         "select": "0"
       },
-      "width": 116,
+      "width": 142,
       "height": 143,
       "selected": false,
       "positionAbsolute": {
@@ -365,7 +366,7 @@
       },
       "data": {
         "label": "FORK",
-        "value": 0
+        "value": -44
       },
       "width": 32,
       "height": 32,
@@ -405,9 +406,9 @@
       },
       "data": {
         "label": "ADD",
-        "value": 4
+        "value": -40
       },
-      "width": 66,
+      "width": 69,
       "height": 75,
       "selected": false,
       "positionAbsolute": {
@@ -420,19 +421,19 @@
       "id": "fork-1740457531304",
       "type": "fork",
       "position": {
-        "x": -92.95514823364468,
-        "y": 68.40826014871666
+        "x": -136.9773959627172,
+        "y": 44.196023897726775
       },
       "data": {
         "label": "FORK",
-        "value": 0
+        "value": -44
       },
       "width": 32,
       "height": 32,
       "selected": false,
       "positionAbsolute": {
-        "x": -92.95514823364468,
-        "y": 68.40826014871666
+        "x": -136.9773959627172,
+        "y": 44.196023897726775
       },
       "dragging": false
     },
@@ -440,8 +441,8 @@
       "id": "jump-control-1740457549626",
       "type": "jump-control",
       "position": {
-        "x": 294,
-        "y": -244.8000030517578
+        "x": 164.13436919923606,
+        "y": -449.5034549919451
       },
       "data": {
         "label": "JUMP-CONTROL",
@@ -455,8 +456,8 @@
       "height": 167,
       "selected": false,
       "positionAbsolute": {
-        "x": 294,
-        "y": -244.8000030517578
+        "x": 164.13436919923606,
+        "y": -449.5034549919451
       },
       "dragging": false
     },
@@ -469,9 +470,9 @@
       },
       "data": {
         "label": "ADD",
-        "value": 4
+        "value": -156
       },
-      "width": 66,
+      "width": 81,
       "height": 75,
       "selected": false,
       "positionAbsolute": {
@@ -489,7 +490,7 @@
       },
       "data": {
         "label": "FORK",
-        "value": 4
+        "value": -112
       },
       "width": 32,
       "height": 32,
@@ -504,20 +505,20 @@
       "id": "mux-1740457672408",
       "type": "mux",
       "position": {
-        "x": 942,
-        "y": -316.8000030517578
+        "x": 845.1510549960406,
+        "y": -332.2077897569332
       },
       "data": {
         "label": "MUX",
-        "value": 4,
+        "value": -40,
         "select": "0"
       },
-      "width": 116,
+      "width": 142,
       "height": 143,
       "selected": false,
       "positionAbsolute": {
-        "x": 942,
-        "y": -316.8000030517578
+        "x": 845.1510549960406,
+        "y": -332.2077897569332
       },
       "dragging": false
     },
@@ -538,6 +539,47 @@
       "positionAbsolute": {
         "x": -224.74938581079866,
         "y": 720.5286440103118
+      },
+      "dragging": false
+    },
+    {
+      "id": "mux-1740464449901",
+      "type": "mux",
+      "position": {
+        "x": 228.77213465013767,
+        "y": -182.76485937675847
+      },
+      "data": {
+        "label": "MUX",
+        "value": -44,
+        "select": "0"
+      },
+      "width": 132,
+      "height": 143,
+      "selected": false,
+      "positionAbsolute": {
+        "x": 228.77213465013767,
+        "y": -182.76485937675847
+      },
+      "dragging": false
+    },
+    {
+      "id": "fork-1740464547221",
+      "type": "fork",
+      "position": {
+        "x": 611.2339277208744,
+        "y": 369.8471820644534
+      },
+      "data": {
+        "label": "FORK",
+        "value": 0
+      },
+      "width": 32,
+      "height": 32,
+      "selected": false,
+      "positionAbsolute": {
+        "x": 611.2339277208744,
+        "y": 369.8471820644534
       },
       "dragging": false
     }
@@ -741,26 +783,6 @@
       "target": "alu-control-1740457192016",
       "targetHandle": "aluOp",
       "id": "econtrol-1740456985517-alu-control-1740457192016-1",
-      "selected": false
-    },
-    {
-      "type": "smoothstep",
-      "animated": false,
-      "style": {
-        "stroke": "#999",
-        "strokeWidth": 1
-      },
-      "markerEnd": {
-        "type": "arrow",
-        "width": 20,
-        "height": 20,
-        "color": "#999"
-      },
-      "source": "register-1740456812349",
-      "sourceHandle": "readData1",
-      "target": "alu-1740457259779",
-      "targetHandle": "a",
-      "id": "eregister-1740456812349-alu-1740457259779-1",
       "selected": false
     },
     {
@@ -1156,26 +1178,6 @@
         "height": 20,
         "color": "#999"
       },
-      "source": "fork-1740457531304",
-      "sourceHandle": "output-2",
-      "target": "add-1740457601453",
-      "targetHandle": "input-a",
-      "id": "efork-1740457531304-add-1740457601453-1",
-      "selected": false
-    },
-    {
-      "type": "smoothstep",
-      "animated": false,
-      "style": {
-        "stroke": "#999",
-        "strokeWidth": 1
-      },
-      "markerEnd": {
-        "type": "arrow",
-        "width": 20,
-        "height": 20,
-        "color": "#999"
-      },
       "source": "imm-gen-1740456815567",
       "sourceHandle": "immediate",
       "target": "fork-1740457651094",
@@ -1408,7 +1410,7 @@
       "animated": false,
       "style": {
         "stroke": "#999",
-        "strokeWidth": 2
+        "strokeWidth": 1
       },
       "markerEnd": {
         "type": "arrow",
@@ -1422,20 +1424,135 @@
       "targetHandle": "instruction",
       "id": "efork-1740458306711-imm-gen-1740456815567-1",
       "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "jump-control-1740457549626",
+      "sourceHandle": "jalr",
+      "target": "mux-1740464449901",
+      "targetHandle": "select",
+      "id": "ejump-control-1740457549626-mux-1740464449901-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "fork-1740457531304",
+      "sourceHandle": "output-2",
+      "target": "mux-1740464449901",
+      "targetHandle": "in0",
+      "id": "efork-1740457531304-mux-1740464449901-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "mux-1740464449901",
+      "sourceHandle": "out",
+      "target": "add-1740457601453",
+      "targetHandle": "input-a",
+      "id": "emux-1740464449901-add-1740457601453-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "register-1740456812349",
+      "sourceHandle": "readData1",
+      "target": "fork-1740464547221",
+      "targetHandle": "input",
+      "id": "eregister-1740456812349-fork-1740464547221-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "fork-1740464547221",
+      "sourceHandle": "output-2",
+      "target": "alu-1740457259779",
+      "targetHandle": "a",
+      "id": "efork-1740464547221-alu-1740457259779-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "fork-1740464547221",
+      "sourceHandle": "output-1",
+      "target": "mux-1740464449901",
+      "targetHandle": "in1",
+      "id": "efork-1740464547221-mux-1740464449901-1",
+      "selected": false
     }
   ],
   "isSimulating": false,
-  "editorCode": "# 冒泡排序程序\r\n# 对内存中的5个数字进行排序\r\n# 初始数据在内存0-16中\r\n\r\n# 外层循环 i 从 4 到 1\r\naddi x1, x0, 4     # i = 4\r\n\r\nloop_i:\r\nbeq x1, x0, end    # if i == 0, 结束排序\r\naddi x2, x0, 0     # j = 0\r\n\r\n# 内层循环 j 从 0 到 i-1\r\nloop_j:\r\nbeq x2, x1, next_i # if j == i, 进入下一轮外层循环\r\n\r\n# 加载相邻元素\r\nslli x3, x2, 2     # x3 = j * 4\r\nlw x4, 0(x3)       # 加载 arr[j]\r\nlw x5, 4(x3)       # 加载 arr[j+1]\r\n\r\n# 比较并交换\r\nbge x4, x5, skip   # if arr[j] >= arr[j+1], 跳过交换\r\nadd x6, x0, x4     # temp = arr[j]\r\nadd x4, x0, x5     # arr[j] = arr[j+1]\r\nadd x5, x0, x6     # arr[j+1] = temp\r\nsw x4, 0(x3)       # 保存 arr[j]\r\nsw x5, 4(x3)       # 保存 arr[j+1]\r\n\r\nskip:\r\naddi x2, x2, 1     # j++\r\njal x0, loop_j     # 继续内层循环\r\n\r\nnext_i:\r\naddi x1, x1, -1    # i--\r\njal x0, loop_i     # 继续外层循环\r\n\r\nend:",
+  "editorCode": "# 斐波那契数列程序\r\n# 计算斐波那契数列的前n个数\r\n# n存储在x1中，结果存储在内存中\r\n\r\n# 初始化\r\naddi x1, x0, 10    # n = 10 (计算前10个数)\r\naddi x2, x0, 0     # 地址索引\r\naddi x3, x0, 0     # f(n-2)\r\naddi x4, x0, 1     # f(n-1)\r\naddi x5, x0, 0     # 当前计算的f(n)\r\n\r\n# 存储前两个数\r\nsw x3, 0(x2)       # 存储f(0)\r\naddi x2, x2, 4     # 地址+4\r\nsw x4, 0(x2)       # 存储f(1)\r\naddi x2, x2, 4     # 地址+4\r\naddi x6, x0, 2     # i = 2\r\n\r\nloop:\r\nbeq x6, x1, end    # if i == n, 结束\r\n\r\n# 计算f(n) = f(n-1) + f(n-2)\r\nadd x5, x3, x4     # f(n) = f(n-2) + f(n-1)\r\nsw x5, 0(x2)       # 存储f(n)\r\n\r\n# 更新变量\r\nadd x3, x0, x4     # f(n-2) = f(n-1)\r\nadd x4, x0, x5     # f(n-1) = f(n)\r\naddi x2, x2, 4     # 地址+4\r\naddi x6, x6, 1     # i++\r\njal x0, loop       # 继续循环\r\n\r\nend:",
   "assembledInstructions": [
     {
-      "hex": "0x00400093",
-      "binary": "00000000010000000000000010010011",
-      "assembly": "addi x1, x0, 4"
-    },
-    {
-      "hex": "0x08008063",
-      "binary": "00001000000000001000000001100011",
-      "assembly": "beq x1, x0, end"
+      "hex": "0x00a00093",
+      "binary": "00000000101000000000000010010011",
+      "assembly": "addi x1, x0, 10"
     },
     {
       "hex": "0x00000113",
@@ -1443,34 +1560,64 @@
       "assembly": "addi x2, x0, 0"
     },
     {
-      "hex": "0x06110063",
-      "binary": "00000110000100010000000001100011",
-      "assembly": "beq x2, x1, next_i"
+      "hex": "0x00000193",
+      "binary": "00000000000000000000000110010011",
+      "assembly": "addi x3, x0, 0"
     },
     {
-      "hex": "0x00211193",
-      "binary": "00000000001000010001000110010011",
-      "assembly": "slli x3, x2, 2"
+      "hex": "0x00100213",
+      "binary": "00000000000100000000001000010011",
+      "assembly": "addi x4, x0, 1"
     },
     {
-      "hex": "0x0001a203",
-      "binary": "00000000000000011010001000000011",
-      "assembly": "lw x4, 0(x3)"
+      "hex": "0x00000293",
+      "binary": "00000000000000000000001010010011",
+      "assembly": "addi x5, x0, 0"
     },
     {
-      "hex": "0x0041a283",
-      "binary": "00000000010000011010001010000011",
-      "assembly": "lw x5, 4(x3)"
+      "hex": "0x00312023",
+      "binary": "00000000001100010010000000100011",
+      "assembly": "sw x3, 0(x2)"
     },
     {
-      "hex": "0x02525863",
-      "binary": "00000010010100100101100001100011",
-      "assembly": "bge x4, x5, skip"
+      "hex": "0x00410113",
+      "binary": "00000000010000010000000100010011",
+      "assembly": "addi x2, x2, 4"
     },
     {
-      "hex": "0x00400333",
-      "binary": "00000000010000000000001100110011",
-      "assembly": "add x6, x0, x4"
+      "hex": "0x00412023",
+      "binary": "00000000010000010010000000100011",
+      "assembly": "sw x4, 0(x2)"
+    },
+    {
+      "hex": "0x00410113",
+      "binary": "00000000010000010000000100010011",
+      "assembly": "addi x2, x2, 4"
+    },
+    {
+      "hex": "0x00200313",
+      "binary": "00000000001000000000001100010011",
+      "assembly": "addi x6, x0, 2"
+    },
+    {
+      "hex": "0x04130063",
+      "binary": "00000100000100110000000001100011",
+      "assembly": "beq x6, x1, 0x00000048"
+    },
+    {
+      "hex": "0x004182b3",
+      "binary": "00000000010000011000001010110011",
+      "assembly": "add x5, x3, x4"
+    },
+    {
+      "hex": "0x00512023",
+      "binary": "00000000010100010010000000100011",
+      "assembly": "sw x5, 0(x2)"
+    },
+    {
+      "hex": "0x004001b3",
+      "binary": "00000000010000000000000110110011",
+      "assembly": "add x3, x0, x4"
     },
     {
       "hex": "0x00500233",
@@ -1478,40 +1625,20 @@
       "assembly": "add x4, x0, x5"
     },
     {
-      "hex": "0x006002b3",
-      "binary": "00000000011000000000001010110011",
-      "assembly": "add x5, x0, x6"
+      "hex": "0x00410113",
+      "binary": "00000000010000010000000100010011",
+      "assembly": "addi x2, x2, 4"
     },
     {
-      "hex": "0x0041a023",
-      "binary": "00000000010000011010000000100011",
-      "assembly": "sw x4, 0(x3)"
+      "hex": "0x00130313",
+      "binary": "00000000000100110000001100010011",
+      "assembly": "addi x6, x6, 1"
     },
     {
-      "hex": "0x0051a223",
-      "binary": "00000000010100011010001000100011",
-      "assembly": "sw x5, 4(x3)"
-    },
-    {
-      "hex": "0x00110113",
-      "binary": "00000000000100010000000100010011",
-      "assembly": "addi x2, x2, 1"
-    },
-    {
-      "hex": "0xfa9ff06f",
-      "binary": "11111010100111111111000001101111",
-      "assembly": "jal x0, loop_j"
-    },
-    {
-      "hex": "0xfff08093",
-      "binary": "11111111111100001000000010010011",
-      "assembly": "addi x1, x1, -1"
-    },
-    {
-      "hex": "0xf89ff06f",
-      "binary": "11111000100111111111000001101111",
-      "assembly": "jal x0, loop_i"
+      "hex": "0xfc9ff06f",
+      "binary": "11111100100111111111000001101111",
+      "assembly": "jal x0, 0x00000028"
     }
   ],
-  "savedAt": "2025-02-25T04:40:23.269Z"
+  "savedAt": "2025-02-25T06:29:41.225Z"
 }
