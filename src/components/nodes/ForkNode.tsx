@@ -2,16 +2,20 @@ import { Handle, Position, useNodes, useEdges } from 'reactflow';
 import { useCircuitStore } from '../../store/circuitStore';
 import React from 'react';
 
-interface ForkNodeData {
+interface NodeData {
+  [key: string]: number | string | undefined;
+}
+
+interface ForkNodeData extends NodeData {
   label: string;
-  value?: number;
+  value?: number | string;
 }
 
 export function ForkNode({ data, id, selected }: { data: ForkNodeData; id: string; selected?: boolean }) {
   const updateNodeData = useCircuitStore((state) => state.updateNodeData);
   const nodes = useNodes();
   const edges = useEdges();
-  const inputsRef = React.useRef<{ value: number }>({ value: 0 });
+  const inputsRef = React.useRef<{ value: number | string }>({ value: 0 });
 
   // 获取源节点的值
   const getSourceNodeValue = (edge: any) => {
@@ -20,16 +24,19 @@ export function ForkNode({ data, id, selected }: { data: ForkNodeData; id: strin
     if (sourceNode?.data && typeof sourceNode.data === 'object') {
       // 首先尝试根据输入端口ID查找对应字段
       const portId = edge.sourceHandle;
-      let sourceValue: number | undefined;
+      let sourceValue: number | string | undefined;
 
       if (portId && sourceNode.data[portId as keyof typeof sourceNode.data] !== undefined) {
         // 如果存在对应端口ID的字段，使用该字段值
-        const value = sourceNode.data[portId as keyof typeof sourceNode.data];
-        sourceValue = typeof value === 'number' ? value : undefined;
+        sourceValue = sourceNode.data[portId as keyof typeof sourceNode.data] as number | string;
       } else if ('value' in sourceNode.data) {
         // 否则使用默认的value字段
-        const value = (sourceNode.data as { value?: number }).value;
-        sourceValue = typeof value === 'number' ? value : undefined;
+        sourceValue = (sourceNode.data as { value?: number | string }).value;
+      }
+
+      // 确保值为string或number类型，如果无效则使用默认值0
+      if (typeof sourceValue !== 'string' && typeof sourceValue !== 'number') {
+        sourceValue = 0;
       }
 
       return sourceValue ?? null;

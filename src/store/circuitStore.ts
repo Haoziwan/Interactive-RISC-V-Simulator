@@ -82,37 +82,59 @@ export const useCircuitStore = create<CircuitState>()((set, get) => ({
       ),
     })),
   setSelectedNode: (node: Node | null) => set({ selectedNode: node }),
-  setSelectedEdge: (edge: Edge | null) => set({ selectedEdge: edge }),
+  setSelectedEdge: (edge: Edge | null) => set((state) => ({
+    selectedEdge: edge,
+    edges: state.edges.map(e => ({
+      ...e,
+      selected: e.id === edge?.id,
+      style: {
+        ...e.style,
+        stroke: e.id === edge?.id ? '#3182ce' : '#999',
+        strokeWidth: e.id === edge?.id ? 3 : 1,
+      }
+    }))
+  })),
   addNode: (node: Node) =>
     set((state) => ({
       nodes: [...state.nodes, node],
     })),
   addEdge: (connection: any) =>
-    set((state) => ({
-      edges: [
-        ...state.edges,
-        {
-          ...connection,
-          id: `e${connection.source}-${connection.target}`,
-          source: connection.source || '',
-          target: connection.target || '',
-          sourceHandle: connection.sourceHandle,
-          targetHandle: connection.targetHandle,
-          type: connection.type || 'smoothstep',
-          animated: connection.animated || false,
-          style: connection.style || {
-            stroke: '#999',
-            strokeWidth: 2
+    set((state) => {
+      // 计算相同source和target之间的边的数量，用于生成序号
+      const existingEdgesCount = state.edges.filter(
+        edge => edge.source === connection.source && edge.target === connection.target
+      ).length;
+
+      // 生成带序号的唯一ID
+      const edgeId = `e${connection.source}-${connection.target}-${existingEdgesCount + 1}`;
+
+      return {
+        edges: [
+          ...state.edges,
+          {
+            ...connection,
+            id: edgeId,
+            source: connection.source || '',
+            target: connection.target || '',
+            sourceHandle: connection.sourceHandle,
+            targetHandle: connection.targetHandle,
+            type: connection.type || 'smoothstep',
+            animated: connection.animated || false,
+            selected: false,
+            style: connection.style || {
+              stroke: '#999',
+              strokeWidth: 1
+            },
+            markerEnd: connection.markerEnd || {
+              type: 'arrow',
+              width: 20,
+              height: 20,
+              color: '#999'
+            }
           },
-          markerEnd: connection.markerEnd || {
-            type: 'arrow',
-            width: 20,
-            height: 20,
-            color: '#999'
-          }
-        },
-      ],
-    })),
+        ],
+      };
+    }),
   saveCircuit: (filename?: string) => {
     const state = get();
     const circuitState = {
@@ -253,9 +275,21 @@ export const useCircuitStore = create<CircuitState>()((set, get) => ({
       (edge) => edge.source !== nodeId && edge.target !== nodeId
     ),
   })),
-  removeEdge: (edgeId: string) => set((state) => ({
-    edges: state.edges.filter((edge) => edge.id !== edgeId),
-  })),
+  removeEdge: (edgeId: string) => set((state) => {
+    // 只删除指定ID的边
+    const newEdges = state.edges.filter((edge) => edge.id !== edgeId);
+    
+    // 如果删除的是当前选中的边，清除选中状态
+    const newState: Partial<CircuitState> = {
+      edges: newEdges
+    };
+    
+    if (state.selectedEdge?.id === edgeId) {
+      newState.selectedEdge = null;
+    }
+    
+    return newState;
+  }),
   updateEdgeType: (type: string) => set((state) => ({
     edges: state.edges.map((edge) => ({
       ...edge,

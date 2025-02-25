@@ -1,42 +1,110 @@
 {
-  "name": "circuit-2025-02-24T06-49-10-989Z",
+  "name": "circuit-2025-02-25T04-40-23-269Z",
   "nodes": [
     {
-      "id": "pc-1740369575927",
+      "id": "register-1740456812349",
+      "type": "register",
+      "position": {
+        "x": 337.15765666357595,
+        "y": 445.284781357758
+      },
+      "data": {
+        "label": "REGISTER",
+        "readReg1": 0,
+        "readReg2": 0,
+        "writeReg": 0,
+        "writeData": 0,
+        "regWrite": false,
+        "readData1": 0,
+        "readData2": 0
+      },
+      "width": 186,
+      "height": 167,
+      "selected": false,
+      "positionAbsolute": {
+        "x": 337.15765666357595,
+        "y": 445.284781357758
+      },
+      "dragging": false
+    },
+    {
+      "id": "imm-gen-1740456815567",
+      "type": "imm-gen",
+      "position": {
+        "x": 18.43567824660738,
+        "y": 698.0389289478572
+      },
+      "data": {
+        "label": "IMM-GEN",
+        "instruction": "00000000010000000000000010010011",
+        "immediate": 4,
+        "format": "I"
+      },
+      "width": 182,
+      "height": 95,
+      "selected": false,
+      "positionAbsolute": {
+        "x": 18.43567824660738,
+        "y": 698.0389289478572
+      },
+      "dragging": false
+    },
+    {
+      "id": "instr-distributer-1740456827777",
+      "type": "instr-distributer",
+      "position": {
+        "x": -86.64905975867669,
+        "y": 420.7820039300528
+      },
+      "data": {
+        "label": "INSTR-DISTRIBUTER",
+        "value": 0,
+        "opcode": 0,
+        "rd": 0,
+        "funct3": 0,
+        "rs1": 0,
+        "rs2": 0,
+        "funct7": 0
+      },
+      "width": 160,
+      "height": 171,
+      "selected": false,
+      "positionAbsolute": {
+        "x": -86.64905975867669,
+        "y": 420.7820039300528
+      },
+      "dragging": false
+    },
+    {
+      "id": "pc-1740456929935",
       "type": "pc",
       "position": {
-        "x": 100.40934817675657,
-        "y": 257.3067834291352
+        "x": -468.6232828989902,
+        "y": 241.6342936169072
       },
       "data": {
         "label": "PC",
         "value": 0,
-        "pc": 0,
-        "regWrite": false,
-        "memRead": false,
-        "memWrite": false,
-        "aluOp": "00",
         "reset": false
       },
       "width": 202,
       "height": 95,
       "selected": false,
       "positionAbsolute": {
-        "x": 100.40934817675657,
-        "y": 257.3067834291352
+        "x": -468.6232828989902,
+        "y": 241.6342936169072
       },
       "dragging": false
     },
     {
-      "id": "instruction-memory-1740369637052",
+      "id": "instruction-memory-1740456942935",
       "type": "instruction-memory",
       "position": {
-        "x": 17.567583560094135,
-        "y": 598.1333847519785
+        "x": -623.5078264189049,
+        "y": 485.4343185152052
       },
       "data": {
         "label": "INSTRUCTION-MEMORY",
-        "pc": 0,
         "instructions": [
           "0x00400093",
           "0x08008063",
@@ -56,328 +124,422 @@
           "0xfff08093",
           "0xf89ff06f"
         ],
-        "value": "0x00400093",
-        "regWrite": false,
-        "memRead": false,
-        "memWrite": false,
-        "aluOp": "00"
+        "pc": 0
       },
       "width": 304,
-      "height": 207,
+      "height": 187,
       "selected": false,
       "positionAbsolute": {
-        "x": 17.567583560094135,
-        "y": 598.1333847519785
+        "x": -623.5078264189049,
+        "y": 485.4343185152052
       },
       "dragging": false
     },
     {
-      "id": "instr-distributer-1740369647749",
-      "type": "instr-distributer",
-      "position": {
-        "x": 467.6847840923135,
-        "y": 374.0563727038308
-      },
-      "data": {
-        "label": "INSTR-DISTRIBUTER",
-        "value": "0x00400093",
-        "opcode": 19,
-        "rd": 1,
-        "funct3": 0,
-        "rs1": 0,
-        "rs2": 4,
-        "funct7": 0,
-        "pc": 0,
-        "regWrite": false,
-        "memRead": false,
-        "memWrite": false,
-        "aluOp": "00"
-      },
-      "width": 160,
-      "height": 171,
-      "selected": false,
-      "positionAbsolute": {
-        "x": 467.6847840923135,
-        "y": 374.0563727038308
-      },
-      "dragging": false
-    },
-    {
-      "id": "control-1740369675154",
+      "id": "control-1740456985517",
       "type": "control",
       "position": {
-        "x": 767.7789808465612,
-        "y": 118.0621929595456
+        "x": 328.4566595288329,
+        "y": -12.62038146344662
       },
       "data": {
         "label": "CONTROL",
-        "regWrite": 1,
+        "regWrite": 0,
         "memRead": 0,
         "memWrite": 0,
-        "aluOp": 3,
+        "aluOp": 0,
         "branch": 0,
         "jump": 0,
-        "aluSrc": 1,
+        "aluSrc": 0,
         "memToReg": 0,
-        "opcode": "0010011",
-        "value": 0,
-        "pc": 0
+        "opcode": "0000000"
       },
       "width": 160,
       "height": 401,
       "selected": false,
       "positionAbsolute": {
-        "x": 767.7789808465612,
-        "y": 118.0621929595456
+        "x": 328.4566595288329,
+        "y": -12.62038146344662
       },
       "dragging": false
     },
     {
-      "id": "imm-gen-1740369747042",
-      "type": "imm-gen",
+      "id": "fork-1740456999685",
+      "type": "fork",
       "position": {
-        "x": 485.08996090307846,
-        "y": 883.8593700807584
+        "x": 139.89968917534105,
+        "y": 373.71669166805236
       },
       "data": {
-        "label": "IMM-GEN",
-        "instruction": "00000000010000000000000010010011",
-        "immediate": 4,
-        "format": "I",
-        "value": 0,
-        "pc": 0,
-        "regWrite": false,
-        "memRead": false,
-        "memWrite": false,
-        "aluOp": "00"
+        "label": "FORK",
+        "value": 0
       },
-      "width": 182,
-      "height": 95,
+      "width": 32,
+      "height": 32,
       "selected": false,
       "positionAbsolute": {
-        "x": 485.08996090307846,
-        "y": 883.8593700807584
+        "x": 139.89968917534105,
+        "y": 373.71669166805236
       },
       "dragging": false
     },
     {
-      "id": "register-1740369761632",
-      "type": "register",
-      "position": {
-        "x": 719.3416473376624,
-        "y": 607.9473894317082
-      },
-      "data": {
-        "label": "REGISTER",
-        "value": 0,
-        "pc": 0,
-        "regWrite": true,
-        "memRead": false,
-        "memWrite": false,
-        "aluOp": "00",
-        "readReg1": 0,
-        "readReg2": 4,
-        "writeReg": 1,
-        "writeData": 4,
-        "readData1": 0,
-        "readData2": 0
-      },
-      "width": 186,
-      "height": 167,
-      "selected": false,
-      "positionAbsolute": {
-        "x": 719.3416473376624,
-        "y": 607.9473894317082
-      },
-      "dragging": false
-    },
-    {
-      "id": "alu-1740369910295",
-      "type": "alu",
-      "position": {
-        "x": 1158.2649639176566,
-        "y": 503.47159753998324
-      },
-      "data": {
-        "label": "ALU",
-        "a": 0,
-        "b": 4,
-        "operation": 2,
-        "result": 4,
-        "zero": 0,
-        "value": 0,
-        "pc": 0,
-        "regWrite": false,
-        "memRead": false,
-        "memWrite": false,
-        "aluOp": "00"
-      },
-      "width": 118,
-      "height": 167,
-      "selected": false,
-      "positionAbsolute": {
-        "x": 1158.2649639176566,
-        "y": 503.47159753998324
-      },
-      "dragging": false
-    },
-    {
-      "id": "alu-control-1740370493221",
-      "type": "alu-control",
-      "position": {
-        "x": 980.2238618313556,
-        "y": 942.1807656910714
-      },
-      "data": {
-        "label": "ALU-CONTROL",
-        "aluOp": 3,
-        "funct3": 0,
-        "funct7": 0,
-        "aluControl": 2,
-        "value": 0,
-        "pc": 0,
-        "regWrite": false,
-        "memRead": false,
-        "memWrite": false
-      },
-      "width": 182,
-      "height": 143,
-      "selected": false,
-      "positionAbsolute": {
-        "x": 980.2238618313556,
-        "y": 942.1807656910714
-      },
-      "dragging": false
-    },
-    {
-      "id": "mux-1740370581520",
-      "type": "mux",
-      "position": {
-        "x": 975.0780059782398,
-        "y": 738.3065104296967
-      },
-      "data": {
-        "label": "MUX",
-        "value": 4,
-        "pc": 0,
-        "regWrite": false,
-        "memRead": false,
-        "memWrite": false,
-        "aluOp": "00",
-        "select": "1"
-      },
-      "width": 116,
-      "height": 143,
-      "selected": false,
-      "positionAbsolute": {
-        "x": 975.0780059782398,
-        "y": 738.3065104296967
-      },
-      "dragging": false
-    },
-    {
-      "id": "memory-1740370710951",
+      "id": "memory-1740457029513",
       "type": "memory",
       "position": {
-        "x": 1391.4839164705302,
-        "y": 583.1673378614746
+        "x": 1072.0130565963225,
+        "y": 679.588469316856
       },
       "data": {
         "label": "MEMORY",
-        "address": 4,
+        "address": 0,
         "memRead": 0,
         "readData": 0,
         "writeData": 0,
-        "memWrite": 0,
-        "value": 0,
-        "pc": 0,
-        "regWrite": false,
-        "aluOp": "00"
+        "memWrite": 0
       },
       "width": 206,
       "height": 191,
       "selected": false,
+      "dragging": false,
       "positionAbsolute": {
-        "x": 1391.4839164705302,
-        "y": 583.1673378614746
-      },
-      "dragging": false
+        "x": 1072.0130565963225,
+        "y": 679.588469316856
+      }
     },
     {
-      "id": "mux-1740370805319",
+      "id": "mux-1740457185388",
       "type": "mux",
       "position": {
-        "x": 1681.0942993990625,
-        "y": 275.43388124241216
+        "x": 601.9505008939988,
+        "y": 670.8285069080308
       },
       "data": {
         "label": "MUX",
-        "value": 4,
-        "pc": 0,
-        "regWrite": false,
-        "memRead": false,
-        "memWrite": false,
-        "aluOp": "00",
+        "value": 0,
         "select": "0"
       },
       "width": 116,
       "height": 143,
       "selected": false,
       "positionAbsolute": {
-        "x": 1681.0942993990625,
-        "y": 275.43388124241216
+        "x": 601.9505008939988,
+        "y": 670.8285069080308
       },
       "dragging": false
     },
     {
-      "id": "add-1740370988063",
+      "id": "alu-control-1740457192016",
+      "type": "alu-control",
+      "position": {
+        "x": 407.3656853543008,
+        "y": 791.7275251130484
+      },
+      "data": {
+        "label": "ALU-CONTROL",
+        "aluOp": 0,
+        "funct3": 0,
+        "funct7": 0,
+        "aluControl": 2
+      },
+      "width": 182,
+      "height": 143,
+      "selected": false,
+      "positionAbsolute": {
+        "x": 407.3656853543008,
+        "y": 791.7275251130484
+      },
+      "dragging": false
+    },
+    {
+      "id": "fork-1740457222103",
+      "type": "fork",
+      "position": {
+        "x": 127.48344778598755,
+        "y": 587.7797922775127
+      },
+      "data": {
+        "label": "FORK",
+        "value": 0
+      },
+      "width": 32,
+      "height": 32,
+      "selected": false,
+      "positionAbsolute": {
+        "x": 127.48344778598755,
+        "y": 587.7797922775127
+      },
+      "dragging": false
+    },
+    {
+      "id": "mux-1740457249603",
+      "type": "mux",
+      "position": {
+        "x": 1293.5196141600811,
+        "y": 350.3275233378463
+      },
+      "data": {
+        "label": "MUX",
+        "value": 0,
+        "select": "0"
+      },
+      "width": 116,
+      "height": 143,
+      "selected": false,
+      "positionAbsolute": {
+        "x": 1293.5196141600811,
+        "y": 350.3275233378463
+      },
+      "dragging": false
+    },
+    {
+      "id": "alu-1740457259779",
+      "type": "alu",
+      "position": {
+        "x": 710.3431464569924,
+        "y": 373.45889582165
+      },
+      "data": {
+        "label": "ALU",
+        "a": 0,
+        "b": 0,
+        "operation": 2,
+        "result": 0,
+        "zero": 1
+      },
+      "width": 118,
+      "height": 167,
+      "selected": false,
+      "positionAbsolute": {
+        "x": 710.3431464569924,
+        "y": 373.45889582165
+      },
+      "dragging": false
+    },
+    {
+      "id": "fork-1740457285226",
+      "type": "fork",
+      "position": {
+        "x": 568.9838653423502,
+        "y": 582.1838622905925
+      },
+      "data": {
+        "label": "FORK",
+        "value": 0
+      },
+      "width": 32,
+      "height": 32,
+      "selected": false,
+      "positionAbsolute": {
+        "x": 568.9838653423502,
+        "y": 582.1838622905925
+      },
+      "dragging": false
+    },
+    {
+      "id": "fork-1740457413673",
+      "type": "fork",
+      "position": {
+        "x": 1015.56004559711,
+        "y": 385.9508284928251
+      },
+      "data": {
+        "label": "FORK",
+        "value": 0
+      },
+      "width": 32,
+      "height": 32,
+      "selected": false,
+      "positionAbsolute": {
+        "x": 1015.56004559711,
+        "y": 385.9508284928251
+      },
+      "dragging": false
+    },
+    {
+      "id": "fork-1740457481300",
+      "type": "fork",
+      "position": {
+        "x": -130.50985875082193,
+        "y": 287.64404523498376
+      },
+      "data": {
+        "label": "FORK",
+        "value": 0
+      },
+      "width": 32,
+      "height": 32,
+      "selected": false,
+      "positionAbsolute": {
+        "x": -130.50985875082193,
+        "y": 287.64404523498376
+      },
+      "dragging": false
+    },
+    {
+      "id": "constant-1740457494777",
+      "type": "constant",
+      "position": {
+        "x": -531.6734844346666,
+        "y": -4.605890925953119
+      },
+      "data": {
+        "label": "CONSTANT",
+        "value": 4
+      },
+      "width": 96,
+      "height": 39,
+      "selected": false,
+      "positionAbsolute": {
+        "x": -531.6734844346666,
+        "y": -4.605890925953119
+      },
+      "dragging": false
+    },
+    {
+      "id": "add-1740457499578",
       "type": "add",
       "position": {
-        "x": 309,
-        "y": 1.1999969482421875
+        "x": -129.9993757823354,
+        "y": -242.45147607158395
       },
       "data": {
         "label": "ADD",
-        "value": 4,
-        "pc": 0,
-        "regWrite": false,
-        "memRead": false,
-        "memWrite": false,
-        "aluOp": "00"
+        "value": 4
       },
       "width": 66,
       "height": 75,
       "selected": false,
       "positionAbsolute": {
-        "x": 309,
-        "y": 1.1999969482421875
+        "x": -129.9993757823354,
+        "y": -242.45147607158395
       },
       "dragging": false
     },
     {
-      "id": "constant-1740370991312",
-      "type": "constant",
+      "id": "fork-1740457531304",
+      "type": "fork",
       "position": {
-        "x": 110,
-        "y": 77.19999694824219
+        "x": -92.95514823364468,
+        "y": 68.40826014871666
       },
       "data": {
-        "label": "CONSTANT",
-        "value": 4,
-        "pc": 0,
-        "regWrite": false,
-        "memRead": false,
-        "memWrite": false,
-        "aluOp": "00"
+        "label": "FORK",
+        "value": 0
       },
-      "width": 96,
-      "height": 39,
+      "width": 32,
+      "height": 32,
       "selected": false,
-      "dragging": false,
       "positionAbsolute": {
-        "x": 110,
-        "y": 77.19999694824219
-      }
+        "x": -92.95514823364468,
+        "y": 68.40826014871666
+      },
+      "dragging": false
+    },
+    {
+      "id": "jump-control-1740457549626",
+      "type": "jump-control",
+      "position": {
+        "x": 294,
+        "y": -244.8000030517578
+      },
+      "data": {
+        "label": "JUMP-CONTROL",
+        "funct3": 0,
+        "opcode": 0,
+        "zero": 1,
+        "jump": 0,
+        "jalr": 0
+      },
+      "width": 178,
+      "height": 167,
+      "selected": false,
+      "positionAbsolute": {
+        "x": 294,
+        "y": -244.8000030517578
+      },
+      "dragging": false
+    },
+    {
+      "id": "add-1740457601453",
+      "type": "add",
+      "position": {
+        "x": 793.5275281648062,
+        "y": -81.82279006607097
+      },
+      "data": {
+        "label": "ADD",
+        "value": 4
+      },
+      "width": 66,
+      "height": 75,
+      "selected": false,
+      "positionAbsolute": {
+        "x": 793.5275281648062,
+        "y": -81.82279006607097
+      },
+      "dragging": false
+    },
+    {
+      "id": "fork-1740457651094",
+      "type": "fork",
+      "position": {
+        "x": 346.96440450636896,
+        "y": 717.345705101098
+      },
+      "data": {
+        "label": "FORK",
+        "value": 4
+      },
+      "width": 32,
+      "height": 32,
+      "selected": false,
+      "positionAbsolute": {
+        "x": 346.96440450636896,
+        "y": 717.345705101098
+      },
+      "dragging": false
+    },
+    {
+      "id": "mux-1740457672408",
+      "type": "mux",
+      "position": {
+        "x": 942,
+        "y": -316.8000030517578
+      },
+      "data": {
+        "label": "MUX",
+        "value": 4,
+        "select": "0"
+      },
+      "width": 116,
+      "height": 143,
+      "selected": false,
+      "positionAbsolute": {
+        "x": 942,
+        "y": -316.8000030517578
+      },
+      "dragging": false
+    },
+    {
+      "id": "fork-1740458306711",
+      "type": "fork",
+      "position": {
+        "x": -224.74938581079866,
+        "y": 720.5286440103118
+      },
+      "data": {
+        "label": "FORK",
+        "value": 0
+      },
+      "width": 32,
+      "height": 32,
+      "selected": false,
+      "positionAbsolute": {
+        "x": -224.74938581079866,
+        "y": 720.5286440103118
+      },
+      "dragging": false
     }
   ],
   "edges": [
@@ -386,7 +548,7 @@
       "animated": false,
       "style": {
         "stroke": "#999",
-        "strokeWidth": 2
+        "strokeWidth": 1
       },
       "markerEnd": {
         "type": "arrow",
@@ -394,104 +556,19 @@
         "height": 20,
         "color": "#999"
       },
-      "source": "pc-1740369575927",
-      "sourceHandle": "address",
-      "target": "instruction-memory-1740369637052",
-      "targetHandle": "pc",
-      "id": "epc-1740369575927-instruction-memory-1740369637052",
-      "selected": false,
-      "connectionMode": "strict"
-    },
-    {
-      "type": "smoothstep",
-      "animated": false,
-      "style": {
-        "stroke": "#999",
-        "strokeWidth": 2
-      },
-      "markerEnd": {
-        "type": "arrow",
-        "width": 20,
-        "height": 20,
-        "color": "#999"
-      },
-      "source": "instr-distributer-1740369647749",
-      "sourceHandle": "opcode",
-      "target": "control-1740369675154",
-      "targetHandle": "opcode",
-      "id": "einstr-distributer-1740369647749-control-1740369675154",
-      "selected": false,
-      "connectionMode": "strict"
-    },
-    {
-      "type": "smoothstep",
-      "animated": false,
-      "style": {
-        "stroke": "#999",
-        "strokeWidth": 2
-      },
-      "markerEnd": {
-        "type": "arrow",
-        "width": 20,
-        "height": 20,
-        "color": "#999"
-      },
-      "source": "instruction-memory-1740369637052",
-      "sourceHandle": "instruction",
-      "target": "instr-distributer-1740369647749",
-      "targetHandle": null,
-      "id": "einstruction-memory-1740369637052-instr-distributer-1740369647749",
-      "selected": false,
-      "connectionMode": "strict"
-    },
-    {
-      "type": "smoothstep",
-      "animated": false,
-      "style": {
-        "stroke": "#999",
-        "strokeWidth": 2
-      },
-      "markerEnd": {
-        "type": "arrow",
-        "width": 20,
-        "height": 20,
-        "color": "#999"
-      },
-      "source": "instruction-memory-1740369637052",
-      "sourceHandle": "instruction",
-      "target": "imm-gen-1740369747042",
-      "targetHandle": "instruction",
-      "id": "einstruction-memory-1740369637052-imm-gen-1740369747042",
-      "selected": false,
-      "connectionMode": "strict"
-    },
-    {
-      "type": "smoothstep",
-      "animated": false,
-      "style": {
-        "stroke": "#999",
-        "strokeWidth": 2
-      },
-      "markerEnd": {
-        "type": "arrow",
-        "width": 20,
-        "height": 20,
-        "color": "#999"
-      },
-      "source": "instr-distributer-1740369647749",
+      "source": "instr-distributer-1740456827777",
       "sourceHandle": "rs1",
-      "target": "register-1740369761632",
+      "target": "register-1740456812349",
       "targetHandle": "readReg1",
-      "id": "einstr-distributer-1740369647749-register-1740369761632",
-      "selected": false,
-      "connectionMode": "strict"
+      "id": "einstr-distributer-1740456827777-register-1740456812349-1",
+      "selected": false
     },
     {
       "type": "smoothstep",
       "animated": false,
       "style": {
         "stroke": "#999",
-        "strokeWidth": 2
+        "strokeWidth": 1
       },
       "markerEnd": {
         "type": "arrow",
@@ -499,33 +576,11 @@
         "height": 20,
         "color": "#999"
       },
-      "source": "instr-distributer-1740369647749",
+      "source": "instr-distributer-1740456827777",
       "sourceHandle": "rs2",
-      "target": "register-1740369761632",
+      "target": "register-1740456812349",
       "targetHandle": "readReg2",
-      "id": "einstr-distributer-1740369647749-register-1740369761632",
-      "selected": false,
-      "connectionMode": "strict"
-    },
-    {
-      "type": "smoothstep",
-      "animated": false,
-      "style": {
-        "stroke": "#999",
-        "strokeWidth": 2
-      },
-      "markerEnd": {
-        "type": "arrow",
-        "width": 20,
-        "height": 20,
-        "color": "#999"
-      },
-      "source": "instr-distributer-1740369647749",
-      "sourceHandle": "rd",
-      "target": "register-1740369761632",
-      "targetHandle": "writeReg",
-      "id": "einstr-distributer-1740369647749-register-1740369761632",
-      "connectionMode": "strict",
+      "id": "einstr-distributer-1740456827777-register-1740456812349-2",
       "selected": false
     },
     {
@@ -533,7 +588,7 @@
       "animated": false,
       "style": {
         "stroke": "#999",
-        "strokeWidth": 2
+        "strokeWidth": 1
       },
       "markerEnd": {
         "type": "arrow",
@@ -541,11 +596,11 @@
         "height": 20,
         "color": "#999"
       },
-      "source": "control-1740369675154",
-      "sourceHandle": "regWrite",
-      "target": "register-1740369761632",
-      "targetHandle": "regWrite",
-      "id": "econtrol-1740369675154-register-1740369761632",
+      "source": "instr-distributer-1740456827777",
+      "sourceHandle": "opcode",
+      "target": "fork-1740456999685",
+      "targetHandle": "input",
+      "id": "einstr-distributer-1740456827777-fork-1740456999685-1",
       "selected": false
     },
     {
@@ -553,7 +608,7 @@
       "animated": false,
       "style": {
         "stroke": "#999",
-        "strokeWidth": 2
+        "strokeWidth": 1
       },
       "markerEnd": {
         "type": "arrow",
@@ -561,11 +616,11 @@
         "height": 20,
         "color": "#999"
       },
-      "source": "control-1740369675154",
-      "sourceHandle": "aluOp",
-      "target": "alu-control-1740370493221",
-      "targetHandle": "aluOp",
-      "id": "econtrol-1740369675154-alu-control-1740370493221",
+      "source": "fork-1740456999685",
+      "sourceHandle": "output-2",
+      "target": "control-1740456985517",
+      "targetHandle": "opcode",
+      "id": "efork-1740456999685-control-1740456985517-1",
       "selected": false
     },
     {
@@ -573,7 +628,7 @@
       "animated": false,
       "style": {
         "stroke": "#999",
-        "strokeWidth": 2
+        "strokeWidth": 1
       },
       "markerEnd": {
         "type": "arrow",
@@ -581,231 +636,11 @@
         "height": 20,
         "color": "#999"
       },
-      "source": "instr-distributer-1740369647749",
-      "sourceHandle": "funct3",
-      "target": "alu-control-1740370493221",
-      "targetHandle": "funct3",
-      "id": "einstr-distributer-1740369647749-alu-control-1740370493221",
-      "selected": false
-    },
-    {
-      "type": "smoothstep",
-      "animated": false,
-      "style": {
-        "stroke": "#999",
-        "strokeWidth": 2
-      },
-      "markerEnd": {
-        "type": "arrow",
-        "width": 20,
-        "height": 20,
-        "color": "#999"
-      },
-      "source": "instr-distributer-1740369647749",
-      "sourceHandle": "funct7",
-      "target": "alu-control-1740370493221",
-      "targetHandle": "funct7",
-      "id": "einstr-distributer-1740369647749-alu-control-1740370493221",
-      "selected": false
-    },
-    {
-      "type": "smoothstep",
-      "animated": false,
-      "style": {
-        "stroke": "#999",
-        "strokeWidth": 2
-      },
-      "markerEnd": {
-        "type": "arrow",
-        "width": 20,
-        "height": 20,
-        "color": "#999"
-      },
-      "source": "alu-control-1740370493221",
-      "sourceHandle": "aluControl",
-      "target": "alu-1740369910295",
-      "targetHandle": "control",
-      "id": "ealu-control-1740370493221-alu-1740369910295",
-      "selected": false
-    },
-    {
-      "type": "smoothstep",
-      "animated": false,
-      "style": {
-        "stroke": "#999",
-        "strokeWidth": 2
-      },
-      "markerEnd": {
-        "type": "arrow",
-        "width": 20,
-        "height": 20,
-        "color": "#999"
-      },
-      "source": "register-1740369761632",
-      "sourceHandle": "readData1",
-      "target": "alu-1740369910295",
-      "targetHandle": "a",
-      "id": "eregister-1740369761632-alu-1740369910295",
-      "selected": false
-    },
-    {
-      "type": "smoothstep",
-      "animated": false,
-      "style": {
-        "stroke": "#999",
-        "strokeWidth": 2
-      },
-      "markerEnd": {
-        "type": "arrow",
-        "width": 20,
-        "height": 20,
-        "color": "#999"
-      },
-      "source": "register-1740369761632",
-      "sourceHandle": "readData2",
-      "target": "mux-1740370581520",
-      "targetHandle": "in0",
-      "id": "eregister-1740369761632-mux-1740370581520",
-      "selected": false
-    },
-    {
-      "type": "smoothstep",
-      "animated": false,
-      "style": {
-        "stroke": "#999",
-        "strokeWidth": 2
-      },
-      "markerEnd": {
-        "type": "arrow",
-        "width": 20,
-        "height": 20,
-        "color": "#999"
-      },
-      "source": "control-1740369675154",
-      "sourceHandle": "aluSrc",
-      "target": "mux-1740370581520",
-      "targetHandle": "select",
-      "id": "econtrol-1740369675154-mux-1740370581520",
-      "selected": false
-    },
-    {
-      "type": "smoothstep",
-      "animated": false,
-      "style": {
-        "stroke": "#999",
-        "strokeWidth": 2
-      },
-      "markerEnd": {
-        "type": "arrow",
-        "width": 20,
-        "height": 20,
-        "color": "#999"
-      },
-      "source": "imm-gen-1740369747042",
-      "sourceHandle": "immediate",
-      "target": "mux-1740370581520",
-      "targetHandle": "in1",
-      "id": "eimm-gen-1740369747042-mux-1740370581520",
-      "selected": false
-    },
-    {
-      "type": "smoothstep",
-      "animated": false,
-      "style": {
-        "stroke": "#999",
-        "strokeWidth": 2
-      },
-      "markerEnd": {
-        "type": "arrow",
-        "width": 20,
-        "height": 20,
-        "color": "#999"
-      },
-      "source": "mux-1740370581520",
-      "sourceHandle": "out",
-      "target": "alu-1740369910295",
-      "targetHandle": "b",
-      "id": "emux-1740370581520-alu-1740369910295",
-      "selected": false
-    },
-    {
-      "type": "smoothstep",
-      "animated": false,
-      "style": {
-        "stroke": "#999",
-        "strokeWidth": 2
-      },
-      "markerEnd": {
-        "type": "arrow",
-        "width": 20,
-        "height": 20,
-        "color": "#999"
-      },
-      "source": "alu-1740369910295",
-      "sourceHandle": "result",
-      "target": "memory-1740370710951",
-      "targetHandle": "address",
-      "id": "ealu-1740369910295-memory-1740370710951",
-      "selected": false
-    },
-    {
-      "type": "smoothstep",
-      "animated": false,
-      "style": {
-        "stroke": "#999",
-        "strokeWidth": 2
-      },
-      "markerEnd": {
-        "type": "arrow",
-        "width": 20,
-        "height": 20,
-        "color": "#999"
-      },
-      "source": "register-1740369761632",
-      "sourceHandle": "readData2",
-      "target": "memory-1740370710951",
-      "targetHandle": "writeData",
-      "id": "eregister-1740369761632-memory-1740370710951",
-      "selected": false
-    },
-    {
-      "type": "smoothstep",
-      "animated": false,
-      "style": {
-        "stroke": "#999",
-        "strokeWidth": 2
-      },
-      "markerEnd": {
-        "type": "arrow",
-        "width": 20,
-        "height": 20,
-        "color": "#999"
-      },
-      "source": "control-1740369675154",
-      "sourceHandle": "memRead",
-      "target": "memory-1740370710951",
-      "targetHandle": "memRead",
-      "id": "econtrol-1740369675154-memory-1740370710951",
-      "selected": false
-    },
-    {
-      "type": "smoothstep",
-      "animated": false,
-      "style": {
-        "stroke": "#999",
-        "strokeWidth": 2
-      },
-      "markerEnd": {
-        "type": "arrow",
-        "width": 20,
-        "height": 20,
-        "color": "#999"
-      },
-      "source": "control-1740369675154",
+      "source": "control-1740456985517",
       "sourceHandle": "memWrite",
-      "target": "memory-1740370710951",
+      "target": "memory-1740457029513",
       "targetHandle": "memWrite",
-      "id": "econtrol-1740369675154-memory-1740370710951",
+      "id": "econtrol-1740456985517-memory-1740457029513-1",
       "selected": false
     },
     {
@@ -813,7 +648,7 @@
       "animated": false,
       "style": {
         "stroke": "#999",
-        "strokeWidth": 2
+        "strokeWidth": 1
       },
       "markerEnd": {
         "type": "arrow",
@@ -821,11 +656,11 @@
         "height": 20,
         "color": "#999"
       },
-      "source": "control-1740369675154",
-      "sourceHandle": "memToReg",
-      "target": "mux-1740370805319",
-      "targetHandle": "select",
-      "id": "econtrol-1740369675154-mux-1740370805319",
+      "source": "control-1740456985517",
+      "sourceHandle": "memRead",
+      "target": "memory-1740457029513",
+      "targetHandle": "memRead",
+      "id": "econtrol-1740456985517-memory-1740457029513-2",
       "selected": false
     },
     {
@@ -833,7 +668,7 @@
       "animated": false,
       "style": {
         "stroke": "#999",
-        "strokeWidth": 2
+        "strokeWidth": 1
       },
       "markerEnd": {
         "type": "arrow",
@@ -841,11 +676,131 @@
         "height": 20,
         "color": "#999"
       },
-      "source": "alu-1740369910295",
-      "sourceHandle": "result",
-      "target": "mux-1740370805319",
+      "source": "instr-distributer-1740456827777",
+      "sourceHandle": "funct7",
+      "target": "alu-control-1740457192016",
+      "targetHandle": "funct7",
+      "id": "einstr-distributer-1740456827777-alu-control-1740457192016-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "instr-distributer-1740456827777",
+      "sourceHandle": "funct3",
+      "target": "fork-1740457222103",
+      "targetHandle": "input",
+      "id": "einstr-distributer-1740456827777-fork-1740457222103-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "fork-1740457222103",
+      "sourceHandle": "output-2",
+      "target": "alu-control-1740457192016",
+      "targetHandle": "funct3",
+      "id": "efork-1740457222103-alu-control-1740457192016-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "control-1740456985517",
+      "sourceHandle": "aluOp",
+      "target": "alu-control-1740457192016",
+      "targetHandle": "aluOp",
+      "id": "econtrol-1740456985517-alu-control-1740457192016-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "register-1740456812349",
+      "sourceHandle": "readData1",
+      "target": "alu-1740457259779",
+      "targetHandle": "a",
+      "id": "eregister-1740456812349-alu-1740457259779-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "register-1740456812349",
+      "sourceHandle": "readData2",
+      "target": "fork-1740457285226",
+      "targetHandle": "input",
+      "id": "eregister-1740456812349-fork-1740457285226-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "fork-1740457285226",
+      "sourceHandle": "output-2",
+      "target": "mux-1740457185388",
       "targetHandle": "in0",
-      "id": "ealu-1740369910295-mux-1740370805319",
+      "id": "efork-1740457285226-mux-1740457185388-1",
       "selected": false
     },
     {
@@ -853,7 +808,7 @@
       "animated": false,
       "style": {
         "stroke": "#999",
-        "strokeWidth": 2
+        "strokeWidth": 1
       },
       "markerEnd": {
         "type": "arrow",
@@ -861,31 +816,11 @@
         "height": 20,
         "color": "#999"
       },
-      "source": "memory-1740370710951",
-      "sourceHandle": "readData",
-      "target": "mux-1740370805319",
-      "targetHandle": "in1",
-      "id": "ememory-1740370710951-mux-1740370805319",
-      "selected": false
-    },
-    {
-      "type": "smoothstep",
-      "animated": false,
-      "style": {
-        "stroke": "#999",
-        "strokeWidth": 2
-      },
-      "markerEnd": {
-        "type": "arrow",
-        "width": 20,
-        "height": 20,
-        "color": "#999"
-      },
-      "source": "mux-1740370805319",
-      "sourceHandle": "out",
-      "target": "register-1740369761632",
+      "source": "fork-1740457285226",
+      "sourceHandle": "output-1",
+      "target": "memory-1740457029513",
       "targetHandle": "writeData",
-      "id": "emux-1740370805319-register-1740369761632",
+      "id": "efork-1740457285226-memory-1740457029513-1",
       "selected": false
     },
     {
@@ -893,7 +828,7 @@
       "animated": false,
       "style": {
         "stroke": "#999",
-        "strokeWidth": 2
+        "strokeWidth": 1
       },
       "markerEnd": {
         "type": "arrow",
@@ -901,11 +836,11 @@
         "height": 20,
         "color": "#999"
       },
-      "source": "constant-1740370991312",
-      "sourceHandle": "value",
-      "target": "add-1740370988063",
-      "targetHandle": "input-b",
-      "id": "econstant-1740370991312-add-1740370988063",
+      "source": "alu-control-1740457192016",
+      "sourceHandle": "aluControl",
+      "target": "alu-1740457259779",
+      "targetHandle": "control",
+      "id": "ealu-control-1740457192016-alu-1740457259779-1",
       "selected": false
     },
     {
@@ -913,7 +848,7 @@
       "animated": false,
       "style": {
         "stroke": "#999",
-        "strokeWidth": 2
+        "strokeWidth": 1
       },
       "markerEnd": {
         "type": "arrow",
@@ -921,11 +856,551 @@
         "height": 20,
         "color": "#999"
       },
-      "source": "pc-1740369575927",
+      "source": "control-1740456985517",
+      "sourceHandle": "aluSrc",
+      "target": "mux-1740457185388",
+      "targetHandle": "select",
+      "id": "econtrol-1740456985517-mux-1740457185388-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "alu-1740457259779",
+      "sourceHandle": "result",
+      "target": "fork-1740457413673",
+      "targetHandle": "input",
+      "id": "ealu-1740457259779-fork-1740457413673-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "fork-1740457413673",
+      "sourceHandle": "output-2",
+      "target": "memory-1740457029513",
+      "targetHandle": "address",
+      "id": "efork-1740457413673-memory-1740457029513-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "fork-1740457413673",
+      "sourceHandle": "output-1",
+      "target": "mux-1740457249603",
+      "targetHandle": "in0",
+      "id": "efork-1740457413673-mux-1740457249603-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "memory-1740457029513",
+      "sourceHandle": "readData",
+      "target": "mux-1740457249603",
+      "targetHandle": "in1",
+      "id": "ememory-1740457029513-mux-1740457249603-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "mux-1740457249603",
+      "sourceHandle": "out",
+      "target": "register-1740456812349",
+      "targetHandle": "writeData",
+      "id": "emux-1740457249603-register-1740456812349-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "mux-1740457185388",
+      "sourceHandle": "out",
+      "target": "alu-1740457259779",
+      "targetHandle": "b",
+      "id": "emux-1740457185388-alu-1740457259779-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "pc-1740456929935",
       "sourceHandle": "address",
-      "target": "add-1740370988063",
+      "target": "fork-1740457481300",
+      "targetHandle": "input",
+      "id": "epc-1740456929935-fork-1740457481300-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "fork-1740457481300",
+      "sourceHandle": "output-2",
+      "target": "instruction-memory-1740456942935",
+      "targetHandle": "pc",
+      "id": "efork-1740457481300-instruction-memory-1740456942935-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "constant-1740457494777",
+      "sourceHandle": "value",
+      "target": "add-1740457499578",
       "targetHandle": "input-a",
-      "id": "epc-1740369575927-add-1740370988063",
+      "id": "econstant-1740457494777-add-1740457499578-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "fork-1740457481300",
+      "sourceHandle": "output-1",
+      "target": "fork-1740457531304",
+      "targetHandle": "input",
+      "id": "efork-1740457481300-fork-1740457531304-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "fork-1740457531304",
+      "sourceHandle": "output-1",
+      "target": "add-1740457499578",
+      "targetHandle": "input-b",
+      "id": "efork-1740457531304-add-1740457499578-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "fork-1740456999685",
+      "sourceHandle": "output-1",
+      "target": "jump-control-1740457549626",
+      "targetHandle": "opcode",
+      "id": "efork-1740456999685-jump-control-1740457549626-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "fork-1740457222103",
+      "sourceHandle": "output-1",
+      "target": "jump-control-1740457549626",
+      "targetHandle": "funct3",
+      "id": "efork-1740457222103-jump-control-1740457549626-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "alu-1740457259779",
+      "sourceHandle": "zero",
+      "target": "jump-control-1740457549626",
+      "targetHandle": "zero",
+      "id": "ealu-1740457259779-jump-control-1740457549626-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "fork-1740457531304",
+      "sourceHandle": "output-2",
+      "target": "add-1740457601453",
+      "targetHandle": "input-a",
+      "id": "efork-1740457531304-add-1740457601453-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "imm-gen-1740456815567",
+      "sourceHandle": "immediate",
+      "target": "fork-1740457651094",
+      "targetHandle": "input",
+      "id": "eimm-gen-1740456815567-fork-1740457651094-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "fork-1740457651094",
+      "sourceHandle": "output-2",
+      "target": "mux-1740457185388",
+      "targetHandle": "in1",
+      "id": "efork-1740457651094-mux-1740457185388-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "fork-1740457651094",
+      "sourceHandle": "output-1",
+      "target": "add-1740457601453",
+      "targetHandle": "input-b",
+      "id": "efork-1740457651094-add-1740457601453-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "add-1740457601453",
+      "sourceHandle": "output",
+      "target": "mux-1740457672408",
+      "targetHandle": "in1",
+      "id": "eadd-1740457601453-mux-1740457672408-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "jump-control-1740457549626",
+      "sourceHandle": "jump",
+      "target": "mux-1740457672408",
+      "targetHandle": "select",
+      "id": "ejump-control-1740457549626-mux-1740457672408-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "mux-1740457672408",
+      "sourceHandle": "out",
+      "target": "pc-1740456929935",
+      "targetHandle": "next",
+      "id": "emux-1740457672408-pc-1740456929935-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "add-1740457499578",
+      "sourceHandle": "output",
+      "target": "mux-1740457672408",
+      "targetHandle": "in0",
+      "id": "eadd-1740457499578-mux-1740457672408-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "control-1740456985517",
+      "sourceHandle": "regWrite",
+      "target": "register-1740456812349",
+      "targetHandle": "regWrite",
+      "id": "econtrol-1740456985517-register-1740456812349-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "control-1740456985517",
+      "sourceHandle": "memToReg",
+      "target": "mux-1740457249603",
+      "targetHandle": "select",
+      "id": "econtrol-1740456985517-mux-1740457249603-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "instr-distributer-1740456827777",
+      "sourceHandle": "rd",
+      "target": "register-1740456812349",
+      "targetHandle": "writeReg",
+      "id": "einstr-distributer-1740456827777-register-1740456812349-3",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "instruction-memory-1740456942935",
+      "sourceHandle": "instruction",
+      "target": "fork-1740458306711",
+      "targetHandle": "input",
+      "id": "einstruction-memory-1740456942935-fork-1740458306711-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "fork-1740458306711",
+      "sourceHandle": "output-1",
+      "target": "instr-distributer-1740456827777",
+      "targetHandle": null,
+      "id": "efork-1740458306711-instr-distributer-1740456827777-1",
       "selected": false
     },
     {
@@ -941,16 +1416,16 @@
         "height": 20,
         "color": "#999"
       },
-      "source": "add-1740370988063",
-      "sourceHandle": "output",
-      "target": "pc-1740369575927",
-      "targetHandle": "next",
-      "id": "eadd-1740370988063-pc-1740369575927",
+      "source": "fork-1740458306711",
+      "sourceHandle": "output-2",
+      "target": "imm-gen-1740456815567",
+      "targetHandle": "instruction",
+      "id": "efork-1740458306711-imm-gen-1740456815567-1",
       "selected": false
     }
   ],
   "isSimulating": false,
-  "editorCode": "# 冒泡排序程序\n# 对内存中的5个数字进行排序\n# 初始数据在内存0-16中\n\n# 外层循环 i 从 4 到 1\naddi x1, x0, 4     # i = 4\n\nloop_i:\nbeq x1, x0, end    # if i == 0, 结束排序\naddi x2, x0, 0     # j = 0\n\n# 内层循环 j 从 0 到 i-1\nloop_j:\nbeq x2, x1, next_i # if j == i, 进入下一轮外层循环\n\n# 加载相邻元素\nslli x3, x2, 2     # x3 = j * 4\nlw x4, 0(x3)       # 加载 arr[j]\nlw x5, 4(x3)       # 加载 arr[j+1]\n\n# 比较并交换\nbge x4, x5, skip   # if arr[j] >= arr[j+1], 跳过交换\nadd x6, x0, x4     # temp = arr[j]\nadd x4, x0, x5     # arr[j] = arr[j+1]\nadd x5, x0, x6     # arr[j+1] = temp\nsw x4, 0(x3)       # 保存 arr[j]\nsw x5, 4(x3)       # 保存 arr[j+1]\n\nskip:\naddi x2, x2, 1     # j++\njal x0, loop_j     # 继续内层循环\n\nnext_i:\naddi x1, x1, -1    # i--\njal x0, loop_i     # 继续外层循环\n\nend:",
+  "editorCode": "# 冒泡排序程序\r\n# 对内存中的5个数字进行排序\r\n# 初始数据在内存0-16中\r\n\r\n# 外层循环 i 从 4 到 1\r\naddi x1, x0, 4     # i = 4\r\n\r\nloop_i:\r\nbeq x1, x0, end    # if i == 0, 结束排序\r\naddi x2, x0, 0     # j = 0\r\n\r\n# 内层循环 j 从 0 到 i-1\r\nloop_j:\r\nbeq x2, x1, next_i # if j == i, 进入下一轮外层循环\r\n\r\n# 加载相邻元素\r\nslli x3, x2, 2     # x3 = j * 4\r\nlw x4, 0(x3)       # 加载 arr[j]\r\nlw x5, 4(x3)       # 加载 arr[j+1]\r\n\r\n# 比较并交换\r\nbge x4, x5, skip   # if arr[j] >= arr[j+1], 跳过交换\r\nadd x6, x0, x4     # temp = arr[j]\r\nadd x4, x0, x5     # arr[j] = arr[j+1]\r\nadd x5, x0, x6     # arr[j+1] = temp\r\nsw x4, 0(x3)       # 保存 arr[j]\r\nsw x5, 4(x3)       # 保存 arr[j+1]\r\n\r\nskip:\r\naddi x2, x2, 1     # j++\r\njal x0, loop_j     # 继续内层循环\r\n\r\nnext_i:\r\naddi x1, x1, -1    # i--\r\njal x0, loop_i     # 继续外层循环\r\n\r\nend:",
   "assembledInstructions": [
     {
       "hex": "0x00400093",
@@ -1038,5 +1513,5 @@
       "assembly": "jal x0, loop_i"
     }
   ],
-  "savedAt": "2025-02-24T06:49:10.989Z"
+  "savedAt": "2025-02-25T04:40:23.269Z"
 }
