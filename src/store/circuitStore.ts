@@ -257,16 +257,14 @@ export const useCircuitStore = create<CircuitState>()((set, get) => ({
     set((state) => {
       // 检查当前指令是否执行完毕
       const currentPc = state.pcValue;
-      const nextPc = currentPc + 4;
       const maxPc = (state.assembledInstructions.length * 4) - 4;
       
       // 如果已经执行到最后一条指令，自动暂停模拟
-      if (currentPc >= maxPc) {
+      if (currentPc > maxPc||currentPc < 0) {
         if (state.simulationTimer !== null) {
           window.clearInterval(state.simulationTimer);
         }
         return {
-          stepCount: state.stepCount + 1,
           isSimulating: false,
           simulationTimer: null
         };
