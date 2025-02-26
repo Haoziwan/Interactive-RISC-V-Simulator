@@ -13,7 +13,7 @@ export function RegPanel() {
       case 'dec':
         return value === 0 ? '0' : value.toString();
       case 'hex':
-        return `0x${value.toString(16).padStart(8, '0')}`;
+        return `0x${(value >>> 0).toString(16).padStart(8, '0')}`;
       default:
         return value.toString();
     }
