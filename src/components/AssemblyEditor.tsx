@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useCircuitStore } from '../store/circuitStore';
-import { Assembler } from '../assembler/assembler';
+import { Assembler, expandPseudoInstruction } from '../assembler/assembler';
 import { InstructionFormatPanel } from './InstructionFormatPanel';
 import Editor from '@monaco-editor/react';
 
@@ -45,10 +45,45 @@ export function AssemblyEditor() {
         .filter(Boolean);
       
       // 将汇编指令与机器码对应
-      const instructionsWithAssembly = instructions.map((inst, i) => ({
-        ...inst,
-        assembly: assemblyLines[i] || ''
-      }));
+      const instructionsWithAssembly = instructions.map((inst, i) => {
+        // 获取原始源代码行和展开后的指令
+        const sourceLines = editorCode.split('\n');
+        let sourceLine = '';
+        let expandedInst = '';
+        let currentLine = 0;
+        let expandedInsts: string[] = [];
+        let foundSource = false;
+        
+        for (let j = 0; j < sourceLines.length && !foundSource; j++) {
+          const line = sourceLines[j].split('#')[0].trim();
+          if (line && !line.endsWith(':')) {
+            // 获取当前行展开后的指令数量
+            expandedInsts = line ? expandPseudoInstruction(line) : [];
+            const instructionIndex = Math.floor(i / expandedInsts.length);
+            
+            if (currentLine === instructionIndex) {
+              sourceLine = sourceLines[j].trim();
+              expandedInst = expandedInsts[i % expandedInsts.length] || '';
+              
+              // 替换分支指令中的标签为地址
+              if (expandedInst) {
+                Object.entries(assemblerInstance.getLabelMap()).forEach(([label, address]) => {
+                  const labelRegex = new RegExp(`\\b${label}\\b`, 'g');
+                  expandedInst = expandedInst.replace(labelRegex, `0x${address.toString(16).padStart(8, '0')}`);
+                });
+              }
+              foundSource = true;
+            }
+            currentLine++;
+          }
+        }
+        
+        return {
+          ...inst,
+          assembly: expandedInst || '',
+          source: sourceLine || ''
+        };
+      });
       
       setAssembledInstructions(instructionsWithAssembly);
 
@@ -208,24 +243,45 @@ export function AssemblyEditor() {
                   <tr>
                     <th className="text-left py-2 px-4 font-medium">地址</th>
                     <th className="text-left py-2 px-4 font-medium">机器码</th>
-                    <th className="text-left py-2 px-4 font-medium">汇编指令</th>
+                    <th className="text-left py-2 px-4 font-medium">Basic</th>
+                    <th className="text-left py-2 px-4 font-medium">Source</th>
                   </tr>
                 </thead>
                 <tbody>
                   {assembledInstructions.length > 0 ? (
-                    assembledInstructions.map((inst, i) => (
-                      <tr 
-                        key={i} 
-                        className={`border-t border-gray-100 ${i === useCircuitStore.getState().currentInstructionIndex ? 'bg-yellow-100' : ''}`}
-                      >
-                        <td className="py-2 px-4 font-mono text-gray-600">{`0x${(i * 4).toString(16).padStart(8, '0')}`}</td>
-                        <td className="py-2 px-4 font-mono text-blue-600">{inst.hex}</td>
-                        <td className="py-2 px-4 font-mono">{inst.assembly}</td>
-                      </tr>
-                    ))
+                    assembledInstructions.map((inst, i) => {
+                      // 获取原始源代码行
+                      const sourceLines = editorCode.split('\n');
+                      let sourceLine = '';
+                      let currentLine = 0;
+                      for (let j = 0; j < sourceLines.length; j++) {
+                        const line = sourceLines[j].split('#')[0].trim();
+                        if (line && !line.endsWith(':')) {
+                          // 获取当前行展开后的指令数量
+                          const expandedInsts = line ? expandPseudoInstruction(line) : [];
+                          if (currentLine === Math.floor(i / expandedInsts.length)) {
+                            sourceLine = sourceLines[j].trim();
+                            break;
+                          }
+                          currentLine++;
+                        }
+                      }
+                      
+                      return (
+                        <tr 
+                          key={i} 
+                          className={`border-t border-gray-100 ${i === useCircuitStore.getState().currentInstructionIndex ? 'bg-yellow-100' : ''}`}
+                        >
+                          <td className="py-2 px-4 font-mono text-gray-600">{`0x${(i * 4).toString(16).padStart(8, '0')}`}</td>
+                          <td className="py-2 px-4 font-mono text-blue-600">{inst.hex}</td>
+                          <td className="py-2 px-4 font-mono">{inst.assembly}</td>
+                          <td className="py-2 px-4 font-mono text-gray-600">{inst.source}</td>
+                        </tr>
+                      );
+                    })
                   ) : (
                     <tr>
-                      <td colSpan={3} className="py-8 text-center text-gray-500">
+                      <td colSpan={4} className="py-8 text-center text-gray-500">
                         暂无汇编结果，请编写代码并点击"汇编代码"
                       </td>
                     </tr>

@@ -10,7 +10,7 @@ interface CircuitState {
   circuit: Circuit;
   isSimulating: boolean;
   stepCount: number;
-  assembledInstructions: Array<{hex: string; binary: string; assembly?: string}>;
+  assembledInstructions: Array<{hex: string; binary: string; assembly?: string; source?: string}>;
   editorCode: string;
   simulationInterval: number;
   simulationTimer: number | null;
@@ -37,7 +37,7 @@ interface CircuitState {
   updateEdgeType: (type: string) => void;
   updateEdgeAnimated: (animated: boolean) => void;
   updateConnectionMode: (mode: ConnectionMode) => void;
-  setAssembledInstructions: (instructions: Array<{hex: string; binary: string; assembly?: string}>) => void;
+  setAssembledInstructions: (instructions: Array<{hex: string; binary: string; assembly?: string; source?: string}>) => void;
   setEditorCode: (code: string) => void;
 }
 
