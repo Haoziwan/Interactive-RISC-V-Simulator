@@ -391,28 +391,6 @@ export function CircuitCanvas() {
             )}
             <div className="flex space-x-2">
               <button
-                onClick={toggleSimulation}
-                className="p-2 rounded hover:bg-gray-100 transition-colors"
-                title={isSimulating ? 'Pause Simulation' : 'Start Simulation'}
-              >
-                {isSimulating ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5" />}
-              </button>
-              <button
-                onClick={stepSimulation}
-                className="p-2 rounded hover:bg-gray-100 transition-colors"
-                title="Step Forward"
-                disabled={isSimulating}
-              >
-                <StepForward className="w-5 h-5" />
-              </button>
-              <button
-                onClick={resetSimulation}
-                className="p-2 rounded hover:bg-gray-100 transition-colors"
-                title="Reset Simulation"
-              >
-                <RotateCcw className="w-5 h-5" />
-              </button>
-              <button
                 onClick={validateCircuit}
                 className="p-2 rounded hover:bg-gray-100 transition-colors"
                 title="验证数据通路"

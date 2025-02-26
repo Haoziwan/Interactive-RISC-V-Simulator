@@ -23,7 +23,7 @@ export function ImmGenNode({ data, id, selected }: {
   const generateImmediate = (instruction: string, format: string): number => {
     if (!instruction || instruction.length !== 32) return 0;
     
-    const bits = instruction.split('').map(Number);
+    // 注意：instruction[0]是最高位(31)，instruction[31]是最低位(0)
     let imm = 0;
 
     switch (format) {
@@ -32,40 +32,63 @@ export function ImmGenNode({ data, id, selected }: {
         return 0;
       case 'I':
         // I-type: imm[11:0] = inst[31:20]
-        imm = parseInt(instruction.slice(0, 12), 2);
-        // 符号扩展
-        if (imm & 0x800) imm |= ~0xFFF;
+        // 取指令的前12位（31:20）
+        imm = parseInt(instruction.substring(0, 12), 2);
+        // 符号扩展：检查最高位（符号位）是否为1
+        if ((imm & 0x800) !== 0) {
+          // 如果是负数，进行符号扩展（32位有符号整数）
+          imm = (imm | 0xFFFFF000);
+        }
         break;
 
       case 'S':
         // S-type: imm[11:5] = inst[31:25], imm[4:0] = inst[11:7]
-        imm = (parseInt(instruction.slice(0, 7), 2) << 5) |
-              parseInt(instruction.slice(20, 25), 2);
-        if (imm & 0x800) imm |= ~0xFFF;
+        // 合成立即数：高7位来自指令的31:25，低5位来自指令的11:7
+        const immHigh = parseInt(instruction.substring(0, 7), 2);
+        const immLow = parseInt(instruction.substring(20, 25), 2);
+        imm = (immHigh << 5) | immLow;
+        // 符号扩展
+        if ((imm & 0x800) !== 0) {
+          imm = (imm | 0xFFFFF000);
+        }
         break;
 
       case 'B':
         // B-type: imm[12|10:5] = inst[31|30:25], imm[4:1|11] = inst[11:8|7]
-        imm = (parseInt(instruction.slice(0, 7), 2) << 5) |
-              (parseInt(instruction.slice(20, 24), 2) << 1) |
-              (parseInt(instruction.slice(24, 25), 2) << 11);
-        if (imm & 0x1000) imm |= ~0x1FFF;
-        imm <<= 1; // 左移一位，因为分支指令的立即数是2字节对齐的
+        // 注意B类型立即数各位在指令中的分布比较特殊
+        const bit12 = parseInt(instruction.substring(0, 1), 2);
+        const bits10to5 = parseInt(instruction.substring(1, 7), 2);
+        const bits4to1 = parseInt(instruction.substring(20, 24), 2);
+        const bit11 = parseInt(instruction.substring(24, 25), 2);
+        
+        // 合成立即数（注意B类型立即数的最低位总是0，因为是2字节对齐的）
+        imm = (bit12 << 12) | (bit11 << 11) | (bits10to5 << 5) | (bits4to1 << 1);
+        
+        // 符号扩展
+        if ((imm & 0x1000) !== 0) {
+          imm = (imm | 0xFFFFE000);
+        }
         break;
 
       case 'U':
         // U-type: imm[31:12] = inst[31:12]
-        imm = parseInt(instruction.slice(0, 20), 2) << 12;
+        imm = parseInt(instruction.substring(0, 20), 2) << 12;
         break;
 
       case 'J':
         // J-type: imm[20|10:1|11|19:12] = inst[31|30:21|20|19:12]
-        imm = (parseInt(instruction.slice(0, 1), 2) << 20) |
-              (parseInt(instruction.slice(1, 11), 2) << 1) |
-              (parseInt(instruction.slice(11, 12), 2) << 11) |
-              (parseInt(instruction.slice(12, 20), 2) << 12);
-        if (imm & 0x100000) imm |= ~0x1FFFFF;
-        imm <<= 1; // 左移一位，因为跳转指令的立即数是2字节对齐的
+        const bit20 = parseInt(instruction.substring(0, 1), 2);
+        const bits10to1 = parseInt(instruction.substring(1, 11), 2);
+        const bit11J = parseInt(instruction.substring(11, 12), 2);
+        const bits19to12 = parseInt(instruction.substring(12, 20), 2);
+        
+        // 合成立即数（也是2字节对齐的）
+        imm = (bit20 << 20) | (bits19to12 << 12) | (bit11J << 11) | (bits10to1 << 1);
+        
+        // 符号扩展
+        if ((imm & 0x100000) !== 0) {
+          imm = (imm | 0xFFE00000);
+        }
         break;
     }
 
@@ -104,31 +127,35 @@ export function ImmGenNode({ data, id, selected }: {
       const sourceNode = nodes.find(node => node.id === instructionEdge.source);
       if (sourceNode?.data && typeof sourceNode.data === 'object' && 'value' in sourceNode.data && typeof sourceNode.data.value === 'string') {
         const instruction = sourceNode.data.value;
-        // 将十六进制指令转换为二进制字符串
-        const binaryInstruction = parseInt(instruction, 16)
-          .toString(2)
-          .padStart(32, '0');
-        
-        // 从指令中提取opcode
-        const opcode = binaryInstruction.slice(-7);
-        // 根据opcode识别指令类型
-        const format = getInstructionFormat(opcode);
-        
-        // 生成立即数
-        const immediate = generateImmediate(binaryInstruction, format);
-        
-        // 更新节点数据
-        if (immediate !== data.immediate || format !== data.format) {
-          updateNodeData(id, {
-            ...data,
-            instruction: binaryInstruction,
-            immediate,
-            format
-          });
+        try {
+          // 将十六进制指令转换为二进制字符串
+          const binaryInstruction = parseInt(instruction, 16)
+            .toString(2)
+            .padStart(32, '0');
+          
+          // 从指令中提取opcode（最后7位）
+          const opcode = binaryInstruction.slice(-7);
+          // 根据opcode识别指令类型
+          const format = getInstructionFormat(opcode);
+          
+          // 生成立即数
+          const immediate = generateImmediate(binaryInstruction, format);
+          
+          // 更新节点数据
+          if (immediate !== data.immediate || format !== data.format || binaryInstruction !== data.instruction) {
+            updateNodeData(id, {
+              ...data,
+              instruction: binaryInstruction,
+              immediate,
+              format
+            });
+          }
+        } catch (error) {
+          console.error("指令解析错误:", error);
         }
       }
     }
-  }, [edges, nodes, id, data.format]);
+  }, [edges, nodes, id, data]);
 
   return (
     <div className={`relative px-4 py-2 shadow-md rounded-md bg-white border-2 ${
@@ -149,7 +176,7 @@ export function ImmGenNode({ data, id, selected }: {
         <div className="ml-2">
           <div className="text-lg font-bold">Immediate Gen</div>
           <div className="text-gray-500">Format: {data.format || 'R'}</div>
-          <div className="text-gray-500">Immediate: {data.immediate || 0}</div>
+          <div className="text-gray-500">Immediate: {data.immediate !== undefined ? data.immediate : 0}</div>
         </div>
       </div>
 

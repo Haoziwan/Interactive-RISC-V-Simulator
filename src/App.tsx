@@ -6,7 +6,8 @@ import { ConfigPanel } from './components/ConfigPanel';
 import { AssemblyEditor } from './components/AssemblyEditor';
 import { RegPanel } from './components/RegPanel';
 import { MemoryView } from './components/MemoryView';
-import { ChevronDown, ChevronRight, Code, Database, Cpu } from 'lucide-react';
+import { ChevronDown, ChevronRight, Code, Database, Cpu, Play, Pause, RotateCcw, StepForward } from 'lucide-react';
+import { useCircuitStore } from './store/circuitStore';
 
 interface CollapsibleSectionProps {
   title: string;
@@ -90,12 +91,40 @@ function App() {
     )
   };
 
+  const isSimulating = useCircuitStore((state) => state.isSimulating);
+
   return (
     <div className="flex flex-col h-screen bg-gray-100">
       <header className="bg-white border-b border-gray-200 flex-shrink-0">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between h-16">
-            <h1 className="text-2xl font-bold">RISC-V Simulator</h1>
+            <div className="flex items-center">
+              <h1 className="text-2xl font-bold">RISC-V Simulator</h1>
+            </div>
+            <div className="flex items-center space-x-2">
+              <button
+                onClick={() => useCircuitStore.getState().toggleSimulation()}
+                className="p-2 rounded hover:bg-gray-100 transition-colors"
+                title={isSimulating ? '暂停模拟' : '开始模拟'}
+              >
+                {isSimulating ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5" />}
+              </button>
+              <button
+                onClick={() => useCircuitStore.getState().stepSimulation()}
+                className="p-2 rounded hover:bg-gray-100 transition-colors"
+                title="单步执行"
+                disabled={isSimulating}
+              >
+                <StepForward className="w-5 h-5" />
+              </button>
+              <button
+                onClick={() => useCircuitStore.getState().resetSimulation()}
+                className="p-2 rounded hover:bg-gray-100 transition-colors"
+                title="重置模拟"
+              >
+                <RotateCcw className="w-5 h-5" />
+              </button>
+            </div>
             <div className="flex space-x-4">
               <TabButton
                 isActive={activeTab === 'code'}

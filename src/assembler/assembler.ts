@@ -411,15 +411,21 @@ export const generateMachineCode = (inst: Instruction): string => {
       break;
 
     case 'B':
-      const bImm = signExtend(inst.imm!, 13) << 1; // 恢复字节偏移
-      machineCode |= ((bImm & 0x1000) >> 12) << 31; // imm[12]
-      machineCode |= ((bImm & 0x800) >> 11) << 7;   // imm[11]
-      machineCode |= ((bImm & 0x7E0) >> 5) << 25;   // imm[10:5]
-      machineCode |= ((bImm & 0x1E) >> 1) << 8;     // imm[4:1]
-      machineCode |= (parseInt(inst.funct3!, 2) & 0x7) << 12;
-      machineCode |= (inst.rs1! & 0x1F) << 15;
-      machineCode |= (inst.rs2! & 0x1F) << 20;
+      const bImm = signExtend(inst.imm!, 13); // 不需要额外左移 1
+    
+      machineCode |= ((bImm & 0x1000) >> 12) << 31; // imm[12] -> bit 31
+      machineCode |= ((bImm & 0x7E0) >> 5) << 25;   // imm[10:5] -> bits 30:25
+      machineCode |= ((bImm & 0x1E) >> 1) << 8;     // imm[4:1] -> bits 11:8
+      machineCode |= ((bImm & 0x800) >> 11) << 7;   // imm[11] -> bit 7
+    
+      machineCode |= (parseInt(inst.funct3!, 2) & 0x7) << 12; // funct3 -> bits 14:12
+      machineCode |= (inst.rs1! & 0x1F) << 15; // rs1 -> bits 19:15
+      machineCode |= (inst.rs2! & 0x1F) << 20; // rs2 -> bits 24:20
+    
+      // machineCode |= 0b1100011; // B 类型指令的 opcode
+    
       break;
+      
 
     case 'U':
       machineCode |= (inst.rd! & 0x1F) << 7;
