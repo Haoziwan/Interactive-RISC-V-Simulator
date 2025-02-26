@@ -1,5 +1,5 @@
 {
-  "name": "circuit-2025-02-25T06-29-41-225Z",
+  "name": "circuit-2025-02-26T12-08-32-797Z",
   "nodes": [
     {
       "id": "register-1740456812349",
@@ -11,14 +11,14 @@
       "data": {
         "label": "REGISTER",
         "readReg1": 0,
-        "readReg2": 0,
-        "writeReg": 0,
-        "writeData": 0,
-        "regWrite": false,
+        "readReg2": 10,
+        "writeReg": 1,
+        "writeData": 10,
+        "regWrite": true,
         "readData1": 0,
         "readData2": 0
       },
-      "width": 186,
+      "width": 196,
       "height": 167,
       "selected": false,
       "positionAbsolute": {
@@ -36,9 +36,9 @@
       },
       "data": {
         "label": "IMM-GEN",
-        "instruction": "11111100100111111111000001101111",
-        "immediate": -112,
-        "format": "J"
+        "instruction": "00000000101000000000000010010011",
+        "immediate": 10,
+        "format": "I"
       },
       "width": 182,
       "height": 95,
@@ -58,12 +58,12 @@
       },
       "data": {
         "label": "INSTR-DISTRIBUTER",
-        "value": 0,
-        "opcode": 0,
-        "rd": 0,
+        "value": "0x00a00093",
+        "opcode": 19,
+        "rd": 1,
         "funct3": 0,
         "rs1": 0,
-        "rs2": 0,
+        "rs2": 10,
         "funct7": 0
       },
       "width": 160,
@@ -84,10 +84,10 @@
       },
       "data": {
         "label": "PC",
-        "value": -44,
+        "value": 0,
         "reset": false
       },
-      "width": 198,
+      "width": 202,
       "height": 95,
       "selected": false,
       "positionAbsolute": {
@@ -116,19 +116,20 @@
           "0x00412023",
           "0x00410113",
           "0x00200313",
-          "0x04130063",
+          "0x02130063",
           "0x004182b3",
           "0x00512023",
           "0x004001b3",
           "0x00500233",
           "0x00410113",
           "0x00130313",
-          "0xfc9ff06f"
+          "0xfe5ff06f"
         ],
-        "pc": -11
+        "pc": 0,
+        "value": "0x00a00093"
       },
-      "width": 297,
-      "height": 355,
+      "width": 304,
+      "height": 187,
       "selected": false,
       "positionAbsolute": {
         "x": -565.2175230188503,
@@ -140,27 +141,27 @@
       "id": "control-1740456985517",
       "type": "control",
       "position": {
-        "x": 353.4453443735348,
-        "y": -25.356957690569516
+        "x": 353.4453443735349,
+        "y": 27.013702730954208
       },
       "data": {
         "label": "CONTROL",
-        "regWrite": 0,
+        "regWrite": 1,
         "memRead": 0,
         "memWrite": 0,
-        "aluOp": 0,
+        "aluOp": 3,
         "branch": 0,
         "jump": 0,
-        "aluSrc": 0,
+        "aluSrc": 1,
         "memToReg": 0,
-        "opcode": "0000000"
+        "opcode": "0010011"
       },
       "width": 160,
-      "height": 401,
+      "height": 267,
       "selected": false,
       "positionAbsolute": {
-        "x": 353.4453443735348,
-        "y": -25.356957690569516
+        "x": 353.4453443735349,
+        "y": 27.013702730954208
       },
       "dragging": false
     },
@@ -173,7 +174,7 @@
       },
       "data": {
         "label": "FORK",
-        "value": 0
+        "value": 19
       },
       "width": 32,
       "height": 32,
@@ -193,13 +194,13 @@
       },
       "data": {
         "label": "MEMORY",
-        "address": 0,
+        "address": 10,
         "memRead": 0,
         "readData": 0,
         "writeData": 0,
         "memWrite": 0
       },
-      "width": 206,
+      "width": 205,
       "height": 191,
       "selected": false,
       "dragging": false,
@@ -217,10 +218,10 @@
       },
       "data": {
         "label": "MUX",
-        "value": 0,
-        "select": "0"
+        "value": 10,
+        "select": "1"
       },
-      "width": 142,
+      "width": 125,
       "height": 143,
       "selected": false,
       "positionAbsolute": {
@@ -238,7 +239,7 @@
       },
       "data": {
         "label": "ALU-CONTROL",
-        "aluOp": 0,
+        "aluOp": 3,
         "funct3": 0,
         "funct7": 0,
         "aluControl": 2
@@ -281,10 +282,10 @@
       },
       "data": {
         "label": "MUX",
-        "value": 0,
+        "value": 10,
         "select": "0"
       },
-      "width": 116,
+      "width": 125,
       "height": 143,
       "selected": false,
       "positionAbsolute": {
@@ -303,10 +304,10 @@
       "data": {
         "label": "ALU",
         "a": 0,
-        "b": 0,
+        "b": 10,
         "operation": 2,
-        "result": 0,
-        "zero": 1
+        "result": 10,
+        "zero": 0
       },
       "width": 118,
       "height": 167,
@@ -346,7 +347,7 @@
       },
       "data": {
         "label": "FORK",
-        "value": 0
+        "value": 10
       },
       "width": 32,
       "height": 32,
@@ -366,7 +367,7 @@
       },
       "data": {
         "label": "FORK",
-        "value": -44
+        "value": 0
       },
       "width": 32,
       "height": 32,
@@ -406,9 +407,9 @@
       },
       "data": {
         "label": "ADD",
-        "value": -40
+        "value": 4
       },
-      "width": 69,
+      "width": 66,
       "height": 75,
       "selected": false,
       "positionAbsolute": {
@@ -426,7 +427,7 @@
       },
       "data": {
         "label": "FORK",
-        "value": -44
+        "value": 0
       },
       "width": 32,
       "height": 32,
@@ -447,8 +448,8 @@
       "data": {
         "label": "JUMP-CONTROL",
         "funct3": 0,
-        "opcode": 0,
-        "zero": 1,
+        "opcode": 19,
+        "zero": 0,
         "jump": 0,
         "jalr": 0
       },
@@ -470,9 +471,9 @@
       },
       "data": {
         "label": "ADD",
-        "value": -156
+        "value": 10
       },
-      "width": 81,
+      "width": 66,
       "height": 75,
       "selected": false,
       "positionAbsolute": {
@@ -490,7 +491,7 @@
       },
       "data": {
         "label": "FORK",
-        "value": -112
+        "value": 10
       },
       "width": 32,
       "height": 32,
@@ -510,10 +511,10 @@
       },
       "data": {
         "label": "MUX",
-        "value": -40,
+        "value": 4,
         "select": "0"
       },
-      "width": 142,
+      "width": 125,
       "height": 143,
       "selected": false,
       "positionAbsolute": {
@@ -531,7 +532,7 @@
       },
       "data": {
         "label": "FORK",
-        "value": 0
+        "value": "0x00a00093"
       },
       "width": 32,
       "height": 32,
@@ -551,10 +552,10 @@
       },
       "data": {
         "label": "MUX",
-        "value": -44,
+        "value": 0,
         "select": "0"
       },
-      "width": 132,
+      "width": 116,
       "height": 143,
       "selected": false,
       "positionAbsolute": {
@@ -1552,93 +1553,111 @@
     {
       "hex": "0x00a00093",
       "binary": "00000000101000000000000010010011",
-      "assembly": "addi x1, x0, 10"
+      "assembly": "addi x1, x0, 10",
+      "source": "addi x1, x0, 10    # n = 10 (计算前10个数)"
     },
     {
       "hex": "0x00000113",
       "binary": "00000000000000000000000100010011",
-      "assembly": "addi x2, x0, 0"
+      "assembly": "addi x2, x0, 0",
+      "source": "addi x2, x0, 0     # 地址索引"
     },
     {
       "hex": "0x00000193",
       "binary": "00000000000000000000000110010011",
-      "assembly": "addi x3, x0, 0"
+      "assembly": "addi x3, x0, 0",
+      "source": "addi x3, x0, 0     # f(n-2)"
     },
     {
       "hex": "0x00100213",
       "binary": "00000000000100000000001000010011",
-      "assembly": "addi x4, x0, 1"
+      "assembly": "addi x4, x0, 1",
+      "source": "addi x4, x0, 1     # f(n-1)"
     },
     {
       "hex": "0x00000293",
       "binary": "00000000000000000000001010010011",
-      "assembly": "addi x5, x0, 0"
+      "assembly": "addi x5, x0, 0",
+      "source": "addi x5, x0, 0     # 当前计算的f(n)"
     },
     {
       "hex": "0x00312023",
       "binary": "00000000001100010010000000100011",
-      "assembly": "sw x3, 0(x2)"
+      "assembly": "sw x3, 0(x2)",
+      "source": "sw x3, 0(x2)       # 存储f(0)"
     },
     {
       "hex": "0x00410113",
       "binary": "00000000010000010000000100010011",
-      "assembly": "addi x2, x2, 4"
+      "assembly": "addi x2, x2, 4",
+      "source": "addi x2, x2, 4     # 地址+4"
     },
     {
       "hex": "0x00412023",
       "binary": "00000000010000010010000000100011",
-      "assembly": "sw x4, 0(x2)"
+      "assembly": "sw x4, 0(x2)",
+      "source": "sw x4, 0(x2)       # 存储f(1)"
     },
     {
       "hex": "0x00410113",
       "binary": "00000000010000010000000100010011",
-      "assembly": "addi x2, x2, 4"
+      "assembly": "addi x2, x2, 4",
+      "source": "addi x2, x2, 4     # 地址+4"
     },
     {
       "hex": "0x00200313",
       "binary": "00000000001000000000001100010011",
-      "assembly": "addi x6, x0, 2"
+      "assembly": "addi x6, x0, 2",
+      "source": "addi x6, x0, 2     # i = 2"
     },
     {
-      "hex": "0x04130063",
-      "binary": "00000100000100110000000001100011",
-      "assembly": "beq x6, x1, 0x00000048"
+      "hex": "0x02130063",
+      "binary": "00000010000100110000000001100011",
+      "assembly": "beq x6, x1, 0x00000048",
+      "source": "beq x6, x1, end    # if i == n, 结束"
     },
     {
       "hex": "0x004182b3",
       "binary": "00000000010000011000001010110011",
-      "assembly": "add x5, x3, x4"
+      "assembly": "add x5, x3, x4",
+      "source": "add x5, x3, x4     # f(n) = f(n-2) + f(n-1)"
     },
     {
       "hex": "0x00512023",
       "binary": "00000000010100010010000000100011",
-      "assembly": "sw x5, 0(x2)"
+      "assembly": "sw x5, 0(x2)",
+      "source": "sw x5, 0(x2)       # 存储f(n)"
     },
     {
       "hex": "0x004001b3",
       "binary": "00000000010000000000000110110011",
-      "assembly": "add x3, x0, x4"
+      "assembly": "add x3, x0, x4",
+      "source": "add x3, x0, x4     # f(n-2) = f(n-1)"
     },
     {
       "hex": "0x00500233",
       "binary": "00000000010100000000001000110011",
-      "assembly": "add x4, x0, x5"
+      "assembly": "add x4, x0, x5",
+      "source": "add x4, x0, x5     # f(n-1) = f(n)"
     },
     {
       "hex": "0x00410113",
       "binary": "00000000010000010000000100010011",
-      "assembly": "addi x2, x2, 4"
+      "assembly": "addi x2, x2, 4",
+      "source": "addi x2, x2, 4     # 地址+4"
     },
     {
       "hex": "0x00130313",
       "binary": "00000000000100110000001100010011",
-      "assembly": "addi x6, x6, 1"
+      "assembly": "addi x6, x6, 1",
+      "source": "addi x6, x6, 1     # i++"
     },
     {
-      "hex": "0xfc9ff06f",
-      "binary": "11111100100111111111000001101111",
-      "assembly": "jal x0, 0x00000028"
+      "hex": "0xfe5ff06f",
+      "binary": "11111110010111111111000001101111",
+      "assembly": "jal x0, 0x00000028",
+      "source": "jal x0, loop       # 继续循环"
     }
   ],
-  "savedAt": "2025-02-25T06:29:41.225Z"
+  "savedAt": "2025-02-26T12:08:32.797Z"
 }

@@ -212,6 +212,8 @@ export function ComponentLibrary() {
                   import('../examples/basic-pipeline.json').then((module) => {
                     loadCircuit(JSON.stringify(module.default));
                   });
+                } else if (selectedExample === 'empty-datapath') {
+                  loadCircuit(JSON.stringify({ nodes: [], edges: [] }));
                 }
               }}
               className="w-full flex items-center px-1.5 py-0.5 text-xs bg-green-500 text-white rounded hover:bg-green-600 transition-colors appearance-none cursor-pointer pr-6 truncate"
@@ -219,6 +221,7 @@ export function ComponentLibrary() {
               aria-label="选择要加载的示例电路"
             >
               <option value="">选择示例</option>
+              <option value="empty-datapath">空白数据通路</option>
               <option value="basic-datapath">基础数据通路</option>
               <option value="basic-pipeline">基础流水线</option>
             </select>

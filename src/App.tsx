@@ -52,6 +52,13 @@ function TabButton({ isActive, onClick, children }: TabButtonProps) {
 function App() {
   const [activeTab, setActiveTab] = useState('code');
 
+  React.useEffect(() => {
+    // 在组件加载时自动加载基础数据通路
+    import('./examples/basic-datapath.json').then((module) => {
+      useCircuitStore.getState().loadCircuit(JSON.stringify(module.default));
+    });
+  }, []);
+
   const renderContent = () => {
     return (
       <div className="h-full flex">

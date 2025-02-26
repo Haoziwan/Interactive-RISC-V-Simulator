@@ -17,6 +17,7 @@ export function AssemblyEditor() {
 
   const assembleCode = () => {
     setError(null);
+    useCircuitStore.getState().resetSimulation();
     try {
       const assemblerInstance = new Assembler();
       const instructions = assemblerInstance.assemble(editorCode);
