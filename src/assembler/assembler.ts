@@ -433,13 +433,18 @@ export const generateMachineCode = (inst: Instruction): string => {
       break;
 
     case 'J':
-      const jImm = signExtend(inst.imm!, 21) << 1; // 恢复字节偏移
-      machineCode |= (inst.rd! & 0x1F) << 7;
-      machineCode |= ((jImm & 0xFF000));
-      machineCode |= ((jImm & 0x800) << 9);
-      machineCode |= ((jImm & 0x7FE) << 20);
-      machineCode |= ((jImm & 0x100000) << 11);
+      const jImm = signExtend(inst.imm!, 21); // 立即数扩展到 21 位
+    
+      machineCode |= ((jImm & 0x100000) >> 20) << 31; // imm[20] -> bit 31
+      machineCode |= ((jImm & 0xFF000) >> 12) << 12;  // imm[19:12] -> bits 19:12
+      machineCode |= ((jImm & 0x800) >> 11) << 20;    // imm[11] -> bit 20
+      machineCode |= ((jImm & 0x7FE) >> 1) << 21;     // imm[10:1] -> bits 30:21
+    
+      machineCode |= (inst.rd! & 0x1F) << 7; // rd -> bits 11:7
+      machineCode |= 0b1101111; // JAL opcode
+    
       break;
+      
   }
 
   // 确保返回的是无符号32位整数的十六进制表示
