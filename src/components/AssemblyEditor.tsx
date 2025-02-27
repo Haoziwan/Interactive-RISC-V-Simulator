@@ -1,11 +1,14 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useCircuitStore } from '../store/circuitStore';
 import { Assembler, expandPseudoInstruction } from '../assembler/assembler';
 import { InstructionFormatPanel } from './InstructionFormatPanel';
-import Editor from '@monaco-editor/react';
+import Editor, { useMonaco } from '@monaco-editor/react';
 
 export function AssemblyEditor() {
   const [error, setError] = useState<string | null>(null);
+  const tableBodyRef = useRef<HTMLDivElement>(null);
+  const editorRef = useRef<any>(null);
+  const monaco = useMonaco();
   
   // 使用store中的状态
   const editorCode = useCircuitStore((state) => state.editorCode);
@@ -14,6 +17,50 @@ export function AssemblyEditor() {
   const setAssembledInstructions = useCircuitStore((state) => state.setAssembledInstructions);
   const updateNodeData = useCircuitStore((state) => state.updateNodeData);
   const nodes = useCircuitStore((state) => state.nodes);
+  const currentInstructionIndex = useCircuitStore((state) => state.currentInstructionIndex);
+
+  // 保存编辑器实例的引用
+  const handleEditorDidMount = (editor: any) => {
+    editorRef.current = editor;
+  };
+
+  // 映射指令索引到源代码行号
+  const getSourceLineFromInstructionIndex = (index: number) => {
+    if (!editorCode || index === null || index < 0 || index >= assembledInstructions.length) {
+      return -1;
+    }
+    
+    const sourceLines = editorCode.split('\n');
+    let currentLine = 0;
+    let currentInstructionCount = 0;
+    
+    for (let i = 0; i < sourceLines.length; i++) {
+      const line = sourceLines[i].split('#')[0].trim();
+      if (line && !line.endsWith(':')) {
+        // 获取当前行展开后的指令数量
+        const expandedInsts = expandPseudoInstruction(line);
+        currentInstructionCount += expandedInsts.length;
+        
+        // 判断当前指令索引是否在这一行的范围内
+        if (index < currentInstructionCount) {
+          return i;
+        }
+      }
+    }
+    
+    return -1;
+  };
+
+  // 监听指令索引变化，自动滚动到高亮行
+  useEffect(() => {
+    // 表格部分的高亮滚动
+    if (tableBodyRef.current && currentInstructionIndex !== null && currentInstructionIndex >= 0) {
+      const highlightedRow = tableBodyRef.current.querySelector(`tr:nth-child(${currentInstructionIndex + 1})`);
+      if (highlightedRow) {
+        highlightedRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }
+  }, [currentInstructionIndex]);
 
   const assembleCode = () => {
     setError(null);
@@ -82,7 +129,8 @@ export function AssemblyEditor() {
         return {
           ...inst,
           assembly: expandedInst || '',
-          source: sourceLine || ''
+          source: sourceLine || '',
+          sourceLineIndex: getSourceLineFromInstructionIndex(i)  // 保存源代码行号
         };
       });
       
@@ -113,7 +161,6 @@ export function AssemblyEditor() {
     } catch (err) {
       setError('加载示例程序失败');
     }
-
   };
 
   return (
@@ -191,7 +238,7 @@ export function AssemblyEditor() {
             defaultLanguage="plaintext"
             value={editorCode}
             onChange={(value) => setEditorCode(value || '')}
-            theme="vs-light"
+            theme="vs"
             options={{
               minimap: { enabled: false },
               fontSize: 14,
@@ -200,8 +247,9 @@ export function AssemblyEditor() {
               wordWrap: 'on',
               automaticLayout: true,
               tabSize: 2,
-              renderWhitespace: 'all',
+              renderWhitespace: 'all'
             }}
+            onMount={handleEditorDidMount}
           />
 
           <InstructionFormatPanel />
@@ -238,48 +286,30 @@ export function AssemblyEditor() {
               )}
             </div>
 
-            <div className="overflow-auto h-[calc(100vh-200px)]">
-              <table className="w-full text-sm">
-                <thead className="bg-gray-50">
+            <div ref={tableBodyRef} className="overflow-auto h-[calc(100vh-200px)] w-full">
+              <table className="w-full text-sm table-fixed border-collapse">
+                <thead className="bg-gray-50 sticky top-0 z-10">
                   <tr>
-                    <th className="text-left py-2 px-4 font-medium">地址</th>
-                    <th className="text-left py-2 px-4 font-medium">机器码</th>
-                    <th className="text-left py-2 px-4 font-medium">Basic</th>
-                    <th className="text-left py-2 px-4 font-medium">Source</th>
+                    <th className="text-left py-2 px-2 font-medium w-24 whitespace-nowrap">地址</th>
+                    <th className="text-left py-2 px-2 font-medium w-28 whitespace-nowrap">机器码</th>
+                    <th className="text-left py-2 px-2 font-medium w-48 whitespace-nowrap">Basic</th>
+                    <th className="text-left py-2 px-2 font-medium whitespace-nowrap">Source</th>
                   </tr>
                 </thead>
-                <tbody>
+                <tbody className="divide-y divide-gray-100">
                   {assembledInstructions.length > 0 ? (
-                    assembledInstructions.map((inst, i) => {
-                      // 获取原始源代码行
-                      const sourceLines = editorCode.split('\n');
-                      let sourceLine = '';
-                      let currentLine = 0;
-                      for (let j = 0; j < sourceLines.length; j++) {
-                        const line = sourceLines[j].split('#')[0].trim();
-                        if (line && !line.endsWith(':')) {
-                          // 获取当前行展开后的指令数量
-                          const expandedInsts = line ? expandPseudoInstruction(line) : [];
-                          if (currentLine === Math.floor(i / expandedInsts.length)) {
-                            sourceLine = sourceLines[j].trim();
-                            break;
-                          }
-                          currentLine++;
-                        }
-                      }
-                      
-                      return (
-                        <tr 
-                          key={i} 
-                          className={`border-t border-gray-100 ${i === useCircuitStore.getState().currentInstructionIndex ? 'bg-yellow-100' : ''}`}
-                        >
-                          <td className="py-2 px-4 font-mono text-gray-600">{`0x${(i * 4).toString(16).padStart(8, '0')}`}</td>
-                          <td className="py-2 px-4 font-mono text-blue-600">{inst.hex}</td>
-                          <td className="py-2 px-4 font-mono">{inst.assembly}</td>
-                          <td className="py-2 px-4 font-mono text-gray-600">{inst.source}</td>
-                        </tr>
-                      );
-                    })
+                    assembledInstructions.map((inst, i) => (
+                      <tr 
+                        key={i} 
+                        className={`${i === currentInstructionIndex ? 'bg-yellow-100' : ''}`}
+                        id={`instruction-row-${i}`}
+                      >
+                        <td className="py-1 px-2 font-mono text-gray-600 text-xs whitespace-nowrap overflow-hidden text-ellipsis">{`0x${(i * 4).toString(16).padStart(8, '0')}`}</td>
+                        <td className="py-1 px-2 font-mono text-blue-600 text-xs whitespace-nowrap overflow-hidden text-ellipsis">{inst.hex}</td>
+                        <td className="py-1 px-2 font-mono text-xs whitespace-nowrap">{inst.assembly}</td>
+                        <td className="py-1 px-2 font-mono text-gray-600 text-xs whitespace-nowrap overflow-hidden text-ellipsis">{inst.source}</td>
+                      </tr>
+                    ))
                   ) : (
                     <tr>
                       <td colSpan={4} className="py-8 text-center text-gray-500">
