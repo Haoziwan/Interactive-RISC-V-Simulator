@@ -9,6 +9,7 @@ export function AssemblyEditor() {
   const tableBodyRef = useRef<HTMLDivElement>(null);
   const editorRef = useRef<any>(null);
   const monaco = useMonaco();
+  const [decorations, setDecorations] = useState<string[]>([]);
   
   // 使用store中的状态
   const editorCode = useCircuitStore((state) => state.editorCode);
@@ -18,6 +19,8 @@ export function AssemblyEditor() {
   const updateNodeData = useCircuitStore((state) => state.updateNodeData);
   const nodes = useCircuitStore((state) => state.nodes);
   const currentInstructionIndex = useCircuitStore((state) => state.currentInstructionIndex);
+  const isSimulating = useCircuitStore((state) => state.isSimulating);
+  const stepCount = useCircuitStore((state) => state.stepCount);
 
   // 保存编辑器实例的引用
   const handleEditorDidMount = (editor: any) => {
@@ -31,7 +34,6 @@ export function AssemblyEditor() {
     }
     
     const sourceLines = editorCode.split('\n');
-    let currentLine = 0;
     let currentInstructionCount = 0;
     
     for (let i = 0; i < sourceLines.length; i++) {
@@ -60,7 +62,101 @@ export function AssemblyEditor() {
         highlightedRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }
     }
-  }, [currentInstructionIndex]);
+
+    // Monaco编辑器的高亮处理
+    if (editorRef.current && monaco) {
+      // 始终清除所有现有的高亮，无论它们是如何创建的
+      // 这确保了编辑器中只有一个高亮行
+      const currentModel = editorRef.current.getModel();
+      if (currentModel) {
+        // 清除所有现有的装饰，包括可能由其他来源添加的装饰
+        const oldDecorations = editorRef.current.getModel().getAllDecorations()
+          .filter((d: { options: { className?: string; glyphMarginClassName?: string } }) => 
+            d.options.className === 'monaco-highlight-line' || d.options.glyphMarginClassName === 'monaco-highlight-glyph')
+          .map((d: { id: string }) => d.id);
+        
+        if (oldDecorations.length > 0) {
+          editorRef.current.deltaDecorations(oldDecorations, []);
+        }
+        
+        // 清除我们自己跟踪的装饰
+        if (decorations.length > 0) {
+          editorRef.current.deltaDecorations(decorations, []);
+          setDecorations([]);
+        }
+      }
+
+      // 如果有有效的指令索引，无论是否在模拟状态下，都添加高亮
+      // 这样在单步执行时也能正确高亮
+      if (currentInstructionIndex !== null && currentInstructionIndex >= 0) {
+        const sourceLine = getSourceLineFromInstructionIndex(currentInstructionIndex);
+        if (sourceLine >= 0) {
+          const newDecorations = editorRef.current.deltaDecorations([], [
+            {
+              range: new monaco.Range(sourceLine + 1, 1, sourceLine + 1, 1),
+              options: {
+                isWholeLine: true,
+                className: 'monaco-highlight-line',
+                glyphMarginClassName: 'monaco-highlight-glyph'
+              }
+            }
+          ]);
+          setDecorations(newDecorations);
+        }
+      }
+    }
+  }, [currentInstructionIndex, monaco, stepCount]);
+
+  // 监听monaco实例加载完成
+  useEffect(() => {
+    if (monaco) {
+      // 添加自定义CSS样式
+      const styleElement = document.createElement('style');
+      styleElement.textContent = `
+        .monaco-highlight-line {
+          background-color: rgba(255, 255, 0, 0.2) !important;
+          border-left: 3px solid gold !important;
+        }
+        .monaco-highlight-glyph {
+          background-color: gold;
+          width: 5px !important;
+          margin-left: 3px;
+        }
+      `;
+      document.head.appendChild(styleElement);
+      
+      return () => {
+        document.head.removeChild(styleElement);
+      };
+    }
+  }, [monaco]);
+
+  // 监听模拟状态变化，当模拟结束或重置时清除高亮
+  useEffect(() => {
+    if (editorRef.current && monaco) {
+      // 当模拟结束时，清除所有高亮
+      if (!isSimulating) {
+        const currentModel = editorRef.current.getModel();
+        if (currentModel) {
+          // 清除所有现有的装饰，包括可能由其他来源添加的装饰
+          const oldDecorations = editorRef.current.getModel().getAllDecorations()
+            .filter((d: { options: { className?: string; glyphMarginClassName?: string } }) => 
+              d.options.className === 'monaco-highlight-line' || d.options.glyphMarginClassName === 'monaco-highlight-glyph')
+            .map((d: { id: string }) => d.id);
+          
+          if (oldDecorations.length > 0) {
+            editorRef.current.deltaDecorations(oldDecorations, []);
+          }
+          
+          // 清除我们自己跟踪的装饰
+          if (decorations.length > 0) {
+            editorRef.current.deltaDecorations(decorations, []);
+            setDecorations([]);
+          }
+        }
+      }
+    }
+  }, [isSimulating, monaco]);
 
   const assembleCode = () => {
     setError(null);
@@ -69,47 +165,21 @@ export function AssemblyEditor() {
       const assemblerInstance = new Assembler();
       const instructions = assemblerInstance.assemble(editorCode);
       
-      // 将代码按行分割并过滤掉注释和空行
-      const assemblyLines = editorCode
-        .split('\n')
-        .map(line => {
-          let trimmedLine = line.split('#')[0].trim();
-          if (!trimmedLine || trimmedLine.endsWith(':')) return null;
-          
-          // 替换标签为地址
-          Object.entries(assemblerInstance.getLabelMap()).forEach(([label, address]) => {
-            const labelRegex = new RegExp(`\\b${label}\\b`, 'g');
-            trimmedLine = trimmedLine.replace(labelRegex, `0x${address.toString(16).padStart(8, '0')}`);
-          });
-          
-          // 格式化其他立即数
-          trimmedLine = trimmedLine.replace(/\b0x[0-9a-fA-F]+\b/g, match => {
-            const num = parseInt(match, 16);
-            return `0x${num.toString(16).padStart(8, '0')}`;
-          });
-          
-          return trimmedLine;
-        })
-        .filter(Boolean);
-      
       // 将汇编指令与机器码对应
       const instructionsWithAssembly = instructions.map((inst, i) => {
         // 获取原始源代码行和展开后的指令
         const sourceLines = editorCode.split('\n');
         let sourceLine = '';
         let expandedInst = '';
-        let currentLine = 0;
-        let expandedInsts: string[] = [];
-        let foundSource = false;
         
-        for (let j = 0; j < sourceLines.length && !foundSource; j++) {
+        for (let j = 0; j < sourceLines.length; j++) {
           const line = sourceLines[j].split('#')[0].trim();
           if (line && !line.endsWith(':')) {
             // 获取当前行展开后的指令数量
-            expandedInsts = line ? expandPseudoInstruction(line) : [];
+            const expandedInsts = line ? expandPseudoInstruction(line) : [];
             const instructionIndex = Math.floor(i / expandedInsts.length);
             
-            if (currentLine === instructionIndex) {
+            if (instructionIndex === j) {
               sourceLine = sourceLines[j].trim();
               expandedInst = expandedInsts[i % expandedInsts.length] || '';
               
@@ -120,9 +190,7 @@ export function AssemblyEditor() {
                   expandedInst = expandedInst.replace(labelRegex, `0x${address.toString(16).padStart(8, '0')}`);
                 });
               }
-              foundSource = true;
             }
-            currentLine++;
           }
         }
         
