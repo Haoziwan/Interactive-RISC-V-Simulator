@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useCircuitStore } from '../store/circuitStore';
 
 type BaseType = 'dec' | 'hex';
 
 export function RegPanel() {
   const [base, setBase] = useState<BaseType>('dec');
+  const [highlightedReg, setHighlightedReg] = useState<number | null>(null);
   const registers = useCircuitStore((state) => state.registers);
   const updateRegisters = useCircuitStore((state) => state.updateRegisters);
 
@@ -37,6 +38,20 @@ export function RegPanel() {
     updateRegisters({ [regIndex]: numValue });
   };
 
+  // 监听寄存器文件节点的写入操作
+  useEffect(() => {
+    const nodes = useCircuitStore.getState().nodes;
+    const regFileNode = nodes.find(node => node.type === 'register');
+    if (regFileNode && regFileNode.data.regWrite && regFileNode.data.writeReg !== undefined) {
+      setHighlightedReg(regFileNode.data.writeReg);
+      // 500ms后清除高亮
+      const timer = setTimeout(() => {
+        setHighlightedReg(null);
+      }, 500);
+      return () => clearTimeout(timer);
+    }
+  }, [useCircuitStore.getState().stepCount]);
+
   return (
     <div className="h-full w-full bg-white overflow-y-auto p-2">
       <div className="flex justify-between items-center mb-2">
@@ -58,7 +73,10 @@ export function RegPanel() {
         </div>
         <div className="space-y-0.5">
           {Array.from({ length: 32 }, (_, i) => (
-            <div key={i} className="grid grid-cols-[2fr_1fr_3fr] gap-2 py-0.5 text-xs hover:bg-gray-50 rounded">
+            <div 
+              key={i} 
+              className={`grid grid-cols-[2fr_1fr_3fr] gap-2 py-0.5 text-xs rounded transition-colors duration-200 ${highlightedReg === i ? 'bg-blue-100' : 'hover:bg-gray-50'}`}
+            >
               <div className="font-medium">
                 {i === 0 ? 'zero' : i === 1 ? 'ra' : i === 2 || i === 3 ? 'sp' : i === 4 ? 'gp' : i <= 7 ? `t${i-5}` : i <= 9 ? `s${i-8}` : i <= 17 ? `a${i-10}` : i <= 27 ? `s${i-16}` : i <= 31 ? `t${i-25}` : `x${i}`}
               </div>
