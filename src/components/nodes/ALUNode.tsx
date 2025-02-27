@@ -2,7 +2,20 @@ import { Handle, Position, useNodes, useEdges } from 'reactflow';
 import { useEffect, useRef } from 'react';
 import { useCircuitStore } from '../../store/circuitStore';
 
-type ALUOperation = 2 | 6 | 0 | 1 | 3 | 7 | 8 | 9 | 10;
+// RISC-V 32I ALU operations
+enum ALUOperation {
+  // R-type and I-type arithmetic/logical operations
+  AND = 0,      // 与 (and, andi)
+  OR = 1,       // 或 (or, ori)
+  ADD = 2,      // 加法 (add, addi, load, store)
+  XOR = 3,      // 异或 (xor, xori)
+  SLL = 11,     // 逻辑左移 (sll, slli)
+  SRL = 8,      // 逻辑右移 (srl, srli)
+  SRA = 9,      // 算术右移 (sra, srai)
+  SUB = 6,      // 减法 (sub)
+  SLT = 7,      // 有符号比较 (slt, slti)
+  SLTU = 10,    // 无符号比较 (sltu, sltiu)
+}
 
 interface ALUNodeData {
   label: string;
@@ -11,7 +24,6 @@ interface ALUNodeData {
   b?: number;
   result?: number;
   zero?: number;
-  pc?: number;
   onDelete?: () => void;
 }
 
@@ -19,29 +31,68 @@ export function ALUNode({ data, id, selected }: { data: ALUNodeData; id: string;
   const updateNodeData = useCircuitStore((state) => state.updateNodeData);
   const nodes = useNodes();
   const edges = useEdges();
-  const inputsRef = useRef({ a: data.a ?? 0, b: data.b ?? 0, operation: data.operation ?? 2 });
+  const inputsRef = useRef({ 
+    a: data.a ?? 0, 
+    b: data.b ?? 0, 
+    operation: data.operation ?? ALUOperation.ADD 
+  });
 
-  const calculateResult = (a: number, b: number, operation: ALUOperation): number => {
+  const calculateResult = (a: number, b: number, operation: ALUOperation): { 
+    result: number;
+    zero: number;
+  } => {
+    // Ensure inputs are 32-bit integers
     a = a | 0;
     b = b | 0;
-
+    
+    let result = 0;
+    
     switch (operation) {
-      case 2: return (a + b) | 0; // 加法
-      case 6: return (a - b) | 0; // 减法
-      case 0: return a & b;      // 与
-      case 1: return a | b;      // 或
-      case 3: return a ^ b;      // 异或
-      case 7: return ((a | 0) < (b | 0)) ? 1 : 0;  // 有符号比较
-      case 8: return (a >>> (b & 0x1F));          // 逻辑右移
-      case 9: return (a >> (b & 0x1F));           // 算术右移
-      case 10: return ((a >>> 0) < (b >>> 0)) ? 1 : 0; // 无符号比较
-      default: return 0;
+      // Arithmetic and logical operations
+      case ALUOperation.ADD:
+        result = (a + b) | 0;
+        break;
+      case ALUOperation.SUB:
+        result = (a - b) | 0;
+        break;
+      case ALUOperation.AND:
+        result = a & b;
+        break;
+      case ALUOperation.OR:
+        result = a | b;
+        break;
+      case ALUOperation.XOR:
+        result = a ^ b;
+        break;
+        
+      // Shift operations
+      case ALUOperation.SLL:
+        result = (a << (b & 0x1F)) | 0; // Shift amount is lower 5 bits only
+        break;
+      case ALUOperation.SRL:
+        result = (a >>> (b & 0x1F)); // Logical right shift (unsigned)
+        break;
+      case ALUOperation.SRA:
+        result = (a >> (b & 0x1F)); // Arithmetic right shift (signed)
+        break;
+        
+      // Comparison operations
+      case ALUOperation.SLT:
+        result = ((a | 0) < (b | 0)) ? 1 : 0; // Signed comparison
+        break;
+      case ALUOperation.SLTU:
+        result = ((a >>> 0) < (b >>> 0)) ? 1 : 0; // Unsigned comparison
+        break;
+        
+      default:
+        result = 0;
+        break;
     }
+    
+    const zero = result === 0 ? 1 : 0;
+    
+    return { result, zero };
   };
-
-  interface NodeData {
-    [key: string]: number | string | boolean | undefined | (() => void);
-  }
 
   // 获取输入端口的值
   const getInputValue = (edge: any) => {
@@ -89,10 +140,13 @@ export function ALUNode({ data, id, selected }: { data: ALUNodeData; id: string;
       const finalOperation = (newControl ?? inputsRef.current.operation) as ALUOperation;
 
       // 更新ref中的值
-      inputsRef.current = { a: finalA, b: finalB, operation: finalOperation };
+      inputsRef.current = { 
+        a: finalA, 
+        b: finalB, 
+        operation: finalOperation 
+      };
 
-      const result = calculateResult(finalA, finalB, finalOperation);
-      const zero = result === 0 ? 1 : 0;
+      const { result, zero } = calculateResult(finalA, finalB, finalOperation);
 
       // 更新节点数据
       updateNodeData(id, {
@@ -110,6 +164,23 @@ export function ALUNode({ data, id, selected }: { data: ALUNodeData; id: string;
   useEffect(() => {
     updateInputConnections();
   }, [edges]);
+
+  // Get operation name for display
+  const getOperationName = (op: ALUOperation): string => {
+    const opNames = {
+      [ALUOperation.ADD]: "ADD",
+      [ALUOperation.SUB]: "SUB",
+      [ALUOperation.AND]: "AND",
+      [ALUOperation.OR]: "OR",
+      [ALUOperation.XOR]: "XOR",
+      [ALUOperation.SLL]: "SLL",
+      [ALUOperation.SRL]: "SRL",
+      [ALUOperation.SRA]: "SRA",
+      [ALUOperation.SLT]: "SLT",
+      [ALUOperation.SLTU]: "SLTU"
+    };
+    return opNames[op] || `UNKNOWN(${op})`;
+  };
 
   return (
     <div className={`relative px-4 py-2 shadow-md rounded-md bg-white border-2 ${
@@ -141,7 +212,7 @@ export function ALUNode({ data, id, selected }: { data: ALUNodeData; id: string;
       <div className="flex items-center">
         <div className="ml-2">
           <div className="text-lg font-bold">ALU</div>
-          <div className="text-gray-500">Control: {data.operation ?? 2}</div>
+          <div className="text-gray-500">Control: {getOperationName(data.operation ?? ALUOperation.ADD)} </div>
           <div className="text-gray-500">A: {data.a ?? 0}</div>
           <div className="text-gray-500">B: {data.b ?? 0}</div>
           <div className="text-gray-500">Result: {data.result ?? 0}</div>

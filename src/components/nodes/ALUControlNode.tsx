@@ -82,42 +82,42 @@ export function ALUControlNode({ data, id, selected }: { data: ALUControlNodeDat
       const generateALUControl = (aluOp: string, funct3: string, funct7: string): string => {
         if (aluOp === '00') {
           // Load/Store指令：执行加法
-          return '0010';
+          return '0010'; // ADD (2)
         } else if (aluOp === '01') {
           // Branch指令：根据funct3确定比较类型
           switch (funct3) {
-            case '000': return '0110'; // beq: 减法判断是否为0
-            case '001': return '0110'; // bne: 减法判断是否不为0
-            case '100': return '0111'; // blt: 有符号比较小于
-            case '101': return '0111'; // bge: 有符号比较大于等于
-            case '110': return '1010'; // bltu: 无符号比较小于
-            case '111': return '1010'; // bgeu: 无符号比较大于等于
+            case '000': return '0110'; // SUB (6) for beq
+            case '001': return '0110'; // SUB (6) for bne
+            case '100': return '0111'; // SLT (7) for blt
+            case '101': return '0111'; // SLT (7) for bge
+            case '110': return '1010'; // SLTU (10) for bltu
+            case '111': return '1010'; // SLTU (10) for bgeu
             default: return '0110';
           }
         } else if (aluOp === '10') {
-          // R-type/I-type指令：根据funct3和funct7确定
+          // R-type指令：根据funct3和funct7确定
           switch (funct3) {
             case '000':
-              return funct7 === '0000000' ? '0010' : '0110'; // add/sub
-            case '001': return '0111'; // sll: 逻辑左移
-            case '010': return '0111'; // slt: 有符号比较设置
-            case '011': return '1010'; // sltu: 无符号比较设置
-            case '100': return '0011'; // xor: 异或
+              return funct7 === '0000000' ? '0010' : '0110'; // ADD (2) / SUB (6)
+            case '001': return '1011'; // SLL (11)
+            case '010': return '0111'; // SLT (7)
+            case '011': return '1010'; // SLTU (10)
+            case '100': return '0011'; // XOR (3)
             case '101':
-              return funct7 === '0000000' ? '1000' : '1001'; // srl/sra: 逻辑/算术右移
-            case '110': return '0001'; // or: 逻辑或
-            case '111': return '0000'; // and: 逻辑与
+              return funct7 === '0000000' ? '1000' : '1001'; // SRL (8) / SRA (9)
+            case '110': return '0001'; // OR (1)
+            case '111': return '0000'; // AND (0)
             default: return '0000';
           }
         } else if (aluOp === '11') {
           // I-type特殊指令
           switch (funct3) {
-            case '000': return '0010'; // addi
-            case '010': return '0111'; // slti
-            case '011': return '1010'; // sltiu
-            case '100': return '0011'; // xori
-            case '110': return '0001'; // ori
-            case '111': return '0000'; // andi
+            case '000': return '0010'; // ADDI (2)
+            case '010': return '0111'; // SLTI (7)
+            case '011': return '1010'; // SLTIU (10)
+            case '100': return '0011'; // XORI (3)
+            case '110': return '0001'; // ORI (1)
+            case '111': return '0000'; // ANDI (0)
             default: return '0010';
           }
         }
