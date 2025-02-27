@@ -43,9 +43,7 @@ export function ForkNode({ data, id, selected }: { data: ForkNodeData; id: strin
     }
     return null;
   };
-
-  // 监听输入连接的变化
-  React.useEffect(() => {
+  const updateInputConnections = () => {
     // 找到连接到此节点的边
     const inputEdge = edges.find(edge => edge.target === id && edge.targetHandle === 'input');
     const newValue = getSourceNodeValue(inputEdge);
@@ -61,8 +59,11 @@ export function ForkNode({ data, id, selected }: { data: ForkNodeData; id: strin
         value: newValue
       });
     }
+  };
+  // 监听输入连接的变化
+  React.useEffect(() => {
+    updateInputConnections();
   }, [edges, id, nodes, data]);
-
   return (
     <div className={`w-8 h-8 shadow-md rounded-full bg-white border-2 ${selected ? 'border-blue-500' : 'border-gray-200'}`}>
       <Handle

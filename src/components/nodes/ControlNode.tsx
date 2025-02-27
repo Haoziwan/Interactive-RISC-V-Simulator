@@ -18,11 +18,10 @@ export function ControlNode({ data, id, selected }: { data: ControlNodeData; id:
   const nodes = useNodes();
   const edges = useEdges();
   
-  const [inputOpcode, setInputOpcode] = React.useState<string>('0000000');
   const [displayOpcode, setDisplayOpcode] = React.useState<string>('0000000');
   
-  // 监听输入连接的变化
-  React.useEffect(() => {
+  // 更新输入连接的函数
+  const updateInputConnections = () => {
     const inputEdges = edges.filter(edge => edge.target === id);
     
     inputEdges.forEach(edge => {
@@ -39,106 +38,115 @@ export function ControlNode({ data, id, selected }: { data: ControlNodeData; id:
   
         if (portId === 'opcode' && sourceValue) {
           const binaryValue = parseInt(sourceValue).toString(2).padStart(7, '0');
-          setInputOpcode(binaryValue);
-          setDisplayOpcode(binaryValue);
+          
+          // 只有当opcode真正改变时才更新状态
+          if (binaryValue !== data.opcode) {
+            setDisplayOpcode(binaryValue);
+            
+            // 根据opcode生成控制信号
+            const op = binaryValue.slice(0, 7);
+            let controlSignals;
+            
+            switch (op) {
+              case '0110011': // R-type
+                controlSignals = {
+                  regWrite: 1,
+                  memRead: 0,
+                  memWrite: 0,
+                  aluOp: parseInt('10', 2),
+                  aluSrc: 0,
+                  memToReg: 0
+                };
+                break;
+              case '0010011': // I-type ALU
+                controlSignals = {
+                  regWrite: 1,
+                  memRead: 0,
+                  memWrite: 0,
+                  aluOp: parseInt('11', 2),
+                  aluSrc: 1,
+                  memToReg: 0
+                };
+                break;
+              case '0000011': // I-type Load
+                controlSignals = {
+                  regWrite: 1,
+                  memRead: 1,
+                  memWrite: 0,
+                  aluOp: parseInt('00', 2),
+                  aluSrc: 1,
+                  memToReg: 1
+                };
+                break;
+              case '0100011': // S-type
+                controlSignals = {
+                  regWrite: 0,
+                  memRead: 0,
+                  memWrite: 1,
+                  aluOp: parseInt('00', 2),
+                  aluSrc: 1,
+                  memToReg: 0
+                };
+                break;
+              case '1100011': // B-type
+                controlSignals = {
+                  regWrite: 0,
+                  memRead: 0,
+                  memWrite: 0,
+                  aluOp: parseInt('01', 2),
+                  aluSrc: 0,
+                  memToReg: 0
+                };
+                break;
+              case '1101111': // J-type (jal)
+              case '1100111': // I-type (jalr)
+                controlSignals = {
+                  regWrite: 1,
+                  memRead: 0,
+                  memWrite: 0,
+                  aluOp: parseInt('00', 2),
+                  aluSrc: 1,
+                  memToReg: 0
+                };
+                break;
+              case '0110111': // U-type (lui)
+              case '0010111': // U-type (auipc)
+                controlSignals = {
+                  regWrite: 1,
+                  memRead: 0,
+                  memWrite: 0,
+                  aluOp: parseInt('00', 2),
+                  aluSrc: 1,
+                  memToReg: 0
+                };
+                break;
+              default:
+                controlSignals = {
+                  regWrite: 0,
+                  memRead: 0,
+                  memWrite: 0,
+                  aluOp: parseInt('00', 2),
+                  aluSrc: 0,
+                  memToReg: 0
+                };
+            }
+            
+            // 更新节点数据
+            updateNodeData(id, {
+              ...data,
+              ...controlSignals,
+              opcode: binaryValue
+            });
+          }
         }
       }
     });
-  }, [nodes, edges, id]);
-  
-  // 根据opcode生成控制信号
-  const generateControlSignals = (opcode: string) => {
-    // 提取opcode的关键位
-    const op = opcode.slice(0, 7);
-    
-    switch (op) {
-      case '0110011': // R-type
-        return {
-          regWrite: 1,
-          memRead: 0,
-          memWrite: 0,
-          aluOp: parseInt('10', 2),
-          aluSrc: 0,
-          memToReg: 0
-        };
-      case '0010011': // I-type ALU
-        return {
-          regWrite: 1,
-          memRead: 0,
-          memWrite: 0,
-          aluOp: parseInt('11', 2),
-          aluSrc: 1,
-          memToReg: 0
-        };
-      case '0000011': // I-type Load
-        return {
-          regWrite: 1,
-          memRead: 1,
-          memWrite: 0,
-          aluOp: parseInt('00', 2),
-          aluSrc: 1,
-          memToReg: 1
-        };
-      case '0100011': // S-type
-        return {
-          regWrite: 0,
-          memRead: 0,
-          memWrite: 1,
-          aluOp: parseInt('00', 2),
-          aluSrc: 1,
-          memToReg: 0
-        };
-      case '1100011': // B-type
-        return {
-          regWrite: 0,
-          memRead: 0,
-          memWrite: 0,
-          aluOp: parseInt('01', 2),
-          aluSrc: 0,
-          memToReg: 0
-        };
-      case '1101111': // J-type (jal)
-      case '1100111': // I-type (jalr)
-        return {
-          regWrite: 1,
-          memRead: 0,
-          memWrite: 0,
-          aluOp: parseInt('00', 2),
-          aluSrc: 1,
-          memToReg: 0
-        };
-      case '0110111': // U-type (lui)
-      case '0010111': // U-type (auipc)
-        return {
-          regWrite: 1,
-          memRead: 0,
-          memWrite: 0,
-          aluOp: parseInt('00', 2),
-          aluSrc: 1,
-          memToReg: 0
-        };
-      default:
-        return {
-          regWrite: 0,
-          memRead: 0,
-          memWrite: 0,
-          aluOp: parseInt('00', 2),
-          aluSrc: 0,
-          memToReg: 0
-        };
-    }
   };
   
-  const controlSignals = generateControlSignals(inputOpcode);
-  
-  // 更新节点数据
+  // 监听输入连接的变化
   React.useEffect(() => {
-    updateNodeData(id, {
-      ...data,
-      ...controlSignals,
-      opcode: inputOpcode
-    });
-  }, [inputOpcode]);
+    updateInputConnections();
+  }, [edges, nodes, id, data]);
   
   return (
     <div className={`px-2 py-4 shadow-md rounded-md bg-white border-2 w-40 ${
@@ -172,27 +180,27 @@ export function ControlNode({ data, id, selected }: { data: ControlNodeData; id:
           <div className="flex flex-col gap-y-4">
             <div className="flex justify-between items-center relative">
               <span>RegWrite:</span>
-              <span>{controlSignals.regWrite}</span>
+              <span>{data.regWrite ?? 0}</span>
             </div>
             <div className="flex justify-between items-center relative">
               <span>ALUSrc:</span>
-              <span>{controlSignals.aluSrc}</span>
+              <span>{data.aluSrc ?? 0}</span>
             </div>
             <div className="flex justify-between items-center relative">
               <span>MemRead:</span>
-              <span>{controlSignals.memRead}</span>
+              <span>{data.memRead ?? 0}</span>
             </div>
             <div className="flex justify-between items-center relative">
               <span>MemWrite:</span>
-              <span>{controlSignals.memWrite}</span>
+              <span>{data.memWrite ?? 0}</span>
             </div>
             <div className="flex justify-between items-center relative">
               <span>ALUOp:</span>
-              <span>{controlSignals.aluOp}</span>
+              <span>{data.aluOp ?? 0}</span>
             </div>
             <div className="flex justify-between items-center relative">
               <span>MemToReg:</span>
-              <span>{controlSignals.memToReg}</span>
+              <span>{data.memToReg ?? 0}</span>
             </div>
           </div>
         </div>

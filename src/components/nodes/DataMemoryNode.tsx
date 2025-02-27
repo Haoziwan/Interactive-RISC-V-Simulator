@@ -45,24 +45,22 @@ export function DataMemoryNode({ data, id, selected }: { data: DataMemoryNodeDat
     }
     return null;
   };
-
-  // 监听输入连接的变化（组合逻辑部分：读取操作）
-  React.useEffect(() => {
+  const updateInputConnections = () => {
     // 找到连接到此节点的边
     const addressEdge = edges.find(edge => edge.target === id && edge.targetHandle === 'address');
     const memReadEdge = edges.find(edge => edge.target === id && edge.targetHandle === 'memRead');
-
+  
     const newAddress = Number(getInputValue(addressEdge) ?? data.address ?? 0);
     const newMemRead = Number(getInputValue(memReadEdge) ?? data.memRead ?? 0);
-
+  
     // 只有当输入值发生实际变化时才更新
     const hasChanges = newAddress !== (data.address || 0) || newMemRead !== (data.memRead || 0);
-
+  
     if (hasChanges) {
       // 更新节点数据（只更新读取相关的状态）
       const addressHex = `0x${newAddress.toString(16).padStart(8, '0')}`;
       const readData = newMemRead > 0 ? (memory[addressHex] || 0) : 0;
-
+  
       updateNodeData(id, {
         ...data,
         address: newAddress,
@@ -70,32 +68,36 @@ export function DataMemoryNode({ data, id, selected }: { data: DataMemoryNodeDat
         readData: readData
       });
     }
+  };
+  
+  // 监听输入连接的变化（组合逻辑部分：读取操作）
+  React.useEffect(() => {
+    updateInputConnections();
   }, [edges, id, nodes, memory]);
-
   // 监听时钟信号（时序逻辑部分：写入操作）
   React.useEffect(() => {
     // 找到连接到此节点的边
     const writeDataEdge = edges.find(edge => edge.target === id && edge.targetHandle === 'writeData');
     const memWriteEdge = edges.find(edge => edge.target === id && edge.targetHandle === 'memWrite');
-
+  
     const newWriteData = Number(getInputValue(writeDataEdge) ?? data.writeData ?? 0);
     const newMemWrite = Number(getInputValue(memWriteEdge) ?? data.memWrite ?? 0);
     const newAddress = data.address || 0;
-
+  
     // 只有当输入值发生实际变化时才更新
     const hasChanges = newWriteData !== (data.writeData || 0) || newMemWrite !== (data.memWrite || 0);
-
+  
     if (hasChanges) {
       // 更新节点数据（写入相关的状态）
       const addressHex = `0x${newAddress.toString(16).padStart(8, '0')}`;
-
+  
       // 写入数据
       if (newMemWrite > 0 && newWriteData !== memory[addressHex]) {
         updateMemory({
           [addressHex]: newWriteData
         });
       }
-
+  
       // 更新节点状态
       updateNodeData(id, {
         ...data,
@@ -104,7 +106,6 @@ export function DataMemoryNode({ data, id, selected }: { data: DataMemoryNodeDat
       });
     }
   }, [stepCount]);
-
   return (
     <div className={`px-4 py-2 shadow-md rounded-md bg-white border-2 ${
       selected ? 'border-blue-500' : 'border-gray-200'
@@ -142,7 +143,7 @@ export function DataMemoryNode({ data, id, selected }: { data: DataMemoryNodeDat
         style={{ top: '70%' }}
         title="写入数据"
       />
-
+  
       {/* Output port on right */}
       <Handle 
         type="source" 
@@ -152,7 +153,7 @@ export function DataMemoryNode({ data, id, selected }: { data: DataMemoryNodeDat
         style={{ top: '50%' }}
         title="读出数据"
       />
-
+  
       <div className="flex items-center">
         <div className="ml-2">
           <div className="text-lg font-bold">Data Memory</div>

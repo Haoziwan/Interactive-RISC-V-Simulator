@@ -19,9 +19,7 @@ export function InstrDistributerNode({ data, id, selected }: { data: InstrDistri
   const nodes = useNodes();
   const edges = useEdges();
   const prevValueRef = useRef<string | undefined>(undefined);
-
-  // 监听输入连接的变化
-  React.useEffect(() => {
+  const updateInputConnections = () => {
     // 找到连接到此节点的边
     const inputEdge = edges.find(edge => edge.target === id);
     if (inputEdge) {
@@ -58,8 +56,11 @@ export function InstrDistributerNode({ data, id, selected }: { data: InstrDistri
         }
       }
     }
+  };
+  // 监听输入连接的变化
+  React.useEffect(() => {
+    updateInputConnections();
   }, [edges, id, nodes]);
-
   const instruction = data.value 
     ? parseInt(data.value, 16).toString(2).padStart(32, '0')
     : '0'.repeat(32);

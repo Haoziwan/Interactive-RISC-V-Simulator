@@ -43,7 +43,8 @@ export function PCNode({ data, id, selected }: { data: PCNodeData; id: string; s
   }, [reset, id, data, updateNodeData, updatePcValue]);
 
   // 监听输入连接的变化
-  React.useEffect(() => {
+
+  const updateInputConnections = () => {
     // 找到连接到此节点的边
     const inputEdge = edges.find(edge => edge.target === id && edge.targetHandle === 'next');
     if (inputEdge) {
@@ -53,6 +54,10 @@ export function PCNode({ data, id, selected }: { data: PCNodeData; id: string; s
         setInputValue(sourceNode.data.value);
       }
     }
+  };
+  // 监听输入连接的变化
+  React.useEffect(() => {
+    updateInputConnections();
   }, [nodes, edges, id]);
 
   // 监听时钟信号(stepCount)

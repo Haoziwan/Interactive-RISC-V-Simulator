@@ -16,7 +16,7 @@ export function AddNode({ data, id, selected }: { data: AddNodeData; id: string;
   const inputsRef = useRef({ a: 0, b: 0 });
 
   // 监听输入连接的变化并更新输出值
-  React.useEffect(() => {
+  const updateInputConnections = () => {
     // 找到连接到此节点的边
     const inputEdgeA = edges.find(edge => edge.target === id && edge.targetHandle === 'input-a');
     const inputEdgeB = edges.find(edge => edge.target === id && edge.targetHandle === 'input-b');
@@ -70,6 +70,10 @@ export function AddNode({ data, id, selected }: { data: AddNodeData; id: string;
         value: sum
       });
     }
+  };
+  // 监听输入连接的变化
+  React.useEffect(() => {
+    updateInputConnections();
   }, [edges, id, nodes, data]);
 
   return (

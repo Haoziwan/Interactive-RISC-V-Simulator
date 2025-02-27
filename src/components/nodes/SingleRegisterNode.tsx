@@ -35,7 +35,7 @@ export function SingleRegisterNode({ data, id, selected }: { data: SingleRegiste
   }, [reset]);
 
   // 监听输入连接的变化
-  React.useEffect(() => {
+  const updateInputConnections = () => {
     // 找到连接到此节点的边
     const inputEdge = edges.find(edge => edge.target === id && edge.targetHandle === 'input');
     if (inputEdge) {
@@ -61,6 +61,10 @@ export function SingleRegisterNode({ data, id, selected }: { data: SingleRegiste
         }
       }
     }
+  };
+  // 监听输入连接的变化
+  React.useEffect(() => {
+    updateInputConnections();
   }, [nodes, edges, id]);
 
   // 监听时钟信号(stepCount)

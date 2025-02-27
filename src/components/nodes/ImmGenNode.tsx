@@ -120,7 +120,7 @@ export function ImmGenNode({ data, id, selected }: {
   };
 
   // 监听输入连接的变化
-  React.useEffect(() => {
+  const updateInputConnections = () => {
     const instructionEdge = edges.find(edge => edge.target === id && edge.targetHandle === 'instruction');
 
     if (instructionEdge) {
@@ -155,6 +155,10 @@ export function ImmGenNode({ data, id, selected }: {
         }
       }
     }
+  };
+  // 监听输入连接的变化
+  React.useEffect(() => {
+    updateInputConnections();
   }, [edges, nodes, id, data]);
 
   return (

@@ -28,9 +28,7 @@ export function InstructionMemoryNode({ data, id, selected }: {
       });
     }
   };
-  
-  // 监听PC输入连接的变化
-  React.useEffect(() => {
+  const updateInputConnections = () => {
     // 找到连接到此节点的边
     const pcEdge = edges.find(edge => edge.target === id && edge.targetHandle === 'pc');
     if (pcEdge) {
@@ -47,8 +45,12 @@ export function InstructionMemoryNode({ data, id, selected }: {
         }
       }
     }
-  }, [nodes, edges, id]);
+  };
   
+  // 监听PC输入连接的变化
+  React.useEffect(() => {
+    updateInputConnections();
+  }, [nodes, edges, id]);
   // 监听PC值变化，更新输出指令
   React.useEffect(() => {
     const pcValue = data.pc || 0;

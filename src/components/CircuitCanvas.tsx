@@ -374,9 +374,9 @@ export function CircuitCanvas() {
                   <label className="text-xs text-gray-600">模拟间隔 (ms)</label>
                   <input
                     type="range"
-                    min="10"
+                    min="100"
                     max="5000"
-                    step="10"
+                    step="100"
                     value={simulationInterval}
                     onChange={(e) => {
                       const newInterval = parseInt(e.target.value);

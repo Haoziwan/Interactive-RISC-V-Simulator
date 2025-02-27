@@ -9,6 +9,7 @@ interface CircuitState {
   selectedEdge: Edge | null;
   circuit: Circuit;
   isSimulating: boolean;
+  isProcessing: boolean;
   stepCount: number;
   assembledInstructions: Array<{hex: string; binary: string; assembly?: string; source?: string}>;
   editorCode: string;
@@ -22,6 +23,7 @@ interface CircuitState {
   updateMemory: (memory: { [key: string]: number }) => void;
   updateRegisters: (registers: { [key: number]: number }) => void;
   updateNodeData: (nodeId: string, data: any) => void;
+  updateAllNodesInputs: () => void;
   setSelectedNode: (node: Node | null) => void;
   setSelectedEdge: (edge: Edge | null) => void;
   addNode: (node: Node) => void;
@@ -55,6 +57,7 @@ export const useCircuitStore = create<CircuitState>()((set, get) => ({
   selectedEdge: null,
   circuit: initialCircuit,
   isSimulating: false,
+  isProcessing: false,
   stepCount: 0,
   assembledInstructions: [],
   editorCode: '',
@@ -86,6 +89,14 @@ export const useCircuitStore = create<CircuitState>()((set, get) => ({
         node.id === nodeId ? { ...node, data: { ...node.data, ...newData } } : node
       ),
     })),
+  updateAllNodesInputs: () => {
+    const state = get();
+    state.nodes.forEach(node => {
+      if (node.data && typeof node.data.updateInputConnections === 'function') {
+        node.data.updateInputConnections();
+      }
+    });
+  },
   setSelectedNode: (node: Node | null) => set({ selectedNode: node }),
   setSelectedEdge: (edge: Edge | null) => set((state) => ({
     selectedEdge: edge,
@@ -255,12 +266,17 @@ export const useCircuitStore = create<CircuitState>()((set, get) => ({
   },
   stepSimulation: () => {
     set((state) => {
+      // 如果正在处理中，则不执行任何操作
+      if (state.isProcessing) {
+        return {};
+      }
+
       // 检查当前指令是否执行完毕
       const currentPc = state.pcValue;
       const maxPc = (state.assembledInstructions.length * 4) - 4;
       
       // 如果已经执行到最后一条指令，自动暂停模拟
-      if (currentPc > maxPc||currentPc < 0) {
+      if (currentPc > maxPc || currentPc < 0) {
         if (state.simulationTimer !== null) {
           window.clearInterval(state.simulationTimer);
         }
@@ -269,10 +285,21 @@ export const useCircuitStore = create<CircuitState>()((set, get) => ({
           simulationTimer: null
         };
       }
-      
-      return {
-        stepCount: state.stepCount + 1
+
+      // 设置处理中标志
+      const newState = {
+        stepCount: state.stepCount + 1,
+        isProcessing: true
       };
+
+      // 更新所有组件状态
+      setTimeout(() => {
+        get().updateAllNodesInputs();
+        // get().updateAllNodesInputs();
+        set({ isProcessing: false });
+      }, 0);
+
+      return newState;
     });
   },
   updateNodes: (changes) => set((state) => {

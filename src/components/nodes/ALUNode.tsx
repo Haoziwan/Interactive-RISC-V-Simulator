@@ -68,7 +68,7 @@ export function ALUNode({ data, id, selected }: { data: ALUNodeData; id: string;
   };
 
   // 更新节点数据
-  const updateNodeValues = () => {
+  const updateInputConnections = () => {
     const inputAEdge = edges.find(edge => edge.target === id && edge.targetHandle === 'a');
     const inputBEdge = edges.find(edge => edge.target === id && edge.targetHandle === 'b');
     const controlEdge = edges.find(edge => edge.target === id && edge.targetHandle === 'control');
@@ -108,7 +108,7 @@ export function ALUNode({ data, id, selected }: { data: ALUNodeData; id: string;
 
   // 监听输入连接的变化
   useEffect(() => {
-    updateNodeValues();
+    updateInputConnections();
   }, [edges]);
 
   return (

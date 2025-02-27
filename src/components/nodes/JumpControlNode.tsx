@@ -16,9 +16,11 @@ export function JumpControlNode({ data, id, selected }: { data: JumpControlNodeD
   const nodes = useNodes();
   const edges = useEdges();
   
-  const [inputFunct3, setInputFunct3] = React.useState<number>(0);
-  const [inputOpcode, setInputOpcode] = React.useState<number>(0);
-  const [inputZero, setInputZero] = React.useState<number>(0);
+  const inputValuesRef = React.useRef({
+    funct3: 0,
+    opcode: 0,
+    zero: 0
+  });
   
   // 获取输入端口的值
   const getInputValue = (edge: any) => {
@@ -40,9 +42,10 @@ export function JumpControlNode({ data, id, selected }: { data: JumpControlNodeD
     }
     return null;
   };
-  // 监听输入连接的变化
-  React.useEffect(() => {
+  // 监听输入连接的变化并处理所有逻辑
+  const updateInputConnections = () => {
     const inputEdges = edges.filter(edge => edge.target === id);
+    let hasChanges = false;
     
     inputEdges.forEach(edge => {
       const sourceValue = getInputValue(edge);
@@ -51,62 +54,77 @@ export function JumpControlNode({ data, id, selected }: { data: JumpControlNodeD
       if (sourceValue !== null && !isNaN(sourceValue)) {
         switch (portId) {
           case 'funct3':
-            setInputFunct3(sourceValue);
+            if (inputValuesRef.current.funct3 !== sourceValue) {
+              inputValuesRef.current.funct3 = sourceValue;
+              hasChanges = true;
+            }
             break;
           case 'opcode':
-            setInputOpcode(sourceValue);
+            if (inputValuesRef.current.opcode !== sourceValue) {
+              inputValuesRef.current.opcode = sourceValue;
+              hasChanges = true;
+            }
             break;
           case 'zero':
-            setInputZero(sourceValue);
+            if (inputValuesRef.current.zero !== sourceValue) {
+              inputValuesRef.current.zero = sourceValue;
+              hasChanges = true;
+            }
             break;
         }
       }
     });
-  }, [nodes, edges, id]);
-  // 根据输入信号生成跳转控制信号
-  React.useEffect(() => {
-    const funct3 = inputFunct3.toString(2).padStart(3, '0');
-    const opcode = inputOpcode.toString(2).padStart(7, '0');
-    const zero = inputZero;
-  
-    let shouldJump = 0;
-    let isJalr = 0;
-  
-    // 根据opcode和funct3判断指令类型和跳转条件
-    if (opcode === '1101111') { // JAL指令
-      shouldJump = 1;
-      isJalr = 0;
-    } else if (opcode === '1100111') { // JALR指令
-      shouldJump = 1;
-      isJalr = 1;
-    } else if (opcode === '1100011') { // B型指令
-      switch (funct3) {
-        case '000': // BEQ
-          shouldJump = zero ? 1 : 0;
-          break;
-        case '001': // BNE
-          shouldJump = zero ? 0 : 1;
-          break;
-        case '100': // BLT
-        case '110': // BLTU
-          shouldJump = zero ? 0 : 1;
-          break;
-        case '101': // BGE
-        case '111': // BGEU
-          shouldJump = zero ? 1 : 0;
-          break;
+
+    // 只在输入值发生变化时更新跳转控制信号
+    if (hasChanges) {
+      const funct3 = inputValuesRef.current.funct3.toString(2).padStart(3, '0');
+      const opcode = inputValuesRef.current.opcode.toString(2).padStart(7, '0');
+      const zero = inputValuesRef.current.zero;
+    
+      let shouldJump = 0;
+      let isJalr = 0;
+    
+      // 根据opcode和funct3判断指令类型和跳转条件
+      if (opcode === '1101111') { // JAL指令
+        shouldJump = 1;
+        isJalr = 0;
+      } else if (opcode === '1100111') { // JALR指令
+        shouldJump = 1;
+        isJalr = 1;
+      } else if (opcode === '1100011') { // B型指令
+        switch (funct3) {
+          case '000': // BEQ
+            shouldJump = zero ? 1 : 0;
+            break;
+          case '001': // BNE
+            shouldJump = zero ? 0 : 1;
+            break;
+          case '100': // BLT
+          case '110': // BLTU
+            shouldJump = zero ? 0 : 1;
+            break;
+          case '101': // BGE
+          case '111': // BGEU
+            shouldJump = zero ? 1 : 0;
+            break;
+        }
       }
+
+      // 更新节点数据
+      updateNodeData(id, {
+        ...data,
+        funct3: inputValuesRef.current.funct3,
+        opcode: inputValuesRef.current.opcode,
+        zero: zero,
+        jump: shouldJump,
+        jalr: isJalr
+      });
     }
-  // 更新节点数据
-    updateNodeData(id, {
-      ...data,
-      funct3: inputFunct3,
-      opcode: inputOpcode,
-      zero: zero,
-      jump: shouldJump,
-      jalr: isJalr
-    });
-  }, [inputFunct3, inputOpcode, inputZero]);
+  };
+  // 监听输入连接的变化
+  React.useEffect(() => {
+    updateInputConnections();
+  }, [nodes, edges, id]);
   return (
     <div className={`relative px-4 py-2 shadow-md rounded-md bg-white border-2 ${
       selected ? 'border-blue-500' : 'border-gray-200'

@@ -62,7 +62,7 @@ export function RegisterFileNode({ data, id, selected }: { data: RegisterFileNod
   };
 
   // 更新输入值和读取数据（组合逻辑）
-  React.useEffect(() => {
+  const updateInputConnections = () => {
     // 找到连接到此节点的边
     const readReg1Edge = edges.find(edge => edge.target === id && edge.targetHandle === 'readReg1');
     const readReg2Edge = edges.find(edge => edge.target === id && edge.targetHandle === 'readReg2');
@@ -109,6 +109,10 @@ export function RegisterFileNode({ data, id, selected }: { data: RegisterFileNod
         readData2
       });
     }
+  };
+  // 监听输入连接的变化
+  React.useEffect(() => {
+    updateInputConnections();
   }, [edges, nodes, id, registers]);
 
   // 监听时钟信号(stepCount)，处理寄存器写入（时序逻辑）

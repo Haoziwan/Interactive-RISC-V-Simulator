@@ -21,7 +21,7 @@ export function MuxNode({ data, id, selected }: {
   const inputsRef = React.useRef({ in0: 0, in1: 0, select: '0' });
 
   // 监听输入连接的变化并更新输出值
-  React.useEffect(() => {
+  const updateInputConnections = () => {
     // 找到连接到此节点的边
     const input0Edge = edges.find(edge => edge.target === id && edge.targetHandle === 'in0');
     const input1Edge = edges.find(edge => edge.target === id && edge.targetHandle === 'in1');
@@ -82,6 +82,10 @@ export function MuxNode({ data, id, selected }: {
       setInput0(finalInput0 as number);
       setInput1(finalInput1 as number);
     }
+  };
+  // 监听输入连接的变化
+  React.useEffect(() => {
+    updateInputConnections();
   }, [edges, id, nodes, data, updateNodeData]);
 
   return (
