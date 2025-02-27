@@ -115,7 +115,6 @@ export function MuxNode({ data, id, selected }: {
           <div className="text-gray-500">Input 0: {input0}</div>
           <div className="text-gray-500">Input 1: {input1}</div>
           <div className="text-gray-500">Select: {data.select || '0'}</div>
-          <div className="text-gray-500">Output: {data.value || 0}</div>
         </div>
       </div>
       <Handle 
