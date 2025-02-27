@@ -148,7 +148,7 @@ export function PipelineRegisterNode({ data, id, selected }: { data: PipelineReg
   }, {} as { [key: string]: number });
 
   return (
-    <div className={`px-4 py-4 shadow-md rounded-md bg-white border-2 h-auto min-h-[200px] ${selected ? 'border-blue-500' : 'border-gray-200'}`}>
+    <div className={`px-2 py-4 shadow-md rounded-md bg-white border-2 h-auto min-h-[900px] max-w-[120px] ${selected ? 'border-blue-500' : 'border-gray-200'}`}>
       <div className="flex flex-col items-center h-full">
         <div className="flex items-center justify-between w-full mb-4">
           <div className="text-sm font-medium text-gray-900">{name}</div>
@@ -198,7 +198,7 @@ export function PipelineRegisterNode({ data, id, selected }: { data: PipelineReg
                 <button
                   onClick={() => setTempConfig(prev => ({
                     ...prev,
-                    portCount: Math.min(10, (prev.portCount ?? portCount) + 1)
+                    portCount: Math.min(20, (prev.portCount ?? portCount) + 1)
                   }))}
                   className="px-2 py-1 border rounded-md hover:bg-gray-100"
                   title="增加端口数量"
@@ -253,8 +253,8 @@ export function PipelineRegisterNode({ data, id, selected }: { data: PipelineReg
           type="target"
           position={Position.Left}
           id={`input-${index}`}
-          className="w-2 h-2 bg-blue-400"
-          style={{ top: `${20 + (index * 60 / (portCount > 1 ? portCount - 1 : 1))}%` }}
+          className="w-3 h-3 bg-blue-400"
+          style={{ top: `${15 + (index * 70 / Math.max(1, portCount-1))}%` }}
           title={`输入端口 ${index}`}
         />
       ))}
@@ -266,8 +266,8 @@ export function PipelineRegisterNode({ data, id, selected }: { data: PipelineReg
           type="source"
           position={Position.Right}
           id={`output-${index}`}
-          className="w-2 h-2 bg-green-400"
-          style={{ top: `${20 + (index * 60 / (portCount > 1 ? portCount - 1 : 1))}%` }}
+          className="w-3 h-3 bg-green-400"
+          style={{ top: `${15 + (index * 70 / Math.max(1, portCount-1))}%` }}
           title={`输出端口 ${index}`}
         />
       ))}
