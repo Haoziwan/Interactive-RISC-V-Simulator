@@ -229,6 +229,12 @@ export const useCircuitStore = create<CircuitState>()((set, get) => ({
     }
   },
   resetSimulation: () => {
+    const state = get();
+    // 如果正在运行，先停止模拟
+    if (state.simulationTimer !== null) {
+      window.clearInterval(state.simulationTimer);
+    }
+
     set((state) => ({
       nodes: state.nodes.map((node) => {
         if (node.type === 'pc') {
@@ -254,7 +260,8 @@ export const useCircuitStore = create<CircuitState>()((set, get) => ({
         return node;
       }),
       isSimulating: false,
-      stepCount: 0
+      stepCount: 0,
+      simulationTimer: null
     }));
     // 延迟到下一个事件循环清空寄存器和内存
     setTimeout(() => {
