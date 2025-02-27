@@ -25,15 +25,19 @@ export function SingleRegisterNode({ data, id, selected }: { data: SingleRegiste
       value: newValue
     });
   };
-
   // 监听复位信号
   React.useEffect(() => {
     if (reset) {
       handleValueChange(0);
       setInputValue(0);
+      // 重置reset标志
+      updateNodeData(id, {
+        ...data,
+        value: 0,  // 确保value也被设置为0
+        reset: false
+      });
     }
-  }, [reset]);
-
+  }, [reset, id, data, updateNodeData]);
   // 监听输入连接的变化
   const updateInputConnections = () => {
     // 找到连接到此节点的边

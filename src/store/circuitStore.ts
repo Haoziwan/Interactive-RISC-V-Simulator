@@ -257,11 +257,23 @@ export const useCircuitStore = create<CircuitState>()((set, get) => ({
             }
           };
         }
+        if (node.type === 'single-register' || node.type === 'pipeline-register') {
+          return {
+            ...node,
+            data: {
+              ...node.data,
+              value: 0,
+              reset: true
+            }
+          };
+        }
         return node;
       }),
       isSimulating: false,
       stepCount: 0,
-      simulationTimer: null
+      simulationTimer: null,
+      pcValue: 0,
+      currentInstructionIndex: 0
     }));
     // 延迟到下一个事件循环清空寄存器和内存
     setTimeout(() => {

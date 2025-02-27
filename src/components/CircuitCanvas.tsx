@@ -31,6 +31,7 @@ import { AddNode } from './nodes/AddNode';
 import { ForkNode } from './nodes/ForkNode';
 import { InstrDistributerNode } from './nodes/InstrDistributerNode';
 import { JumpControlNode } from './nodes/JumpControlNode';
+import { PipelineRegisterNode } from './nodes/PipelineRegisterNode';
 import { useCircuitStore } from '../store/circuitStore';
 import { Play, Pause, RotateCcw, StepForward, CheckCircle, Trash2 } from 'lucide-react';
 
@@ -46,6 +47,7 @@ const nodeTypes = {
   pc: PCNode,
   constant: ConstantNode,
   'single-register': SingleRegisterNode,
+  'pipeline-register': PipelineRegisterNode,
   label: LabelNode,
   add: AddNode,
   fork: ForkNode,

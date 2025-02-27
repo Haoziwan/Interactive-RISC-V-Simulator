@@ -18,35 +18,13 @@ import {
 import { useCircuitStore } from '../store/circuitStore';
 
 const components = [
-  {
-    type: 'jump-control',
-    label: 'Jump Control',
-    icon: <GitBranch className="w-6 h-6" />,
-    description: 'Jump Control Unit',
-  },
-  {
-    type: 'add',
-    label: 'Add',
-    icon: <Plus className="w-6 h-6" />,
-    description: 'Adder Component',
-  },
-  {
-    type: 'label',
-    label: 'Label',
-    icon: <Tag className="w-6 h-6" />,
-    description: 'Label Display Component',
-  },
+
+  
   {
     type: 'constant',
     label: 'Constant',
     icon: <HashIcon className="w-6 h-6" />,
     description: 'Constant Output Component',
-  },
-  {
-    type: 'single-register',
-    label: 'Single Register',
-    icon: <Database className="w-6 h-6" />,
-    description: 'Single Register Component',
   },
   {
     type: 'pc',
@@ -59,6 +37,24 @@ const components = [
     label: 'Fork',
     icon: <GitBranch className="w-6 h-6" />,
     description: 'Signal Fork Component',
+  },
+  {
+    type: 'pipeline-register',
+    label: 'Pipeline Register',
+    icon: <Database className="w-6 h-6" />,
+    description: 'Pipeline Register Component',
+  },
+  {
+    type: 'jump-control',
+    label: 'Jump Control',
+    icon: <GitBranch className="w-6 h-6" />,
+    description: 'Jump Control Unit',
+  },
+  {
+    type: 'add',
+    label: 'Add',
+    icon: <Plus className="w-6 h-6" />,
+    description: 'Adder Component',
   },
   {
     type: 'instr-distributer',
@@ -113,6 +109,18 @@ const components = [
     label: 'Data Memory',
     icon: <Database className="w-6 h-6" />,
     description: 'Data Memory Unit',
+  },
+  {
+    type: 'label',
+    label: 'Label',
+    icon: <Tag className="w-6 h-6" />,
+    description: 'Label Display Component',
+  },
+  {
+    type: 'single-register',
+    label: 'Single Register',
+    icon: <Database className="w-6 h-6" />,
+    description: 'Single Register Component',
   }
 ];
 
