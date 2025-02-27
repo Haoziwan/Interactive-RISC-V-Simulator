@@ -148,7 +148,7 @@ export function AssemblyEditor() {
             editorRef.current.deltaDecorations(oldDecorations, []);
           }
           
-          // 清除我们自己跟踪的装饰
+          // 清除 ourselves tracking decorations
           if (decorations.length > 0) {
             editorRef.current.deltaDecorations(decorations, []);
             setDecorations([]);
@@ -166,32 +166,44 @@ export function AssemblyEditor() {
       const instructions = assemblerInstance.assemble(editorCode);
       
       // 将汇编指令与机器码对应
+      // 首先构建指令映射表
+      const instructionMapping: { sourceLine: string; expandedInsts: string[] }[] = [];
+      const sourceLines = editorCode.split('\n');
+      
+      for (const line of sourceLines) {
+        const trimmedLine = line.split('#')[0].trim();
+        if (trimmedLine && !trimmedLine.endsWith(':')) {
+          const expandedInsts = expandPseudoInstruction(trimmedLine);
+          instructionMapping.push({
+            sourceLine: line.trim(),
+            expandedInsts
+          });
+        }
+      }
+
+      // 然后映射每条机器码指令
+      let currentInstructionIndex = 0;
       const instructionsWithAssembly = instructions.map((inst, i) => {
-        // 获取原始源代码行和展开后的指令
-        const sourceLines = editorCode.split('\n');
         let sourceLine = '';
         let expandedInst = '';
         
-        for (let j = 0; j < sourceLines.length; j++) {
-          const line = sourceLines[j].split('#')[0].trim();
-          if (line && !line.endsWith(':')) {
-            // 获取当前行展开后的指令数量
-            const expandedInsts = line ? expandPseudoInstruction(line) : [];
-            const instructionIndex = Math.floor(i / expandedInsts.length);
+        // 找到当前指令对应的源代码行
+        let accumulator = 0;
+        for (const mapping of instructionMapping) {
+          if (i >= accumulator && i < accumulator + mapping.expandedInsts.length) {
+            sourceLine = mapping.sourceLine;
+            expandedInst = mapping.expandedInsts[i - accumulator];
             
-            if (instructionIndex === j) {
-              sourceLine = sourceLines[j].trim();
-              expandedInst = expandedInsts[i % expandedInsts.length] || '';
-              
-              // 替换分支指令中的标签为地址
-              if (expandedInst) {
-                Object.entries(assemblerInstance.getLabelMap()).forEach(([label, address]) => {
-                  const labelRegex = new RegExp(`\\b${label}\\b`, 'g');
-                  expandedInst = expandedInst.replace(labelRegex, `0x${address.toString(16).padStart(8, '0')}`);
-                });
-              }
+            // 替换分支指令中的标签为地址
+            if (expandedInst) {
+              Object.entries(assemblerInstance.getLabelMap()).forEach(([label, address]) => {
+                const labelRegex = new RegExp(`\\b${label}\\b`, 'g');
+                expandedInst = expandedInst.replace(labelRegex, `0x${address.toString(16).padStart(8, '0')}`);
+              });
             }
+            break;
           }
+          accumulator += mapping.expandedInsts.length;
         }
         
         return {
