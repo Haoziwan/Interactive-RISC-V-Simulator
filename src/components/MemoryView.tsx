@@ -54,7 +54,7 @@ export function MemoryView() {
             updateMemory(importedMemory);
           }
         } catch (error) {
-          console.error('导入内存数据失败:', error);
+          console.error('Failed to import memory data:', error);
         }
       };
       reader.readAsText(file);
@@ -68,23 +68,23 @@ export function MemoryView() {
             value={displayFormat}
             onChange={(e) => setDisplayFormat(e.target.value as 'hex' | 'dec')}
             className="px-2 py-1 border rounded"
-            title="选择显示格式"
-            aria-label="选择内存值的显示格式"
+            title="Select display format"
+            aria-label="Select memory value display format"
           >
-            <option value="hex">十六进制</option>
-            <option value="dec">十进制</option>
+            <option value="hex">Hexadecimal</option>
+            <option value="dec">Decimal</option>
           </select>
           <button
             onClick={() => setStartAddress(Math.max(0, startAddress - rowCount * colCount))}
             className="p-1 rounded hover:bg-gray-100"
-            title="上一页"
+            title="Previous Page"
           >
             ↑
           </button>
           <button
             onClick={() => setStartAddress(startAddress + rowCount * colCount)}
             className="p-1 rounded hover:bg-gray-100"
-            title="下一页"
+            title="Next Page"
           >
             ↓
           </button>
@@ -95,11 +95,11 @@ export function MemoryView() {
             className="flex items-center px-2 py-1 text-sm bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
           >
             <Save className="w-4 h-4 mr-1" />
-            导出
+            Export
           </button>
           <label className="flex items-center px-2 py-1 text-sm bg-gray-500 text-white rounded hover:bg-gray-600 transition-colors cursor-pointer">
             <FileInput className="w-4 h-4 mr-1" />
-            导入
+            Import
             <input
               type="file"
               accept=".json"
@@ -113,7 +113,7 @@ export function MemoryView() {
         <table className="w-full border-collapse">
           <thead>
             <tr>
-              <th className="border p-2 bg-gray-50">地址</th>
+              <th className="border p-2 bg-gray-50">Address</th>
               {Array.from({ length: colCount }, (_, i) => (
                 <th key={i} className="border p-2 bg-gray-50">
                   +{i.toString(16).toUpperCase().padStart(2, '0')}
@@ -139,7 +139,7 @@ export function MemoryView() {
                           value={formatValue(value)}
                           onChange={(e) => handleValueChange(address, e.target.value)}
                           className="w-full p-1 font-mono text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
-                          aria-label={`内存地址 ${formatAddress(address)} 的值`}
+                          aria-label={`Memory address ${formatAddress(address)} value`}
                         />
                       </td>
                     );

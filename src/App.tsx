@@ -53,7 +53,7 @@ function App() {
   const [activeTab, setActiveTab] = useState('code');
 
   React.useEffect(() => {
-    // 在组件加载时自动加载基础数据通路
+    // Load basic datapath when component mounts
     import('./examples/basic-datapath.json').then((module) => {
       useCircuitStore.getState().loadCircuit(JSON.stringify(module.default));
     });
@@ -112,14 +112,14 @@ function App() {
               <button
                 onClick={() => useCircuitStore.getState().toggleSimulation()}
                 className="p-2 rounded hover:bg-gray-100 transition-colors"
-                title={isSimulating ? '暂停模拟' : '开始模拟'}
+                title={isSimulating ? 'Pause Simulation' : 'Start Simulation'}
               >
                 {isSimulating ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5" />}
               </button>
               <button
                 onClick={() => useCircuitStore.getState().stepSimulation()}
                 className="p-2 rounded hover:bg-gray-100 transition-colors"
-                title="单步执行"
+                title="Single Step"
                 disabled={isSimulating}
               >
                 <StepForward className="w-5 h-5" />
@@ -127,7 +127,7 @@ function App() {
               <button
                 onClick={() => useCircuitStore.getState().resetSimulation()}
                 className="p-2 rounded hover:bg-gray-100 transition-colors"
-                title="重置模拟"
+                title="Reset Simulation"
               >
                 <RotateCcw className="w-5 h-5" />
               </button>
@@ -138,21 +138,21 @@ function App() {
                 onClick={() => setActiveTab('code')}
               >
                 <Code className="w-5 h-5" />
-                <span>代码编辑器</span>
+                <span>Code Editor</span>
               </TabButton>
               <TabButton
                 isActive={activeTab === 'datapath'}
                 onClick={() => setActiveTab('datapath')}
               >
                 <Cpu className="w-5 h-5" />
-                <span>数据通路</span>
+                <span>Datapath</span>
               </TabButton>
               <TabButton
                 isActive={activeTab === 'memory'}
                 onClick={() => setActiveTab('memory')}
               >
                 <Database className="w-5 h-5" />
-                <span>内存视图</span>
+                <span>Memory View</span>
               </TabButton>
             </div>
           </div>

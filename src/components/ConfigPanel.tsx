@@ -15,9 +15,9 @@ export function ConfigPanel() {
       case 'constant':
         return (
           <div className="space-y-4">
-            <h3 className="font-medium">常量配置</h3>
+            <h3 className="font-medium">Constant Configuration</h3>
             <div className="space-y-2">
-              <p className="text-sm text-gray-500">无需配置</p>
+              <p className="text-sm text-gray-500">No configuration needed</p>
             </div>
           </div>
         );
@@ -127,11 +127,11 @@ export function ConfigPanel() {
       case 'register':
         return (
           <div className="space-y-4">
-            <h3 className="font-medium">单个寄存器配置</h3>
+            <h3 className="font-medium">Register Configuration</h3>
             <div className="space-y-2">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  寄存器名称
+                  Register Name
                 </label>
                 <input
                   type="text"
@@ -144,7 +144,7 @@ export function ConfigPanel() {
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  初始值
+                  Initial Value
                 </label>
                 <input
                   type="number"

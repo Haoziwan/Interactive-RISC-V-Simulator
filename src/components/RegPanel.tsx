@@ -55,14 +55,14 @@ export function RegPanel() {
   return (
     <div className="h-full w-full bg-white overflow-y-auto p-2">
       <div className="flex justify-between items-center mb-2">
-        <h2 className="text-lg font-bold">寄存器状态</h2>
+        <h2 className="text-lg font-bold">Register</h2>
         <select
           value={base}
           onChange={(e) => setBase(e.target.value as BaseType)}
           className="px-2 py-1 text-sm bg-gray-100 hover:bg-gray-200 rounded outline-none"
         >
-          <option value="dec">十进制</option>
-          <option value="hex">十六进制</option>
+          <option value="dec">Decimal</option>
+          <option value="hex">Hexadecimal</option>
         </select>
       </div>
       <div className="w-full">

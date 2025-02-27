@@ -7,66 +7,66 @@ interface InstructionFormat {
 
 const instructionFormats: InstructionFormat[] = [
   {
-    type: 'R型指令',
+    type: 'R-Type Instructions',
     instructions: [
-      'add rd, rs1, rs2 - 加法',
-      'sub rd, rs1, rs2 - 减法',
-      'and rd, rs1, rs2 - 按位与',
-      'or rd, rs1, rs2 - 按位或',
-      'xor rd, rs1, rs2 - 按位异或',
-      'sll rd, rs1, rs2 - 逻辑左移',
-      'srl rd, rs1, rs2 - 逻辑右移',
-      'sra rd, rs1, rs2 - 算术右移',
-      'slt rd, rs1, rs2 - 小于则置位',
-      'sltu rd, rs1, rs2 - 无符号小于则置位'
+      'add rd, rs1, rs2 - Addition',
+      'sub rd, rs1, rs2 - Subtraction',
+      'and rd, rs1, rs2 - Bitwise AND',
+      'or rd, rs1, rs2 - Bitwise OR',
+      'xor rd, rs1, rs2 - Bitwise XOR',
+      'sll rd, rs1, rs2 - Logical Left Shift',
+      'srl rd, rs1, rs2 - Logical Right Shift',
+      'sra rd, rs1, rs2 - Arithmetic Right Shift',
+      'slt rd, rs1, rs2 - Set Less Than',
+      'sltu rd, rs1, rs2 - Set Less Than Unsigned'
     ]
   },
   {
-    type: 'I型指令',
+    type: 'I-Type Instructions',
     instructions: [
-      'addi rd, rs1, imm - 立即数加法',
-      'andi rd, rs1, imm - 立即数按位与',
-      'ori rd, rs1, imm - 立即数按位或',
-      'xori rd, rs1, imm - 立即数按位异或',
-      'slli rd, rs1, imm - 立即数逻辑左移',
-      'srli rd, rs1, imm - 立即数逻辑右移',
-      'srai rd, rs1, imm - 立即数算术右移',
-      'lw rd, offset(rs1) - 加载字',
-      'lb rd, offset(rs1) - 加载字节',
-      'lh rd, offset(rs1) - 加载半字'
+      'addi rd, rs1, imm - Immediate Addition',
+      'andi rd, rs1, imm - Immediate Bitwise AND',
+      'ori rd, rs1, imm - Immediate Bitwise OR',
+      'xori rd, rs1, imm - Immediate Bitwise XOR',
+      'slli rd, rs1, imm - Immediate Logical Left Shift',
+      'srli rd, rs1, imm - Immediate Logical Right Shift',
+      'srai rd, rs1, imm - Immediate Arithmetic Right Shift',
+      'lw rd, offset(rs1) - Load Word',
+      'lb rd, offset(rs1) - Load Byte',
+      'lh rd, offset(rs1) - Load Half Word'
     ]
   },
   {
-    type: 'S型指令',
+    type: 'S-Type Instructions',
     instructions: [
-      'sw rs2, offset(rs1) - 存储字',
-      'sb rs2, offset(rs1) - 存储字节',
-      'sh rs2, offset(rs1) - 存储半字'
+      'sw rs2, offset(rs1) - Store Word',
+      'sb rs2, offset(rs1) - Store Byte',
+      'sh rs2, offset(rs1) - Store Half Word'
     ]
   },
   {
-    type: 'B型指令',
+    type: 'B-Type Instructions',
     instructions: [
-      'beq rs1, rs2, offset - 相等跳转',
-      'bne rs1, rs2, offset - 不等跳转',
-      'blt rs1, rs2, offset - 小于跳转',
-      'bge rs1, rs2, offset - 大于等于跳转',
-      'bltu rs1, rs2, offset - 无符号小于跳转',
-      'bgeu rs1, rs2, offset - 无符号大于等于跳转'
+      'beq rs1, rs2, offset - Branch if Equal',
+      'bne rs1, rs2, offset - Branch if Not Equal',
+      'blt rs1, rs2, offset - Branch if Less Than',
+      'bge rs1, rs2, offset - Branch if Greater or Equal',
+      'bltu rs1, rs2, offset - Branch if Less Than Unsigned',
+      'bgeu rs1, rs2, offset - Branch if Greater or Equal Unsigned'
     ]
   },
   {
-    type: 'U型指令',
+    type: 'U-Type Instructions',
     instructions: [
-      'lui rd, imm - 加载高位立即数',
-      'auipc rd, imm - PC相对加载高位立即数'
+      'lui rd, imm - Load Upper Immediate',
+      'auipc rd, imm - Add Upper Immediate to PC'
     ]
   },
   {
-    type: 'J型指令',
+    type: 'J-Type Instructions',
     instructions: [
-      'jal rd, offset - 跳转并链接',
-      'jalr rd, offset(rs1) - 寄存器跳转并链接'
+      'jal rd, offset - Jump and Link',
+      'jalr rd, offset(rs1) - Jump and Link Register'
     ]
   }
 ];
@@ -81,7 +81,7 @@ export function InstructionFormatPanel() {
         onClick={() => setIsExpanded(!isExpanded)}
       >
         <h3 className="font-semibold">
-          支持的指令格式
+          Supported Instruction Formats
         </h3>
         <span className="ml-2 text-gray-500">
           {isExpanded ? '▼' : '▶'}
@@ -89,13 +89,13 @@ export function InstructionFormatPanel() {
       </div>
 
       {isExpanded && (
-        <div className="absolute bottom-full mb-2 left-0 right-0 grid grid-cols-2 gap-4 text-sm bg-gray-50 p-4 rounded shadow-lg transition-all duration-300 ease-in-out transform origin-bottom" style={{ opacity: isExpanded ? 1 : 0, scale: isExpanded ? '1' : '0.95' }}>
+        <div className="absolute bottom-full mb-2 left-0 right-0 grid grid-cols-3 gap-2 text-sm bg-gray-50 p-3 rounded shadow-lg transition-all duration-300 ease-in-out transform origin-bottom w-[800px]" style={{ opacity: isExpanded ? 1 : 0, scale: isExpanded ? '1' : '0.95' }}>
           {instructionFormats.map((format) => (
-            <div key={format.type}>
-              <h4 className="font-medium">{format.type}</h4>
-              <ul className="list-disc list-inside">
+            <div key={format.type} className="min-w-0">
+              <h4 className="font-medium text-gray-700 mb-1">{format.type}</h4>
+              <ul className="list-none space-y-0.5">
                 {format.instructions.map((instruction, index) => (
-                  <li key={index}>{instruction}</li>
+                  <li key={index} className="text-xs text-gray-600 truncate hover:text-clip hover:whitespace-normal">{instruction}</li>
                 ))}
               </ul>
             </div>

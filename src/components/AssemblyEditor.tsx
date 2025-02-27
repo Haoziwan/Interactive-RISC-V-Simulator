@@ -79,7 +79,7 @@ export function AssemblyEditor() {
           editorRef.current.deltaDecorations(oldDecorations, []);
         }
         
-        // 清除我们自己跟踪的装饰
+        // 清除 ourselves tracking decorations
         if (decorations.length > 0) {
           editorRef.current.deltaDecorations(decorations, []);
           setDecorations([]);
@@ -237,7 +237,7 @@ export function AssemblyEditor() {
         {/* 左侧编辑器部分 */}
         <div className="w-1/2 p-4 border-r border-gray-200">
           <div className="flex justify-between items-center mb-4">
-            <h2 className="text-lg font-semibold">汇编代码编辑器</h2>
+            <h2 className="text-lg font-semibold">Code Editor</h2>
             <div className="flex items-center gap-2">
               <button
                 onClick={() => {
@@ -258,9 +258,9 @@ export function AssemblyEditor() {
                   input.click();
                 }}
                 className="px-3 py-1 text-sm bg-gray-100 hover:bg-gray-200 rounded"
-                title="导入.txt或.s格式的汇编代码文件"
+                title="Import .txt or .s assembly code file"
               >
-                导入程序
+                Import
               </button>
               <button
                 onClick={() => {
@@ -273,30 +273,30 @@ export function AssemblyEditor() {
                   URL.revokeObjectURL(url);
                 }}
                 className="px-3 py-1 text-sm bg-gray-100 hover:bg-gray-200 rounded"
-                title="将当前编辑器中的代码保存为文本文件"
+                title="Save current editor code as text file"
               >
-                导出程序
+                Export
               </button>
               <select
                 className="px-3 py-1 text-sm bg-gray-100 hover:bg-gray-200 rounded"
                 onChange={(e) => loadTestProgram(e.target.value as 'sort' | 'fibonacci' | 'gcd')}
                 defaultValue=""
               >
-                <option value="" disabled>加载示例程序</option>
-                <option value="sort">排序程序</option>
-                <option value="fibonacci">斐波那契程序</option>
-                <option value="gcd">GCD程序</option>
-                <option value="r_type_test">R型指令测试</option>
-                <option value="i_type_test">I型指令测试</option>
-                <option value="s_type_test">S型指令测试</option>
-                <option value="b_type_test">B型指令测试</option>
-                <option value="u_type_test">U型指令测试</option>
+                <option value="" disabled>Load Example Program</option>
+                <option value="sort">Sort Program</option>
+                <option value="fibonacci">Fibonacci Program</option>
+                <option value="gcd">GCD Program</option>
+                <option value="r_type_test">R-Type Test</option>
+                <option value="i_type_test">I-Type Test</option>
+                <option value="s_type_test">S-Type Test</option>
+                <option value="b_type_test">B-Type Test</option>
+                <option value="u_type_test">U-Type Test</option>
               </select>
               <button
                 onClick={assembleCode}
                 className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
               >
-                汇编代码
+                Assemble
               </button>
             </div>
           </div>
@@ -327,14 +327,14 @@ export function AssemblyEditor() {
         <div className="w-1/2 p-4">
           {error && (
             <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded">
-              <h3 className="text-red-600 font-semibold mb-2">错误信息</h3>
+              <h3 className="text-red-600 font-semibold mb-2">Error Message</h3>
               <p className="text-red-500">{error}</p>
             </div>
           )}
 
           <div>
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-semibold">汇编结果</h3>
+              <h3 className="text-lg font-semibold">Result</h3>
               {assembledInstructions.length > 0 && (
                 <button
                   onClick={() => {
@@ -349,7 +349,7 @@ export function AssemblyEditor() {
                   }}
                   className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 text-sm"
                 >
-                  导出机器码
+                  Export Machine Code
                 </button>
               )}
             </div>
@@ -358,8 +358,8 @@ export function AssemblyEditor() {
               <table className="w-full text-sm table-fixed border-collapse">
                 <thead className="bg-gray-50 sticky top-0 z-10">
                   <tr>
-                    <th className="text-left py-2 px-2 font-medium w-24 whitespace-nowrap">地址</th>
-                    <th className="text-left py-2 px-2 font-medium w-28 whitespace-nowrap">机器码</th>
+                    <th className="text-left py-2 px-2 font-medium w-24 whitespace-nowrap">Address</th>
+                    <th className="text-left py-2 px-2 font-medium w-28 whitespace-nowrap">Machine Code</th>
                     <th className="text-left py-2 px-2 font-medium w-48 whitespace-nowrap">Basic</th>
                     <th className="text-left py-2 px-2 font-medium whitespace-nowrap">Source</th>
                   </tr>
@@ -381,7 +381,7 @@ export function AssemblyEditor() {
                   ) : (
                     <tr>
                       <td colSpan={4} className="py-8 text-center text-gray-500">
-                        暂无汇编结果，请编写代码并点击"汇编代码"
+                        No assembly result. Please write code and click "Assemble Code"
                       </td>
                     </tr>
                   )}

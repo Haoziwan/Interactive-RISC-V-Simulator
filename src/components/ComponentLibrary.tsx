@@ -21,50 +21,49 @@ const components = [
     type: 'jump-control',
     label: 'Jump Control',
     icon: <GitBranch className="w-6 h-6" />,
-    description: '跳转控制单元',
+    description: 'Jump Control Unit',
   },
   {
     type: 'add',
     label: 'Add',
     icon: <Plus className="w-6 h-6" />,
-    description: '加法器组件',
+    description: 'Adder Component',
   },
   {
     type: 'label',
     label: 'Label',
     icon: <Tag className="w-6 h-6" />,
-    description: '标签显示组件',
+    description: 'Label Display Component',
   },
   {
     type: 'constant',
     label: 'Constant',
     icon: <HashIcon className="w-6 h-6" />,
-    description: '常量输出组件',
+    description: 'Constant Output Component',
   },
   {
     type: 'single-register',
     label: 'Single Register',
     icon: <Database className="w-6 h-6" />,
-    description: '单个寄存器组件',
+    description: 'Single Register Component',
   },
   {
     type: 'pc',
     label: 'Program Counter',
     icon: <Timer className="w-6 h-6" />,
-    description: '程序计数器',
+    description: 'Program Counter',
   },
-
   {
     type: 'fork',
     label: 'Fork',
     icon: <GitBranch className="w-6 h-6" />,
-    description: '信号分叉组件',
+    description: 'Signal Fork Component',
   },
   {
     type: 'instr-distributer',
     label: 'Instruction Distributer',
     icon: <FileInput className="w-6 h-6" />,
-    description: '指令分发器组件',
+    description: 'Instruction Distributor Component',
   },
   {
     type: 'instruction-memory',
@@ -188,11 +187,11 @@ export function ComponentLibrary() {
             className="flex items-center px-1.5 py-0.5 text-xs bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors min-w-0 whitespace-nowrap overflow-hidden"
           >
             <Save className="w-3 h-3 mr-0.5 flex-shrink-0" />
-            <span className="truncate">保存</span>
+            <span className="truncate">save</span>
           </button>
           <label className="flex items-center px-1.5 py-0.5 text-xs bg-gray-500 text-white rounded hover:bg-gray-600 transition-colors cursor-pointer min-w-0 whitespace-nowrap overflow-hidden">
             <FileInput className="w-3 h-3 mr-0.5 flex-shrink-0" />
-            <span className="truncate">加载</span>
+            <span className="truncate">load</span>
             <input
               type="file"
               accept=".json"
@@ -217,13 +216,13 @@ export function ComponentLibrary() {
                 }
               }}
               className="w-full flex items-center px-1.5 py-0.5 text-xs bg-green-500 text-white rounded hover:bg-green-600 transition-colors appearance-none cursor-pointer pr-6 truncate"
-              title="选择示例电路"
-              aria-label="选择要加载的示例电路"
+              title="Select Example Circuit"
+              aria-label="Select example circuit to load"
             >
-              <option value="">选择示例</option>
-              <option value="empty-datapath">空白数据通路</option>
-              <option value="basic-datapath">基础数据通路</option>
-              <option value="basic-pipeline">基础流水线</option>
+              <option value="">select</option>
+              <option value="empty-datapath">empty</option>
+              <option value="basic-datapath">basic datapath</option>
+              <option value="basic-pipeline">pipeline datapath</option>
             </select>
             <BookOpen className="w-3 h-3 absolute right-1 top-1/2 transform -translate-y-1/2 pointer-events-none text-white" />
           </div>

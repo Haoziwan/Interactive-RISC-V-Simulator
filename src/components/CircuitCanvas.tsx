@@ -105,9 +105,9 @@ export function CircuitCanvas() {
     Object.entries(requiredComponents).forEach(([type, { min, max }]) => {
       const count = componentCounts[type] || 0;
       if (count < min) {
-        errors.push(`缺少必需组件: ${type}`);
+        errors.push(`Missing required component: ${type}`);
       } else if (count > max) {
-        errors.push(`${type} 组件数量过多，最多允许 ${max} 个`);
+        errors.push(`Too many ${type} components, maximum allowed: ${max}`);
       }
     });
 
@@ -120,15 +120,15 @@ export function CircuitCanvas() {
 
     nodes.forEach(node => {
       if (!connectedNodes.has(node.id)) {
-        errors.push(`组件 ${node.type} (${node.id}) 未连接到任何其他组件`);
+        errors.push(`Component ${node.type} (${node.id}) is not connected to any other component`);
       }
     });
 
     // 显示验证结果
     if (errors.length === 0) {
-      alert('数据通路验证通过！所有必需组件都已正确配置。');
+      alert('Datapath validation passed! All required components are properly configured.');
     } else {
-      alert('数据通路验证失败：\n' + errors.join('\n'));
+      alert('Datapath validation failed:\n' + errors.join('\n'));
     }
   }, [nodes, edges]);
 
@@ -305,7 +305,7 @@ export function CircuitCanvas() {
             {showEdgeSettings && (
               <div className="space-y-2 p-2 bg-gray-50 rounded">
                 <div className="flex flex-col space-y-1">
-                  <label className="text-xs text-gray-600">连线类型</label>
+                  <label className="text-xs text-gray-600">Edge Type</label>
                   <select
                     value={edgeType}
                     onChange={(e) => {
@@ -322,7 +322,7 @@ export function CircuitCanvas() {
                   </select>
                 </div>
                 <div className="flex flex-col space-y-1">
-                  <label className="text-xs text-gray-600">连接模式</label>
+                  <label className="text-xs text-gray-600">Connection Mode</label>
                   <select
                     value={connectionMode}
                     onChange={(e) => {
@@ -339,7 +339,7 @@ export function CircuitCanvas() {
                   </select>
                 </div>
                 <div className="flex flex-col space-y-1">
-                  <label className="text-xs text-gray-600">连线颜色</label>
+                  <label className="text-xs text-gray-600">Edge Color</label>
                   <input
                     type="color"
                     value={edgeColor}
@@ -348,7 +348,7 @@ export function CircuitCanvas() {
                   />
                 </div>
                 <div className="flex flex-col space-y-1">
-                  <label className="text-xs text-gray-600">连线宽度</label>
+                  <label className="text-xs text-gray-600">Edge Width</label>
                   <input
                     type="range"
                     min="1"
@@ -368,10 +368,10 @@ export function CircuitCanvas() {
                     }}
                     className="rounded border-gray-300"
                   />
-                  <label className="text-xs text-gray-600">动画效果</label>
+                  <label className="text-xs text-gray-600">Animation</label>
                 </div>
                 <div className="flex flex-col space-y-1">
-                  <label className="text-xs text-gray-600">模拟间隔 (ms)</label>
+                  <label className="text-xs text-gray-600">Simulation Interval (ms)</label>
                   <input
                     type="range"
                     min="100"
@@ -393,7 +393,7 @@ export function CircuitCanvas() {
               <button
                 onClick={validateCircuit}
                 className="p-2 rounded hover:bg-gray-100 transition-colors"
-                title="验证数据通路"
+                title="Validate Datapath"
               >
                 <CheckCircle className="w-5 h-5" />
               </button>
@@ -408,7 +408,7 @@ export function CircuitCanvas() {
                   }
                 }}
                 className="p-2 rounded hover:bg-gray-100 transition-colors"
-                title="删除选中的组件或连线"
+                title="Delete selected component or edge"
                 disabled={!selectedEdge && !selectedNode}
               >
                 <Trash2 className="w-5 h-5" />
