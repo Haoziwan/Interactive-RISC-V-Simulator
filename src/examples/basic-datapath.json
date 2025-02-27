@@ -1,29 +1,29 @@
 {
-  "name": "circuit-2025-02-26T12-08-32-797Z",
+  "name": "circuit-2025-02-27T10-15-16-099Z",
   "nodes": [
     {
       "id": "register-1740456812349",
       "type": "register",
       "position": {
-        "x": 319.73134542502146,
-        "y": 423.2788314014151
+        "x": 301.6582999874488,
+        "y": 393.9101325653596
       },
       "data": {
         "label": "REGISTER",
         "readReg1": 0,
-        "readReg2": 10,
-        "writeReg": 1,
-        "writeData": 10,
-        "regWrite": true,
+        "readReg2": 0,
+        "writeReg": 0,
+        "writeData": 0,
+        "regWrite": false,
         "readData1": 0,
         "readData2": 0
       },
-      "width": 196,
+      "width": 186,
       "height": 167,
       "selected": false,
       "positionAbsolute": {
-        "x": 319.73134542502146,
-        "y": 423.2788314014151
+        "x": 301.6582999874488,
+        "y": 393.9101325653596
       },
       "dragging": false
     },
@@ -58,12 +58,12 @@
       },
       "data": {
         "label": "INSTR-DISTRIBUTER",
-        "value": "0x00a00093",
-        "opcode": 19,
-        "rd": 1,
+        "value": 0,
+        "opcode": 0,
+        "rd": 0,
         "funct3": 0,
         "rs1": 0,
-        "rs2": 10,
+        "rs2": 0,
         "funct7": 0
       },
       "width": 160,
@@ -100,40 +100,20 @@
       "id": "instruction-memory-1740456942935",
       "type": "instruction-memory",
       "position": {
-        "x": -565.2175230188503,
-        "y": 459.0209698777617
+        "x": -574.2540457376367,
+        "y": 486.1305380341206
       },
       "data": {
         "label": "INSTRUCTION-MEMORY",
-        "instructions": [
-          "0x00a00093",
-          "0x00000113",
-          "0x00000193",
-          "0x00100213",
-          "0x00000293",
-          "0x00312023",
-          "0x00410113",
-          "0x00412023",
-          "0x00410113",
-          "0x00200313",
-          "0x02130063",
-          "0x004182b3",
-          "0x00512023",
-          "0x004001b3",
-          "0x00500233",
-          "0x00410113",
-          "0x00130313",
-          "0xfe5ff06f"
-        ],
-        "pc": 0,
-        "value": "0x00a00093"
+        "instructions": [],
+        "pc": 0
       },
-      "width": 304,
-      "height": 187,
+      "width": 297,
+      "height": 95,
       "selected": false,
       "positionAbsolute": {
-        "x": -565.2175230188503,
-        "y": 459.0209698777617
+        "x": -574.2540457376367,
+        "y": 486.1305380341206
       },
       "dragging": false
     },
@@ -146,15 +126,15 @@
       },
       "data": {
         "label": "CONTROL",
-        "regWrite": 1,
+        "regWrite": 0,
         "memRead": 0,
         "memWrite": 0,
-        "aluOp": 3,
+        "aluOp": 0,
         "branch": 0,
         "jump": 0,
-        "aluSrc": 1,
+        "aluSrc": 0,
         "memToReg": 0,
-        "opcode": "0010011"
+        "opcode": "0000000"
       },
       "width": 160,
       "height": 267,
@@ -174,7 +154,7 @@
       },
       "data": {
         "label": "FORK",
-        "value": 19
+        "value": 0
       },
       "width": 32,
       "height": 32,
@@ -194,13 +174,13 @@
       },
       "data": {
         "label": "MEMORY",
-        "address": 10,
+        "address": 0,
         "memRead": 0,
         "readData": 0,
-        "writeData": 0,
+        "writeData": 10,
         "memWrite": 0
       },
-      "width": 205,
+      "width": 206,
       "height": 191,
       "selected": false,
       "dragging": false,
@@ -218,11 +198,11 @@
       },
       "data": {
         "label": "MUX",
-        "value": 10,
-        "select": "1"
+        "value": 0,
+        "select": "0"
       },
       "width": 125,
-      "height": 143,
+      "height": 119,
       "selected": false,
       "positionAbsolute": {
         "x": 601.9505008939988,
@@ -239,7 +219,7 @@
       },
       "data": {
         "label": "ALU-CONTROL",
-        "aluOp": 3,
+        "aluOp": 0,
         "funct3": 0,
         "funct7": 0,
         "aluControl": 2
@@ -277,20 +257,20 @@
       "id": "mux-1740457249603",
       "type": "mux",
       "position": {
-        "x": 1293.5196141600811,
-        "y": 350.3275233378463
+        "x": 1275.4465687225086,
+        "y": 359.36404605663256
       },
       "data": {
         "label": "MUX",
-        "value": 10,
+        "value": 0,
         "select": "0"
       },
-      "width": 125,
-      "height": 143,
+      "width": 116,
+      "height": 119,
       "selected": false,
       "positionAbsolute": {
-        "x": 1293.5196141600811,
-        "y": 350.3275233378463
+        "x": 1275.4465687225086,
+        "y": 359.36404605663256
       },
       "dragging": false
     },
@@ -298,23 +278,23 @@
       "id": "alu-1740457259779",
       "type": "alu",
       "position": {
-        "x": 710.3431464569924,
-        "y": 373.45889582165
+        "x": 746.4892373321377,
+        "y": 326.01715154802196
       },
       "data": {
         "label": "ALU",
         "a": 0,
-        "b": 10,
+        "b": 0,
         "operation": 2,
-        "result": 10,
-        "zero": 0
+        "result": 0,
+        "zero": 1
       },
-      "width": 118,
+      "width": 144,
       "height": 167,
       "selected": false,
       "positionAbsolute": {
-        "x": 710.3431464569924,
-        "y": 373.45889582165
+        "x": 746.4892373321377,
+        "y": 326.01715154802196
       },
       "dragging": false
     },
@@ -347,7 +327,7 @@
       },
       "data": {
         "label": "FORK",
-        "value": 10
+        "value": 0
       },
       "width": 32,
       "height": 32,
@@ -382,8 +362,8 @@
       "id": "constant-1740457494777",
       "type": "constant",
       "position": {
-        "x": -531.6734844346666,
-        "y": -4.605890925953119
+        "x": -522.6369617158804,
+        "y": -99.48937947320937
       },
       "data": {
         "label": "CONSTANT",
@@ -393,8 +373,8 @@
       "height": 39,
       "selected": false,
       "positionAbsolute": {
-        "x": -531.6734844346666,
-        "y": -4.605890925953119
+        "x": -522.6369617158804,
+        "y": -99.48937947320937
       },
       "dragging": false
     },
@@ -442,14 +422,14 @@
       "id": "jump-control-1740457549626",
       "type": "jump-control",
       "position": {
-        "x": 164.13436919923606,
-        "y": -449.5034549919451
+        "x": 166.39349987893263,
+        "y": -435.9486709137656
       },
       "data": {
         "label": "JUMP-CONTROL",
         "funct3": 0,
-        "opcode": 19,
-        "zero": 0,
+        "opcode": 0,
+        "zero": 1,
         "jump": 0,
         "jalr": 0
       },
@@ -457,8 +437,8 @@
       "height": 167,
       "selected": false,
       "positionAbsolute": {
-        "x": 164.13436919923606,
-        "y": -449.5034549919451
+        "x": 166.39349987893263,
+        "y": -435.9486709137656
       },
       "dragging": false
     },
@@ -506,8 +486,8 @@
       "id": "mux-1740457672408",
       "type": "mux",
       "position": {
-        "x": 845.1510549960406,
-        "y": -332.2077897569332
+        "x": 973.9215037387455,
+        "y": -298.3208295614846
       },
       "data": {
         "label": "MUX",
@@ -515,11 +495,11 @@
         "select": "0"
       },
       "width": 125,
-      "height": 143,
+      "height": 119,
       "selected": false,
       "positionAbsolute": {
-        "x": 845.1510549960406,
-        "y": -332.2077897569332
+        "x": 973.9215037387455,
+        "y": -298.3208295614846
       },
       "dragging": false
     },
@@ -532,7 +512,7 @@
       },
       "data": {
         "label": "FORK",
-        "value": "0x00a00093"
+        "value": 0
       },
       "width": 32,
       "height": 32,
@@ -556,7 +536,7 @@
         "select": "0"
       },
       "width": 116,
-      "height": 143,
+      "height": 119,
       "selected": false,
       "positionAbsolute": {
         "x": 228.77213465013767,
@@ -1548,116 +1528,7 @@
     }
   ],
   "isSimulating": false,
-  "editorCode": "# 斐波那契数列程序\r\n# 计算斐波那契数列的前n个数\r\n# n存储在x1中，结果存储在内存中\r\n\r\n# 初始化\r\naddi x1, x0, 10    # n = 10 (计算前10个数)\r\naddi x2, x0, 0     # 地址索引\r\naddi x3, x0, 0     # f(n-2)\r\naddi x4, x0, 1     # f(n-1)\r\naddi x5, x0, 0     # 当前计算的f(n)\r\n\r\n# 存储前两个数\r\nsw x3, 0(x2)       # 存储f(0)\r\naddi x2, x2, 4     # 地址+4\r\nsw x4, 0(x2)       # 存储f(1)\r\naddi x2, x2, 4     # 地址+4\r\naddi x6, x0, 2     # i = 2\r\n\r\nloop:\r\nbeq x6, x1, end    # if i == n, 结束\r\n\r\n# 计算f(n) = f(n-1) + f(n-2)\r\nadd x5, x3, x4     # f(n) = f(n-2) + f(n-1)\r\nsw x5, 0(x2)       # 存储f(n)\r\n\r\n# 更新变量\r\nadd x3, x0, x4     # f(n-2) = f(n-1)\r\nadd x4, x0, x5     # f(n-1) = f(n)\r\naddi x2, x2, 4     # 地址+4\r\naddi x6, x6, 1     # i++\r\njal x0, loop       # 继续循环\r\n\r\nend:",
-  "assembledInstructions": [
-    {
-      "hex": "0x00a00093",
-      "binary": "00000000101000000000000010010011",
-      "assembly": "addi x1, x0, 10",
-      "source": "addi x1, x0, 10    # n = 10 (计算前10个数)"
-    },
-    {
-      "hex": "0x00000113",
-      "binary": "00000000000000000000000100010011",
-      "assembly": "addi x2, x0, 0",
-      "source": "addi x2, x0, 0     # 地址索引"
-    },
-    {
-      "hex": "0x00000193",
-      "binary": "00000000000000000000000110010011",
-      "assembly": "addi x3, x0, 0",
-      "source": "addi x3, x0, 0     # f(n-2)"
-    },
-    {
-      "hex": "0x00100213",
-      "binary": "00000000000100000000001000010011",
-      "assembly": "addi x4, x0, 1",
-      "source": "addi x4, x0, 1     # f(n-1)"
-    },
-    {
-      "hex": "0x00000293",
-      "binary": "00000000000000000000001010010011",
-      "assembly": "addi x5, x0, 0",
-      "source": "addi x5, x0, 0     # 当前计算的f(n)"
-    },
-    {
-      "hex": "0x00312023",
-      "binary": "00000000001100010010000000100011",
-      "assembly": "sw x3, 0(x2)",
-      "source": "sw x3, 0(x2)       # 存储f(0)"
-    },
-    {
-      "hex": "0x00410113",
-      "binary": "00000000010000010000000100010011",
-      "assembly": "addi x2, x2, 4",
-      "source": "addi x2, x2, 4     # 地址+4"
-    },
-    {
-      "hex": "0x00412023",
-      "binary": "00000000010000010010000000100011",
-      "assembly": "sw x4, 0(x2)",
-      "source": "sw x4, 0(x2)       # 存储f(1)"
-    },
-    {
-      "hex": "0x00410113",
-      "binary": "00000000010000010000000100010011",
-      "assembly": "addi x2, x2, 4",
-      "source": "addi x2, x2, 4     # 地址+4"
-    },
-    {
-      "hex": "0x00200313",
-      "binary": "00000000001000000000001100010011",
-      "assembly": "addi x6, x0, 2",
-      "source": "addi x6, x0, 2     # i = 2"
-    },
-    {
-      "hex": "0x02130063",
-      "binary": "00000010000100110000000001100011",
-      "assembly": "beq x6, x1, 0x00000048",
-      "source": "beq x6, x1, end    # if i == n, 结束"
-    },
-    {
-      "hex": "0x004182b3",
-      "binary": "00000000010000011000001010110011",
-      "assembly": "add x5, x3, x4",
-      "source": "add x5, x3, x4     # f(n) = f(n-2) + f(n-1)"
-    },
-    {
-      "hex": "0x00512023",
-      "binary": "00000000010100010010000000100011",
-      "assembly": "sw x5, 0(x2)",
-      "source": "sw x5, 0(x2)       # 存储f(n)"
-    },
-    {
-      "hex": "0x004001b3",
-      "binary": "00000000010000000000000110110011",
-      "assembly": "add x3, x0, x4",
-      "source": "add x3, x0, x4     # f(n-2) = f(n-1)"
-    },
-    {
-      "hex": "0x00500233",
-      "binary": "00000000010100000000001000110011",
-      "assembly": "add x4, x0, x5",
-      "source": "add x4, x0, x5     # f(n-1) = f(n)"
-    },
-    {
-      "hex": "0x00410113",
-      "binary": "00000000010000010000000100010011",
-      "assembly": "addi x2, x2, 4",
-      "source": "addi x2, x2, 4     # 地址+4"
-    },
-    {
-      "hex": "0x00130313",
-      "binary": "00000000000100110000001100010011",
-      "assembly": "addi x6, x6, 1",
-      "source": "addi x6, x6, 1     # i++"
-    },
-    {
-      "hex": "0xfe5ff06f",
-      "binary": "11111110010111111111000001101111",
-      "assembly": "jal x0, 0x00000028",
-      "source": "jal x0, loop       # 继续循环"
-    }
-  ],
-  "savedAt": "2025-02-26T12:08:32.797Z"
+  "editorCode": "",
+  "assembledInstructions": [],
+  "savedAt": "2025-02-27T10:15:16.099Z"
 }

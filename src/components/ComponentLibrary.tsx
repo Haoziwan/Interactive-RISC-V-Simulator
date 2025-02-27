@@ -12,7 +12,8 @@ import {
   Plus,
   GitBranch,
   Tag,
-  Hash as HashIcon
+  Hash as HashIcon,
+  SplitSquareHorizontal
 } from 'lucide-react';
 import { useCircuitStore } from '../store/circuitStore';
 
@@ -116,8 +117,11 @@ const components = [
 ];
 
 export function ComponentLibrary() {
+  const [showAssemblyResult, setShowAssemblyResult] = React.useState(false);
   const saveCircuit = useCircuitStore((state) => state.saveCircuit);
   const loadCircuit = useCircuitStore((state) => state.loadCircuit);
+  const assembledInstructions = useCircuitStore((state) => state.assembledInstructions);
+  const currentInstructionIndex = useCircuitStore((state) => state.currentInstructionIndex);
 
   const onDragStart = (event: React.DragEvent, type: string) => {
     event.dataTransfer.setData('application/reactflow', type);
@@ -180,7 +184,16 @@ export function ComponentLibrary() {
   return (
     <div className="flex flex-col h-full">
       <div className="bg-white p-4 rounded-lg shadow-lg mb-4">
-        <h2 className="text-lg font-semibold mb-2">Components</h2>
+        <div className="flex justify-between items-center mb-2">
+          <h2 className="text-lg font-semibold">Components</h2>
+          <button
+            onClick={() => setShowAssemblyResult(!showAssemblyResult)}
+            className="p-1 rounded hover:bg-gray-100 transition-colors"
+            title={showAssemblyResult ? "Show Components" : "Show Assembly Result"}
+          >
+            <SplitSquareHorizontal className="w-5 h-5" />
+          </button>
+        </div>
         <div className="flex flex-wrap gap-1 mb-3">
           <button
             onClick={handleSave}
@@ -228,18 +241,36 @@ export function ComponentLibrary() {
           </div>
         </div>
         <div className="space-y-2 overflow-y-auto max-h-[calc(100vh-12rem)]">
-          {components.map((component) => (
-            <div
-              key={component.type}
-              className="flex items-center p-2 bg-gray-50 rounded cursor-move hover:bg-gray-100 transition-colors"
-              draggable
-              onDragStart={(e) => onDragStart(e, component.type)}
-            >
-              {component.icon}
-              <span className="ml-2">{component.label}</span>
-              <span className="ml-auto text-xs text-gray-500">{component.description}</span>
+          {showAssemblyResult ? (
+            <div className="space-y-1 overflow-y-auto">
+              {assembledInstructions.map((inst, i) => (
+                <div
+                  key={i}
+                  ref={i === currentInstructionIndex ? (el) => {
+                    if (el) {
+                      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+                  } : undefined}
+                  className={`p-2 rounded ${i === currentInstructionIndex ? 'bg-yellow-100' : 'bg-gray-50'}`}
+                >
+                  <div className="font-mono text-sm">{inst.assembly}</div>
+                </div>
+              ))}
             </div>
-          ))}
+          ) : (
+            components.map((component) => (
+              <div
+                key={component.type}
+                className="flex items-center p-2 bg-gray-50 rounded cursor-move hover:bg-gray-100 transition-colors"
+                draggable
+                onDragStart={(e) => onDragStart(e, component.type)}
+              >
+                {component.icon}
+                <span className="ml-2">{component.label}</span>
+                <span className="ml-auto text-xs text-gray-500">{component.description}</span>
+              </div>
+            ))
+          )}
         </div>
       </div>
     </div>
