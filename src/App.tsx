@@ -52,13 +52,6 @@ function TabButton({ isActive, onClick, children }: TabButtonProps) {
 function App() {
   const [activeTab, setActiveTab] = useState('code');
 
-  React.useEffect(() => {
-    // Load basic datapath when component mounts
-    import('./examples/basic-datapath.json').then((module) => {
-      useCircuitStore.getState().loadCircuit(JSON.stringify(module.default));
-    });
-  }, []);
-
   const renderContent = () => {
     return (
       <div className="h-full flex">

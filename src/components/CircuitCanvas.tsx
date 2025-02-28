@@ -92,6 +92,13 @@ export function CircuitCanvas() {
   const [showEdgeSettings, setShowEdgeSettings] = useState(false);
   const [simulationInterval, setSimulationInterval] = useState(1000);
   
+  React.useEffect(() => {
+    // Load basic datapath when component mounts
+    import('../examples/basic-datapath.json').then((module) => {
+      useCircuitStore.getState().loadCircuit(JSON.stringify(module.default));
+    });
+  }, []);
+  
   const validateCircuit = useCallback(() => {
     const errors: string[] = [];
     const componentCounts: { [key: string]: number } = {};
