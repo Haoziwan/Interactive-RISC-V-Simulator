@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    {
+      "source": "/test-programs/:path*",
+      "destination": "/public/test-programs/:path*"
+    }
+  ]
+}
