@@ -65,7 +65,7 @@ export function ConstantNode({ data, id, selected }: { data: ConstantNodeData; i
         id="value" 
         className="w-2 h-2 bg-green-400" 
         style={{ top: '50%' }} 
-        title="常量输出值" 
+        title="Constant Output Value" 
       />
     </div>
   );

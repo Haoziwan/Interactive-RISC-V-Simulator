@@ -135,7 +135,7 @@ export function JumpControlNode({ data, id, selected }: { data: JumpControlNodeD
         id="funct3" 
         className="w-3 h-3 bg-blue-400" 
         style={{ top: '30%' }} 
-        title="功能码3" 
+        title="Function Code 3" 
       />
       <Handle 
         type="target" 
@@ -143,7 +143,7 @@ export function JumpControlNode({ data, id, selected }: { data: JumpControlNodeD
         id="opcode" 
         className="w-3 h-3 bg-blue-400" 
         style={{ top: '50%' }} 
-        title="操作码" 
+        title="Operation Code" 
       />
       <Handle 
         type="target" 
@@ -151,7 +151,7 @@ export function JumpControlNode({ data, id, selected }: { data: JumpControlNodeD
         id="zero" 
         className="w-3 h-3 bg-blue-400" 
         style={{ top: '70%' }} 
-        title="ALU零标志" 
+        title="ALU Zero Flag" 
       />
       
       <div className="flex items-center">
@@ -171,7 +171,7 @@ export function JumpControlNode({ data, id, selected }: { data: JumpControlNodeD
         id="jump" 
         className="w-3 h-3 bg-green-400" 
         style={{ top: '40%' }} 
-        title="跳转控制信号" 
+        title="Jump Control Signal" 
       />
       <Handle 
         type="source" 
@@ -179,7 +179,7 @@ export function JumpControlNode({ data, id, selected }: { data: JumpControlNodeD
         id="jalr" 
         className="w-3 h-3 bg-green-400" 
         style={{ top: '60%' }} 
-        title="JALR控制信号" 
+        title="JALR Control Signal" 
       />
     </div>
   );

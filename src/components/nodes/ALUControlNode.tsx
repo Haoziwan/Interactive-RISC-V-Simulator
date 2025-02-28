@@ -153,7 +153,7 @@ export function ALUControlNode({ data, id, selected }: { data: ALUControlNodeDat
         id="aluOp" 
         className="w-3 h-3 bg-blue-400" 
         style={{ left: '50%' }} 
-        title="ALU操作码" 
+        title="ALU Operation Code" 
       />
       <Handle 
         type="target" 
@@ -161,7 +161,7 @@ export function ALUControlNode({ data, id, selected }: { data: ALUControlNodeDat
         id="funct3" 
         className="w-3 h-3 bg-blue-400" 
         style={{ top: '40%' }} 
-        title="功能码3" 
+        title="Function Code 3" 
       />
       <Handle 
         type="target" 
@@ -169,7 +169,7 @@ export function ALUControlNode({ data, id, selected }: { data: ALUControlNodeDat
         id="funct7" 
         className="w-3 h-3 bg-blue-400" 
         style={{ top: '60%' }} 
-        title="功能码7" 
+        title="Function Code 7" 
       />
       
       <div className="flex items-center">
@@ -188,7 +188,7 @@ export function ALUControlNode({ data, id, selected }: { data: ALUControlNodeDat
         id="aluControl" 
         className="w-3 h-3 bg-green-400" 
         style={{ top: '50%' }} 
-        title="ALU控制信号" 
+        title="ALU Control Signal" 
       />
     </div>
   );

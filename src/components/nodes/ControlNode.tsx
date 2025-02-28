@@ -158,7 +158,7 @@ export function ControlNode({ data, id, selected }: { data: ControlNodeData; id:
         id="opcode" 
         className="w-3 h-3 bg-blue-400" 
         style={{ top: '10%' }}
-        title="指令操作码"
+        title="Instruction Opcode"
       />
       <div className="flex flex-col items-start">
         <div className="text-lg font-bold mb-2">Control Unit</div>

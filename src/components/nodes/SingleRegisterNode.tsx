@@ -108,7 +108,7 @@ export function SingleRegisterNode({ data, id, selected }: { data: SingleRegiste
         id="input"
         className="w-2 h-2 bg-blue-400"
         style={{ top: '50%' }}
-        title="输入值"
+        title="Input Value"
       />
       <Handle
         type="source"
@@ -116,7 +116,7 @@ export function SingleRegisterNode({ data, id, selected }: { data: SingleRegiste
         id="output"
         className="w-2 h-2 bg-green-400"
         style={{ top: '50%' }}
-        title="输出值"
+        title="Output Value"
       />
     </div>
   );

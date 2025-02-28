@@ -117,7 +117,7 @@ export function DataMemoryNode({ data, id, selected }: { data: DataMemoryNodeDat
         id="memWrite" 
         className="w-3 h-3 bg-yellow-400" 
         style={{ left: '30%' }}
-        title="写使能信号"
+        title="Write Enable Signal"
       />
       <Handle 
         type="target" 
@@ -125,7 +125,7 @@ export function DataMemoryNode({ data, id, selected }: { data: DataMemoryNodeDat
         id="memRead" 
         className="w-3 h-3 bg-yellow-400" 
         style={{ left: '70%' }}
-        title="读使能信号"
+        title="Read Enable Signal"
       />
       <Handle 
         type="target" 
@@ -133,7 +133,7 @@ export function DataMemoryNode({ data, id, selected }: { data: DataMemoryNodeDat
         id="address" 
         className="w-3 h-3 bg-blue-400" 
         style={{ top: '30%' }}
-        title="内存地址"
+        title="Memory Address"
       />
       <Handle 
         type="target" 
@@ -141,7 +141,7 @@ export function DataMemoryNode({ data, id, selected }: { data: DataMemoryNodeDat
         id="writeData" 
         className="w-3 h-3 bg-blue-400" 
         style={{ top: '70%' }}
-        title="写入数据"
+        title="Write Data"
       />
   
       {/* Output port on right */}
@@ -151,7 +151,7 @@ export function DataMemoryNode({ data, id, selected }: { data: DataMemoryNodeDat
         id="readData" 
         className="w-3 h-3 bg-green-400" 
         style={{ top: '50%' }}
-        title="读出数据"
+        title="Read Data"
       />
   
       <div className="flex items-center">

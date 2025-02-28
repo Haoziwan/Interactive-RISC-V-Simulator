@@ -72,7 +72,7 @@ export function ForkNode({ data, id, selected }: { data: ForkNodeData; id: strin
         id="input"
         className="w-2 h-2 bg-blue-400"
         style={{ top: '50%' }}
-        title="输入"
+        title="Input"
       />
       <Handle
         type="source"
@@ -80,7 +80,7 @@ export function ForkNode({ data, id, selected }: { data: ForkNodeData; id: strin
         id="output-1"
         className="w-2 h-2 bg-green-400"
         style={{ top: '30%' }}
-        title="输出1"
+        title="Output 1"
       />
       <Handle
         type="source"
@@ -88,7 +88,7 @@ export function ForkNode({ data, id, selected }: { data: ForkNodeData; id: strin
         id="output-2"
         className="w-2 h-2 bg-green-400"
         style={{ top: '70%' }}
-        title="输出2"
+        title="Output 2"
       />
     </div>
   );

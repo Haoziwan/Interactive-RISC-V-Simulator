@@ -95,7 +95,7 @@ export function PCNode({ data, id, selected }: { data: PCNodeData; id: string; s
         id="next" 
         className="w-3 h-3 bg-blue-400" 
         style={{ top: '50%' }}
-        title="下一指令地址"
+        title="Next Instruction Address"
       />
       
       <div className="flex items-center">
@@ -112,7 +112,7 @@ export function PCNode({ data, id, selected }: { data: PCNodeData; id: string; s
         id="address" 
         className="w-3 h-3 bg-green-400" 
         style={{ top: '50%' }}
-        title="当前指令地址"
+        title="Current Instruction Address"
       />
     </div>
   );

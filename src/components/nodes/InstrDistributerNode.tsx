@@ -80,7 +80,7 @@ export function InstrDistributerNode({ data, id, selected }: { data: InstrDistri
         position={Position.Left}
         className="w-2 h-2 bg-blue-400"
         style={{ top: '50%' }}
-        title="指令输入"
+        title="Instruction Input"
       />
 
       <div className="flex flex-col space-y-2 px-2">
@@ -93,7 +93,7 @@ export function InstrDistributerNode({ data, id, selected }: { data: InstrDistri
             id="opcode"
             className="w-2 h-2 bg-green-400"
             style={{ top: '1.5rem' }}
-            title="操作码"
+            title="Operation Code"
           />
         </div>
 
@@ -106,7 +106,7 @@ export function InstrDistributerNode({ data, id, selected }: { data: InstrDistri
             id="rd"
             className="w-2 h-2 bg-green-400"
             style={{ top: '3rem' }}
-            title="目标寄存器"
+            title="Destination Register"
           />
         </div>
 
@@ -119,7 +119,7 @@ export function InstrDistributerNode({ data, id, selected }: { data: InstrDistri
             id="funct3"
             className="w-2 h-2 bg-green-400"
             style={{ top: '4.5rem' }}
-            title="功能码3"
+            title="Function Code 3"
           />
         </div>
 
@@ -132,7 +132,7 @@ export function InstrDistributerNode({ data, id, selected }: { data: InstrDistri
             id="rs1"
             className="w-2 h-2 bg-green-400"
             style={{ top: '6rem' }}
-            title="源寄存器1"
+            title="Source Register 1"
           />
         </div>
 
@@ -145,7 +145,7 @@ export function InstrDistributerNode({ data, id, selected }: { data: InstrDistri
             id="rs2"
             className="w-2 h-2 bg-green-400"
             style={{ top: '7.5rem' }}
-            title="源寄存器2"
+            title="Source Register 2"
           />
         </div>
 
@@ -158,7 +158,7 @@ export function InstrDistributerNode({ data, id, selected }: { data: InstrDistri
             id="funct7"
             className="w-2 h-2 bg-green-400"
             style={{ top: '9rem' }}
-            title="功能码7"
+            title="Function Code 7"
           />
         </div>
       </div>

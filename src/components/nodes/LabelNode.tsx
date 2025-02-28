@@ -88,7 +88,7 @@ export function LabelNode({ data, id, selected }: { data: LabelNodeData; id: str
         id="input" 
         className="w-2 h-2 bg-blue-400" 
         style={{ top: '50%' }}
-        title="输入值"
+        title="Input Value"
       />
       
       <div className="flex items-center justify-center">
@@ -101,7 +101,7 @@ export function LabelNode({ data, id, selected }: { data: LabelNodeData; id: str
         id="output" 
         className="w-2 h-2 bg-green-400" 
         style={{ top: '50%' }}
-        title="输出值"
+        title="Output Value"
       />
     </div>
   );

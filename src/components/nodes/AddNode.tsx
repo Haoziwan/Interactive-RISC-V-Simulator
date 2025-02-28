@@ -88,7 +88,7 @@ export function AddNode({ data, id, selected }: { data: AddNodeData; id: string;
         id="input-a"
         className="w-2 h-2 bg-blue-400"
         style={{ top: '30%' }}
-        title="输入A"
+        title="Input A"
       />
       <Handle
         type="target"
@@ -96,7 +96,7 @@ export function AddNode({ data, id, selected }: { data: AddNodeData; id: string;
         id="input-b"
         className="w-2 h-2 bg-blue-400"
         style={{ top: '70%' }}
-        title="输入B"
+        title="Input B"
       />
       <Handle
         type="source"
@@ -104,7 +104,7 @@ export function AddNode({ data, id, selected }: { data: AddNodeData; id: string;
         id="output"
         className="w-2 h-2 bg-green-400"
         style={{ top: '50%' }}
-        title="输出和"
+        title="Output Sum"
       />
     </div>
   );

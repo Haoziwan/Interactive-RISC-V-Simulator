@@ -5,16 +5,16 @@ import { useCircuitStore } from '../../store/circuitStore';
 // RISC-V 32I ALU operations
 enum ALUOperation {
   // R-type and I-type arithmetic/logical operations
-  AND = 0,      // 与 (and, andi)
-  OR = 1,       // 或 (or, ori)
-  ADD = 2,      // 加法 (add, addi, load, store)
-  XOR = 3,      // 异或 (xor, xori)
-  SLL = 11,     // 逻辑左移 (sll, slli)
-  SRL = 8,      // 逻辑右移 (srl, srli)
-  SRA = 9,      // 算术右移 (sra, srai)
-  SUB = 6,      // 减法 (sub)
-  SLT = 7,      // 有符号比较 (slt, slti)
-  SLTU = 10,    // 无符号比较 (sltu, sltiu)
+  AND = 0,      // Logical AND (and, andi)
+  OR = 1,       // Logical OR (or, ori)
+  ADD = 2,      // Addition (add, addi, load, store)
+  XOR = 3,      // Logical XOR (xor, xori)
+  SLL = 11,     // Logical Left Shift (sll, slli)
+  SRL = 8,      // Logical Right Shift (srl, srli)
+  SRA = 9,      // Arithmetic Right Shift (sra, srai)
+  SUB = 6,      // Subtraction (sub)
+  SLT = 7,      // Set Less Than (signed) (slt, slti)
+  SLTU = 10,    // Set Less Than (unsigned) (sltu, sltiu)
 }
 
 interface ALUNodeData {
@@ -192,7 +192,7 @@ export function ALUNode({ data, id, selected }: { data: ALUNodeData; id: string;
         id="a" 
         className="w-3 h-3 bg-blue-400" 
         style={{ top: '30%' }} 
-        title="输入操作数A" 
+        title="Input Operand A" 
       />
       <Handle 
         type="target" 
@@ -200,14 +200,14 @@ export function ALUNode({ data, id, selected }: { data: ALUNodeData; id: string;
         id="b" 
         className="w-3 h-3 bg-blue-400" 
         style={{ top: '60%' }} 
-        title="输入操作数B" 
+        title="Input Operand B" 
       />
       <Handle 
         type="target" 
         position={Position.Bottom} 
         id="control" 
         className="w-3 h-3 bg-yellow-400" 
-        title="ALU控制信号" 
+        title="ALU Control Signal" 
       />
       <div className="flex items-center">
         <div className="ml-2">
@@ -225,7 +225,7 @@ export function ALUNode({ data, id, selected }: { data: ALUNodeData; id: string;
         id="result" 
         className="w-3 h-3 bg-green-400" 
         style={{ top: '30%' }} 
-        title="计算结果" 
+        title="Result" 
       />
       <Handle 
         type="source" 
@@ -233,7 +233,7 @@ export function ALUNode({ data, id, selected }: { data: ALUNodeData; id: string;
         id="zero" 
         className="w-3 h-3 bg-green-400" 
         style={{ top: '60%' }} 
-        title="零标志位" 
+        title="Zero Flag" 
       />
     </div>
   );

@@ -99,7 +99,7 @@ export function MuxNode({ data, id, selected }: {
         id="in0" 
         className="w-3 h-3 bg-blue-400" 
         style={{ top: '30%' }}
-        title="输入0"
+        title="Input 0"
       />
       <Handle 
         type="target" 
@@ -107,7 +107,7 @@ export function MuxNode({ data, id, selected }: {
         id="in1" 
         className="w-3 h-3 bg-blue-400" 
         style={{ top: '70%' }}
-        title="输入1"
+        title="Input 1"
       />
       <div className="flex items-center">
         <div className="ml-2">
@@ -123,7 +123,7 @@ export function MuxNode({ data, id, selected }: {
         id="out" 
         className="w-3 h-3 bg-green-400" 
         style={{ top: '50%' }}
-        title="输出"
+        title="Output"
       />
       <Handle 
         type="target" 
@@ -131,7 +131,7 @@ export function MuxNode({ data, id, selected }: {
         id="select" 
         className="w-3 h-3 bg-yellow-400" 
         style={{ left: '50%' }}
-        title="选择信号"
+        title="Select Signal"
       />
     </div>
   );

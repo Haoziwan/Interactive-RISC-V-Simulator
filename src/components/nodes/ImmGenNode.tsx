@@ -173,7 +173,7 @@ export function ImmGenNode({ data, id, selected }: {
         id="instruction" 
         className="w-3 h-3 bg-blue-400" 
         style={{ top: '50%' }}
-        title="指令数据"
+        title="Instruction Data"
       />
 
       <div className="flex items-center">
@@ -191,7 +191,7 @@ export function ImmGenNode({ data, id, selected }: {
         id="immediate" 
         className="w-3 h-3 bg-green-400" 
         style={{ top: '50%' }}
-        title="立即数"
+        title="Immediate Value"
       />
     </div>
   );

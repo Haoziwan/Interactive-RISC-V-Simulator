@@ -163,7 +163,7 @@ export function PipelineRegisterNode({ data, id, selected }: { data: PipelineReg
           <button
             onClick={() => setShowConfig(!showConfig)}
             className="p-1 rounded-md hover:bg-gray-100"
-            title="配置"
+            title="Configure"
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-500" viewBox="0 0 20 20" fill="currentColor">
               <path fillRule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.532 1.532 0 01-.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clipRule="evenodd" />
@@ -174,7 +174,7 @@ export function PipelineRegisterNode({ data, id, selected }: { data: PipelineReg
         {showConfig && (
           <div className="absolute z-10 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 p-2">
             <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-1">寄存器类型</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Register Type</label>
               <select
                 className="w-full border rounded px-2 py-1 text-sm"
                 value={name}
@@ -190,7 +190,7 @@ export function PipelineRegisterNode({ data, id, selected }: { data: PipelineReg
               </select>
             </div>
             <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-1">端口数量</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Port Count</label>
               <div className="flex items-center space-x-2">
                 <button
                   onClick={() => setTempConfig(prev => ({
@@ -198,7 +198,7 @@ export function PipelineRegisterNode({ data, id, selected }: { data: PipelineReg
                     portCount: Math.max(1, (prev.portCount ?? portCount) - 1)
                   }))}
                   className="px-2 py-1 border rounded-md hover:bg-gray-100"
-                  title="减少端口数量"
+                  title="Decrease port count"
                 >
                   -
                 </button>
@@ -209,7 +209,7 @@ export function PipelineRegisterNode({ data, id, selected }: { data: PipelineReg
                     portCount: Math.min(20, (prev.portCount ?? portCount) + 1)
                   }))}
                   className="px-2 py-1 border rounded-md hover:bg-gray-100"
-                  title="增加端口数量"
+                  title="Increase port count"
                 >
                   +
                 </button>
@@ -223,7 +223,7 @@ export function PipelineRegisterNode({ data, id, selected }: { data: PipelineReg
                 }}
                 className="px-3 py-1 border rounded-md hover:bg-gray-100 text-sm"
               >
-                取消
+                Cancel
               </button>
               <button
                 onClick={() => {
@@ -239,7 +239,7 @@ export function PipelineRegisterNode({ data, id, selected }: { data: PipelineReg
                 }}
                 className="px-3 py-1 bg-blue-500 text-white rounded-md hover:bg-blue-600 text-sm"
               >
-                确定
+                Confirm
               </button>
             </div>
           </div>
@@ -271,7 +271,7 @@ export function PipelineRegisterNode({ data, id, selected }: { data: PipelineReg
           id={`input-${index}`}
           className="w-3 h-3 bg-blue-400"
           style={{ top: `${15 + (index * 70 / Math.max(1, portCount-1))}%` }}
-          title={`输入端口 ${index}`}
+          title={`Input Port ${index}`}
         />
       ))}
 
@@ -284,7 +284,7 @@ export function PipelineRegisterNode({ data, id, selected }: { data: PipelineReg
           id={`output-${index}`}
           className="w-3 h-3 bg-green-400"
           style={{ top: `${15 + (index * 70 / Math.max(1, portCount-1))}%` }}
-          title={`输出端口 ${index}`}
+          title={`Output Port ${index}`}
         />
       ))}
     </div>

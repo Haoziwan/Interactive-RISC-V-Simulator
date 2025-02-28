@@ -36,22 +36,21 @@ export function RegisterFileNode({ data, id, selected }: { data: RegisterFileNod
     writeData: 0,
     regWrite: false
   });
-
-  // 获取输入端口的值（组合逻辑）
+  // Get input port value (combinational logic)
   const getInputValue = (edge: any) => {
     if (!edge) return null;
     const sourceNode = nodes.find(node => node.id === edge.source);
     if (sourceNode?.data && typeof sourceNode.data === 'object') {
-      // 首先尝试根据输入端口ID查找对应字段
+      // First try to find the corresponding field by input port ID
       const portId = edge.sourceHandle;
       let sourceValue: number | boolean | undefined;
 
       if (portId && sourceNode.data[portId as keyof typeof sourceNode.data] !== undefined) {
-        // 如果存在对应端口ID的字段，使用该字段值
+        // If there is a field corresponding to the port ID, use that field value
         const value = sourceNode.data[portId as keyof typeof sourceNode.data];
         sourceValue = typeof value === 'number' || typeof value === 'boolean' ? value : undefined;
       } else if ('value' in sourceNode.data) {
-        // 否则使用默认的value字段
+        // Otherwise use the default value field
         const value = (sourceNode.data as { value?: number | boolean }).value;
         sourceValue = typeof value === 'number' || typeof value === 'boolean' ? value : undefined;
       }
@@ -60,10 +59,9 @@ export function RegisterFileNode({ data, id, selected }: { data: RegisterFileNod
     }
     return null;
   };
-
-  // 更新输入值和读取数据（组合逻辑）
+  // Update input values and read data (combinational logic)
   const updateInputConnections = () => {
-    // 找到连接到此节点的边
+    // Find edges connected to this node
     const readReg1Edge = edges.find(edge => edge.target === id && edge.targetHandle === 'readReg1');
     const readReg2Edge = edges.find(edge => edge.target === id && edge.targetHandle === 'readReg2');
     const writeRegEdge = edges.find(edge => edge.target === id && edge.targetHandle === 'writeReg');
@@ -76,7 +74,7 @@ export function RegisterFileNode({ data, id, selected }: { data: RegisterFileNod
     const newWriteData = Number(getInputValue(writeDataEdge) ?? inputsRef.current.writeData);
     const newRegWrite = Boolean(getInputValue(regWriteEdge) ?? inputsRef.current.regWrite);
 
-    // 只有当输入值发生实际变化时才更新
+    // Only update when input values have actually changed
     const hasChanges = newReadReg1 !== inputsRef.current.readReg1 ||
                       newReadReg2 !== inputsRef.current.readReg2 ||
                       newWriteReg !== inputsRef.current.writeReg ||
@@ -84,7 +82,7 @@ export function RegisterFileNode({ data, id, selected }: { data: RegisterFileNod
                       newRegWrite !== inputsRef.current.regWrite;
 
     if (hasChanges) {
-      // 更新ref中的值
+      // Update values in ref
       inputsRef.current = {
         readReg1: newReadReg1,
         readReg2: newReadReg2,
@@ -93,11 +91,11 @@ export function RegisterFileNode({ data, id, selected }: { data: RegisterFileNod
         regWrite: newRegWrite
       };
 
-      // 计算读出的数据
+      // Calculate read data
       const readData1 = newReadReg1 === 0 ? 0 : (registers[newReadReg1] || 0);
       const readData2 = newReadReg2 === 0 ? 0 : (registers[newReadReg2] || 0);
 
-      // 更新节点数据
+      // Update node data
       updateNodeData(id, {
         ...data,
         readReg1: newReadReg1,
@@ -110,12 +108,12 @@ export function RegisterFileNode({ data, id, selected }: { data: RegisterFileNod
       });
     }
   };
-  // 监听输入连接的变化
+  // Monitor changes in input connections
   React.useEffect(() => {
     updateInputConnections();
   }, [edges, nodes, id, registers]);
 
-  // 监听时钟信号(stepCount)，处理寄存器写入（时序逻辑）
+  // Monitor clock signal (stepCount) and handle register write (sequential logic)
   React.useEffect(() => {
     if (!reset && inputsRef.current.regWrite && inputsRef.current.writeReg !== 0) {
       updateRegisters({
@@ -135,7 +133,7 @@ export function RegisterFileNode({ data, id, selected }: { data: RegisterFileNod
         id="regWrite" 
         className="w-3 h-3 bg-yellow-400" 
         style={{ left: '50%' }}
-        title="寄存器写使能"
+        title="Register Write Enable"
       />
 
       {/* Input ports on left */}
@@ -145,7 +143,7 @@ export function RegisterFileNode({ data, id, selected }: { data: RegisterFileNod
         id="readReg1" 
         className="w-3 h-3 bg-blue-400" 
         style={{ top: '20%' }}
-        title="读寄存器1地址"
+        title="Read Register 1 Address"
       />
       <Handle 
         type="target" 
@@ -153,7 +151,7 @@ export function RegisterFileNode({ data, id, selected }: { data: RegisterFileNod
         id="readReg2" 
         className="w-3 h-3 bg-blue-400" 
         style={{ top: '40%' }}
-        title="读寄存器2地址"
+        title="Read Register 2 Address"
       />
       <Handle 
         type="target" 
@@ -161,7 +159,7 @@ export function RegisterFileNode({ data, id, selected }: { data: RegisterFileNod
         id="writeReg" 
         className="w-3 h-3 bg-blue-400" 
         style={{ top: '60%' }}
-        title="写寄存器地址"
+        title="Write Register Address"
       />
       <Handle 
         type="target" 
@@ -169,7 +167,7 @@ export function RegisterFileNode({ data, id, selected }: { data: RegisterFileNod
         id="writeData" 
         className="w-3 h-3 bg-blue-400" 
         style={{ top: '80%' }}
-        title="写入数据"
+        title="Write Data"
       />
       
       {/* Output ports on right */}
@@ -179,7 +177,7 @@ export function RegisterFileNode({ data, id, selected }: { data: RegisterFileNod
         id="readData1" 
         className="w-3 h-3 bg-green-400" 
         style={{ top: '30%' }}
-        title="读出数据1"
+        title="Read Data 1"
       />
       <Handle 
         type="source" 
@@ -187,7 +185,7 @@ export function RegisterFileNode({ data, id, selected }: { data: RegisterFileNod
         id="readData2" 
         className="w-3 h-3 bg-green-400" 
         style={{ top: '70%' }}
-        title="读出数据2"
+        title="Read Data 2"
       />
       
       <div className="flex items-center">

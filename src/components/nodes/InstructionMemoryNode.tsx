@@ -84,7 +84,7 @@ export function InstructionMemoryNode({ data, id, selected }: {
         id="pc" 
         className="w-3 h-3 bg-blue-400" 
         style={{ top: '50%' }}
-        title="程序计数器地址"
+        title="Program Counter Address"
       />
 
       <div className="flex items-center justify-between">
@@ -115,7 +115,7 @@ export function InstructionMemoryNode({ data, id, selected }: {
             </div>
             {data.instructions && data.instructions.length > 0 && (
               <div className="mt-2 text-xs text-gray-400">
-                共 {data.instructions.length} 条指令
+                Total Instructions: {data.instructions.length}
               </div>
             )}
           </div>
@@ -128,9 +128,9 @@ export function InstructionMemoryNode({ data, id, selected }: {
               ? 'bg-blue-500 text-white hover:bg-blue-600'
               : 'bg-gray-200 text-gray-500 cursor-not-allowed'
           }`}
-          title={assembledInstructions.length === 0 ? "请先在编辑器中汇编代码" : "加载最近一次汇编的指令"}
+          title={assembledInstructions.length === 0 ? "Please assemble code in editor first" : "Load recently assembled instructions"}
         >
-          加载指令
+          Load
         </button>
       </div>
 
@@ -141,7 +141,7 @@ export function InstructionMemoryNode({ data, id, selected }: {
         id="instruction" 
         className="w-3 h-3 bg-green-400" 
         style={{ top: '50%' }}
-        title="当前指令"
+        title="Current Instruction"
       />
     </div>
   );
