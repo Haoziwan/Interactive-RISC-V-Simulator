@@ -96,9 +96,14 @@ export function CircuitCanvas() {
   
   React.useEffect(() => {
     // Load basic datapath when component mounts
-    import('../examples/basic-datapath.json').then((module) => {
-      useCircuitStore.getState().loadCircuit(JSON.stringify(module.default));
-    });
+    fetch('/datapath/basic-datapath.json')
+      .then(response => response.json())
+      .then(data => {
+        useCircuitStore.getState().loadCircuit(JSON.stringify(data));
+      })
+      .catch(error => {
+        console.error('Error loading basic datapath:', error);
+      });
   }, []);
   
   const validateCircuit = useCallback(() => {

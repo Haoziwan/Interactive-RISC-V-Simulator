@@ -235,7 +235,7 @@ export function AssemblyEditor() {
 
   const loadTestProgram = async (programType: string) => {
     try {
-      const response = await fetch(`/src/examples/test-programs/${programType}.s`);
+      const response = await fetch(`/test-programs/${programType}.s`);
       const programText = await response.text();
       setEditorCode(programText);
     } catch (err) {

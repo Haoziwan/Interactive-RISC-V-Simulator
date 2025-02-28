@@ -225,13 +225,17 @@ export function ComponentLibrary() {
               onChange={(e) => {
                 const selectedExample = e.target.value;
                 if (selectedExample === 'basic-datapath') {
-                  import('../examples/basic-datapath.json').then((module) => {
-                    loadCircuit(JSON.stringify(module.default));
-                  });
+                  fetch('/datapath/basic-datapath.json')
+                    .then(response => response.json())
+                    .then(data => {
+                      loadCircuit(JSON.stringify(data));
+                    });
                 } else if (selectedExample === 'basic-pipeline') {
-                  import('../examples/basic-pipeline.json').then((module) => {
-                    loadCircuit(JSON.stringify(module.default));
-                  });
+                  fetch('/datapath/basic-pipeline.json')
+                    .then(response => response.json())
+                    .then(data => {
+                      loadCircuit(JSON.stringify(data));
+                    });
                 } else if (selectedExample === 'empty-datapath') {
                   loadCircuit(JSON.stringify({ nodes: [], edges: [] }));
                 }
