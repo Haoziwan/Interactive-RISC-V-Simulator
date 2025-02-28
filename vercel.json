@@ -1,7 +1,7 @@
 {
   "rewrites": [
     {
-      "source": "/test-programs/:path*",
+      "source": "/src/examples/test-programs/:path*",
       "destination": "/public/test-programs/:path*"
     }
   ]
