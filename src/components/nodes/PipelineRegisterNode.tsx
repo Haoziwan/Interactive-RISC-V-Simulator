@@ -7,7 +7,7 @@ interface PipelineRegisterNodeData {
   name?: 'IF/ID' | 'ID/EX' | 'EX/MEM' | 'MEM/WB';
   reset?: boolean;
   portCount?: number;
-  values?: number[];
+  values?: (number | string)[];
 }
 
 export function PipelineRegisterNode({ data, id, selected }: { data: PipelineRegisterNodeData; id: string; selected?: boolean }) {
@@ -17,13 +17,13 @@ export function PipelineRegisterNode({ data, id, selected }: { data: PipelineReg
   const reset = data.reset ?? false;
   const portCount = data.portCount ?? 1;
   const values = data.values ?? Array(portCount).fill(0);
-  const [inputValues, setInputValues] = React.useState<number[]>(Array(portCount).fill(0));
+  const [inputValues, setInputValues] = React.useState<(number | string)[]>(Array(portCount).fill(0));
   const [showConfig, setShowConfig] = useState(false);
   const [tempConfig, setTempConfig] = useState<{ name?: string; portCount?: number }>({ name, portCount });
   const nodes = useNodes();
   const edges = useEdges();
 
-  const handleValueChange = (newValues: number[]) => {
+  const handleValueChange = (newValues: (number | string)[]) => {
     updateNodeData(id, {
       ...data,
       values: newValues
@@ -57,14 +57,14 @@ export function PipelineRegisterNode({ data, id, selected }: { data: PipelineReg
         const sourceNode = nodes.find(node => node.id === inputEdge.source);
         if (sourceNode?.data && typeof sourceNode.data === 'object') {
           const portId = inputEdge.sourceHandle;
-          let sourceValue: number | undefined;
+          let sourceValue: number | string | undefined;
 
           if (portId && sourceNode.data[portId as keyof typeof sourceNode.data] !== undefined) {
             const value = sourceNode.data[portId as keyof typeof sourceNode.data];
-            sourceValue = typeof value === 'number' ? value : undefined;
+            sourceValue = (typeof value === 'number' || typeof value === 'string') ? value : undefined;
           } else if ('value' in sourceNode.data) {
-            const value = (sourceNode.data as { value?: number }).value;
-            sourceValue = typeof value === 'number' ? value : undefined;
+            const value = (sourceNode.data as { value?: number | string }).value;
+            sourceValue = (typeof value === 'number' || typeof value === 'string') ? value : undefined;
           }
 
           if (sourceValue !== undefined && sourceValue !== newInputValues[i]) {
@@ -96,7 +96,7 @@ export function PipelineRegisterNode({ data, id, selected }: { data: PipelineReg
       const outputValues = newValues.reduce((acc, value, index) => {
         acc[`output-${index}`] = value;
         return acc;
-      }, {} as { [key: string]: number });
+      }, {} as { [key: string]: number | string });
 
       updateNodeData(id, {
         ...data,
@@ -117,14 +117,14 @@ export function PipelineRegisterNode({ data, id, selected }: { data: PipelineReg
           const sourceNode = nodes.find(node => node.id === inputEdge.source);
           if (sourceNode?.data && typeof sourceNode.data === 'object') {
             const portId = inputEdge.sourceHandle;
-            let sourceValue: number | undefined;
+            let sourceValue: number | string | undefined;
 
             if (portId && sourceNode.data[portId as keyof typeof sourceNode.data] !== undefined) {
               const value = sourceNode.data[portId as keyof typeof sourceNode.data];
-              sourceValue = typeof value === 'number' ? value : undefined;
+              sourceValue = (typeof value === 'number' || typeof value === 'string') ? value : undefined;
             } else if ('value' in sourceNode.data) {
-              const value = (sourceNode.data as { value?: number }).value;
-              sourceValue = typeof value === 'number' ? value : undefined;
+              const value = (sourceNode.data as { value?: number | string }).value;
+              sourceValue = (typeof value === 'number' || typeof value === 'string') ? value : undefined;
             }
 
             if (sourceValue !== undefined && sourceValue !== newInputValues[i]) {
@@ -145,7 +145,7 @@ export function PipelineRegisterNode({ data, id, selected }: { data: PipelineReg
   const outputValues = values.reduce((acc, value, index) => {
     acc[`output-${index}`] = value;
     return acc;
-  }, {} as { [key: string]: number });
+  }, {} as { [key: string]: number | string });
 
   return (
     <div className={`px-2 py-4 shadow-md rounded-md bg-white border-2 h-auto min-h-[900px] max-w-[120px] ${selected ? 'border-blue-500' : 'border-gray-200'}`}>
@@ -240,7 +240,7 @@ export function PipelineRegisterNode({ data, id, selected }: { data: PipelineReg
         <div className="flex flex-col space-y-2 mt-4 flex-grow justify-center">
           {values.map((value, index) => (
             <div key={index} className="text-sm text-gray-700">
-              Port {index}: {value}
+              Port {index}: {typeof value === 'number' ? value : String(value)}
             </div>
           ))}
         </div>
