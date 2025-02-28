@@ -245,9 +245,17 @@ export function PipelineRegisterNode({ data, id, selected }: { data: PipelineReg
           </div>
         )}
 
-        <div className="flex flex-col space-y-2 mt-4 flex-grow justify-center">
+        <div className="flex flex-col h-full justify-start pt-8 w-full">
           {values.map((value, index) => (
-            <div key={index} className="text-sm text-gray-700">
+            <div 
+              key={index} 
+              className="text-sm text-gray-700 absolute left-1/2 transform -translate-x-1/2"
+              style={{ 
+                top: `${15 + (index * 70 / Math.max(1, portCount-1))}%`,
+                width: '100%',
+                textAlign: 'center'
+              }}
+            >
               Port {index}: {typeof value === 'number' ? value : String(value)}
             </div>
           ))}
