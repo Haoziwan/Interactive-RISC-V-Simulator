@@ -34,6 +34,7 @@ import { JumpControlNode } from './nodes/JumpControlNode';
 import { PipelineRegisterNode } from './nodes/PipelineRegisterNode';
 import { useCircuitStore } from '../store/circuitStore';
 import { Play, Pause, RotateCcw, StepForward, CheckCircle, Trash2 } from 'lucide-react';
+import { ForwardingUnitNode } from './nodes/ForwardingUnitNode';
 
 const nodeTypes = {
   alu: ALUNode,
@@ -53,6 +54,7 @@ const nodeTypes = {
   fork: ForkNode,
   'instr-distributer': InstrDistributerNode,
   'jump-control': JumpControlNode,
+  'forwarding-unit': ForwardingUnitNode,
 };
 
 // 定义必需的组件和它们允许的数量
