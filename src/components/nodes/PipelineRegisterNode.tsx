@@ -36,11 +36,19 @@ export function PipelineRegisterNode({ data, id, selected }: { data: PipelineReg
       const zeroValues = Array(portCount).fill(0);
       handleValueChange(zeroValues);
       setInputValues(zeroValues);
-      // 重置reset标志
+      
+      // 创建所有输出端口的零值映射
+      const zeroOutputValues = zeroValues.reduce((acc, _, index) => {
+        acc[`output-${index}`] = 0;
+        return acc;
+      }, {} as { [key: string]: number | string });
+
+      // 重置reset标志，同时更新所有状态和输出端口的值
       updateNodeData(id, {
         ...data,
-        values: zeroValues,  // 确保values也被设置为0
-        reset: false
+        values: zeroValues,  // 确保values被设置为0
+        reset: false,
+        ...zeroOutputValues  // 确保所有输出端口的值被设置为0
       });
     }
   }, [reset, portCount]);

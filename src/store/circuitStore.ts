@@ -263,10 +263,14 @@ export const useCircuitStore = create<CircuitState>()((set, get) => ({
             data: {
               ...node.data,
               value: 0,
-              reset: true
+              reset: true,
+              values: node.type === 'pipeline-register' ? Array(node.data.portCount || 1).fill(0) : undefined,
+              label: '',
+              outputValue: 0
             }
           };
         }
+        
         return node;
       }),
       isSimulating: false,
@@ -294,8 +298,8 @@ export const useCircuitStore = create<CircuitState>()((set, get) => ({
       const currentPc = state.pcValue;
       const maxPc = (state.assembledInstructions.length * 4) - 4;
       
-      // 如果已经执行到最后一条指令，自动暂停模拟
-      if (currentPc > maxPc || currentPc < 0) {
+      // 如果已经执行到最后一条指令，自动暂停模拟，pipeline还需要多执行几句
+      if (currentPc > maxPc + 4*4 || currentPc < 0) {
         if (state.simulationTimer !== null) {
           window.clearInterval(state.simulationTimer);
         }
