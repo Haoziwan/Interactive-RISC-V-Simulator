@@ -92,7 +92,6 @@ export function CircuitCanvas() {
   const [edgeColor, setEdgeColor] = useState('#999');
   const [edgeWidth, setEdgeWidth] = useState(3);
   const [showEdgeSettings, setShowEdgeSettings] = useState(false);
-  const [simulationInterval, setSimulationInterval] = useState(1000);
   
   React.useEffect(() => {
     // Load basic datapath when component mounts
@@ -385,23 +384,6 @@ export function CircuitCanvas() {
                     className="rounded border-gray-300"
                   />
                   <label className="text-xs text-gray-600">Animation</label>
-                </div>
-                <div className="flex flex-col space-y-1">
-                  <label className="text-xs text-gray-600">Simulation Interval (ms)</label>
-                  <input
-                    type="range"
-                    min="0"
-                    max="5000"
-                    step="100"
-                    value={simulationInterval}
-                    onChange={(e) => {
-                      const newInterval = parseInt(e.target.value);
-                      setSimulationInterval(newInterval);
-                      useCircuitStore.getState().simulationInterval = newInterval;
-                    }}
-                    className="w-full"
-                  />
-                  <span className="text-xs text-gray-600">{simulationInterval}ms</span>
                 </div>
               </div>
             )}

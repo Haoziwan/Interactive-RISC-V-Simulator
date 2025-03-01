@@ -148,6 +148,21 @@ function App() {
                 >
                   <RotateCcw className="w-5 h-5" />
                 </button>
+                <div className="flex items-center space-x-2 ml-4">
+                  <input
+                    type="range"
+                    min="0"
+                    max="4000"
+                    step="100"
+                    value={useCircuitStore((state) => state.simulationInterval)}
+                    onChange={(e) => useCircuitStore.setState({ simulationInterval: parseInt(e.target.value) })}
+                    className="w-32 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+                    title="Simulation Interval (ms)"
+                  />
+                  <span className="text-sm text-gray-600 min-w-[4rem]">
+                    {useCircuitStore((state) => state.simulationInterval)}ms
+                  </span>
+                </div>
               </div>
             </div>
           </div>
