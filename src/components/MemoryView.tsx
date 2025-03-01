@@ -168,7 +168,7 @@ export function MemoryView() {
                               type="text"
                               value={formatValue(value)}
                               onChange={(e) => handleValueChange(address, e.target.value)}
-                              className="w-full font-mono text-sm bg-transparent focus:bg-blue-50 focus:outline-none rounded"
+                              className="w-full h-6 font-mono text-sm bg-transparent focus:bg-blue-50 focus:outline-none rounded text-center"
                               aria-label={`Memory address ${formatAddress(address)} value`}
                             />
                           </td>
@@ -183,8 +183,8 @@ export function MemoryView() {
                           byteValue = fullHex.slice(6 - byteOffset * 2, 8 - byteOffset * 2);
                         }
                         return (
-                          <td key={col} className="whitespace-nowrap px-3 py-2 text-sm font-mono text-gray-600 border-r border-gray-200 last:border-r-0">
-                            {byteValue}
+                          <td key={col} className="whitespace-nowrap px-3 py-2 text-sm border-r border-gray-200 last:border-r-0">
+                            <div className="w-full h-6 font-mono text-sm text-center">{byteValue}</div>
                           </td>
                         );
                       }

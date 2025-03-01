@@ -75,7 +75,7 @@ export function InstructionFormatPanel() {
   const [isExpanded, setIsExpanded] = useState(false);
 
   return (
-    <div className="mt-4 relative">
+    <div className="mt-2 relative">
       <div 
         className="flex items-center cursor-pointer select-none"
         onClick={() => setIsExpanded(!isExpanded)}
@@ -89,18 +89,21 @@ export function InstructionFormatPanel() {
       </div>
 
       {isExpanded && (
-        <div className="absolute bottom-full mb-2 left-0 right-0 grid grid-cols-3 gap-2 text-sm bg-gray-50 p-3 rounded shadow-lg transition-all duration-300 ease-in-out transform origin-bottom w-[800px]" style={{ opacity: isExpanded ? 1 : 0, scale: isExpanded ? '1' : '0.95' }}>
-          {instructionFormats.map((format) => (
-            <div key={format.type} className="min-w-0">
-              <h4 className="font-medium text-gray-700 mb-1">{format.type}</h4>
-              <ul className="list-none space-y-0.5">
-                {format.instructions.map((instruction, index) => (
-                  <li key={index} className="text-xs text-gray-600 truncate hover:text-clip hover:whitespace-normal">{instruction}</li>
-                ))}
-              </ul>
-            </div>
-          ))}
-        </div>
+        <>
+          <div className="fixed inset-0 bg-black bg-opacity-50 z-[100]" onClick={() => setIsExpanded(false)} />
+          <div className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[80vw] grid grid-cols-3 gap-4 text-sm bg-white p-6 rounded-lg shadow-xl border border-gray-200 transition-all duration-300 ease-in-out z-[101] max-h-[80vh] overflow-y-auto" style={{ opacity: isExpanded ? 1 : 0, scale: isExpanded ? '1' : '0.95' }}>
+            {instructionFormats.map((format) => (
+              <div key={format.type} className="min-w-0 p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors duration-200">
+                <h4 className="font-semibold text-gray-800 mb-3">{format.type}</h4>
+                <ul className="list-none space-y-2">
+                  {format.instructions.map((instruction, index) => (
+                    <li key={index} className="text-xs text-gray-600 hover:text-gray-900 transition-colors duration-200">{instruction}</li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </>
       )}
     </div>
   );

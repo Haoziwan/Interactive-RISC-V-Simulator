@@ -269,7 +269,7 @@ export function AssemblyEditor() {
                   };
                   input.click();
                 }}
-                className="px-3 py-1 text-sm bg-gray-50 hover:bg-gray-100 transition-colors duration-200 rounded shadow-sm"
+                className="inline-flex items-center px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200"
                 title="Import .txt or .s assembly code file"
               >
                 Import
@@ -284,13 +284,13 @@ export function AssemblyEditor() {
                   a.click();
                   URL.revokeObjectURL(url);
                 }}
-                className="px-3 py-1 text-sm bg-gray-50 hover:bg-gray-100 transition-colors duration-200 rounded shadow-sm"
+                className="inline-flex items-center px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200"
                 title="Save current editor code as text file"
               >
                 Export
               </button>
               <select
-                className="px-3 py-1 text-sm bg-gray-100 hover:bg-gray-200 rounded"
+                className="inline-flex items-center px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200"
                 onChange={(e) => loadTestProgram(e.target.value as 'sort' | 'fibonacci' | 'gcd')}
                 defaultValue=""
               >
@@ -306,7 +306,7 @@ export function AssemblyEditor() {
               </select>
               <button
                 onClick={assembleCode}
-                className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                className="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200"
               >
                 Assemble
               </button>
@@ -314,7 +314,7 @@ export function AssemblyEditor() {
           </div>
           
           <Editor
-            height="calc(100vh - 200px)"
+            height="calc(100vh - 160px)"
             defaultLanguage="plaintext"
             value={editorCode}
             onChange={(value) => setEditorCode(value || '')}
@@ -359,21 +359,21 @@ export function AssemblyEditor() {
                     a.click();
                     URL.revokeObjectURL(url);
                   }}
-                  className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 text-sm"
+                  className="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200"
                 >
                   Export Code
                 </button>
               )}
             </div>
 
-            <div ref={tableBodyRef} className="overflow-auto h-[calc(100vh-200px)] w-full">
+            <div ref={tableBodyRef} className="overflow-auto h-[calc(100vh-10rem)] w-full border border-gray-200 rounded-lg shadow-sm">
               <table className="w-full text-sm table-fixed border-collapse">
-                <thead className="bg-gray-50 sticky top-0 z-10">
+                <thead className="bg-gray-50 sticky top-0 z-10 shadow-sm">
                   <tr>
-                    <th className="text-left py-2 px-2 font-medium w-24 whitespace-nowrap">Address</th>
-                    <th className="text-left py-2 px-2 font-medium w-28 whitespace-nowrap">Code</th>
-                    <th className="text-left py-2 px-2 font-medium w-48 whitespace-nowrap">Basic</th>
-                    <th className="text-left py-2 px-2 font-medium whitespace-nowrap">Source</th>
+                    <th className="text-left py-2.5 px-3 font-medium w-24 whitespace-nowrap border-b border-gray-200">Address</th>
+                    <th className="text-left py-2.5 px-3 font-medium w-28 whitespace-nowrap border-b border-gray-200">Code</th>
+                    <th className="text-left py-2.5 px-3 font-medium w-48 whitespace-nowrap border-b border-gray-200">Basic</th>
+                    <th className="text-left py-2.5 px-3 font-medium whitespace-nowrap border-b border-gray-200">Source</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100">
@@ -381,13 +381,13 @@ export function AssemblyEditor() {
                     assembledInstructions.map((inst, i) => (
                       <tr 
                         key={i} 
-                        className={`${i === currentInstructionIndex ? 'bg-yellow-100' : ''}`}
+                        className={`${i === currentInstructionIndex ? 'bg-yellow-50 hover:bg-yellow-100' : 'hover:bg-gray-50'} transition-colors duration-150`}
                         id={`instruction-row-${i}`}
                       >
-                        <td className="py-1 px-2 font-mono text-gray-600 text-xs whitespace-nowrap overflow-hidden text-ellipsis">{`0x${(i * 4).toString(16).padStart(8, '0')}`}</td>
-                        <td className="py-1 px-2 font-mono text-blue-600 text-xs whitespace-nowrap overflow-hidden text-ellipsis">{inst.hex}</td>
-                        <td className="py-1 px-2 font-mono text-xs whitespace-nowrap">{inst.assembly}</td>
-                        <td className="py-1 px-2 font-mono text-gray-600 text-xs whitespace-nowrap overflow-hidden text-ellipsis">{inst.source}</td>
+                        <td className="py-2 px-3 font-mono text-gray-600 text-xs whitespace-nowrap overflow-hidden text-ellipsis">{`0x${(i * 4).toString(16).padStart(8, '0')}`}</td>
+                        <td className="py-2 px-3 font-mono text-blue-600 text-xs whitespace-nowrap overflow-hidden text-ellipsis">{inst.hex}</td>
+                        <td className="py-2 px-3 font-mono text-xs whitespace-nowrap">{inst.assembly}</td>
+                        <td className="py-2 px-3 font-mono text-gray-600 text-xs whitespace-nowrap overflow-hidden text-ellipsis">{inst.source}</td>
                       </tr>
                     ))
                   ) : (
