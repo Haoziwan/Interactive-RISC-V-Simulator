@@ -390,7 +390,7 @@ export function CircuitCanvas() {
                   <label className="text-xs text-gray-600">Simulation Interval (ms)</label>
                   <input
                     type="range"
-                    min="100"
+                    min="0"
                     max="5000"
                     step="100"
                     value={simulationInterval}
