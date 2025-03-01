@@ -53,35 +53,35 @@ export function RegPanel() {
   }, [useCircuitStore.getState().stepCount]);
 
   return (
-    <div className="h-full w-full bg-white overflow-y-auto p-2">
-      <div className="flex justify-between items-center mb-2">
-        <h2 className="text-lg font-bold">Register</h2>
+    <div className="h-full w-full bg-white overflow-y-auto p-1">
+      <div className="flex justify-between items-center mb-1">
+        <h2 className="text-base font-bold">Register</h2>
         <select
           value={base}
           onChange={(e) => setBase(e.target.value as BaseType)}
-          className="px-2 py-1 text-sm bg-gray-100 hover:bg-gray-200 rounded outline-none"
+          className="px-1.5 py-0.5 text-xs bg-gray-100 hover:bg-gray-200 rounded outline-none"
         >
           <option value="dec">Decimal</option>
           <option value="hex">Hexadecimal</option>
         </select>
       </div>
       <div className="w-full">
-        <div className="grid grid-cols-[2fr_1fr_3fr] gap-2 mb-1 text-sm font-medium bg-gray-50 p-1 rounded">
+        <div className="grid grid-cols-[2fr_1fr_3fr] gap-1 mb-0.5 text-xs font-medium bg-gray-50 p-0.5 rounded">
           <div>Name</div>
           <div>Number</div>
-          <div className="pl-4">Value</div>
+          <div className="pl-2">Value</div>
         </div>
-        <div className="space-y-0.5">
+        <div className="space-y-0">
           {Array.from({ length: 32 }, (_, i) => (
             <div 
               key={i} 
-              className={`grid grid-cols-[2fr_1fr_3fr] gap-2 py-0.5 text-xs rounded transition-colors duration-200 ${highlightedReg === i ? 'bg-blue-100' : 'hover:bg-gray-50'}`}
+              className={`grid grid-cols-[2fr_1fr_3fr] gap-1 py-0.5 text-xs rounded-sm transition-colors duration-150 ${highlightedReg === i ? 'bg-blue-50 shadow-sm' : 'hover:bg-gray-50'}`}
             >
-              <div className="font-medium">
+              <div className="font-medium text-[11px]">
                 {i === 0 ? 'zero' : i === 1 ? 'ra' : i === 2 || i === 3 ? 'sp' : i === 4 ? 'gp' : i <= 7 ? `t${i-5}` : i <= 9 ? `s${i-8}` : i <= 17 ? `a${i-10}` : i <= 27 ? `s${i-16}` : i <= 31 ? `t${i-25}` : `x${i}`}
               </div>
-              <div className="text-gray-600">{i}</div>
-              <div className="font-mono text-gray-600 pl-4">
+              <div className="text-gray-500 text-[11px]">{i}</div>
+              <div className="font-mono text-gray-600 pl-2 text-[11px]">
                 {i === 0 ? (
                   formatValue(0)
                 ) : (
@@ -89,7 +89,7 @@ export function RegPanel() {
                     type="text"
                     value={formatValue(registers[i] || 0)}
                     onChange={(e) => handleRegisterChange(i, e.target.value)}
-                    className="w-full bg-transparent border-b border-transparent hover:border-gray-300 focus:border-blue-500 outline-none"
+                    className="w-full bg-transparent border-b border-transparent hover:border-gray-200 focus:border-blue-400 outline-none py-0"
                   />
                 )}
               </div>

@@ -353,20 +353,21 @@ export function ConfigPanel() {
 
   return (
     <div 
-      className="absolute bottom-0 bg-white border-l border-t border-gray-200 shadow-lg transition-transform duration-200"
+      className="absolute bottom-0 bg-white border-l border-t border-gray-200 shadow-lg transition-all duration-300 rounded-t-lg overflow-hidden"
       style={{ 
-        width: '18rem',
+        width: '20rem',
         right: '16rem', 
         maxHeight: 'calc(100vh - 5rem)',
-        transform: isExpanded ? 'translateY(0)' : 'translateY(calc(100% - 2.5rem))'
+        transform: isExpanded ? 'translateY(0)' : 'translateY(calc(100% - 2.5rem))',
+        opacity: isExpanded ? 1 : 0.95
       }}
     >
-      <div className="p-2 border-b border-gray-200 bg-white">
+      <div className="p-2 border-b border-gray-200 bg-white hover:bg-gray-50 transition-colors">
         <button
-          className="w-full flex items-center justify-between text-left"
+          className="w-full flex items-center justify-between text-left focus:outline-none group"
           onClick={() => setIsExpanded(!isExpanded)}
         >
-          <span className="font-medium">Component Configuration</span>
+          <span className="font-medium text-gray-800 group-hover:text-blue-600 transition-colors">Component Configuration</span>
           {isExpanded ? (
             <ChevronDown className="w-4 h-4" />
           ) : (

@@ -82,13 +82,13 @@ const components = [
   },
   {
     type: 'register',
-    label: 'Register',
+    label: '32-bit Register',
     icon: <Database className="w-6 h-6" />,
     description: '32-bit Register',
   },
   {
     type: 'mux',
-    label: 'Multiplexer',
+    label: '2-to-1 Multiplexer',
     icon: <ArrowRightLeft className="w-6 h-6" />,
     description: '2-to-1 Multiplexer',
   },
@@ -191,27 +191,27 @@ export function ComponentLibrary() {
 
   return (
     <div className="flex flex-col h-full">
-      <div className="bg-white p-4 rounded-lg shadow-lg mb-4">
-        <div className="flex justify-between items-center mb-2">
-          <h2 className="text-lg font-semibold">Components</h2>
+      <div className="bg-white p-4 rounded-lg shadow-md mb-4">
+        <div className="flex justify-between items-center mb-3">
+          <h2 className="text-lg font-semibold tracking-tight text-gray-800">Components</h2>
           <button
             onClick={() => setShowAssemblyResult(!showAssemblyResult)}
-            className="p-1 rounded hover:bg-gray-100 transition-colors"
+            className="p-1.5 rounded-md hover:bg-gray-100 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
             title={showAssemblyResult ? "Show Components" : "Show Assembly Result"}
           >
-            <SplitSquareHorizontal className="w-5 h-5" />
+            <SplitSquareHorizontal className="w-4 h-4 text-gray-600" />
           </button>
         </div>
-        <div className="flex flex-wrap gap-1 mb-3">
+        <div className="flex flex-wrap gap-1.5 mb-4">
           <button
             onClick={handleSave}
-            className="flex items-center px-1.5 py-0.5 text-xs bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors min-w-0 whitespace-nowrap overflow-hidden"
+            className="flex items-center px-2.5 py-1 text-xs font-medium bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 min-w-0 whitespace-nowrap overflow-hidden shadow-sm"
           >
-            <Save className="w-3 h-3 mr-0.5 flex-shrink-0" />
+            <Save className="w-3.5 h-3.5 mr-1 flex-shrink-0" />
             <span className="truncate">save</span>
           </button>
-          <label className="flex items-center px-1.5 py-0.5 text-xs bg-gray-500 text-white rounded hover:bg-gray-600 transition-colors cursor-pointer min-w-0 whitespace-nowrap overflow-hidden">
-            <FileInput className="w-3 h-3 mr-0.5 flex-shrink-0" />
+          <label className="flex items-center px-2.5 py-1 text-xs font-medium bg-gray-500 text-white rounded-md hover:bg-gray-600 transition-colors cursor-pointer min-w-0 whitespace-nowrap overflow-hidden shadow-sm focus-within:ring-2 focus-within:ring-gray-500 focus-within:ring-opacity-50">
+            <FileInput className="w-3.5 h-3.5 mr-1 flex-shrink-0" />
             <span className="truncate">load</span>
             <input
               type="file"
@@ -240,7 +240,7 @@ export function ComponentLibrary() {
                   loadCircuit(JSON.stringify({ nodes: [], edges: [] }));
                 }
               }}
-              className="w-full flex items-center px-1.5 py-0.5 text-xs bg-green-500 text-white rounded hover:bg-green-600 transition-colors appearance-none cursor-pointer pr-6 truncate"
+              className="w-full flex items-center px-2.5 py-1 text-xs font-medium bg-green-500 text-white rounded-md hover:bg-green-600 transition-colors appearance-none cursor-pointer pr-7 truncate shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50"
               title="Select Example Circuit"
               aria-label="Select example circuit to load"
             >
@@ -249,12 +249,12 @@ export function ComponentLibrary() {
               <option value="basic-datapath">basic datapath</option>
               <option value="basic-pipeline">pipeline datapath</option>
             </select>
-            <BookOpen className="w-3 h-3 absolute right-1 top-1/2 transform -translate-y-1/2 pointer-events-none text-white" />
+            <BookOpen className="w-3.5 h-3.5 absolute right-2 top-1/2 transform -translate-y-1/2 pointer-events-none text-white opacity-80" />
           </div>
         </div>
-        <div className="space-y-2 overflow-y-auto max-h-[calc(100vh-12rem)]">
+        <div className="space-y-1.5 overflow-y-auto max-h-[calc(100vh-12rem)]">
           {showAssemblyResult ? (
-            <div className="space-y-1 overflow-y-auto">
+            <div className="space-y-1.5 overflow-y-auto">
               {assembledInstructions.map((inst, i) => (
                 <div
                   key={i}
@@ -263,9 +263,9 @@ export function ComponentLibrary() {
                       el.scrollIntoView({ behavior: 'smooth', block: 'center' });
                     }
                   } : undefined}
-                  className={`p-2 rounded ${i === currentInstructionIndex ? 'bg-yellow-100' : 'bg-gray-50'}`}
+                  className={`p-2.5 rounded-md ${i === currentInstructionIndex ? 'bg-yellow-50 border border-yellow-200' : 'bg-gray-50 hover:bg-gray-100 transition-colors'}`}
                 >
-                  <div className="font-mono text-sm">{inst.assembly}</div>
+                  <div className="font-mono text-sm text-gray-700">{inst.assembly}</div>
                 </div>
               ))}
             </div>
@@ -273,13 +273,12 @@ export function ComponentLibrary() {
             components.map((component) => (
               <div
                 key={component.type}
-                className="flex items-center p-2 bg-gray-50 rounded cursor-move hover:bg-gray-100 transition-colors"
+                className="flex items-center p-2.5 bg-gray-50 rounded-md cursor-move hover:bg-gray-100 transition-colors border border-transparent hover:border-gray-200"
                 draggable
                 onDragStart={(e) => onDragStart(e, component.type)}
               >
-                {component.icon}
-                <span className="ml-2">{component.label}</span>
-                <span className="ml-auto text-xs text-gray-500">{component.description}</span>
+                <div className="text-gray-600">{component.icon}</div>
+                <span className="ml-2.5 font-medium text-gray-700">{component.label}</span>
               </div>
             ))
           )}

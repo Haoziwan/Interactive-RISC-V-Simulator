@@ -95,58 +95,60 @@ function App() {
 
   return (
     <div className="flex flex-col h-screen bg-gray-100">
-      <header className="bg-white border-b border-gray-200 flex-shrink-0">
+      <header className="bg-white border-b border-gray-200 flex-shrink-0 shadow-sm">
         <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between h-16">
-            <div className="flex items-center">
-              <h1 className="text-2xl font-bold">RISC-V Simulator</h1>
+          <div className="flex items-center h-14">
+            <div className="flex items-center mr-8">
+              <h1 className="text-xl font-bold bg-gradient-to-r from-blue-600 to-blue-400 bg-clip-text text-transparent">RISC-V Simulator</h1>
             </div>
-            <div className="flex items-center space-x-2">
-              <button
-                onClick={() => useCircuitStore.getState().toggleSimulation()}
-                className="p-2 rounded hover:bg-gray-100 transition-colors"
-                title={isSimulating ? 'Pause Simulation' : 'Start Simulation'}
-              >
-                {isSimulating ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5" />}
-              </button>
-              <button
-                onClick={() => useCircuitStore.getState().stepSimulation()}
-                className="p-2 rounded hover:bg-gray-100 transition-colors"
-                title="Single Step"
-                disabled={isSimulating}
-              >
-                <StepForward className="w-5 h-5" />
-              </button>
-              <button
-                onClick={() => useCircuitStore.getState().resetSimulation()}
-                className="p-2 rounded hover:bg-gray-100 transition-colors"
-                title="Reset Simulation"
-              >
-                <RotateCcw className="w-5 h-5" />
-              </button>
-            </div>
-            <div className="flex space-x-4">
-              <TabButton
-                isActive={activeTab === 'code'}
-                onClick={() => setActiveTab('code')}
-              >
-                <Code className="w-5 h-5" />
-                <span>Code Editor</span>
-              </TabButton>
-              <TabButton
-                isActive={activeTab === 'datapath'}
-                onClick={() => setActiveTab('datapath')}
-              >
-                <Cpu className="w-5 h-5" />
-                <span>Datapath</span>
-              </TabButton>
-              <TabButton
-                isActive={activeTab === 'memory'}
-                onClick={() => setActiveTab('memory')}
-              >
-                <Database className="w-5 h-5" />
-                <span>Memory View</span>
-              </TabButton>
+            <div className="flex-1 flex justify-center items-center space-x-4">
+              <div className="flex bg-gray-50 rounded-lg p-1 space-x-1">
+                <TabButton
+                  isActive={activeTab === 'code'}
+                  onClick={() => setActiveTab('code')}
+                >
+                  <Code className="w-4 h-4" />
+                  <span className="text-sm">Code Editor</span>
+                </TabButton>
+                <TabButton
+                  isActive={activeTab === 'datapath'}
+                  onClick={() => setActiveTab('datapath')}
+                >
+                  <Cpu className="w-4 h-4" />
+                  <span className="text-sm">Datapath</span>
+                </TabButton>
+                <TabButton
+                  isActive={activeTab === 'memory'}
+                  onClick={() => setActiveTab('memory')}
+                >
+                  <Database className="w-4 h-4" />
+                  <span className="text-sm">Memory View</span>
+                </TabButton>
+              </div>
+              <div className="flex items-center space-x-2">
+                <button
+                  onClick={() => useCircuitStore.getState().toggleSimulation()}
+                  className="p-2.5 rounded-lg hover:bg-gray-100 transition-colors text-gray-700 hover:text-blue-600"
+                  title={isSimulating ? 'Pause Simulation' : 'Start Simulation'}
+                >
+                  {isSimulating ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5" />}
+                </button>
+                <button
+                  onClick={() => useCircuitStore.getState().stepSimulation()}
+                  className="p-2.5 rounded-lg hover:bg-gray-100 transition-colors text-gray-700 hover:text-blue-600"
+                  title="Single Step"
+                  disabled={isSimulating}
+                >
+                  <StepForward className="w-5 h-5" />
+                </button>
+                <button
+                  onClick={() => useCircuitStore.getState().resetSimulation()}
+                  className="p-2.5 rounded-lg hover:bg-gray-100 transition-colors text-gray-700 hover:text-blue-600"
+                  title="Reset Simulation"
+                >
+                  <RotateCcw className="w-5 h-5" />
+                </button>
+              </div>
             </div>
           </div>
         </div>

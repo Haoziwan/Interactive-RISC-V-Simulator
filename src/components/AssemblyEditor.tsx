@@ -269,7 +269,7 @@ export function AssemblyEditor() {
                   };
                   input.click();
                 }}
-                className="px-3 py-1 text-sm bg-gray-100 hover:bg-gray-200 rounded"
+                className="px-3 py-1 text-sm bg-gray-50 hover:bg-gray-100 transition-colors duration-200 rounded shadow-sm"
                 title="Import .txt or .s assembly code file"
               >
                 Import
@@ -284,7 +284,7 @@ export function AssemblyEditor() {
                   a.click();
                   URL.revokeObjectURL(url);
                 }}
-                className="px-3 py-1 text-sm bg-gray-100 hover:bg-gray-200 rounded"
+                className="px-3 py-1 text-sm bg-gray-50 hover:bg-gray-100 transition-colors duration-200 rounded shadow-sm"
                 title="Save current editor code as text file"
               >
                 Export
@@ -361,7 +361,7 @@ export function AssemblyEditor() {
                   }}
                   className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 text-sm"
                 >
-                  Export Machine Code
+                  Export Code
                 </button>
               )}
             </div>
@@ -371,7 +371,7 @@ export function AssemblyEditor() {
                 <thead className="bg-gray-50 sticky top-0 z-10">
                   <tr>
                     <th className="text-left py-2 px-2 font-medium w-24 whitespace-nowrap">Address</th>
-                    <th className="text-left py-2 px-2 font-medium w-28 whitespace-nowrap">Machine Code</th>
+                    <th className="text-left py-2 px-2 font-medium w-28 whitespace-nowrap">Code</th>
                     <th className="text-left py-2 px-2 font-medium w-48 whitespace-nowrap">Basic</th>
                     <th className="text-left py-2 px-2 font-medium whitespace-nowrap">Source</th>
                   </tr>
@@ -400,8 +400,7 @@ export function AssemblyEditor() {
                 </tbody>
               </table>
             </div>
-          </div>
-        </div>
+          </div>        </div>
       </div>
     </div>
   );
