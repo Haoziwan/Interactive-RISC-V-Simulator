@@ -5,13 +5,15 @@ import { useCircuitStore } from '../store/circuitStore';
 export function MemoryView() {
   const memory = useCircuitStore((state) => state.memory);
   const updateMemory = useCircuitStore((state) => state.updateMemory);
+  const assembledInstructions = useCircuitStore((state) => state.assembledInstructions);
   const [displayFormat, setDisplayFormat] = useState<'hex' | 'dec'>('dec');
   const [startAddress, setStartAddress] = useState(0);
+  const [segment, setSegment] = useState<'data' | 'text'>('data');
   const rowCount = 16;
   const colCount = 16;
   const formatValue = (value: number) => {
     if (displayFormat === 'hex') {
-      return `0x${value.toString(16).padStart(8, '0')}`;
+      return (value & 0xFF).toString(16).padStart(2, '0').toUpperCase();
     }
     return value.toString();
   };
@@ -61,45 +63,69 @@ export function MemoryView() {
     }
   };
   return (
-    <div className="h-full flex flex-col">
-      <div className="flex justify-between items-center mb-4">
+    <div className="h-full flex flex-col bg-white rounded-lg shadow-sm p-4">
+      <div className="flex justify-between items-center mb-6 border-b pb-4">
         <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-2 bg-gray-50 p-1 rounded-lg">
+            <button
+              onClick={() => setSegment('data')}
+              className={`px-3 py-1.5 rounded-md transition-colors ${segment === 'data' ? 'bg-white shadow-sm text-blue-600' : 'text-gray-600 hover:bg-gray-100'}`}
+            >
+              Data Segment
+            </button>
+            <button
+              onClick={() => setSegment('text')}
+              className={`px-3 py-1.5 rounded-md transition-colors ${segment === 'text' ? 'bg-white shadow-sm text-blue-600' : 'text-gray-600 hover:bg-gray-100'}`}
+            >
+              Text Segment
+            </button>
+          </div>
           <select
             value={displayFormat}
             onChange={(e) => setDisplayFormat(e.target.value as 'hex' | 'dec')}
-            className="px-2 py-1 border rounded"
+            className="px-3 py-1.5 bg-white border border-gray-200 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             title="Select display format"
             aria-label="Select memory value display format"
           >
             <option value="hex">Hexadecimal</option>
             <option value="dec">Decimal</option>
           </select>
-          <button
-            onClick={() => setStartAddress(Math.max(0, startAddress - rowCount * colCount))}
-            className="p-1 rounded hover:bg-gray-100"
-            title="Previous Page"
-          >
-            ↑
-          </button>
-          <button
-            onClick={() => setStartAddress(startAddress + rowCount * colCount)}
-            className="p-1 rounded hover:bg-gray-100"
-            title="Next Page"
-          >
-            ↓
-          </button>
+          <div className="flex items-center space-x-2 bg-white border border-gray-200 rounded-md p-1">
+            <button
+              onClick={() => setStartAddress(Math.max(0, startAddress - rowCount * colCount))}
+              className="p-1.5 rounded hover:bg-gray-100 text-gray-600 disabled:text-gray-300 disabled:hover:bg-transparent"
+              title="Previous Page"
+              disabled={startAddress === 0}
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
+              </svg>
+            </button>
+            <div className="px-2 text-sm text-gray-600 select-none">
+              {formatAddress(startAddress)}
+            </div>
+            <button
+              onClick={() => setStartAddress(startAddress + rowCount * colCount)}
+              className="p-1.5 rounded hover:bg-gray-100 text-gray-600"
+              title="Next Page"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+          </div>
         </div>
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center space-x-3">
           <button
             onClick={handleExport}
-            className="flex items-center px-2 py-1 text-sm bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+            className="flex items-center px-4 py-2 text-sm bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
           >
-            <Save className="w-4 h-4 mr-1" />
-            Export
+            <Save className="w-4 h-4 mr-2" />
+            Export Memory
           </button>
-          <label className="flex items-center px-2 py-1 text-sm bg-gray-500 text-white rounded hover:bg-gray-600 transition-colors cursor-pointer">
-            <FileInput className="w-4 h-4 mr-1" />
-            Import
+          <label className="flex items-center px-4 py-2 text-sm bg-gray-600 text-white rounded-md hover:bg-gray-700 transition-colors cursor-pointer focus-within:ring-2 focus-within:ring-gray-500 focus-within:ring-offset-2">
+            <FileInput className="w-4 h-4 mr-2" />
+            Import Memory
             <input
               type="file"
               accept=".json"
@@ -110,45 +136,65 @@ export function MemoryView() {
         </div>
       </div>
       <div className="flex-1 overflow-auto">
-        <table className="w-full border-collapse">
-          <thead>
-            <tr>
-              <th className="border p-2 bg-gray-50">Address</th>
-              {Array.from({ length: colCount }, (_, i) => (
-                <th key={i} className="border p-2 bg-gray-50">
-                  +{i.toString(16).toUpperCase().padStart(2, '0')}
+        <div className="inline-block min-w-full align-middle">
+          <table className="min-w-full divide-y divide-gray-200 border border-gray-200 rounded-lg overflow-hidden">
+            <thead>
+              <tr className="bg-gray-50">
+                <th className="sticky left-0 z-10 bg-gray-50 px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-r border-gray-200">
+                  Address
                 </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {Array.from({ length: rowCount }, (_, row) => {
-              const baseAddress = startAddress + row * colCount;
-              return (
-                <tr key={row}>
-                  <td className="border p-2 font-mono bg-gray-50">
-                    {formatAddress(baseAddress)}
-                  </td>
-                  {Array.from({ length: colCount }, (_, col) => {
-                    const address = baseAddress + col;
-                    const value = memory[formatAddress(address)] || 0;
-                    return (
-                      <td key={col} className="border p-1">
-                        <input
-                          type="text"
-                          value={formatValue(value)}
-                          onChange={(e) => handleValueChange(address, e.target.value)}
-                          className="w-full p-1 font-mono text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
-                          aria-label={`Memory address ${formatAddress(address)} value`}
-                        />
-                      </td>
-                    );
-                  })}
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
+                {Array.from({ length: colCount }, (_, i) => (
+                  <th key={i} className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-r border-gray-200 last:border-r-0">
+                    +{i.toString(16).toUpperCase().padStart(2, '0')}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {Array.from({ length: rowCount }, (_, row) => {
+                const baseAddress = segment === 'data' ? startAddress + row * colCount : row * colCount;
+                return (
+                  <tr key={row} className={row % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
+                    <td className="sticky left-0 z-10 whitespace-nowrap px-3 py-2 text-sm font-mono text-gray-900 border-r border-gray-200 bg-inherit w-32">
+                      {formatAddress(baseAddress)}
+                    </td>
+                    {Array.from({ length: colCount }, (_, col) => {
+                      if (segment === 'data') {
+                        const address = baseAddress + col;
+                        const value = memory[formatAddress(address)] || 0;
+                        return (
+                          <td key={col} className="whitespace-nowrap px-3 py-2 text-sm border-r border-gray-200 last:border-r-0">
+                            <input
+                              type="text"
+                              value={formatValue(value)}
+                              onChange={(e) => handleValueChange(address, e.target.value)}
+                              className="w-full font-mono text-sm bg-transparent focus:bg-blue-50 focus:outline-none rounded"
+                              aria-label={`Memory address ${formatAddress(address)} value`}
+                            />
+                          </td>
+                        );
+                      } else {
+                        const index = Math.floor((row * colCount + col) / 4);
+                        const byteOffset = (row * colCount + col) % 4;
+                        const instruction = assembledInstructions[index];
+                        let byteValue = '';
+                        if (instruction) {
+                          const fullHex = instruction.hex.replace('0x', '');
+                          byteValue = fullHex.slice(6 - byteOffset * 2, 8 - byteOffset * 2);
+                        }
+                        return (
+                          <td key={col} className="whitespace-nowrap px-3 py-2 text-sm font-mono text-gray-600 border-r border-gray-200 last:border-r-0">
+                            {byteValue}
+                          </td>
+                        );
+                      }
+                    })}
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );
