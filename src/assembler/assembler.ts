@@ -14,6 +14,9 @@ export type AssembledInstruction = {
   binary: string;
   assembly?: string;
   source?: string;
+  segment?: 'text' | 'data';
+  address?: number;
+  data?: number[];
 };
 
 export class AssemblerError extends Error {
@@ -307,7 +310,9 @@ export const parseInstruction = (line: string, currentAddress: number, labelMap:
     case 'beq':
     case 'bne':
     case 'blt':
-    case 'bge': {
+    case 'bge':
+    case 'bltu':
+    case 'bgeu': {
       if (parts.length !== 4) throw new AssemblerError(`${op}指令需要3个操作数`, {
     errorType: '操作数错误',
     instruction: lineWithoutComment,
@@ -330,7 +335,9 @@ export const parseInstruction = (line: string, currentAddress: number, labelMap:
         imm: offset,
         funct3: op === 'beq' ? '000' :
                op === 'bne' ? '001' :
-               op === 'blt' ? '100' : '101'
+               op === 'blt' ? '100' :
+               op === 'bge' ? '101' :
+               op === 'bltu' ? '110' : '111'
       };
     }
     case 'lui':
@@ -373,6 +380,21 @@ export const parseInstruction = (line: string, currentAddress: number, labelMap:
         rd: parseRegister(parts[1]),
         rs1: parseRegister(parts[2]),
         imm: parseImmediate(parts[3], 12),
+        funct3: '000'
+      };
+    }
+    case 'ecall': {
+      if (parts.length !== 1) throw new AssemblerError(`${op}指令不需要操作数`, {
+        errorType: '操作数错误',
+        instruction: lineWithoutComment,
+        suggestion: 'ecall指令格式：ecall'
+      });
+      return {
+        type: 'I',
+        opcode: '1110011',
+        rd: 0,
+        rs1: 0,
+        imm: 0,
         funct3: '000'
       };
     }
@@ -473,17 +495,34 @@ export const generateMachineCode = (inst: Instruction): string => {
 export class Assembler {
   private labelMap: Record<string, number> = {};
   private currentAddress = 0;
+  private currentSegment: 'text' | 'data' = 'text';
+  private textAddress = 0;
+  private dataAddress = 0;
   public getLabelMap(): Record<string, number> {
     return this.labelMap;
   }
   public assemble(code: string): AssembledInstruction[] {
     this.labelMap = {};
     this.currentAddress = 0;
+    this.currentSegment = 'text';
+    this.textAddress = 0;
+    this.dataAddress = 0;
 
-    // 第一遍：收集标签
+    // 第一遍：收集标签和处理段指令
     code.split('\n').forEach(line => {
       const trimmedLine = line.trim();
       if (!trimmedLine || trimmedLine.startsWith('#')) return;
+      
+      // 处理段指令
+      if (trimmedLine === '.text') {
+        this.currentSegment = 'text';
+        this.currentAddress = this.textAddress;
+        return;
+      } else if (trimmedLine === '.data') {
+        this.currentSegment = 'data';
+        this.currentAddress = this.dataAddress;
+        return;
+      }
       
       const labelMatch = trimmedLine.match(/^([a-zA-Z0-9_]+):/);
       if (labelMatch) {
@@ -493,32 +532,170 @@ export class Assembler {
       
       // 如果不是纯标签行，则增加地址
       if (!trimmedLine.endsWith(':')) {
-        // 处理伪指令，每个伪指令可能展开为多条基本指令
-        const expandedInstructions = expandPseudoInstruction(trimmedLine);
-        this.currentAddress += 4 * expandedInstructions.length;
+        if (this.currentSegment === 'text') {
+          // 处理伪指令，每个伪指令可能展开为多条基本指令
+          const expandedInstructions = expandPseudoInstruction(trimmedLine);
+          this.currentAddress += 4 * expandedInstructions.length;
+          this.textAddress = this.currentAddress;
+        } else if (this.currentSegment === 'data') {
+          // 处理数据定义指令
+          if (trimmedLine.startsWith('.word')) {
+            const parts = trimmedLine.split(/\s+/).slice(1);
+            this.currentAddress += 4 * parts.length;
+          } else if (trimmedLine.startsWith('.byte')) {
+            const parts = trimmedLine.split(/\s+/).slice(1);
+            this.currentAddress += parts.length;
+          } else if (trimmedLine.startsWith('.half')) {
+            const parts = trimmedLine.split(/\s+/).slice(1);
+            this.currentAddress += 2 * parts.length;
+          } else if (trimmedLine.startsWith('.ascii') || trimmedLine.startsWith('.asciz')) {
+            const match = trimmedLine.match(/"(.*)"/);
+            if (match) {
+              const str = match[1];
+              this.currentAddress += trimmedLine.startsWith('.asciz') ? str.length + 1 : str.length;
+            }
+          }
+          this.dataAddress = this.currentAddress;
+        }
       }
     });
 
-    // 第二遍：生成指令
+    // 第二遍：生成指令和数据
     this.currentAddress = 0;
-    return code
-      .split('\n')
-      .map(line => line.trim())
-      .filter(line => {
-        if (!line || line.startsWith('#')) return false;
-        const withoutComment = line.split('#')[0].trim();
-        return withoutComment.length > 0 && !withoutComment.endsWith(':');
-      })
-      .flatMap(line => {
-        // 展开伪指令
-        const expandedInstructions = expandPseudoInstruction(line);
-        return expandedInstructions.map(expandedLine => {
-          const parsedInst = parseInstruction(expandedLine, this.currentAddress, this.labelMap);
-          const hex = generateMachineCode(parsedInst);
-          const binary = (parseInt(hex.slice(2), 16) >>> 0).toString(2).padStart(32, '0');
-          this.currentAddress += 4;
-          return { hex, binary };
-        });
-      });
+    this.currentSegment = 'text';
+    
+    const result: AssembledInstruction[] = [];
+    
+    code.split('\n').forEach(line => {
+      const trimmedLine = line.trim();
+      if (!trimmedLine || trimmedLine.startsWith('#')) return;
+      
+      // 处理段指令
+      if (trimmedLine === '.text') {
+        this.currentSegment = 'text';
+        this.currentAddress = result.filter(inst => inst.segment === 'text').reduce((acc, inst) => acc + 4, 0);
+        return;
+      } else if (trimmedLine === '.data') {
+        this.currentSegment = 'data';
+        this.currentAddress = result.filter(inst => inst.segment === 'data').reduce((acc, inst) => {
+          if (inst.data) {
+            return acc + inst.data.length;
+          }
+          return acc;
+        }, 0);
+        return;
+      }
+      
+      // 跳过标签行
+      if (trimmedLine.match(/^[a-zA-Z0-9_]+:$/)) return;
+      
+      // 处理指令或数据
+      if (this.currentSegment === 'text') {
+        // 处理代码段指令
+        if (!trimmedLine.startsWith('.')) {
+          // 展开伪指令
+          const expandedInstructions = expandPseudoInstruction(trimmedLine);
+          expandedInstructions.forEach(expandedLine => {
+            const parsedInst = parseInstruction(expandedLine, this.currentAddress, this.labelMap);
+            const hex = generateMachineCode(parsedInst);
+            const binary = (parseInt(hex.slice(2), 16) >>> 0).toString(2).padStart(32, '0');
+            result.push({ 
+              hex, 
+              binary, 
+              assembly: expandedLine,
+              segment: 'text',
+              address: this.currentAddress
+            });
+            this.currentAddress += 4;
+          });
+        }
+      } else if (this.currentSegment === 'data') {
+        // 处理数据段指令
+        if (trimmedLine.startsWith('.word')) {
+          const parts = trimmedLine.split(/\s+/).slice(1);
+          const data = parts.map(part => {
+            if (part.startsWith('0x')) {
+              return parseInt(part.slice(2), 16);
+            } else {
+              return parseInt(part);
+            }
+          });
+          
+          result.push({
+            hex: '0x' + data.map(d => d.toString(16).padStart(8, '0')).join(''),
+            binary: data.map(d => d.toString(2).padStart(32, '0')).join(''),
+            assembly: trimmedLine,
+            segment: 'data',
+            address: this.currentAddress,
+            data: data
+          });
+          
+          this.currentAddress += 4 * data.length;
+        } else if (trimmedLine.startsWith('.byte')) {
+          const parts = trimmedLine.split(/\s+/).slice(1);
+          const data = parts.map(part => {
+            if (part.startsWith('0x')) {
+              return parseInt(part.slice(2), 16) & 0xFF;
+            } else {
+              return parseInt(part) & 0xFF;
+            }
+          });
+          
+          result.push({
+            hex: '0x' + data.map(d => d.toString(16).padStart(2, '0')).join(''),
+            binary: data.map(d => d.toString(2).padStart(8, '0')).join(''),
+            assembly: trimmedLine,
+            segment: 'data',
+            address: this.currentAddress,
+            data: data
+          });
+          
+          this.currentAddress += data.length;
+        } else if (trimmedLine.startsWith('.half')) {
+          const parts = trimmedLine.split(/\s+/).slice(1);
+          const data = parts.map(part => {
+            if (part.startsWith('0x')) {
+              return parseInt(part.slice(2), 16) & 0xFFFF;
+            } else {
+              return parseInt(part) & 0xFFFF;
+            }
+          });
+          
+          result.push({
+            hex: '0x' + data.map(d => d.toString(16).padStart(4, '0')).join(''),
+            binary: data.map(d => d.toString(2).padStart(16, '0')).join(''),
+            assembly: trimmedLine,
+            segment: 'data',
+            address: this.currentAddress,
+            data: data
+          });
+          
+          this.currentAddress += 2 * data.length;
+        } else if (trimmedLine.startsWith('.ascii') || trimmedLine.startsWith('.asciz')) {
+          const match = trimmedLine.match(/"(.*)"/);
+          if (match) {
+            const str = match[1];
+            const data = Array.from(str).map(c => c.charCodeAt(0));
+            
+            if (trimmedLine.startsWith('.asciz')) {
+              data.push(0); // 添加空字符结尾
+            }
+            
+            result.push({
+              hex: '0x' + data.map(d => d.toString(16).padStart(2, '0')).join(''),
+              binary: data.map(d => d.toString(2).padStart(8, '0')).join(''),
+              assembly: trimmedLine,
+              segment: 'data',
+              address: this.currentAddress,
+              data: data
+            });
+            
+            this.currentAddress += data.length;
+          }
+        }
+      }
+    });
+    
+    return result;
   }
 }
