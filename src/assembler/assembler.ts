@@ -254,10 +254,15 @@ export const parseInstruction = (line: string, currentAddress: number, labelMap:
                op === 'sltiu' ? '011' :
                op === 'xori' ? '100' :
                op === 'srli' || op === 'srai' ? '101' :
-               op === 'ori' ? '110' : '111'
+               op === 'ori' ? '110' : '111',
+        funct7: op === 'srai' ? '0100000' : op === 'slli' || op === 'srli' ? '0000000' : undefined
       };
     }
-    case 'lw': {
+    case 'lb':
+    case 'lh':
+    case 'lw':
+    case 'lbu':
+    case 'lhu': {
       if (parts.length !== 3) throw new AssemblerError(`${op}指令需要2个操作数和偏移量`);
       const [rd, memStr] = parts.slice(1);
       const match = memStr.match(/(-?\d+)\(([a-zA-Z0-9]+)\)/);
@@ -272,9 +277,14 @@ export const parseInstruction = (line: string, currentAddress: number, labelMap:
         rd: parseRegister(rd),
         rs1: parseRegister(match[2]),
         imm: parseImmediate(match[1], 12),
-        funct3: '010'
+        funct3: op === 'lb' ? '000' :
+               op === 'lh' ? '001' :
+               op === 'lw' ? '010' :
+               op === 'lbu' ? '100' : '101'
       };
     }
+    case 'sb':
+    case 'sh':
     case 'sw': {
       if (parts.length !== 3) throw new AssemblerError(`${op}指令需要2个操作数和偏移量`);
       const [rs2, memStr] = parts.slice(1);
@@ -290,7 +300,8 @@ export const parseInstruction = (line: string, currentAddress: number, labelMap:
         rs1: parseRegister(match[2]),
         rs2: parseRegister(rs2),
         imm: parseImmediate(match[1], 12),
-        funct3: '010'
+        funct3: op === 'sb' ? '000' :
+               op === 'sh' ? '001' : '010'
       };
     }
     case 'beq':
@@ -398,7 +409,15 @@ export const generateMachineCode = (inst: Instruction): string => {
       machineCode |= (inst.rd! & 0x1F) << 7;
       machineCode |= (parseInt(inst.funct3!, 2) & 0x7) << 12;
       machineCode |= (inst.rs1! & 0x1F) << 15;
-      machineCode |= ((iImm & 0xFFF) << 20) >>> 0;
+      
+      // 对于移位指令（slli, srli, srai），需要特殊处理funct7字段
+      if (inst.funct7) {
+        machineCode |= (parseInt(inst.funct7, 2) & 0x7F) << 25;
+        // 对于移位指令，立即数只使用低5位
+        machineCode |= ((iImm & 0x1F) << 20) >>> 0;
+      } else {
+        machineCode |= ((iImm & 0xFFF) << 20) >>> 0;
+      }
       break;
 
     case 'S':
