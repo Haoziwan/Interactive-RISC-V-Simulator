@@ -1,5 +1,5 @@
 {
-  "name": "circuit-2025-03-01T12-46-35-652Z",
+  "name": "circuit-2025-03-01T16-08-09-392Z",
   "nodes": [
     {
       "id": "register-1740456812349",
@@ -618,7 +618,7 @@
         "output-0": 0,
         "value": 0,
         "reset": false,
-        "name": "IF/ID",
+        "name": "EX/MEM",
         "portCount": 7,
         "output-1": 0,
         "output-2": 0,
@@ -628,7 +628,7 @@
         "output-6": 0,
         "outputValue": 0
       },
-      "width": 80,
+      "width": 105,
       "height": 900,
       "selected": false,
       "positionAbsolute": {
@@ -1191,8 +1191,8 @@
       "type": "smoothstep",
       "animated": false,
       "style": {
-        "stroke": "#3182ce",
-        "strokeWidth": 3
+        "stroke": "#999",
+        "strokeWidth": 1
       },
       "markerEnd": {
         "type": "arrow",
@@ -2211,5 +2211,5 @@
   "isSimulating": false,
   "editorCode": "",
   "assembledInstructions": [],
-  "savedAt": "2025-03-01T12:46:35.652Z"
+  "savedAt": "2025-03-01T16:08:09.392Z"
 }
