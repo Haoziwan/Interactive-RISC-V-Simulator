@@ -9,6 +9,14 @@ export function RegPanel() {
   const registers = useCircuitStore((state) => state.registers);
   const updateRegisters = useCircuitStore((state) => state.updateRegisters);
 
+  // 初始化sp和gp寄存器
+  useEffect(() => {
+    updateRegisters({
+      2: 0x7ffffff0,  // sp
+      3: 0x10000000   // gp
+    });
+  }, []);
+
   const formatValue = (value: number) => {
     switch (base) {
       case 'dec':
@@ -78,7 +86,17 @@ export function RegPanel() {
               className={`grid grid-cols-[2fr_1fr_3fr] gap-1 py-0.5 text-xs rounded-sm transition-colors duration-150 ${highlightedReg === i ? 'bg-blue-50 shadow-sm' : 'hover:bg-gray-50'}`}
             >
               <div className="font-medium text-[11px]">
-                {i === 0 ? 'zero' : i === 1 ? 'ra' : i === 2 || i === 3 ? 'sp' : i === 4 ? 'gp' : i <= 7 ? `t${i-5}` : i <= 9 ? `s${i-8}` : i <= 17 ? `a${i-10}` : i <= 27 ? `s${i-16}` : i <= 31 ? `t${i-25}` : `x${i}`}
+                {i === 0 ? 'zero' : 
+                 i === 1 ? 'ra' : 
+                 i === 2 ? 'sp' : 
+                 i === 3 ? 'gp' : 
+                 i === 4 ? 'tp' : 
+                 i >= 5 && i <= 7 ? `t${i-5}` : 
+                 i >= 8 && i <= 9 ? `s${i-8}` : 
+                 i >= 10 && i <= 17 ? `a${i-10}` : 
+                 i >= 18 && i <= 27 ? `s${i-16}` : 
+                 i >= 28 && i <= 31 ? `t${i-25}` : 
+                 `x${i}`}
               </div>
               <div className="text-gray-500 text-[11px]">{i}</div>
               <div className="font-mono text-gray-600 pl-2 text-[11px]">

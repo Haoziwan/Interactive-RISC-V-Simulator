@@ -293,7 +293,10 @@ export const useCircuitStore = create<CircuitState>()((set, get) => ({
     // 延迟到下一个事件循环清空寄存器和内存
     setTimeout(() => {
       set({
-        registers: {},
+        registers: {
+          2: 0x7ffffff0,  // sp
+          3: 0x10000000   // gp
+        },
         memory: {}
       });
     }, 0);
