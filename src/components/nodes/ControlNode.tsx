@@ -106,7 +106,7 @@ export function ControlNode({ data, id, selected }: { data: ControlNodeData; id:
                   memWrite: 0,
                   aluOp: parseInt('00', 2),
                   aluSrc: 1,
-                  memToReg: 0
+                  memToReg: 2
                 };
                 break;
               case '0110111': // U-type (lui)

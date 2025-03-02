@@ -1,47 +1,47 @@
 import { Handle, Position } from 'reactflow';
-import React from 'react';
+import React, { useState } from 'react';
 import { useNodes, useEdges } from 'reactflow';
 import { useCircuitStore } from '../../store/circuitStore';
 
+interface MuxNodeData {
+  label: string;
+  select?: string;
+  value?: number;
+  portCount?: number;
+  onDelete?: () => void;
+}
+
 export function MuxNode({ data, id, selected }: { 
-  data: { 
-    label: string;
-    select?: string;
-    value?: number;
-    onDelete?: () => void;
-  }; 
+  data: MuxNodeData; 
   id: string;
   selected?: boolean 
 }) {
   const updateNodeData = useCircuitStore((state) => state.updateNodeData);
-  const [input0, setInput0] = React.useState<number>(0);
-  const [input1, setInput1] = React.useState<number>(0);
+  const [inputs, setInputs] = React.useState<number[]>([]);
+  const [showConfig, setShowConfig] = useState(false);
+  const [tempPortCount, setTempPortCount] = useState(data.portCount || 2);
   const nodes = useNodes();
   const edges = useEdges();
-  const inputsRef = React.useRef({ in0: 0, in1: 0, select: '0' });
+  const inputsRef = React.useRef<{[key: string]: number}>({});
+  const portCount = data.portCount || 2;
 
   // 监听输入连接的变化并更新输出值
   const updateInputConnections = () => {
-    // 找到连接到此节点的边
-    const input0Edge = edges.find(edge => edge.target === id && edge.targetHandle === 'in0');
-    const input1Edge = edges.find(edge => edge.target === id && edge.targetHandle === 'in1');
-    const selectEdge = edges.find(edge => edge.target === id && edge.targetHandle === 'select');
+    const newInputs: {[key: string]: number} = {};
+    let hasChanges = false;
 
     // 获取源节点的值
     const getSourceNodeValue = (edge: any) => {
       if (!edge) return null;
       const sourceNode = nodes.find(node => node.id === edge.source);
       if (sourceNode?.data && typeof sourceNode.data === 'object') {
-        // 首先尝试根据输入端口ID查找对应字段
         const portId = edge.sourceHandle;
         let sourceValue: number | undefined;
 
         if (portId && sourceNode.data[portId as keyof typeof sourceNode.data] !== undefined) {
-          // 如果存在对应端口ID的字段，使用该字段值
           const value = sourceNode.data[portId as keyof typeof sourceNode.data];
           sourceValue = typeof value === 'number' ? value : undefined;
         } else if ('value' in sourceNode.data) {
-          // 否则使用默认的value字段
           const value = (sourceNode.data as { value?: number }).value;
           sourceValue = typeof value === 'number' ? value : undefined;
         }
@@ -51,85 +51,156 @@ export function MuxNode({ data, id, selected }: {
       return null;
     };
 
-    const newInput0 = getSourceNodeValue(input0Edge);
-    const newInput1 = getSourceNodeValue(input1Edge);
-    const newSelect = getSourceNodeValue(selectEdge);
-
-    // 只有当输入值发生实际变化时才更新
-    const hasChanges = (newInput0 !== null && newInput0 !== inputsRef.current.in0) ||
-                      (newInput1 !== null && newInput1 !== inputsRef.current.in1) ||
-                      (newSelect !== null && String(newSelect) !== inputsRef.current.select);
-
-    if (hasChanges) {
-      const finalInput0 = newInput0 ?? inputsRef.current.in0;
-      const finalInput1 = newInput1 ?? inputsRef.current.in1;
-      const finalSelect = String(newSelect ?? inputsRef.current.select);
-
-      // 更新ref中的值
-      inputsRef.current = { in0: finalInput0 as number, in1: finalInput1 as number, select: finalSelect };
-
-      // 根据选择信号计算输出值
-      const outputValue = finalSelect === '1' ? finalInput1 : finalInput0;
-
-      // 更新节点数据
-      updateNodeData(id, {
-        ...data,
-        value: outputValue,
-        select: finalSelect
-      });
-
-      // 更新状态
-      setInput0(finalInput0 as number);
-      setInput1(finalInput1 as number);
+    // 处理所有输入端口
+    for (let i = 0; i < portCount; i++) {
+      const inputEdge = edges.find(edge => edge.target === id && edge.targetHandle === `in${i}`);
+      const newValue = getSourceNodeValue(inputEdge);
+      if (newValue !== null) {
+        newInputs[`in${i}`] = newValue;
+        if (newValue !== inputsRef.current[`in${i}`]) {
+          hasChanges = true;
+        }
+      } else {
+        newInputs[`in${i}`] = inputsRef.current[`in${i}`] || 0;
+      }
     }
+
+    // 处理选择信号
+      const selectEdge = edges.find(edge => edge.target === id && edge.targetHandle === 'select');
+      const selectValue = getSourceNodeValue(selectEdge);
+      const currentSelect = selectValue !== null ? String(selectValue) : (data.select || '0');
+
+      if (hasChanges || currentSelect !== data.select) {
+        // 更新ref中的值
+        inputsRef.current = newInputs;
+
+        // 计算选择的输入端口索引
+        const selectIndex = parseInt(currentSelect) % portCount;
+        const outputValue = newInputs[`in${selectIndex}`] || 0;
+
+        // 更新节点数据
+        updateNodeData(id, {
+          ...data,
+          value: outputValue,
+          select: currentSelect
+        });
+
+        // 更新状态
+        setInputs(Object.values(newInputs));
+      }
   };
   // 监听输入连接的变化
   React.useEffect(() => {
     updateInputConnections();
-  }, [edges, id, nodes, data, updateNodeData]);
+  }, [edges, id, nodes, data, portCount]);
 
   return (
     <div className={`relative px-4 py-2 shadow-md rounded-md bg-white border-2 ${
       selected ? 'border-blue-500' : 'border-gray-200'
     }`}>
-      
-      <Handle 
-        type="target" 
-        position={Position.Left} 
-        id="in0" 
-        className="w-3 h-3 bg-blue-400" 
-        style={{ top: '30%' }}
-        title="Input 0"
-      />
-      <Handle 
-        type="target" 
-        position={Position.Left} 
-        id="in1" 
-        className="w-3 h-3 bg-blue-400" 
-        style={{ top: '70%' }}
-        title="Input 1"
-      />
-      <div className="flex items-center">
-        <div className="ml-2">
-          <div className="text-lg font-bold">MUX</div>
-          <div className="text-gray-500">Input 0: {input0}</div>
-          <div className="text-gray-500">Input 1: {input1}</div>
-          <div className="text-gray-500">Select: {data.select || '0'}</div>
+      <div className="flex items-center justify-between mb-2">
+        <div className="text-lg font-bold">MUX</div>
+        <button
+          onClick={() => setShowConfig(!showConfig)}
+          className="p-1 rounded-md hover:bg-gray-100"
+          title="Configure"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-500" viewBox="0 0 20 20" fill="currentColor">
+            <path fillRule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.532 1.532 0 01-.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clipRule="evenodd" />
+          </svg>
+        </button>
+      </div>
+
+      {showConfig && (
+        <div className="absolute z-10 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 p-2">
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700 mb-1">输入端口数量</label>
+            <div className="flex items-center space-x-2">
+              <button
+                onClick={() => setTempPortCount(Math.max(2, tempPortCount - 1))}
+                className="px-2 py-1 border rounded-md hover:bg-gray-100"
+                title="减少端口数量"
+              >
+                -
+              </button>
+              <span className="flex-1 text-center">{tempPortCount}</span>
+              <button
+                onClick={() => setTempPortCount(Math.min(8, tempPortCount + 1))}
+                className="px-2 py-1 border rounded-md hover:bg-gray-100"
+                title="增加端口数量"
+              >
+                +
+              </button>
+            </div>
+          </div>
+          <div className="flex justify-end space-x-2">
+            <button
+              onClick={() => {
+                setShowConfig(false);
+                setTempPortCount(data.portCount || 2);
+              }}
+              className="px-3 py-1 border rounded-md hover:bg-gray-100 text-sm"
+            >
+              取消
+            </button>
+            <button
+              onClick={() => {
+                updateNodeData(id, {
+                  ...data,
+                  portCount: tempPortCount
+                });
+                setShowConfig(false);
+              }}
+              className="px-3 py-1 bg-blue-500 text-white rounded-md hover:bg-blue-600 text-sm"
+            >
+              确认
+            </button>
+          </div>
+        </div>
+      )}
+
+      <div className="text-sm text-gray-500 space-y-1">
+        {Array.from({ length: portCount }).map((_, i) => (
+          <div key={i} className="flex justify-between">
+            <span>Input {i}: </span>
+            <span>{inputs[i] || 0}</span>
+          </div>
+        ))}
+        <div className="flex justify-between">
+          <span>Select: </span>
+          <span>{data.select || '0'}</span>
         </div>
       </div>
-      <Handle 
-        type="source" 
-        position={Position.Right} 
-        id="out" 
-        className="w-3 h-3 bg-green-400" 
+
+      {/* 输入端口 */}
+      {Array.from({ length: portCount }).map((_, i) => (
+        <Handle
+          key={`in${i}`}
+          type="target"
+          position={Position.Left}
+          id={`in${i}`}
+          className="w-3 h-3 bg-blue-400"
+          style={{ top: `${20 + (i * 60 / (portCount - 1))}%` }}
+          title={`Input ${i}`}
+        />
+      ))}
+
+      {/* 输出端口 */}
+      <Handle
+        type="source"
+        position={Position.Right}
+        id="out"
+        className="w-3 h-3 bg-green-400"
         style={{ top: '50%' }}
         title="Output"
       />
-      <Handle 
-        type="target" 
-        position={Position.Bottom} 
-        id="select" 
-        className="w-3 h-3 bg-yellow-400" 
+
+      {/* 选择信号端口 */}
+      <Handle
+        type="target"
+        position={Position.Bottom}
+        id="select"
+        className="w-3 h-3 bg-yellow-400"
         style={{ left: '50%' }}
         title="Select Signal"
       />

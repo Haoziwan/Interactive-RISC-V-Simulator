@@ -299,6 +299,8 @@ export const useCircuitStore = create<CircuitState>()((set, get) => ({
         },
         memory: {}
       });
+
+      get().updateAllNodesInputs();
     }, 0);
   },
   stepSimulation: () => {
