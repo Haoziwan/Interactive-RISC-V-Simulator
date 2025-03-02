@@ -1,47 +1,47 @@
-# I型指令测试程序
-# 测试所有I型指令的基本功能和边界条件
+# I-Type Instructions Test Program
+# Test all I-type instructions for basic functionality and edge cases
 
-# 初始化内存数据（通过S型指令，稍后会在S型测试中详细测试）
-addi x1, x0, 1234    # 测试数据
+# Initialize memory data (using S-type instructions, will be tested in detail in S-type test)
+addi x1, x0, 1234    # Test data
 sw x1, 0(x0)        # mem[0] = 1234
-addi x1, x0, -56     # 测试数据
+addi x1, x0, -56     # Test data
 sw x1, 4(x0)        # mem[4] = -56
-addi x1, x0, 0x7FF   # 测试数据
+addi x1, x0, 0x7FF   # Test data
 sw x1, 8(x0)        # mem[8] = 2047
 
-# 测试立即数算术运算指令
+# Test immediate arithmetic instructions
 addi x1, x0, 42      # x1 = 42
 addi x2, x1, 10      # x2 = 52
 addi x3, x1, -20     # x3 = 22
-addi x4, x0, 0x7FF   # x4 = 2047 (最大12位立即数)
-addi x5, x0, -2048   # x5 = -2048 (最小12位立即数)
+addi x4, x0, 0x7FF   # x4 = 2047 (maximum 12-bit immediate)
+addi x5, x0, -2048   # x5 = -2048 (minimum 12-bit immediate)
 
-# 测试立即数逻辑运算指令
+# Test immediate logical instructions
 andi x6, x1, 0x0F    # x6 = 10 (42 & 15)
 ori x7, x1, 0x0F     # x7 = 47 (42 | 15)
 xori x8, x1, 0xFF    # x8 = 213 (42 ^ 255)
 
-# 测试立即数移位指令
+# Test immediate shift instructions
 slli x9, x1, 2       # x9 = 168 (42 << 2)
 srli x10, x1, 2      # x10 = 10 (42 >> 2)
-srai x11, x5, 2      # x11 = -512 (-2048 >> 2，算术右移)
+srai x11, x5, 2      # x11 = -512 (-2048 >> 2, arithmetic right shift)
 
-# 测试加载指令
-lw x12, 0(x0)       # x12 = 1234 (加载字)
-lh x13, 4(x0)       # x13 = -56 (加载半字，符号扩展)
-lb x14, 8(x0)       # x14 = 127 (加载字节，符号扩展)
-lhu x15, 4(x0)      # x15 = 65480 (加载半字，无符号)
-lbu x16, 8(x0)      # x16 = 255 (加载字节，无符号)
+# Test load instructions
+lw x12, 0(x0)       # x12 = 1234 (load word)
+lh x13, 4(x0)       # x13 = -56 (load half-word, sign-extended)
+lb x14, 8(x0)       # x14 = 127 (load byte, sign-extended)
+lhu x15, 4(x0)      # x15 = 65480 (load half-word, unsigned)
+lbu x16, 8(x0)      # x16 = 255 (load byte, unsigned)
 
-# 测试边界条件
+# Test edge cases
 addi x20, x0, -1     # x20 = -1
 andi x21, x20, 1     # x21 = 1 (-1 & 1)
 ori x22, x0, -1      # x22 = -1 (0 | -1)
 xori x23, x20, -1    # x23 = 0 (-1 ^ -1)
 
-# 测试不同偏移量的加载
-lw x24, -2048(x0)    # 测试最小偏移量
-lw x25, 2047(x0)     # 测试最大偏移量
+# Test different load offsets
+lw x24, -2048(x0)    # Test minimum offset
+lw x25, 2047(x0)     # Test maximum offset
 
-# 完成测试
-add x0, x0, x0       # NOP指令，标记测试结束
+# Test complete
+add x0, x0, x0       # NOP instruction, marks end of test

@@ -1,45 +1,69 @@
-# 冒泡排序程序
-# 对5个寄存器（x10-x14）中的数字进行排序
+# Bubble Sort Program
+# Memory-based bubble sort implementation for 5 numbers
 
-# 初始化测试数据
-addi x10, x0, 5     # x10 = 5
-addi x11, x0, 3     # x11 = 3
-addi x12, x0, 4     # x12 = 4
-addi x13, x0, 1     # x13 = 1
-addi x14, x0, 2     # x14 = 2
+# Initialize memory base address
+addi x1, x0, 0      # Memory base address
 
-# 外层循环 i 从 4 到 1
-addi x1, x0, 4      # i = 4
+# Initialize test data and store in memory
+addi x2, x0, 5     # First data = 5
+sw x2, 0(x1)       # Store at memory location 0
 
-loop_i:
-beq x1, x0, end     # if i == 0, 结束排序
-addi x2, x0, 0      # j = 0
+addi x2, x0, 3     # Second data = 3
+sw x2, 4(x1)       # Store at memory location 4
 
-# 内层循环 j 从 0 到 i-1
-loop_j:
-beq x2, x1, next_i  # if j == i, 进入下一轮外层循环
+addi x2, x0, 4     # Third data = 4
+sw x2, 8(x1)       # Store at memory location 8
 
-# 加载相邻元素到临时寄存器
-addi x3, x2, 10     # x3 = j + 10（基址）
-addi x4, x3, 1      # x4 = (j + 1) + 10
+addi x2, x0, 1     # Fourth data = 1
+sw x2, 12(x1)      # Store at memory location 12
 
-# 使用临时寄存器x5, x6获取要比较的值
-add x5, x0, x3      # 获取第一个值的寄存器编号
-add x6, x0, x4      # 获取第二个值的寄存器编号
+addi x2, x0, 2     # Fifth data = 2
+sw x2, 16(x1)      # Store at memory location 16
 
-# 比较并交换（使用x7和x8作为临时存储）
-bge x5, x6, skip    # if arr[j] >= arr[j+1], 跳过交换
-add x7, x0, x5      # temp = arr[j]
-add x5, x0, x6      # arr[j] = arr[j+1]
-add x6, x0, x7      # arr[j+1] = temp
+# Bubble sort implementation
+addi x5, x0, 4      # Outer loop counter, need n-1 rounds
 
-skip:
-addi x2, x2, 1     # j++
-jal x0, loop_j      # 继续内层循环
+outer_loop:
+    beq x5, x0, end_sort  # If outer loop is complete, end sorting
+    addi x6, x0, 0      # Initialize inner loop index to 0
+    addi x7, x0, 4      # Inner loop limit is n-1
+    sub x7, x7, x5      # Reduce comparison count each round
 
-next_i:
-addi x1, x1, -1    # i--
-jal x0, loop_i      # 继续外层循环
+inner_loop:
+    beq x6, x7, end_inner  # If inner loop is complete, jump to outer loop
+    
+    # Calculate memory addresses of current and next elements
+    slli x8, x6, 2     # x8 = x6 * 4 (byte offset)
+    add x8, x8, x1     # x8 = current element address
+    addi x9, x8, 4     # x9 = next element address
+    
+    # Load two adjacent elements
+    lw x10, 0(x8)      # Load current element
+    lw x11, 0(x9)      # Load next element
+    
+    # Compare values
+    bge x10, x11, no_swap  # If current element >= next element, no swap needed
+    
+    # Swap values
+    sw x11, 0(x8)      # Store next element at current position
+    sw x10, 0(x9)      # Store current element at next position
 
-end:
-# 排序结果存储在x10-x14中，从小到大排序
+no_swap:
+    addi x6, x6, 1      # Increment inner loop index
+    jal x0, inner_loop  # Continue inner loop
+
+end_inner:
+    addi x5, x5, -1     # Decrement outer loop counter
+    jal x0, outer_loop  # Continue outer loop
+
+end_sort:
+    # Sorting complete, load results back to registers
+    lw x10, 0(x1)       # x10 = first sorted number
+    lw x11, 4(x1)       # x11 = second sorted number
+    lw x12, 8(x1)       # x12 = third sorted number
+    lw x13, 12(x1)      # x13 = fourth sorted number
+    lw x14, 16(x1)      # x14 = fifth sorted number
+    
+    # Program end
+    add x0, x0, x0      # NOP instruction, marks end of sorting
+

@@ -303,6 +303,7 @@ export function AssemblyEditor() {
                 <option value="s_type_test">S-Type Test</option>
                 <option value="b_type_test">B-Type Test</option>
                 <option value="u_type_test">U-Type Test</option>
+                <option value="j_type_test">J-Type Test</option>
               </select>
               <button
                 onClick={assembleCode}
