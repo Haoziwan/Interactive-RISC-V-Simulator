@@ -425,7 +425,7 @@ export function ConfigPanel() {
       className="absolute bottom-0 bg-white border-l border-t border-gray-200 shadow-lg transition-all duration-300 rounded-t-lg overflow-hidden"
       style={{ 
         width: '20rem',
-        right: '16rem', 
+        right: '0rem', 
         maxHeight: 'calc(100vh - 5rem)',
         transform: isExpanded ? 'translateY(0)' : 'translateY(calc(100% - 2.5rem))',
         opacity: isExpanded ? 1 : 0.95
