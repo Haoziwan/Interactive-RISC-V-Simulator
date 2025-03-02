@@ -6,7 +6,7 @@ import { ConfigPanel } from './components/ConfigPanel';
 import { AssemblyEditor } from './components/AssemblyEditor';
 import { RegPanel } from './components/RegPanel';
 import { MemoryView } from './components/MemoryView';
-import { ChevronDown, ChevronRight, Code, Database, Cpu, Play, Pause, RotateCcw, StepForward } from 'lucide-react';
+import { ChevronDown, ChevronRight, Code, Database, Cpu, Play, Pause, RotateCcw, StepForward, StepBack } from 'lucide-react';
 import { useCircuitStore } from './store/circuitStore';
 
 interface CollapsibleSectionProps {
@@ -132,6 +132,14 @@ function App() {
                   title={isSimulating ? 'Pause Simulation' : 'Start Simulation'}
                 >
                   {isSimulating ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5" />}
+                </button>
+                <button
+                  onClick={() => useCircuitStore.getState().stepBackSimulation()}
+                  className="p-2.5 rounded-lg hover:bg-gray-100 transition-colors text-gray-700 hover:text-blue-600"
+                  title="Step Back"
+                  disabled={isSimulating}
+                >
+                  <StepBack className="w-5 h-5" />
                 </button>
                 <button
                   onClick={() => useCircuitStore.getState().stepSimulation()}

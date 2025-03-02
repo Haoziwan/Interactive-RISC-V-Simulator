@@ -19,6 +19,14 @@ interface CircuitState {
   memory: { [key: string]: number };
   pcValue: number;
   currentInstructionIndex: number;
+  simulationHistory: Array<{
+    nodes: Node[];
+    registers: { [key: number]: number };
+    memory: { [key: string]: number };
+    pcValue: number;
+    currentInstructionIndex: number;
+    stepCount: number;
+  }>;
   updatePcValue: (value: number) => void;
   updateMemory: (memory: { [key: string]: number }) => void;
   updateRegisters: (registers: { [key: number]: number }) => void;
@@ -35,6 +43,7 @@ interface CircuitState {
   toggleSimulation: () => void;
   resetSimulation: () => void;
   stepSimulation: () => void;
+  stepBackSimulation: () => void;
   updateNodes: (changes: Node[]) => void;
   updateEdgeType: (type: string) => void;
   updateEdgeAnimated: (animated: boolean) => void;
@@ -67,6 +76,7 @@ export const useCircuitStore = create<CircuitState>()((set, get) => ({
   memory: {},
   pcValue: 0,
   currentInstructionIndex: 0,
+  simulationHistory: [],
   updatePcValue: (value: number) => set({ 
     pcValue: value,
     currentInstructionIndex: value / 4
@@ -277,7 +287,8 @@ export const useCircuitStore = create<CircuitState>()((set, get) => ({
       stepCount: 0,
       simulationTimer: null,
       pcValue: 0,
-      currentInstructionIndex: 0
+      currentInstructionIndex: 0,
+      simulationHistory: []
     }));
     // 延迟到下一个事件循环清空寄存器和内存
     setTimeout(() => {
@@ -309,10 +320,21 @@ export const useCircuitStore = create<CircuitState>()((set, get) => ({
         };
       }
 
+      // 保存当前状态到历史记录
+      const currentState = {
+        nodes: JSON.parse(JSON.stringify(state.nodes)),
+        registers: { ...state.registers },
+        memory: { ...state.memory },
+        pcValue: state.pcValue,
+        currentInstructionIndex: state.currentInstructionIndex,
+        stepCount: state.stepCount
+      };
+
       // 设置处理中标志
       const newState = {
         stepCount: state.stepCount + 1,
-        isProcessing: true
+        isProcessing: true,
+        simulationHistory: [...state.simulationHistory, currentState]
       };
 
       // 更新所有组件状态
@@ -324,6 +346,41 @@ export const useCircuitStore = create<CircuitState>()((set, get) => ({
 
       return newState;
     });
+  },
+  
+  stepBackSimulation: () => {
+    // 获取当前状态
+    const state = get();
+    
+    // 如果正在处理中或历史记录为空，则不执行任何操作
+    if (state.isProcessing || state.simulationHistory.length === 0) {
+      return;
+    }
+    
+    // 获取上一个状态
+    const prevState = state.simulationHistory[state.simulationHistory.length - 1];
+    const newHistory = state.simulationHistory.slice(0, -1);
+    
+    // 先单独更新stepCount，确保它在单独的更新周期中执行
+    set({ stepCount: prevState.stepCount, isProcessing: true });
+    
+    // 在下一个事件循环中更新其他状态
+    setTimeout(() => {
+      set({
+        nodes: prevState.nodes,
+        registers: prevState.registers,
+        memory: prevState.memory,
+        pcValue: prevState.pcValue,
+        currentInstructionIndex: prevState.currentInstructionIndex,
+        simulationHistory: newHistory
+      });
+      
+      // 更新所有组件状态，确保在恢复历史状态后更新节点输入
+      setTimeout(() => {
+        get().updateAllNodesInputs();
+        set({ isProcessing: false });
+      }, 0);
+    }, 0);
   },
   updateNodes: (changes) => set((state) => {
     const nextNodes = state.nodes.map(node => {
