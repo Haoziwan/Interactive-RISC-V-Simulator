@@ -88,9 +88,9 @@ const components = [
   },
   {
     type: 'mux',
-    label: '2-to-1 Multiplexer',
+    label: 'Multiplexer',
     icon: <ArrowRightLeft className="w-6 h-6" />,
-    description: '2-to-1 Multiplexer',
+    description: 'Multiplexer',
   },
   {
     type: 'imm-gen',

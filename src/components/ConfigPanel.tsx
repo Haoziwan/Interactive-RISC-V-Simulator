@@ -92,13 +92,17 @@ export function ConfigPanel() {
             <div className="space-y-2">
               <div className="bg-blue-50 p-3 rounded-md mb-3">
                 <h4 className="text-sm font-medium text-blue-800 mb-1">Component Description</h4>
-                <p className="text-sm text-blue-700">A 2-to-1 multiplexer that selects between two input values based on a control signal. Essential for data path control and signal routing.</p>
+                <p className="text-sm text-blue-700">A configurable N-to-1 multiplexer that selects one input from multiple input values based on a control signal. Supports 2 to 8 input ports. Essential for data path control and flexible signal routing.</p>
                 <h4 className="text-sm font-medium text-blue-800 mt-2 mb-1">Ports</h4>
                 <ul className="text-sm text-blue-700 list-disc pl-5">
-                  <li><span className="font-medium">Input 0:</span> First input value</li>
-                  <li><span className="font-medium">Input 1:</span> Second input value</li>
-                  <li><span className="font-medium">Select:</span> Control signal to choose between inputs</li>
+                  <li><span className="font-medium">Input 0-N:</span> Multiple input values (N configurable from 2 to 8)</li>
+                  <li><span className="font-medium">Select:</span> Control signal to choose which input to route to output</li>
                   <li><span className="font-medium">Output:</span> Selected input value</li>
+                </ul>
+                <h4 className="text-sm font-medium text-blue-800 mt-2 mb-1">Configuration</h4>
+                <ul className="text-sm text-blue-700 list-disc pl-5">
+                  <li><span className="font-medium">Port Count:</span> Number of input ports (2-8)</li>
+                  <li><span className="font-medium">Selection:</span> Input index is determined by select signal modulo port count</li>
                 </ul>
               </div>
               <p className="text-sm text-gray-500">No configuration needed</p>

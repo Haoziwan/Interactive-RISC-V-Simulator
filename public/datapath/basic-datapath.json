@@ -1,5 +1,5 @@
 {
-  "name": "circuit-2025-02-27T10-15-16-099Z",
+  "name": "circuit-2025-03-02T11-21-44-328Z",
   "nodes": [
     {
       "id": "register-1740456812349",
@@ -36,8 +36,8 @@
       },
       "data": {
         "label": "IMM-GEN",
-        "instruction": "00000000101000000000000010010011",
-        "immediate": 10,
+        "instruction": "11111111110000010000000100010011",
+        "immediate": -4,
         "format": "I"
       },
       "width": 182,
@@ -108,7 +108,7 @@
         "instructions": [],
         "pc": 0
       },
-      "width": 297,
+      "width": 273,
       "height": 95,
       "selected": false,
       "positionAbsolute": {
@@ -177,7 +177,7 @@
         "address": 0,
         "memRead": 0,
         "readData": 0,
-        "writeData": 10,
+        "writeData": 16,
         "memWrite": 0
       },
       "width": 206,
@@ -193,20 +193,20 @@
       "id": "mux-1740457185388",
       "type": "mux",
       "position": {
-        "x": 601.9505008939988,
-        "y": 670.8285069080308
+        "x": 631.9084001459481,
+        "y": 653.7097073354882
       },
       "data": {
         "label": "MUX",
         "value": 0,
         "select": "0"
       },
-      "width": 125,
-      "height": 119,
+      "width": 108,
+      "height": 123,
       "selected": false,
       "positionAbsolute": {
-        "x": 601.9505008939988,
-        "y": 670.8285069080308
+        "x": 631.9084001459481,
+        "y": 653.7097073354882
       },
       "dragging": false
     },
@@ -257,20 +257,21 @@
       "id": "mux-1740457249603",
       "type": "mux",
       "position": {
-        "x": 1275.4465687225086,
-        "y": 359.36404605663256
+        "x": 1314.0971211914587,
+        "y": 200.62642159440605
       },
       "data": {
         "label": "MUX",
         "value": 0,
-        "select": "0"
+        "select": "0",
+        "portCount": 3
       },
-      "width": 116,
-      "height": 119,
+      "width": 108,
+      "height": 147,
       "selected": false,
       "positionAbsolute": {
-        "x": 1275.4465687225086,
-        "y": 359.36404605663256
+        "x": 1314.0971211914587,
+        "y": 200.62642159440605
       },
       "dragging": false
     },
@@ -279,7 +280,7 @@
       "type": "alu",
       "position": {
         "x": 746.4892373321377,
-        "y": 326.01715154802196
+        "y": 331.7234180722028
       },
       "data": {
         "label": "ALU",
@@ -294,7 +295,7 @@
       "selected": false,
       "positionAbsolute": {
         "x": 746.4892373321377,
-        "y": 326.01715154802196
+        "y": 331.7234180722028
       },
       "dragging": false
     },
@@ -451,7 +452,7 @@
       },
       "data": {
         "label": "ADD",
-        "value": 10
+        "value": -4
       },
       "width": 66,
       "height": 75,
@@ -471,7 +472,7 @@
       },
       "data": {
         "label": "FORK",
-        "value": 10
+        "value": -4
       },
       "width": 32,
       "height": 32,
@@ -494,8 +495,8 @@
         "value": 4,
         "select": "0"
       },
-      "width": 125,
-      "height": 119,
+      "width": 108,
+      "height": 123,
       "selected": false,
       "positionAbsolute": {
         "x": 973.9215037387455,
@@ -535,8 +536,8 @@
         "value": 0,
         "select": "0"
       },
-      "width": 116,
-      "height": 119,
+      "width": 108,
+      "height": 123,
       "selected": false,
       "positionAbsolute": {
         "x": 228.77213465013767,
@@ -561,6 +562,26 @@
       "positionAbsolute": {
         "x": 611.2339277208744,
         "y": 369.8471820644534
+      },
+      "dragging": false
+    },
+    {
+      "id": "fork-1740914252490",
+      "type": "fork",
+      "position": {
+        "x": 559.6082410306024,
+        "y": -213.65378859526504
+      },
+      "data": {
+        "label": "FORK",
+        "value": 4
+      },
+      "width": 32,
+      "height": 32,
+      "selected": false,
+      "positionAbsolute": {
+        "x": 559.6082410306024,
+        "y": -213.65378859526504
       },
       "dragging": false
     }
@@ -1279,26 +1300,6 @@
         "height": 20,
         "color": "#999"
       },
-      "source": "add-1740457499578",
-      "sourceHandle": "output",
-      "target": "mux-1740457672408",
-      "targetHandle": "in0",
-      "id": "eadd-1740457499578-mux-1740457672408-1",
-      "selected": false
-    },
-    {
-      "type": "smoothstep",
-      "animated": false,
-      "style": {
-        "stroke": "#999",
-        "strokeWidth": 1
-      },
-      "markerEnd": {
-        "type": "arrow",
-        "width": 20,
-        "height": 20,
-        "color": "#999"
-      },
       "source": "control-1740456985517",
       "sourceHandle": "regWrite",
       "target": "register-1740456812349",
@@ -1525,10 +1526,70 @@
       "targetHandle": "in1",
       "id": "efork-1740464547221-mux-1740464449901-1",
       "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "add-1740457499578",
+      "sourceHandle": "output",
+      "target": "fork-1740914252490",
+      "targetHandle": "input",
+      "id": "eadd-1740457499578-fork-1740914252490-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "fork-1740914252490",
+      "sourceHandle": "output-1",
+      "target": "mux-1740457672408",
+      "targetHandle": "in0",
+      "id": "efork-1740914252490-mux-1740457672408-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "fork-1740914252490",
+      "sourceHandle": "output-2",
+      "target": "mux-1740457249603",
+      "targetHandle": "in2",
+      "id": "efork-1740914252490-mux-1740457249603-1",
+      "selected": false
     }
   ],
   "isSimulating": false,
   "editorCode": "",
   "assembledInstructions": [],
-  "savedAt": "2025-02-27T10:15:16.099Z"
+  "savedAt": "2025-03-02T11:21:44.329Z"
 }

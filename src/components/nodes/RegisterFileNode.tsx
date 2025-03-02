@@ -74,12 +74,18 @@ export function RegisterFileNode({ data, id, selected }: { data: RegisterFileNod
     const newWriteData = Number(getInputValue(writeDataEdge) ?? inputsRef.current.writeData);
     const newRegWrite = Boolean(getInputValue(regWriteEdge) ?? inputsRef.current.regWrite);
 
-    // Only update when input values have actually changed
+    // Calculate read data regardless of input changes
+    const readData1 = newReadReg1 === 0 ? 0 : (registers[newReadReg1] || 0);
+    const readData2 = newReadReg2 === 0 ? 0 : (registers[newReadReg2] || 0);
+
+    // Update node data if inputs changed or register values changed
     const hasChanges = newReadReg1 !== inputsRef.current.readReg1 ||
                       newReadReg2 !== inputsRef.current.readReg2 ||
                       newWriteReg !== inputsRef.current.writeReg ||
                       newWriteData !== inputsRef.current.writeData ||
-                      newRegWrite !== inputsRef.current.regWrite;
+                      newRegWrite !== inputsRef.current.regWrite ||
+                      readData1 !== data.readData1 ||
+                      readData2 !== data.readData2;
 
     if (hasChanges) {
       // Update values in ref
@@ -90,10 +96,6 @@ export function RegisterFileNode({ data, id, selected }: { data: RegisterFileNod
         writeData: newWriteData,
         regWrite: newRegWrite
       };
-
-      // Calculate read data
-      const readData1 = newReadReg1 === 0 ? 0 : (registers[newReadReg1] || 0);
-      const readData2 = newReadReg2 === 0 ? 0 : (registers[newReadReg2] || 0);
 
       // Update node data
       updateNodeData(id, {
