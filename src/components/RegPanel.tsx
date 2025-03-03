@@ -4,7 +4,7 @@ import { useCircuitStore } from '../store/circuitStore';
 type BaseType = 'dec' | 'hex';
 
 export function RegPanel() {
-  const [base, setBase] = useState<BaseType>('dec');
+  const [base, setBase] = useState<BaseType>('hex');
   const [highlightedReg, setHighlightedReg] = useState<number | null>(null);
   const registers = useCircuitStore((state) => state.registers);
   const updateRegisters = useCircuitStore((state) => state.updateRegisters);
