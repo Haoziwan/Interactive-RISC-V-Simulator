@@ -38,7 +38,8 @@ export function AssemblyEditor() {
     
     for (let i = 0; i < sourceLines.length; i++) {
       const line = sourceLines[i].split('#')[0].trim();
-      if (line && !line.endsWith(':')) {
+      // 跳过空行、注释行、标签行和段指令
+      if (line && !line.endsWith(':') && line !== '.data' && line !== '.text') {
         // 获取当前行展开后的指令数量
         const expandedInsts = expandPseudoInstruction(line);
         currentInstructionCount += expandedInsts.length;
@@ -172,7 +173,8 @@ export function AssemblyEditor() {
       
       for (const line of sourceLines) {
         const trimmedLine = line.split('#')[0].trim();
-        if (trimmedLine && !trimmedLine.endsWith(':')) {
+        // 跳过空行、注释行、标签行和段指令
+        if (trimmedLine && !trimmedLine.endsWith(':') && trimmedLine !== '.data' && trimmedLine !== '.text') {
           const expandedInsts = expandPseudoInstruction(trimmedLine);
           instructionMapping.push({
             sourceLine: line.trim(),
@@ -400,7 +402,8 @@ export function AssemblyEditor() {
                 </tbody>
               </table>
             </div>
-          </div>        </div>
+          </div>
+        </div>
       </div>
     </div>
   );

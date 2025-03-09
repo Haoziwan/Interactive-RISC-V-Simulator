@@ -570,7 +570,7 @@ export class Assembler {
       const trimmedLine = line.trim();
       if (!trimmedLine || trimmedLine.startsWith('#')) return;
       
-      // 处理段指令
+      // 处理段指令 - 不将段指令添加到结果中，只更改当前段
       if (trimmedLine === '.text') {
         this.currentSegment = 'text';
         this.currentAddress = result.filter(inst => inst.segment === 'text').reduce((acc, inst) => acc + 4, 0);
@@ -603,6 +603,7 @@ export class Assembler {
               hex, 
               binary, 
               assembly: expandedLine,
+              source: trimmedLine,
               segment: 'text',
               address: this.currentAddress
             });
@@ -625,6 +626,7 @@ export class Assembler {
             hex: '0x' + data.map(d => d.toString(16).padStart(8, '0')).join(''),
             binary: data.map(d => d.toString(2).padStart(32, '0')).join(''),
             assembly: trimmedLine,
+            source: trimmedLine,
             segment: 'data',
             address: this.currentAddress,
             data: data
@@ -645,6 +647,7 @@ export class Assembler {
             hex: '0x' + data.map(d => d.toString(16).padStart(2, '0')).join(''),
             binary: data.map(d => d.toString(2).padStart(8, '0')).join(''),
             assembly: trimmedLine,
+            source: trimmedLine,
             segment: 'data',
             address: this.currentAddress,
             data: data
@@ -665,6 +668,7 @@ export class Assembler {
             hex: '0x' + data.map(d => d.toString(16).padStart(4, '0')).join(''),
             binary: data.map(d => d.toString(2).padStart(16, '0')).join(''),
             assembly: trimmedLine,
+            source: trimmedLine,
             segment: 'data',
             address: this.currentAddress,
             data: data
@@ -685,6 +689,7 @@ export class Assembler {
               hex: '0x' + data.map(d => d.toString(16).padStart(2, '0')).join(''),
               binary: data.map(d => d.toString(2).padStart(8, '0')).join(''),
               assembly: trimmedLine,
+              source: trimmedLine,
               segment: 'data',
               address: this.currentAddress,
               data: data
