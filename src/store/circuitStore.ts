@@ -314,6 +314,18 @@ export const useCircuitStore = create<CircuitState>()((set, get) => ({
       const currentPc = state.pcValue;
       const maxPc = (state.assembledInstructions.length * 4) - 4;
       
+      // 检查是否为ecall指令且为退出程序请求
+      const currentInstruction = state.assembledInstructions[currentPc / 4];
+      if (currentInstruction && currentInstruction.hex === '0x00000073' && state.registers[17] === 93) {
+        if (state.simulationTimer !== null) {
+          window.clearInterval(state.simulationTimer);
+        }
+        return {
+          isSimulating: false,
+          simulationTimer: null
+        };
+      }
+      
       // 如果已经执行到最后一条指令，自动暂停模拟，pipeline还需要多执行几句
       if (currentPc > maxPc + 2*4 || currentPc < 0) {
         if (state.simulationTimer !== null) {
