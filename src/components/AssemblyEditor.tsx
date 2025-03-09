@@ -291,11 +291,10 @@ export function AssemblyEditor() {
               </button>
               <select
                 className="inline-flex items-center px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200"
-                onChange={(e) => loadTestProgram(e.target.value as 'sort' | 'fibonacci' | 'gcd')}
+                onChange={(e) => loadTestProgram(e.target.value as 'fibonacci' | 'gcd')}
                 defaultValue=""
               >
                 <option value="" disabled>Load Example Program</option>
-                <option value="sort">Sort Program</option>
                 <option value="fibonacci">Fibonacci Program</option>
                 <option value="gcd">GCD Program</option>
                 <option value="r_type_test">R-Type Test</option>
