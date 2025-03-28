@@ -17,6 +17,7 @@ export type AssembledInstruction = {
   segment?: 'text' | 'data';
   address?: number;
   data?: number[];
+  originalLineNumber?: number;
 };
 
 export class AssemblerError extends Error {
@@ -31,7 +32,9 @@ export class AssemblerError extends Error {
     errorType?: string;
     suggestion?: string;
   }) {
-    const formattedMessage = `${options?.lineNumber ? `Line ${options.lineNumber}: ` : ''}
+    // Check if the message already includes a line number prefix to avoid duplication
+    const hasLinePrefix = message.startsWith('Line');
+    const formattedMessage = `${!hasLinePrefix && options?.lineNumber ? `Line ${options.lineNumber}: ` : ''}
 ${message}
 ${options?.instruction ? `Instruction: ${options.instruction}` : ''}
 ${options?.suggestion ? `Suggestion: ${options.suggestion}` : ''}`;
@@ -138,7 +141,7 @@ export const parseImmediate = (imm: string, bits: number): number => {
   return value;
 };
 
-export const expandPseudoInstruction = (line: string): string[] => {
+export const expandPseudoInstruction = (line: string, lineNumber?: number): string[] => {
   // Remove comments
   const lineWithoutComment = line.split('#')[0].trim();
   const parts = lineWithoutComment.split(/[\s,]+/).filter(Boolean);
@@ -147,7 +150,9 @@ export const expandPseudoInstruction = (line: string): string[] => {
   switch (op) {
     case 'li': {
       if (parts.length !== 3) {
-        throw new AssemblerError(`Syntax error in li instruction: requires 2 operands\nCorrect format: li rd, immediate\n  - rd: target register (e.g., x1, t0)\n  - immediate: immediate value (e.g., 42, 0xff)\nCurrent input: ${lineWithoutComment}`);
+        throw new AssemblerError(`Syntax error in li instruction: requires 2 operands\nCorrect format: li rd, immediate\n  - rd: target register (e.g., x1, t0)\n  - immediate: immediate value (e.g., 42, 0xff)\nCurrent input: ${lineWithoutComment}`, {
+          lineNumber: lineNumber
+        });
       }
       const rd = parts[1];
       let imm;
@@ -155,7 +160,9 @@ export const expandPseudoInstruction = (line: string): string[] => {
         imm = parts[2].startsWith('0x') ? parseInt(parts[2].slice(2), 16) : parseInt(parts[2]);
         if (isNaN(imm)) throw new Error();
       } catch {
-        throw new AssemblerError(`Invalid immediate format in li instruction: ${parts[2]}\nSupported formats:\n  - Decimal number (e.g., 42)\n  - Hexadecimal number (e.g., 0xff)`);
+        throw new AssemblerError(`Invalid immediate format in li instruction: ${parts[2]}\nSupported formats:\n  - Decimal number (e.g., 42)\n  - Hexadecimal number (e.g., 0xff)`, {
+          lineNumber: lineNumber
+        });
       }
       
       if (imm >= -2048 && imm < 2048) {
@@ -173,7 +180,8 @@ export const expandPseudoInstruction = (line: string): string[] => {
       if (parts.length !== 3) throw new AssemblerError(`Syntax error in la instruction: requires 2 operands`, {
         errorType: 'Operand Error',
         instruction: lineWithoutComment,
-        suggestion: 'la instruction format: la rd, symbol (e.g., la a0, msg)'
+        suggestion: 'la instruction format: la rd, symbol (e.g., la a0, msg)',
+        lineNumber: lineNumber
       });
       // la rd, symbol - load address of symbol into register
       // during first pass, symbol address is unknown, so return placeholder
@@ -181,12 +189,16 @@ export const expandPseudoInstruction = (line: string): string[] => {
       return [`la ${parts[1]}, ${parts[2]}`];
     }
     case 'mv': {
-      if (parts.length !== 3) throw new AssemblerError('mv instruction requires 2 operands');
+      if (parts.length !== 3) throw new AssemblerError('mv instruction requires 2 operands', {
+        lineNumber: lineNumber
+      });
       // mv rd, rs equivalent to addi rd, rs, 0
       return [`addi ${parts[1]}, ${parts[2]}, 0`];
     }
     case 'j': {
-      if (parts.length !== 2) throw new AssemblerError('j instruction requires 1 operand');
+      if (parts.length !== 2) throw new AssemblerError('j instruction requires 1 operand', {
+        lineNumber: lineNumber
+      });
       // j offset equivalent to jal x0, offset
       return [`jal x0, ${parts[1]}`];
     }
@@ -203,7 +215,7 @@ export const expandPseudoInstruction = (line: string): string[] => {
   }
 };
 
-export const parseInstruction = (line: string, currentAddress: number, labelMap: Record<string, number>): Instruction => {
+export const parseInstruction = (line: string, currentAddress: number, labelMap: Record<string, number>, lineNumber?: number): Instruction => {
   // Remove comments
   const lineWithoutComment = line.split('#')[0].trim();
   // Split instruction parts
@@ -222,10 +234,11 @@ export const parseInstruction = (line: string, currentAddress: number, labelMap:
     case 'slt':
     case 'sltu': {
       if (parts.length !== 4) throw new AssemblerError(`${op} instruction requires 3 operands`, {
-    errorType: 'Operand Error',
-    instruction: lineWithoutComment,
-    suggestion: `${op} instruction format: ${op} rd, rs1, rs2 (e.g., ${op} x1, x2, x3)`
-  });
+        errorType: 'Operand Error',
+        instruction: lineWithoutComment,
+        suggestion: `${op} instruction format: ${op} rd, rs1, rs2 (e.g., ${op} x1, x2, x3)`,
+        lineNumber: lineNumber
+      });
       return {
         type: 'R',
         opcode: '0110011',
@@ -568,15 +581,17 @@ export class Assembler {
     let inDataSegment = false;
     
     // First separate all lines and save them (ignoring comments and empty lines)
-    const allLines: {text: string, hasLabel: boolean, label?: string, instr?: string}[] = [];
+    const allLines: {text: string, hasLabel: boolean, label?: string, instr?: string, lineNumber: number}[] = [];
     
-    code.split('\n').forEach(line => {
+    code.split('\n').forEach((line, index) => {
+      const lineNumber = index + 1; // 1-indexed line numbers
       const trimmedLine = line.trim();
       if (!trimmedLine || trimmedLine.startsWith('#')) return;
       
-      const entry: {text: string, hasLabel: boolean, label?: string, instr?: string} = {
+      const entry: {text: string, hasLabel: boolean, label?: string, instr?: string, lineNumber: number} = {
         text: trimmedLine,
-        hasLabel: false
+        hasLabel: false,
+        lineNumber: lineNumber
       };
       
       // Check for label
@@ -624,8 +639,23 @@ export class Assembler {
       if (entry.instr) {
         if (!inDataSegment) {
           // Process code segment
-          const expandedInstrs = expandPseudoInstruction(entry.instr);
-          currentAddr += 4 * expandedInstrs.length;
+          try {
+            const expandedInstrs = expandPseudoInstruction(entry.instr, entry.lineNumber);
+            currentAddr += 4 * expandedInstrs.length;
+          } catch (error: unknown) {
+            if (error instanceof AssemblerError) {
+              // Propagate the error with line number
+              throw new AssemblerError(error.message, {
+                ...error,
+                lineNumber: entry.lineNumber
+              });
+            } else {
+              throw new AssemblerError(`Error processing instruction: ${error instanceof Error ? error.message : String(error)}`, {
+                lineNumber: entry.lineNumber,
+                instruction: entry.instr
+              });
+            }
+          }
         } else {
           // Process data segment
           if (entry.instr.startsWith('.word')) {
@@ -685,108 +715,125 @@ export class Assembler {
         // Process code segment instructions
         if (!instruction.startsWith('.')) {
           // Expand pseudo instructions
-          const expandedInstructions = expandPseudoInstruction(instruction);
-          expandedInstructions.forEach((expandedLine, i) => {
-            try {
-              // Special handling for la instruction second part (addi)
-              if (expandedLine.startsWith('la ')) {
-                const parts = expandedLine.split(/[\s,]+/).filter(Boolean);
-                if (parts.length === 3) {
-                  const rd = parts[1];
-                  const symbol = parts[2];
-                  
-                  if (symbol in this.labelMap) {
-                    const address = this.labelMap[symbol];
+          try {
+            const expandedInstructions = expandPseudoInstruction(instruction, entry.lineNumber);
+            expandedInstructions.forEach((expandedLine, i) => {
+              try {
+                // Special handling for la instruction second part (addi)
+                if (expandedLine.startsWith('la ')) {
+                  const parts = expandedLine.split(/[\s,]+/).filter(Boolean);
+                  if (parts.length === 3) {
+                    const rd = parts[1];
+                    const symbol = parts[2];
                     
-                    // Calculate address offset in data segment
-                    let offset = 0;
-                    let baseImm = 0x10000; // Default lui immediate, corresponding to 0x10000000
-                    
-                    // Check if label is in data segment or code segment
-                    if (address >= this.GP_BASE) {
-                      // Data segment label
-                      offset = address - this.GP_BASE;
-                    } else {
-                      // Code segment label
-                      baseImm = address >>> 12;
-                      offset = address & 0xFFF;
+                    if (symbol in this.labelMap) {
+                      const address = this.labelMap[symbol];
+                      
+                      // Calculate address offset in data segment
+                      let offset = 0;
+                      let baseImm = 0x10000; // Default lui immediate, corresponding to 0x10000000
+                      
+                      // Check if label is in data segment or code segment
+                      if (address >= this.GP_BASE) {
+                        // Data segment label
+                        offset = address - this.GP_BASE;
+                      } else {
+                        // Code segment label
+                        baseImm = address >>> 12;
+                        offset = address & 0xFFF;
+                      }
+                      
+                      // Ensure offset is within 12-bit signed integer range (-2048 to 2047)
+                      if (offset < -2048 || offset > 2047) {
+                        console.warn(`Warning: ${symbol} offset ${offset} exceeds 12-bit signed integer range`);
+                      }
+                      
+                      // Generate lui instruction
+                      const luiInst = {
+                        type: 'U' as const,
+                        opcode: '0110111',
+                        rd: parseRegister(rd),
+                        imm: baseImm
+                      };
+                      const luiHex = generateMachineCode(luiInst);
+                      const luiBinary = (parseInt(luiHex.slice(2), 16) >>> 0).toString(2).padStart(32, '0');
+                      
+                      result.push({
+                        hex: luiHex,
+                        binary: luiBinary,
+                        assembly: `lui ${rd}, 0x${baseImm.toString(16)}`,
+                        source: expandedLine,
+                        segment: 'text',
+                        address: this.currentAddress,
+                        originalLineNumber: entry.lineNumber
+                      });
+                      this.currentAddress += 4;
+                      
+                      // Generate addi instruction
+                      const addiInst = {
+                        type: 'I' as const,
+                        opcode: '0010011',
+                        rd: parseRegister(rd),
+                        rs1: parseRegister(rd),
+                        imm: offset,
+                        funct3: '000'
+                      };
+                      const addiHex = generateMachineCode(addiInst);
+                      const addiBinary = (parseInt(addiHex.slice(2), 16) >>> 0).toString(2).padStart(32, '0');
+                      
+                      result.push({
+                        hex: addiHex,
+                        binary: addiBinary,
+                        assembly: `addi ${rd}, ${rd}, ${offset}`,
+                        source: expandedLine,
+                        segment: 'text',
+                        address: this.currentAddress,
+                        originalLineNumber: entry.lineNumber
+                      });
+                      this.currentAddress += 4;
                     }
-                    
-                    // Ensure offset is within 12-bit signed integer range (-2048 to 2047)
-                    if (offset < -2048 || offset > 2047) {
-                      console.warn(`Warning: ${symbol} offset ${offset} exceeds 12-bit signed integer range`);
-                    }
-                    
-                    // Generate lui instruction
-                    const luiInst = {
-                      type: 'U' as const,
-                      opcode: '0110111',
-                      rd: parseRegister(rd),
-                      imm: baseImm
-                    };
-                    const luiHex = generateMachineCode(luiInst);
-                    const luiBinary = (parseInt(luiHex.slice(2), 16) >>> 0).toString(2).padStart(32, '0');
-                    
-                    result.push({
-                      hex: luiHex,
-                      binary: luiBinary,
-                      assembly: `lui ${rd}, 0x${baseImm.toString(16)}`,
-                      source: expandedLine,
-                      segment: 'text',
-                      address: this.currentAddress
-                    });
-                    this.currentAddress += 4;
-                    
-                    // Generate addi instruction
-                    const addiInst = {
-                      type: 'I' as const,
-                      opcode: '0010011',
-                      rd: parseRegister(rd),
-                      rs1: parseRegister(rd),
-                      imm: offset,
-                      funct3: '000'
-                    };
-                    const addiHex = generateMachineCode(addiInst);
-                    const addiBinary = (parseInt(addiHex.slice(2), 16) >>> 0).toString(2).padStart(32, '0');
-                    
-                    result.push({
-                      hex: addiHex,
-                      binary: addiBinary,
-                      assembly: `addi ${rd}, ${rd}, ${offset}`,
-                      source: expandedLine,
-                      segment: 'text',
-                      address: this.currentAddress
-                    });
-                    this.currentAddress += 4;
                   }
+                  return; // la instruction processed, skip normal processing
                 }
-                return; // la instruction processed, skip normal processing
-              }
-              
-              // Process other instructions
-              const parsedInst = parseInstruction(expandedLine, this.currentAddress, this.labelMap);
-              const hex = generateMachineCode(parsedInst);
-              const binary = (parseInt(hex.slice(2), 16) >>> 0).toString(2).padStart(32, '0');
-              result.push({ 
-                hex, 
-                binary, 
-                assembly: expandedLine,
-                source: entry.text,
-                segment: 'text',
-                address: this.currentAddress
-              });
-              this.currentAddress += 4;
-            } catch (error) {
-              if (error instanceof AssemblerError) {
-                throw new AssemblerError(error.message, {
-                  ...error,
-                  lineNumber: 0
+                
+                // Process other instructions
+                const parsedInst = parseInstruction(expandedLine, this.currentAddress, this.labelMap, entry.lineNumber);
+                const hex = generateMachineCode(parsedInst);
+                const binary = (parseInt(hex.slice(2), 16) >>> 0).toString(2).padStart(32, '0');
+                result.push({ 
+                  hex, 
+                  binary, 
+                  assembly: expandedLine,
+                  source: entry.text,
+                  segment: 'text',
+                  address: this.currentAddress,
+                  originalLineNumber: entry.lineNumber
                 });
-              } else {
-                throw error;
+                this.currentAddress += 4;
+              } catch (error: unknown) {
+                if (error instanceof AssemblerError) {
+                  throw new AssemblerError(error.message, {
+                    ...error,
+                    lineNumber: entry.lineNumber
+                  });
+                } else {
+                  throw new AssemblerError(`Error processing instruction: ${error instanceof Error ? error.message : String(error)}`, {
+                    lineNumber: entry.lineNumber,
+                    instruction: instruction
+                  });
+                }
               }
+            });
+          } catch (error: unknown) {
+            if (error instanceof AssemblerError) {
+              throw error; // Line number already set
+            } else {
+              throw new AssemblerError(`Error processing instruction: ${error instanceof Error ? error.message : String(error)}`, {
+                lineNumber: entry.lineNumber,
+                instruction: instruction
+              });
             }
-          });
+          }
         }
       } else if (currentSection === 'data') {
         // Process data segment instructions
@@ -822,7 +869,8 @@ export class Assembler {
               source: entry.text,
               segment: 'data',
               address: this.currentAddress,
-              data: data
+              data: data,
+              originalLineNumber: entry.lineNumber
             });
             
           } else if (instruction.startsWith('.byte')) {
@@ -845,7 +893,8 @@ export class Assembler {
               source: entry.text,
               segment: 'data',
               address: this.currentAddress,
-              data: data
+              data: data,
+              originalLineNumber: entry.lineNumber
             });
             
           } else if (instruction.startsWith('.half')) {
@@ -873,7 +922,8 @@ export class Assembler {
               source: entry.text,
               segment: 'data',
               address: this.currentAddress,
-              data: data
+              data: data,
+              originalLineNumber: entry.lineNumber
             });
             
           } else if (instruction.startsWith('.ascii') || instruction.startsWith('.asciz')) {
@@ -896,7 +946,8 @@ export class Assembler {
                 source: entry.text,
                 segment: 'data',
                 address: this.currentAddress,
-                data: data
+                data: data,
+                originalLineNumber: entry.lineNumber
               });
             }
           }
@@ -909,14 +960,17 @@ export class Assembler {
             
             this.currentAddress += dataSize;
           }
-        } catch (error) {
+        } catch (error: unknown) {
           if (error instanceof AssemblerError) {
             throw new AssemblerError(error.message, {
               ...error,
-              lineNumber: 0
+              lineNumber: entry.lineNumber
             });
           } else {
-            throw error;
+            throw new AssemblerError(`Error processing data: ${error instanceof Error ? error.message : String(error)}`, {
+              lineNumber: entry.lineNumber,
+              instruction: instruction
+            });
           }
         }
       }

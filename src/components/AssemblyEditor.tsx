@@ -1,11 +1,12 @@
 import { useState, useEffect, useRef } from 'react';
 import { useCircuitStore } from '../store/circuitStore';
-import { Assembler, expandPseudoInstruction } from '../assembler/assembler';
+import { Assembler, expandPseudoInstruction, AssemblerError } from '../assembler/assembler';
 import { InstructionFormatPanel } from './InstructionFormatPanel';
 import Editor, { useMonaco } from '@monaco-editor/react';
 
 export function AssemblyEditor() {
   const [error, setError] = useState<string | null>(null);
+  const [errorLineNumber, setErrorLineNumber] = useState<number | null>(null);
   const tableBodyRef = useRef<HTMLDivElement>(null);
   const editorRef = useRef<any>(null);
   const monaco = useMonaco();
@@ -141,6 +142,15 @@ export function AssemblyEditor() {
           width: 5px !important;
           margin-left: 3px;
         }
+        .monaco-error-line {
+          background-color: rgba(255, 0, 0, 0.2) !important;
+          border-left: 3px solid red !important;
+        }
+        .monaco-error-glyph {
+          background-color: red;
+          width: 5px !important;
+          margin-left: 3px;
+        }
       `;
       document.head.appendChild(styleElement);
       
@@ -177,8 +187,55 @@ export function AssemblyEditor() {
     }
   }, [isSimulating, monaco]);
 
+  // Add an effect to highlight the error line
+  useEffect(() => {
+    if (errorLineNumber !== null && errorLineNumber > 0 && editorRef.current && monaco) {
+      const currentModel = editorRef.current.getModel();
+      if (currentModel) {
+        // Clear any existing decorations first
+        const oldDecorations = editorRef.current.getModel().getAllDecorations()
+          .filter((d: { options: { className?: string; } }) => 
+            d.options.className === 'monaco-error-line')
+          .map((d: { id: string }) => d.id);
+        
+        if (oldDecorations.length > 0) {
+          editorRef.current.deltaDecorations(oldDecorations, []);
+        }
+        
+        // Add the error decoration
+        const newDecorations = editorRef.current.deltaDecorations([], [
+          {
+            range: new monaco.Range(errorLineNumber, 1, errorLineNumber, 1),
+            options: {
+              isWholeLine: true,
+              className: 'monaco-error-line',
+              glyphMarginClassName: 'monaco-error-glyph'
+            }
+          }
+        ]);
+        
+        // Reveal the error line in the editor
+        editorRef.current.revealLineInCenter(errorLineNumber);
+      }
+    } else if (errorLineNumber === null && editorRef.current && monaco) {
+      // Clear error decorations when there's no error
+      const currentModel = editorRef.current.getModel();
+      if (currentModel) {
+        const oldDecorations = editorRef.current.getModel().getAllDecorations()
+          .filter((d: { options: { className?: string; } }) => 
+            d.options.className === 'monaco-error-line')
+          .map((d: { id: string }) => d.id);
+        
+        if (oldDecorations.length > 0) {
+          editorRef.current.deltaDecorations(oldDecorations, []);
+        }
+      }
+    }
+  }, [errorLineNumber, monaco]);
+
   const assembleCode = () => {
     setError(null);
+    setErrorLineNumber(null);
     useCircuitStore.getState().resetSimulation();
     
     try {
@@ -231,7 +288,13 @@ export function AssemblyEditor() {
         });
       }
     } catch (err) {
-      if (err instanceof Error) {
+      if (err instanceof AssemblerError) {
+        setError(err.message);
+        // Set the error line number if available
+        if (err.lineNumber && err.lineNumber > 0) {
+          setErrorLineNumber(err.lineNumber);
+        }
+      } else if (err instanceof Error) {
         setError(err.message);
       } else {
         setError('汇编过程中发生未知错误');
