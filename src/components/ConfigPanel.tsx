@@ -15,7 +15,7 @@ export function ConfigPanel() {
       case 'constant':
         return (
           <div className="space-y-4">
-            <h3 className="font-medium">Constant Configuration</h3>
+            <h3 className="font-medium">Constant</h3>
             <div className="space-y-2">
               <div className="bg-blue-50 p-3 rounded-md mb-3">
                 <h4 className="text-sm font-medium text-blue-800 mb-1">Component Description</h4>
@@ -32,7 +32,7 @@ export function ConfigPanel() {
       case 'pc':
         return (
           <div className="space-y-4">
-            <h3 className="font-medium">Program Counter Configuration</h3>
+            <h3 className="font-medium">Program Counter</h3>
             <div className="space-y-2">
               <div className="bg-blue-50 p-3 rounded-md mb-3">
                 <h4 className="text-sm font-medium text-blue-800 mb-1">Component Description</h4>
@@ -51,7 +51,7 @@ export function ConfigPanel() {
       case 'fork':
         return (
           <div className="space-y-4">
-            <h3 className="font-medium">Fork Configuration</h3>
+            <h3 className="font-medium">Fork</h3>
             <div className="space-y-2">
               <div className="bg-blue-50 p-3 rounded-md mb-3">
                 <h4 className="text-sm font-medium text-blue-800 mb-1">Component Description</h4>
@@ -69,7 +69,7 @@ export function ConfigPanel() {
       case 'add':
         return (
           <div className="space-y-4">
-            <h3 className="font-medium">Add Configuration</h3>
+            <h3 className="font-medium">Add</h3>
             <div className="space-y-2">
               <div className="bg-blue-50 p-3 rounded-md mb-3">
                 <h4 className="text-sm font-medium text-blue-800 mb-1">Component Description</h4>
@@ -88,7 +88,7 @@ export function ConfigPanel() {
       case 'mux':
         return (
           <div className="space-y-4">
-            <h3 className="font-medium">Multiplexer Configuration</h3>
+            <h3 className="font-medium">Multiplexer</h3>
             <div className="space-y-2">
               <div className="bg-blue-50 p-3 rounded-md mb-3">
                 <h4 className="text-sm font-medium text-blue-800 mb-1">Component Description</h4>
@@ -112,7 +112,7 @@ export function ConfigPanel() {
       case 'imm-gen':
         return (
           <div className="space-y-4">
-            <h3 className="font-medium">Immediate Generator Configuration</h3>
+            <h3 className="font-medium">Immediate Generator </h3>
             <div className="space-y-2">
               <div className="bg-blue-50 p-3 rounded-md mb-3">
                 <h4 className="text-sm font-medium text-blue-800 mb-1">Component Description</h4>
@@ -130,7 +130,7 @@ export function ConfigPanel() {
       case 'pc-mux':
         return (
           <div className="space-y-4">
-            <h3 className="font-medium">PC Multiplexer Configuration</h3>
+            <h3 className="font-medium">PC Multiplexer </h3>
             <div className="space-y-2">
               <div className="bg-blue-50 p-3 rounded-md mb-3">
                 <h4 className="text-sm font-medium text-blue-800 mb-1">Component Description</h4>
@@ -151,7 +151,7 @@ export function ConfigPanel() {
       case 'alu':
         return (
           <div className="space-y-4">
-            <h3 className="font-medium">ALU Configuration</h3>
+            <h3 className="font-medium">ALU </h3>
             <div className="space-y-2">
               <div className="bg-blue-50 p-3 rounded-md mb-3">
                 <h4 className="text-sm font-medium text-blue-800 mb-1">Component Description</h4>
@@ -173,7 +173,7 @@ export function ConfigPanel() {
       case 'alu-control':
         return (
           <div className="space-y-4">
-            <h3 className="font-medium">ALU Control Configuration</h3>
+            <h3 className="font-medium">ALU Control</h3>
             <div className="space-y-2">
               <div className="bg-blue-50 p-3 rounded-md mb-3">
                 <h4 className="text-sm font-medium text-blue-800 mb-1">Component Description</h4>
@@ -194,7 +194,7 @@ export function ConfigPanel() {
       case 'register':
         return (
           <div className="space-y-4">
-            <h3 className="font-medium">Register File Configuration</h3>
+            <h3 className="font-medium">Register File </h3>
             <div className="space-y-2">
               <div className="bg-blue-50 p-3 rounded-md mb-3">
                 <h4 className="text-sm font-medium text-blue-800 mb-1">Component Description</h4>
@@ -217,7 +217,7 @@ export function ConfigPanel() {
       case 'instruction-memory':
         return (
           <div className="space-y-4">
-            <h3 className="font-medium">Instruction Memory Configuration</h3>
+            <h3 className="font-medium">Instruction Memory </h3>
             <div className="space-y-2">
               <div className="bg-blue-50 p-3 rounded-md mb-3">
                 <h4 className="text-sm font-medium text-blue-800 mb-1">Component Description</h4>
@@ -236,7 +236,7 @@ export function ConfigPanel() {
       case 'memory':
         return (
           <div className="space-y-4">
-            <h3 className="font-medium">Memory Configuration</h3>
+            <h3 className="font-medium">Memory </h3>
             <div className="space-y-2">
               <div className="bg-blue-50 p-3 rounded-md mb-3">
                 <h4 className="text-sm font-medium text-blue-800 mb-1">Component Description</h4>
@@ -259,7 +259,7 @@ export function ConfigPanel() {
       case 'control':
         return (
           <div className="space-y-4">
-            <h3 className="font-medium">Control Unit Configuration</h3>
+            <h3 className="font-medium">Control Unit </h3>
             <div className="space-y-2">
               <div className="bg-blue-50 p-3 rounded-md mb-3">
                 <h4 className="text-sm font-medium text-blue-800 mb-1">Component Description</h4>
@@ -281,7 +281,7 @@ export function ConfigPanel() {
       case 'jump-control':
         return (
           <div className="space-y-4">
-            <h3 className="font-medium">Jump Control Configuration</h3>
+            <h3 className="font-medium">Jump Control </h3>
             <div className="space-y-2">
               <div className="bg-blue-50 p-3 rounded-md mb-3">
                 <h4 className="text-sm font-medium text-blue-800 mb-1">Component Description</h4>
@@ -302,7 +302,7 @@ export function ConfigPanel() {
       case 'instr-distributer':
         return (
           <div className="space-y-4">
-            <h3 className="font-medium">Instruction Distributer Configuration</h3>
+            <h3 className="font-medium">Instruction Distributer </h3>
             <div className="space-y-2">
               <div className="bg-blue-50 p-3 rounded-md mb-3">
                 <h4 className="text-sm font-medium text-blue-800 mb-1">Component Description</h4>
@@ -326,7 +326,7 @@ export function ConfigPanel() {
       case 'pipeline-register':
         return (
           <div className="space-y-4">
-            <h3 className="font-medium">Pipeline Register Configuration</h3>
+            <h3 className="font-medium">Pipeline Register </h3>
             <div className="space-y-2">
               <div className="bg-blue-50 p-3 rounded-md mb-3">
                 <h4 className="text-sm font-medium text-blue-800 mb-1">Component Description</h4>
@@ -363,7 +363,7 @@ export function ConfigPanel() {
       case 'single-register':
         return (
           <div className="space-y-4">
-            <h3 className="font-medium">Single Register Configuration</h3>
+            <h3 className="font-medium">Single Register</h3>
             <div className="space-y-2">
               <div className="bg-blue-50 p-3 rounded-md mb-3">
                 <h4 className="text-sm font-medium text-blue-800 mb-1">Component Description</h4>
@@ -383,7 +383,7 @@ export function ConfigPanel() {
       case 'label':
         return (
           <div className="space-y-4">
-            <h3 className="font-medium">Label Configuration</h3>
+            <h3 className="font-medium">Label </h3>
             <div className="space-y-2">
               <div className="bg-blue-50 p-3 rounded-md mb-3">
                 <h4 className="text-sm font-medium text-blue-800 mb-1">Component Description</h4>
@@ -436,7 +436,7 @@ export function ConfigPanel() {
           className="w-full flex items-center justify-between text-left focus:outline-none group"
           onClick={() => setIsExpanded(!isExpanded)}
         >
-          <span className="font-medium text-gray-800 group-hover:text-blue-600 transition-colors">Component Configuration</span>
+          <span className="font-medium text-gray-800 group-hover:text-blue-600 transition-colors">Component Description</span>
           {isExpanded ? (
             <ChevronDown className="w-4 h-4" />
           ) : (

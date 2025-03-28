@@ -20,6 +20,14 @@ export function ForwardingUnitNode({ data, id, selected }: {
   const updateNodeData = useCircuitStore((state) => state.updateNodeData);
   const nodes = useNodes();
   const edges = useEdges();
+  
+  // 使用ref来缓存输入值，避免不必要的更新
+  const inputsRef = React.useRef({
+    rs1: 0,
+    rs2: 0,
+    exMemRd: 0,
+    memWbRd: 0
+  });
 
   const updateInputConnections = () => {
     const rs1Edge = edges.find(edge => edge.target === id && edge.targetHandle === 'rs1');
@@ -76,21 +84,50 @@ export function ForwardingUnitNode({ data, id, selected }: {
       forwardB = 1; // 从MEM/WB转发
     }
 
-    // 更新节点数据
-    updateNodeData(id, {
-      ...data,
-      rs1: rs1Value,
-      rs2: rs2Value,
-      exMemRd: exMemRdValue,
-      memWbRd: memWbRdValue,
-      forwardA,
-      forwardB
-    });
+    // 检查输入值是否发生变化
+    const hasChanges = rs1Value !== inputsRef.current.rs1 ||
+                      rs2Value !== inputsRef.current.rs2 ||
+                      exMemRdValue !== inputsRef.current.exMemRd ||
+                      memWbRdValue !== inputsRef.current.memWbRd;
+
+    if (hasChanges) {
+      // 更新缓存的输入值
+      inputsRef.current = {
+        rs1: rs1Value,
+        rs2: rs2Value,
+        exMemRd: exMemRdValue,
+        memWbRd: memWbRdValue
+      };
+
+      // 更新节点数据
+      updateNodeData(id, {
+        ...data,
+        rs1: rs1Value,
+        rs2: rs2Value,
+        exMemRd: exMemRdValue,
+        memWbRd: memWbRdValue,
+        forwardA,
+        forwardB
+      });
+    }
   };
+
+  // 使用deps数组来跟踪依赖项的变化
+  const deps = React.useMemo(() => {
+    return edges
+      .filter(edge => edge.target === id)
+      .map(edge => {
+        const sourceNode = nodes.find(node => node.id === edge.source);
+        if (sourceNode?.data && typeof sourceNode.data === 'object') {
+          return sourceNode.data[edge.sourceHandle as keyof typeof sourceNode.data];
+        }
+        return null;
+      });
+  }, [nodes, edges, id]);
 
   React.useEffect(() => {
     updateInputConnections();
-  }, [nodes, edges, id]);
+  }, [deps]); // 只在依赖项真正变化时更新
 
   return (
     <div className={`px-4 py-2 shadow-md rounded-md bg-white border-2 ${
@@ -104,7 +141,7 @@ export function ForwardingUnitNode({ data, id, selected }: {
         position={Position.Left}
         id="rs1"
         className="w-3 h-3 bg-blue-400"
-        style={{ top: '25%' }}
+        style={{ top: '35%' }}
         title="RS1"
       />
       <Handle
@@ -112,23 +149,23 @@ export function ForwardingUnitNode({ data, id, selected }: {
         position={Position.Left}
         id="rs2"
         className="w-3 h-3 bg-blue-400"
-        style={{ top: '45%' }}
+        style={{ top: '65%' }}
         title="RS2"
       />
       <Handle
         type="target"
-        position={Position.Left}
+        position={Position.Right}
         id="exMemRd"
         className="w-3 h-3 bg-blue-400"
-        style={{ top: '65%' }}
+        style={{ top: '35%' }}
         title="EX/MEM Rd"
       />
       <Handle
         type="target"
-        position={Position.Left}
+        position={Position.Right}
         id="memWbRd"
         className="w-3 h-3 bg-blue-400"
-        style={{ top: '85%' }}
+        style={{ top: '65%' }}
         title="MEM/WB Rd"
       />
 
@@ -141,18 +178,18 @@ export function ForwardingUnitNode({ data, id, selected }: {
       {/* 输出端口 */}
       <Handle
         type="source"
-        position={Position.Right}
+        position={Position.Top}
         id="forwardA"
         className="w-3 h-3 bg-green-400"
-        style={{ top: '35%' }}
+        style={{ left: '35%' }}
         title="Forward A"
       />
       <Handle
         type="source"
-        position={Position.Right}
+        position={Position.Top}
         id="forwardB"
         className="w-3 h-3 bg-green-400"
-        style={{ top: '65%' }}
+        style={{ left: '65%' }}
         title="Forward B"
       />
     </div>

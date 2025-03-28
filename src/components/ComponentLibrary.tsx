@@ -13,7 +13,8 @@ import {
   GitBranch,
   Tag,
   Hash as HashIcon,
-  SplitSquareHorizontal
+  SplitSquareHorizontal,
+  ArrowLeftRight
 } from 'lucide-react';
 import { useCircuitStore } from '../store/circuitStore';
 
@@ -121,6 +122,12 @@ const components = [
     label: 'Single Register',
     icon: <Database className="w-6 h-6" />,
     description: 'Single Register Component',
+  },
+  {
+    type: 'forwarding-unit',
+    label: 'Forwarding Unit',
+    icon: <ArrowLeftRight className="w-6 h-6" />,
+    description: 'Data Forwarding Unit for Pipeline Hazard Control',
   }
 ];
 
