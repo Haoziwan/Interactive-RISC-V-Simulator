@@ -31,15 +31,15 @@ export class AssemblerError extends Error {
     errorType?: string;
     suggestion?: string;
   }) {
-    const formattedMessage = `${options?.lineNumber ? `第 ${options.lineNumber} 行: ` : ''}
+    const formattedMessage = `${options?.lineNumber ? `Line ${options.lineNumber}: ` : ''}
 ${message}
-${options?.instruction ? `指令: ${options.instruction}` : ''}
-${options?.suggestion ? `建议: ${options.suggestion}` : ''}`;
+${options?.instruction ? `Instruction: ${options.instruction}` : ''}
+${options?.suggestion ? `Suggestion: ${options.suggestion}` : ''}`;
     super(formattedMessage);
     this.name = 'AssemblerError';
     this.lineNumber = options?.lineNumber;
     this.instruction = options?.instruction;
-    this.errorType = options?.errorType || '语法错误';
+    this.errorType = options?.errorType || 'Syntax Error';
     this.suggestion = options?.suggestion;
   }
 }
@@ -81,21 +81,21 @@ const registerAliases: Record<string, number> = {
 };
 
 export const parseRegister = (reg: string): number => {
-  // 尝试匹配ABI名称
+  // Try to match ABI name
   if (reg in registerAliases) {
     return registerAliases[reg];
   }
 
-  // 尝试匹配x数字格式
+  // Try to match x+number format
   const match = reg.match(/x(\d+)/);
-  if (!match) throw new AssemblerError(`无效的寄存器格式: ${reg}`, {
-    errorType: '寄存器错误',
-    suggestion: '寄存器应使用x0-x31的格式（如x0, x1）或ABI名称（如zero, ra, sp等）'
+  if (!match) throw new AssemblerError(`Invalid register format: ${reg}`, {
+    errorType: 'Register Error',
+    suggestion: 'Registers should use x0-x31 format (e.g., x0, x1) or ABI names (e.g., zero, ra, sp, etc)'
   });
   const num = parseInt(match[1]);
-  if (num < 0 || num > 31) throw new AssemblerError(`寄存器编号必须在0-31之间: ${reg}`, {
-    errorType: '寄存器错误',
-    suggestion: '请检查寄存器编号是否在有效范围内（0-31）'
+  if (num < 0 || num > 31) throw new AssemblerError(`Register number must be between 0-31: ${reg}`, {
+    errorType: 'Register Error',
+    suggestion: 'Please check if the register number is within valid range (0-31)'
   });
   return num;
 };
@@ -104,7 +104,7 @@ export const parseImmediate = (imm: string, bits: number): number => {
   let value: number;
   if (imm.startsWith('0x')) {
     value = parseInt(imm.slice(2), 16);
-    // 处理十六进制负数
+    // Handle hexadecimal negative numbers
     if (value >= (1 << (bits - 1))) {
       value -= (1 << bits);
     }
@@ -114,32 +114,32 @@ export const parseImmediate = (imm: string, bits: number): number => {
   const max = (1 << (bits - 1)) - 1;
   const min = -(1 << (bits - 1));
   if (isNaN(value)) {
-    throw new AssemblerError(`无效的立即数格式: ${imm}`, {
-    errorType: '立即数错误',
-    suggestion: '立即数可以是十进制（如：42）或十六进制（如：0xff）格式'
+    throw new AssemblerError(`Invalid immediate format: ${imm}`, {
+    errorType: 'Immediate Error',
+    suggestion: 'Immediate values can be in decimal (e.g., 42) or hexadecimal (e.g., 0xff) format'
   });
   }
-  // 对于分支指令的偏移量，需要特殊处理
+  // Special handling for branch offset
   if (bits === 13 || bits === 21) {
     if (value % 2 !== 0) {
-      throw new AssemblerError(`分支/跳转目标必须是2字节对齐的: ${imm}`, {
-    errorType: '对齐错误',
-    suggestion: '分支和跳转指令的目标地址必须是2的倍数'
+      throw new AssemblerError(`Branch/jump target must be 2-byte aligned: ${imm}`, {
+    errorType: 'Alignment Error',
+    suggestion: 'Branch and jump instruction targets must be multiples of 2'
   });
     }
-    value = value >> 1; // 将字节偏移转换为字数偏移
+    value = value >> 1; // Convert byte offset to word offset
   }
   if (value < min || value > max) {
-    throw new AssemblerError(`立即数必须在${min}到${max}之间: ${imm}`, {
-    errorType: '立即数范围错误',
-    suggestion: `请确保立即数在有效范围内（${min} 到 ${max}）`
+    throw new AssemblerError(`Immediate must be between ${min} and ${max}: ${imm}`, {
+    errorType: 'Immediate Range Error',
+    suggestion: `Please ensure the immediate is within valid range (${min} to ${max})`
   });
   }
   return value;
 };
 
 export const expandPseudoInstruction = (line: string): string[] => {
-  // 移除注释
+  // Remove comments
   const lineWithoutComment = line.split('#')[0].trim();
   const parts = lineWithoutComment.split(/[\s,]+/).filter(Boolean);
   const op = parts[0].toLowerCase();
@@ -147,7 +147,7 @@ export const expandPseudoInstruction = (line: string): string[] => {
   switch (op) {
     case 'li': {
       if (parts.length !== 3) {
-        throw new AssemblerError(`li指令语法错误：需要2个操作数\n正确格式：li rd, immediate\n  - rd: 目标寄存器 (例如：x1, t0)\n  - immediate: 立即数值 (例如：42, 0xff)\n当前输入：${lineWithoutComment}`);
+        throw new AssemblerError(`Syntax error in li instruction: requires 2 operands\nCorrect format: li rd, immediate\n  - rd: target register (e.g., x1, t0)\n  - immediate: immediate value (e.g., 42, 0xff)\nCurrent input: ${lineWithoutComment}`);
       }
       const rd = parts[1];
       let imm;
@@ -155,7 +155,7 @@ export const expandPseudoInstruction = (line: string): string[] => {
         imm = parts[2].startsWith('0x') ? parseInt(parts[2].slice(2), 16) : parseInt(parts[2]);
         if (isNaN(imm)) throw new Error();
       } catch {
-        throw new AssemblerError(`li指令的立即数格式错误：${parts[2]}\n支持的格式：\n  - 十进制数字 (例如：42)\n  - 十六进制数字 (例如：0xff)`);
+        throw new AssemblerError(`Invalid immediate format in li instruction: ${parts[2]}\nSupported formats:\n  - Decimal number (e.g., 42)\n  - Hexadecimal number (e.g., 0xff)`);
       }
       
       if (imm >= -2048 && imm < 2048) {
@@ -170,32 +170,32 @@ export const expandPseudoInstruction = (line: string): string[] => {
       }
     }
     case 'la': {
-      if (parts.length !== 3) throw new AssemblerError(`la指令语法错误：需要2个操作数`, {
-        errorType: '操作数错误',
+      if (parts.length !== 3) throw new AssemblerError(`Syntax error in la instruction: requires 2 operands`, {
+        errorType: 'Operand Error',
         instruction: lineWithoutComment,
-        suggestion: 'la指令格式：la rd, symbol（例如：la a0, msg）'
+        suggestion: 'la instruction format: la rd, symbol (e.g., la a0, msg)'
       });
-      // la rd, symbol - 加载标签地址到寄存器
-      // 在第一遍扫描时，标签地址未知，所以只能返回占位符
-      // 在实际汇编过程中会替换为lui+addi指令
+      // la rd, symbol - load address of symbol into register
+      // during first pass, symbol address is unknown, so return placeholder
+      // during actual assembly it will be replaced with lui+addi
       return [`la ${parts[1]}, ${parts[2]}`];
     }
     case 'mv': {
-      if (parts.length !== 3) throw new AssemblerError('mv指令需要2个操作数');
-      // mv rd, rs 等价于 addi rd, rs, 0
+      if (parts.length !== 3) throw new AssemblerError('mv instruction requires 2 operands');
+      // mv rd, rs equivalent to addi rd, rs, 0
       return [`addi ${parts[1]}, ${parts[2]}, 0`];
     }
     case 'j': {
-      if (parts.length !== 2) throw new AssemblerError('j指令需要1个操作数');
-      // j offset 等价于 jal x0, offset
+      if (parts.length !== 2) throw new AssemblerError('j instruction requires 1 operand');
+      // j offset equivalent to jal x0, offset
       return [`jal x0, ${parts[1]}`];
     }
     case 'ret': {
-      // ret 等价于 jalr x0, ra, 0
+      // ret equivalent to jalr x0, ra, 0
       return ['jalr x0, ra, 0'];
     }
     case 'nop': {
-      // nop 等价于 addi x0, x0, 0
+      // nop equivalent to addi x0, x0, 0
       return ['addi x0, x0, 0'];
     }
     default:
@@ -204,9 +204,9 @@ export const expandPseudoInstruction = (line: string): string[] => {
 };
 
 export const parseInstruction = (line: string, currentAddress: number, labelMap: Record<string, number>): Instruction => {
-  // 移除注释
+  // Remove comments
   const lineWithoutComment = line.split('#')[0].trim();
-  // 分割指令部分
+  // Split instruction parts
   const parts = lineWithoutComment.split(/[\s,]+/).filter(Boolean);
   const op = parts[0].toLowerCase();
 
@@ -221,10 +221,10 @@ export const parseInstruction = (line: string, currentAddress: number, labelMap:
     case 'sra':
     case 'slt':
     case 'sltu': {
-      if (parts.length !== 4) throw new AssemblerError(`${op}指令需要3个操作数`, {
-    errorType: '操作数错误',
+      if (parts.length !== 4) throw new AssemblerError(`${op} instruction requires 3 operands`, {
+    errorType: 'Operand Error',
     instruction: lineWithoutComment,
-    suggestion: `${op}指令格式：${op} rd, rs1, rs2（例如：${op} x1, x2, x3）`
+    suggestion: `${op} instruction format: ${op} rd, rs1, rs2 (e.g., ${op} x1, x2, x3)`
   });
       return {
         type: 'R',
@@ -243,30 +243,30 @@ export const parseInstruction = (line: string, currentAddress: number, labelMap:
       };
     }
     case 'la': {
-      if (parts.length !== 3) throw new AssemblerError(`${op}指令需要2个操作数`, {
-        errorType: '操作数错误',
+      if (parts.length !== 3) throw new AssemblerError(`${op} instruction requires 2 operands`, {
+        errorType: 'Operand Error',
         instruction: lineWithoutComment,
-        suggestion: `la指令格式：la rd, symbol（例如：la a0, msg）`
+        suggestion: `la instruction format: la rd, symbol (e.g., la a0, msg)`
       });
       
       const rd = parseRegister(parts[1]);
       const symbol = parts[2];
       
       if (!(symbol in labelMap)) {
-        throw new AssemblerError(`未定义的标签: ${symbol}`, {
-          errorType: '标签错误',
+        throw new AssemblerError(`Undefined label: ${symbol}`, {
+          errorType: 'Label Error',
           instruction: lineWithoutComment,
-          suggestion: '请确保标签已在代码中定义'
+          suggestion: 'Please ensure the label is defined in the code'
         });
       }
       
       const address = labelMap[symbol];
-      // 首先生成lui指令部分
+      // First generate lui instruction part
       const upper = (address >> 12) & 0xFFFFF;
       
       return {
         type: 'U',
-        opcode: '0110111', // lui的opcode
+        opcode: '0110111', // lui opcode
         rd,
         imm: upper
       };
@@ -280,10 +280,10 @@ export const parseInstruction = (line: string, currentAddress: number, labelMap:
     case 'slli':
     case 'srli':
     case 'srai': {
-      if (parts.length !== 4) throw new AssemblerError(`${op}指令需要3个操作数`, {
-    errorType: '操作数错误',
+      if (parts.length !== 4) throw new AssemblerError(`${op} instruction requires 3 operands`, {
+    errorType: 'Operand Error',
     instruction: lineWithoutComment,
-    suggestion: `${op}指令格式：${op} rd, rs1, rs2（例如：${op} x1, x2, x3）`
+    suggestion: `${op} instruction format: ${op} rd, rs1, imm (e.g., ${op} x1, x2, 10)`
   });
       return {
         type: 'I',
@@ -306,13 +306,13 @@ export const parseInstruction = (line: string, currentAddress: number, labelMap:
     case 'lw':
     case 'lbu':
     case 'lhu': {
-      if (parts.length !== 3) throw new AssemblerError(`${op}指令需要2个操作数和偏移量`);
+      if (parts.length !== 3) throw new AssemblerError(`${op} instruction requires 2 operands with offset`);
       const [rd, memStr] = parts.slice(1);
       const match = memStr.match(/(-?\d+)\(([a-zA-Z0-9]+)\)/);
-      if (!match) throw new AssemblerError(`无效的内存访问格式: ${memStr}`, {
-    errorType: '内存访问格式错误',
+      if (!match) throw new AssemblerError(`Invalid memory access format: ${memStr}`, {
+    errorType: 'Memory Access Format Error',
     instruction: lineWithoutComment,
-    suggestion: '内存访问格式应为：offset(register)，例如：4(x2)或4(sp)'
+    suggestion: 'Memory access format should be: offset(register), e.g., 4(x2) or 4(sp)'
   });
       return {
         type: 'I',
@@ -329,13 +329,13 @@ export const parseInstruction = (line: string, currentAddress: number, labelMap:
     case 'sb':
     case 'sh':
     case 'sw': {
-      if (parts.length !== 3) throw new AssemblerError(`${op}指令需要2个操作数和偏移量`);
+      if (parts.length !== 3) throw new AssemblerError(`${op} instruction requires 2 operands with offset`);
       const [rs2, memStr] = parts.slice(1);
       const match = memStr.match(/(-?\d+)\(([a-zA-Z0-9]+)\)/);
-      if (!match) throw new AssemblerError(`无效的内存访问格式: ${memStr}`, {
-    errorType: '内存访问格式错误',
+      if (!match) throw new AssemblerError(`Invalid memory access format: ${memStr}`, {
+    errorType: 'Memory Access Format Error',
     instruction: lineWithoutComment,
-    suggestion: '内存访问格式应为：offset(register)，例如：4(x2)或4(sp)'
+    suggestion: 'Memory access format should be: offset(register), e.g., 4(x2) or 4(sp)'
   });
       return {
         type: 'S',
@@ -353,10 +353,10 @@ export const parseInstruction = (line: string, currentAddress: number, labelMap:
     case 'bge':
     case 'bltu':
     case 'bgeu': {
-      if (parts.length !== 4) throw new AssemblerError(`${op}指令需要3个操作数`, {
-    errorType: '操作数错误',
+      if (parts.length !== 4) throw new AssemblerError(`${op} instruction requires 3 operands`, {
+    errorType: 'Operand Error',
     instruction: lineWithoutComment,
-    suggestion: `${op}指令格式：${op} rd, rs1, rs2（例如：${op} x1, x2, x3）`
+    suggestion: `${op} instruction format: ${op} rs1, rs2, offset/label (e.g., ${op} x1, x2, label)`
   });
       const targetLabel = parts[3];
       let offset: number;
@@ -382,7 +382,7 @@ export const parseInstruction = (line: string, currentAddress: number, labelMap:
     }
     case 'lui':
     case 'auipc': {
-      if (parts.length !== 3) throw new AssemblerError(`${op}指令需要2个操作数`);
+      if (parts.length !== 3) throw new AssemblerError(`${op} instruction requires 2 operands`);
       return {
         type: 'U',
         opcode: op === 'lui' ? '0110111' : '0010111',
@@ -391,7 +391,7 @@ export const parseInstruction = (line: string, currentAddress: number, labelMap:
       };
     }
     case 'jal': {
-      if (parts.length !== 3) throw new AssemblerError(`${op}指令需要2个操作数`);
+      if (parts.length !== 3) throw new AssemblerError(`${op} instruction requires 2 operands`);
       const targetLabel = parts[2];
       let offset: number;
       
@@ -409,10 +409,10 @@ export const parseInstruction = (line: string, currentAddress: number, labelMap:
       };
     }
     case 'jalr': {
-      if (parts.length !== 4) throw new AssemblerError(`${op}指令需要3个操作数`, {
-    errorType: '操作数错误',
+      if (parts.length !== 4) throw new AssemblerError(`${op} instruction requires 3 operands`, {
+    errorType: 'Operand Error',
     instruction: lineWithoutComment,
-    suggestion: `${op}指令格式：${op} rd, rs1, rs2（例如：${op} x1, x2, x3）`
+    suggestion: `${op} instruction format: ${op} rd, rs1, imm (e.g., ${op} x1, x2, 0)`
   });
       return {
         type: 'I',
@@ -424,10 +424,10 @@ export const parseInstruction = (line: string, currentAddress: number, labelMap:
       };
     }
     case 'ecall': {
-      if (parts.length !== 1) throw new AssemblerError(`${op}指令不需要操作数`, {
-        errorType: '操作数错误',
+      if (parts.length !== 1) throw new AssemblerError(`${op} instruction does not require operands`, {
+        errorType: 'Operand Error',
         instruction: lineWithoutComment,
-        suggestion: 'ecall指令格式：ecall'
+        suggestion: 'ecall instruction format: ecall'
       });
       return {
         type: 'I',
@@ -439,10 +439,10 @@ export const parseInstruction = (line: string, currentAddress: number, labelMap:
       };
     }
     default:
-      throw new AssemblerError(`不支持的指令: ${op}`, {
-    errorType: '未知指令',
+      throw new AssemblerError(`Unsupported instruction: ${op}`, {
+    errorType: 'Unknown Instruction',
     instruction: lineWithoutComment,
-    suggestion: '请检查指令拼写是否正确，或参考支持的指令列表'
+    suggestion: 'Please check if the instruction spelling is correct, or refer to the list of supported instructions'
   });
   }
 };
@@ -450,15 +450,15 @@ export const parseInstruction = (line: string, currentAddress: number, labelMap:
 export const generateMachineCode = (inst: Instruction): string => {
   let machineCode = parseInt(inst.opcode, 2);
 
-  // 符号扩展函数
+  // Sign extension function
   const signExtend = (value: number, bits: number) => {
-    // 检查最高位是否为1（负数）
+    // Check if the most significant bit is 1 (negative)
     const signBit = 1 << (bits - 1);
     if (value & signBit) {
-      // 如果是负数，则进行符号扩展
+      // If negative, perform sign extension
       return value | (~0 << bits);
     } else {
-      // 如果是正数，则保持不变
+      // If positive, keep unchanged
       return value;
     }
   };
@@ -474,20 +474,20 @@ export const generateMachineCode = (inst: Instruction): string => {
       break;
 
     case 'I':
-      // 直接使用原始的立即数值，不进行符号扩展
+      // Directly use the original immediate value, no sign extension
       const iImm = inst.imm!;
       
       machineCode |= (inst.rd! & 0x1F) << 7;
       machineCode |= (parseInt(inst.funct3!, 2) & 0x7) << 12;
       machineCode |= (inst.rs1! & 0x1F) << 15;
       
-      // 对于移位指令（slli, srli, srai），需要特殊处理funct7字段
+      // For shift instructions (slli, srli, srai), need special handling for funct7 field
       if (inst.funct7) {
         machineCode |= (parseInt(inst.funct7, 2) & 0x7F) << 25;
-        // 对于移位指令，立即数只使用低5位
+        // For shift instructions, immediate only use low 5 bits
         machineCode |= ((iImm & 0x1F) << 20) >>> 0;
       } else {
-        // 对于其他I型指令，使用低12位
+        // For other I-type instructions, use low 12 bits
         machineCode |= ((iImm & 0xFFF) << 20) >>> 0;
       }
       
@@ -503,7 +503,7 @@ export const generateMachineCode = (inst: Instruction): string => {
       break;
 
     case 'B':
-      const bImm = signExtend(inst.imm!, 13); // 不需要额外左移 1
+      const bImm = signExtend(inst.imm!, 13); // No need to left shift 1
     
       machineCode |= ((bImm & 0x1000) >> 12) << 31; // imm[12] -> bit 31
       machineCode |= ((bImm & 0x7E0) >> 5) << 25;   // imm[10:5] -> bits 30:25
@@ -514,7 +514,7 @@ export const generateMachineCode = (inst: Instruction): string => {
       machineCode |= (inst.rs1! & 0x1F) << 15; // rs1 -> bits 19:15
       machineCode |= (inst.rs2! & 0x1F) << 20; // rs2 -> bits 24:20
     
-      // machineCode |= 0b1100011; // B 类型指令的 opcode
+      // machineCode |= 0b1100011; // B type instruction opcode
     
       break;
       
@@ -525,7 +525,7 @@ export const generateMachineCode = (inst: Instruction): string => {
       break;
 
     case 'J':
-      const jImm = signExtend(inst.imm!, 21); // 立即数扩展到 21 位
+      const jImm = signExtend(inst.imm!, 21); // Immediate extend to 21 bits
     
       machineCode |= ((jImm & 0x100000) >> 20) << 31; // imm[20] -> bit 31
       machineCode |= ((jImm & 0xFF000) >> 12) << 12;  // imm[19:12] -> bits 19:12
@@ -539,7 +539,7 @@ export const generateMachineCode = (inst: Instruction): string => {
       
   }
 
-  // 确保返回的是无符号32位整数的十六进制表示
+  // Ensure return is unsigned 32-bit integer hexadecimal representation
   return `0x${(machineCode >>> 0).toString(16).padStart(8, '0')}`;
 };
 
@@ -549,7 +549,7 @@ export class Assembler {
   private currentSegment: 'text' | 'data' = 'text';
   private textAddress = 0;
   private dataAddress = 0;
-  private readonly GP_BASE = 0x10000000;  // GP 寄存器基址
+  private readonly GP_BASE = 0x10000000;  // GP register base address
   
   public getLabelMap(): Record<string, number> {
     return this.labelMap;
@@ -560,14 +560,14 @@ export class Assembler {
     this.currentAddress = 0;
     this.currentSegment = 'text';
     this.textAddress = 0;
-    this.dataAddress = this.GP_BASE; // 数据段从GP寄存器基址开始
+    this.dataAddress = this.GP_BASE; // Data segment starts from GP register base address
 
-    // 第一遍：只收集标签所在的地址，不处理数据的地址偏移
-    // 预先处理标签，单独一遍扫描
+    // First pass: Collect addresses of labels and instructions, but not data addresses
+    // Preprocess labels separately
     let currentAddr = 0;
     let inDataSegment = false;
     
-    // 首先分离所有行并保存它们（忽略注释和空行）
+    // First separate all lines and save them (ignoring comments and empty lines)
     const allLines: {text: string, hasLabel: boolean, label?: string, instr?: string}[] = [];
     
     code.split('\n').forEach(line => {
@@ -579,13 +579,13 @@ export class Assembler {
         hasLabel: false
       };
       
-      // 检查是否有标签
+      // Check for label
       const labelMatch = trimmedLine.match(/^([a-zA-Z0-9_]+):/);
       if (labelMatch) {
         entry.hasLabel = true;
         entry.label = labelMatch[1];
         
-        // 提取标签后的指令或数据
+        // Extract instruction or data after label
         const afterLabel = trimmedLine.substring(labelMatch[0].length).trim();
         if (afterLabel) {
           entry.instr = afterLabel;
@@ -597,37 +597,37 @@ export class Assembler {
       allLines.push(entry);
     });
     
-    // 现在进行第一遍遍历，只收集.text和.data指令和标签的位置
+    // Now perform first pass traversal, collect .text and .data instruction and label locations
     currentAddr = 0;
     inDataSegment = false;
     
     for (let i = 0; i < allLines.length; i++) {
       const entry = allLines[i];
       
-      // 处理段指令
+      // Process segment instructions
       if (entry.instr === '.text') {
         inDataSegment = false;
-        currentAddr = 0; // 代码段从0开始
+        currentAddr = 0; // Code segment starts from 0
         continue;
       } else if (entry.instr === '.data') {
         inDataSegment = true;
-        currentAddr = this.GP_BASE; // 数据段从GP_BASE开始
+        currentAddr = this.GP_BASE; // Data segment starts from GP_BASE
         continue;
       }
       
-      // 如果有标签，记录它的地址
+      // If there is a label, record its address
       if (entry.hasLabel) {
         this.labelMap[entry.label!] = currentAddr;
       }
       
-      // 根据指令或数据类型更新地址
+      // Update address based on instruction or data type
       if (entry.instr) {
         if (!inDataSegment) {
-          // 处理代码段
+          // Process code segment
           const expandedInstrs = expandPseudoInstruction(entry.instr);
           currentAddr += 4 * expandedInstrs.length;
         } else {
-          // 处理数据段
+          // Process data segment
           if (entry.instr.startsWith('.word')) {
             const parts = entry.instr.split(/\s+/).slice(1);
             currentAddr += 4 * parts.length;
@@ -649,18 +649,18 @@ export class Assembler {
       }
     }
     
-    // 完成标签收集后，开始第二遍正式汇编
+    // After label collection, start second pass for actual assembly
     this.currentAddress = 0;
     this.currentSegment = 'text';
     
     const result: AssembledInstruction[] = [];
-    const memoryBytes: Record<number, number> = {}; // 用于跟踪内存中的每个字节
+    const memoryBytes: Record<number, number> = {}; // Used to track each byte in memory
     
-    // 第二遍：生成实际的指令和数据
+    // Second pass: Generate actual instructions and data
     let currentSection = 'text';
     
     for (const entry of allLines) {
-      // 处理段指令
+      // Process segment instructions
       if (entry.instr === '.text') {
         currentSection = 'text';
         this.currentAddress = result.filter(inst => inst.segment === 'text').reduce((acc, inst) => acc + 4, 0);
@@ -676,19 +676,19 @@ export class Assembler {
         continue;
       }
       
-      // 跳过纯标签行
+      // Skip pure label lines
       if (!entry.instr) continue;
       
       const instruction = entry.instr;
       
       if (currentSection === 'text') {
-        // 处理代码段指令
+        // Process code segment instructions
         if (!instruction.startsWith('.')) {
-          // 展开伪指令
+          // Expand pseudo instructions
           const expandedInstructions = expandPseudoInstruction(instruction);
           expandedInstructions.forEach((expandedLine, i) => {
             try {
-              // 特殊处理 la 指令的第二部分 (addi)
+              // Special handling for la instruction second part (addi)
               if (expandedLine.startsWith('la ')) {
                 const parts = expandedLine.split(/[\s,]+/).filter(Boolean);
                 if (parts.length === 3) {
@@ -698,26 +698,26 @@ export class Assembler {
                   if (symbol in this.labelMap) {
                     const address = this.labelMap[symbol];
                     
-                    // 计算地址在数据段中的偏移量
+                    // Calculate address offset in data segment
                     let offset = 0;
-                    let baseImm = 0x10000; // 默认的lui立即数，对应0x10000000
+                    let baseImm = 0x10000; // Default lui immediate, corresponding to 0x10000000
                     
-                    // 检查标签是在数据段还是在代码段
+                    // Check if label is in data segment or code segment
                     if (address >= this.GP_BASE) {
-                      // 数据段标签
+                      // Data segment label
                       offset = address - this.GP_BASE;
                     } else {
-                      // 代码段标签
+                      // Code segment label
                       baseImm = address >>> 12;
                       offset = address & 0xFFF;
                     }
                     
-                    // 确保偏移量在12位有符号整数范围内 (-2048 到 2047)
+                    // Ensure offset is within 12-bit signed integer range (-2048 to 2047)
                     if (offset < -2048 || offset > 2047) {
-                      console.warn(`警告: ${symbol} 的偏移量 ${offset} 超出了12位有符号整数范围`);
+                      console.warn(`Warning: ${symbol} offset ${offset} exceeds 12-bit signed integer range`);
                     }
                     
-                    // 生成 lui 指令
+                    // Generate lui instruction
                     const luiInst = {
                       type: 'U' as const,
                       opcode: '0110111',
@@ -737,7 +737,7 @@ export class Assembler {
                     });
                     this.currentAddress += 4;
                     
-                    // 生成 addi 指令
+                    // Generate addi instruction
                     const addiInst = {
                       type: 'I' as const,
                       opcode: '0010011',
@@ -760,10 +760,10 @@ export class Assembler {
                     this.currentAddress += 4;
                   }
                 }
-                return; // la 指令已处理完毕，跳过正常的处理
+                return; // la instruction processed, skip normal processing
               }
               
-              // 处理其他指令
+              // Process other instructions
               const parsedInst = parseInstruction(expandedLine, this.currentAddress, this.labelMap);
               const hex = generateMachineCode(parsedInst);
               const binary = (parseInt(hex.slice(2), 16) >>> 0).toString(2).padStart(32, '0');
@@ -789,7 +789,7 @@ export class Assembler {
           });
         }
       } else if (currentSection === 'data') {
-        // 处理数据段指令
+        // Process data segment instructions
         try {
           let dataBytes: number[] = [];
           let dataSize = 0;
@@ -805,7 +805,7 @@ export class Assembler {
             });
             
             dataBytes = [];
-            // 存储为小端序
+            // Store as little-endian
             data.forEach(value => {
               dataBytes.push(value & 0xFF);
               dataBytes.push((value >> 8) & 0xFF);
@@ -814,7 +814,7 @@ export class Assembler {
             });
             dataSize = 4 * data.length;
             
-            // 添加到结果数组
+            // Add to result array
             result.push({
               hex: '0x' + data.map(d => d.toString(16).padStart(8, '0')).join(''),
               binary: data.map(d => d.toString(2).padStart(32, '0')).join(''),
@@ -859,7 +859,7 @@ export class Assembler {
             });
             
             dataBytes = [];
-            // 存储为小端序
+            // Store as little-endian
             data.forEach(value => {
               dataBytes.push(value & 0xFF);
               dataBytes.push((value >> 8) & 0xFF);
@@ -883,7 +883,7 @@ export class Assembler {
               const data = Array.from(str).map(c => c.charCodeAt(0));
               
               if (instruction.startsWith('.asciz')) {
-                data.push(0); // 添加空字符结尾
+                data.push(0); // Add null character at the end
               }
               
               dataBytes = data;
@@ -901,7 +901,7 @@ export class Assembler {
             }
           }
           
-          // 存储到内存模型中并更新地址
+          // Store to memory model and update address
           if (dataBytes.length > 0) {
             dataBytes.forEach((value, i) => {
               memoryBytes[this.currentAddress + i] = value;
@@ -922,15 +922,15 @@ export class Assembler {
       }
     }
     
-    // 将内存数据添加到结果中
-    // 作为一个特殊的属性添加到第一个结果元素上
+    // Add memory data to result
+    // As a special attribute added to the first result element
     if (result.length > 0) {
       const memoryData: Record<string, number> = {};
       Object.entries(memoryBytes).forEach(([addr, value]) => {
         memoryData[`0x${parseInt(addr).toString(16).padStart(8, '0')}`] = value;
       });
       
-      // @ts-ignore - 添加一个特殊的属性用于传递内存数据
+      // @ts-ignore - Add a special attribute for passing memory data
       result[0].memoryData = memoryData;
     }
     
