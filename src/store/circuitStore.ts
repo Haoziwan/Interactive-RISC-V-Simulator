@@ -29,6 +29,7 @@ interface CircuitState {
   }>;
   updatePcValue: (value: number) => void;
   updateMemory: (memory: { [key: string]: number }) => void;
+  clearMemory: () => void;
   updateRegisters: (registers: { [key: number]: number }) => void;
   updateNodeData: (nodeId: string, data: any) => void;
   updateAllNodesInputs: () => void;
@@ -87,6 +88,7 @@ export const useCircuitStore = create<CircuitState>()((set, get) => ({
       ...memory
     }
   })),
+  clearMemory: () => set({ memory: {} }),
   updateRegisters: (registers) => set((state) => ({
     registers: {
       ...state.registers,
@@ -288,8 +290,7 @@ export const useCircuitStore = create<CircuitState>()((set, get) => ({
       simulationTimer: null,
       pcValue: 0,
       currentInstructionIndex: 0,
-      simulationHistory: [],
-      memory: {} // 清空内存
+      simulationHistory: []
     }));
     
     // 延迟到下一个事件循环设置寄存器默认值，但保留内存中的数据段

@@ -195,7 +195,11 @@ export function AssemblyEditor() {
         // 增加延迟确保内存数据写入在模拟开始之前完成
         setTimeout(() => {
           // 先清空内存，然后设置新的内存数据
-          useCircuitStore.getState().updateMemory(memoryData);
+          useCircuitStore.getState().clearMemory();  // 使用新的clearMemory函数
+          setTimeout(() => {
+            // 然后设置新的数据段内存
+            useCircuitStore.getState().updateMemory(memoryData);
+          }, 10);
         }, 50);
         
         // 从结果中删除memoryData属性，防止影响后续处理
