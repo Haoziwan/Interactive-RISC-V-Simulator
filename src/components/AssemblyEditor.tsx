@@ -1,8 +1,13 @@
 import { useState, useEffect, useRef } from 'react';
 import { useCircuitStore } from '../store/circuitStore';
-import { Assembler, expandPseudoInstruction, AssemblerError } from '../assembler/assembler';
+import { Assembler, expandPseudoInstruction, AssemblerError, AssembledInstruction } from '../assembler/assembler';
 import { InstructionFormatPanel } from './InstructionFormatPanel';
 import Editor, { useMonaco } from '@monaco-editor/react';
+
+// 扩展AssembledInstruction类型，确保包含originalLineNumber
+type ExtendedAssembledInstruction = AssembledInstruction & {
+  originalLineNumber?: number;
+};
 
 export function AssemblyEditor() {
   const [error, setError] = useState<string | null>(null);
@@ -15,7 +20,7 @@ export function AssemblyEditor() {
   // 使用store中的状态
   const editorCode = useCircuitStore((state) => state.editorCode);
   const setEditorCode = useCircuitStore((state) => state.setEditorCode);
-  const assembledInstructions = useCircuitStore((state) => state.assembledInstructions);
+  const assembledInstructions = useCircuitStore((state) => state.assembledInstructions) as ExtendedAssembledInstruction[];
   const setAssembledInstructions = useCircuitStore((state) => state.setAssembledInstructions);
   const updateNodeData = useCircuitStore((state) => state.updateNodeData);
   const nodes = useCircuitStore((state) => state.nodes);
@@ -36,11 +41,27 @@ export function AssemblyEditor() {
     
     const sourceLines = editorCode.split('\n');
     let currentInstructionCount = 0;
+    let inDataSegment = false; // 跟踪是否在数据段中
     
     for (let i = 0; i < sourceLines.length; i++) {
       const line = sourceLines[i].split('#')[0].trim();
-      // 跳过空行、注释行、标签行和段指令
-      if (line && !line.endsWith(':') && line !== '.data' && line !== '.text') {
+      
+      // 检查段标识符
+      if (line === '.data') {
+        inDataSegment = true;
+        continue;
+      } else if (line === '.text') {
+        inDataSegment = false;
+        continue;
+      }
+      
+      // 如果在数据段中，跳过该行
+      if (inDataSegment) {
+        continue;
+      }
+      
+      // 跳过空行、注释行和标签行
+      if (line && !line.endsWith(':')) {
         // 获取当前行展开后的指令数量
         const expandedInsts = expandPseudoInstruction(line);
         currentInstructionCount += expandedInsts.length;
@@ -108,9 +129,12 @@ export function AssemblyEditor() {
 
       // 如果有有效的指令索引，无论是否在模拟状态下，都添加高亮
       // 这样在单步执行时也能正确高亮
-      if (currentInstructionIndex !== null && currentInstructionIndex >= 0) {
-        const sourceLine = getSourceLineFromInstructionIndex(currentInstructionIndex);
-        if (sourceLine >= 0) {
+      if (currentInstructionIndex !== null && currentInstructionIndex >= 0 && assembledInstructions.length > 0) {
+        // 首先尝试使用指令中的原始行号
+        const currentInstruction = assembledInstructions[currentInstructionIndex];
+        if (currentInstruction && currentInstruction.originalLineNumber && currentInstruction.originalLineNumber > 0) {
+          // 直接使用汇编器提供的原始行号
+          const sourceLine = currentInstruction.originalLineNumber - 1; // 转为0索引
           const newDecorations = editorRef.current.deltaDecorations([], [
             {
               range: new monaco.Range(sourceLine + 1, 1, sourceLine + 1, 1),
@@ -122,10 +146,26 @@ export function AssemblyEditor() {
             }
           ]);
           setDecorations(newDecorations);
+        } else {
+          // 回退到使用指令索引映射
+          const sourceLine = getSourceLineFromInstructionIndex(currentInstructionIndex);
+          if (sourceLine >= 0) {
+            const newDecorations = editorRef.current.deltaDecorations([], [
+              {
+                range: new monaco.Range(sourceLine + 1, 1, sourceLine + 1, 1),
+                options: {
+                  isWholeLine: true,
+                  className: 'monaco-highlight-line',
+                  glyphMarginClassName: 'monaco-highlight-glyph'
+                }
+              }
+            ]);
+            setDecorations(newDecorations);
+          }
         }
       }
     }
-  }, [currentInstructionIndex, monaco, stepCount]);
+  }, [currentInstructionIndex, monaco, stepCount, assembledInstructions]);
 
   // 监听monaco实例加载完成
   useEffect(() => {
@@ -273,7 +313,8 @@ export function AssemblyEditor() {
         // 保留原有的assembly字段，它已经是展开后的实际指令
         return {
           ...inst,
-          sourceLineIndex: -1 // 稍后会设置正确的行号
+          // 确保记录原始行号，用于正确的高亮显示
+          originalLineNumber: inst.originalLineNumber || -1
         };
       });
       
