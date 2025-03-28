@@ -75,6 +75,29 @@ const instructionFormats: InstructionFormat[] = [
     instructions: [
       'jal rd, offset - Jump and Link'
     ]
+  },
+  {
+    type: 'Pseudo-Instructions',
+    instructions: [
+      'li rd, imm - Load Immediate (expands to lui+addi or addi)',
+      'la rd, symbol - Load Address (expands to lui+addi)',
+      'mv rd, rs - Move (expands to addi rd, rs, 0)',
+      'j offset - Jump (expands to jal x0, offset)',
+      'ret - Return from subroutine (expands to jalr x0, ra, 0)',
+      'nop - No Operation (expands to addi x0, x0, 0)'
+    ]
+  },
+  {
+    type: 'Assembly Directives',
+    instructions: [
+      '.text - Text section declaration',
+      '.data - Data section declaration',
+      '.word w1, w2, ... - Define words (4 bytes)',
+      '.half h1, h2, ... - Define half words (2 bytes)',
+      '.byte b1, b2, ... - Define bytes',
+      '.ascii "string" - Define ASCII string (not null terminated)',
+      '.asciz "string" - Define ASCII string (null terminated)'
+    ]
   }
 ];
 
