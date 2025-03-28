@@ -11,7 +11,7 @@ interface CircuitState {
   isSimulating: boolean;
   isProcessing: boolean;
   stepCount: number;
-  assembledInstructions: Array<{hex: string; binary: string; assembly?: string; source?: string}>;
+  assembledInstructions: Array<{hex: string; binary: string; assembly?: string; source?: string; segment?: 'text' | 'data', address?: number, data?: number[]}>;
   editorCode: string;
   simulationInterval: number;
   simulationTimer: number | null;
@@ -48,7 +48,7 @@ interface CircuitState {
   updateEdgeType: (type: string) => void;
   updateEdgeAnimated: (animated: boolean) => void;
   updateConnectionMode: (mode: ConnectionMode) => void;
-  setAssembledInstructions: (instructions: Array<{hex: string; binary: string; assembly?: string; source?: string}>) => void;
+  setAssembledInstructions: (instructions: Array<{hex: string; binary: string; assembly?: string; source?: string; segment?: 'text' | 'data', address?: number, data?: number[]}>) => void;
   setEditorCode: (code: string) => void;
 }
 
@@ -288,17 +288,18 @@ export const useCircuitStore = create<CircuitState>()((set, get) => ({
       simulationTimer: null,
       pcValue: 0,
       currentInstructionIndex: 0,
-      simulationHistory: []
+      simulationHistory: [],
+      memory: {} // 清空内存
     }));
-    // 延迟到下一个事件循环清空寄存器和内存
+    
+    // 延迟到下一个事件循环设置寄存器默认值，但保留内存中的数据段
     setTimeout(() => {
-      set({
+      set((state) => ({
         registers: {
           2: 0x7ffffff0,  // sp
           3: 0x10000000   // gp
-        },
-        memory: {}
-      });
+        }
+      }));
 
       get().updateAllNodesInputs();
     }, 0);

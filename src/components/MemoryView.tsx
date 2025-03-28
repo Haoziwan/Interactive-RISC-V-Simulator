@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Save, FileInput, RefreshCw } from 'lucide-react';
 import { useCircuitStore } from '../store/circuitStore';
 
@@ -10,17 +10,45 @@ export function MemoryView() {
   const [displayFormat, setDisplayFormat] = useState<'hex' | 'dec'>('dec');
   const [startAddress, setStartAddress] = useState(0);
   const [segment, setSegment] = useState<'data' | 'text' | 'gp' | 'sp'>('data');
+  const [dataLabels, setDataLabels] = useState<Record<number, string>>({});
+  
   const rowCount = 16;
   const colCount = 16;
+  
+  // 获取GP和SP寄存器的值
+  const gpValue = registers[3] || 0x10000000; // GP寄存器默认值
+  const spValue = registers[2] || 0x7ffffff0; // SP寄存器默认值
+  
+  // 提取数据段标签信息
+  useEffect(() => {
+    // 从汇编指令中提取数据段标签
+    const labels: Record<number, string> = {};
+    
+    assembledInstructions
+      .filter(inst => inst.segment === 'data' && inst.address !== undefined)
+      .forEach(inst => {
+        // 从源代码中提取标签名称
+        const sourceLine = inst.source || '';
+        const labelMatch = sourceLine.match(/^([a-zA-Z0-9_]+):/);
+        if (labelMatch && inst.address !== undefined) {
+          labels[inst.address] = labelMatch[1];
+        }
+      });
+    
+    setDataLabels(labels);
+  }, [assembledInstructions]);
+
   const formatValue = (value: number) => {
     if (displayFormat === 'hex') {
       return (value & 0xFF).toString(16).padStart(2, '0').toUpperCase();
     }
     return value.toString();
   };
+  
   const formatAddress = (address: number) => {
     return `0x${address.toString(16).padStart(8, '0')}`;
   };
+  
   const handleValueChange = (address: number, value: string) => {
     let numValue: number;
     if (value.startsWith('0x')) {
@@ -35,6 +63,7 @@ export function MemoryView() {
       });
     }
   };
+  
   const handleExport = () => {
     const data = JSON.stringify(memory, null, 2);
     const blob = new Blob([data], { type: 'application/json' });
@@ -45,6 +74,7 @@ export function MemoryView() {
     a.click();
     URL.revokeObjectURL(url);
   };
+  
   const handleImport = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
@@ -63,9 +93,6 @@ export function MemoryView() {
       reader.readAsText(file);
     }
   };
-  // 获取GP和SP寄存器的值
-  const gpValue = registers[3] || 0x10000000; // GP寄存器默认值
-  const spValue = registers[2] || 0x7ffffff0; // SP寄存器默认值
 
   // 处理段切换
   const handleSegmentChange = (newSegment: 'data' | 'text' | 'gp' | 'sp') => {
@@ -81,6 +108,44 @@ export function MemoryView() {
     } else if (newSegment === 'text') {
       setStartAddress(0);
     }
+  };
+  
+  // 检查地址是否有对应的数据标签
+  const getLabelForAddress = (address: number): string | null => {
+    return dataLabels[address] || null;
+  };
+  
+  // 自动检测数据类型并格式化显示
+  const formatCellValue = (address: number, value: number): string => {
+    if (displayFormat === 'hex') {
+      return (value & 0xFF).toString(16).padStart(2, '0').toUpperCase();
+    }
+    
+    // 尝试检测ASCII字符
+    if (value >= 32 && value <= 126) { // 可打印ASCII字符
+      return String.fromCharCode(value);
+    }
+    
+    return value.toString();
+  };
+  
+  // 获取单元格背景色，突出显示标签开始的单元格
+  const getCellBackground = (address: number): string => {
+    // 判断是否为数据标签起始位置
+    if (dataLabels[address]) {
+      return 'bg-blue-50';
+    }
+    
+    // 判断是否是 .word 数据的起始位置（4字节对齐）
+    if (address % 4 === 0) {
+      // 查找前后的内存是否有值
+      const hasData = memory[formatAddress(address)] !== undefined;
+      if (hasData) {
+        return 'bg-gray-50';
+      }
+    }
+    
+    return '';
   };
 
   return (
@@ -172,6 +237,26 @@ export function MemoryView() {
           </label>
         </div>
       </div>
+      
+      {/* 数据标签面板 - 仅在GP段显示 */}
+      {segment === 'gp' && Object.keys(dataLabels).length > 0 && (
+        <div className="mb-4 p-2 bg-gray-50 rounded border border-gray-200">
+          <h3 className="text-sm font-semibold mb-2">Data Labels</h3>
+          <div className="flex flex-wrap gap-2">
+            {Object.entries(dataLabels).map(([addr, label]) => (
+              <button
+                key={addr}
+                className="px-2 py-1 text-xs bg-blue-50 text-blue-700 rounded hover:bg-blue-100 transition-colors"
+                onClick={() => setStartAddress(parseInt(addr) & ~0xF)} // 跳转到标签地址，对齐到16字节边界
+                title={`Jump to ${label} at ${formatAddress(parseInt(addr))}`}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+      
       <div className="flex-1 overflow-auto">
         <div className="inline-block min-w-full align-middle">
           <table className="min-w-full divide-y divide-gray-200 border border-gray-200 rounded-lg overflow-hidden">
@@ -190,30 +275,57 @@ export function MemoryView() {
             <tbody className="bg-white divide-y divide-gray-200">
               {Array.from({ length: rowCount }, (_, row) => {
                 const baseAddress = (segment === 'text') ? row * colCount : startAddress + row * colCount;
+                // 检查当前行是否有标签
+                const rowLabel = Object.entries(dataLabels).find(([addr, _]) => {
+                  const address = parseInt(addr);
+                  return address >= baseAddress && address < baseAddress + colCount;
+                });
+                
                 return (
                   <tr key={row} className={row % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
                     <td className="sticky left-0 z-10 whitespace-nowrap px-3 py-2 text-sm font-mono text-gray-900 border-r border-gray-200 bg-inherit w-32">
-                      {formatAddress(baseAddress)}
+                      <div className="flex flex-col">
+                        <span>{formatAddress(baseAddress)}</span>
+                        {rowLabel && (
+                          <span className="text-xs text-blue-600 font-bold mt-1">{rowLabel[1]}</span>
+                        )}
+                      </div>
                     </td>
                     {Array.from({ length: colCount }, (_, col) => {
                       if (segment === 'data' || segment === 'gp' || segment === 'sp') {
                         const address = baseAddress + col;
                         const value = memory[formatAddress(address)] || 0;
+                        const label = getLabelForAddress(address);
+                        const cellClass = `whitespace-nowrap px-3 py-2 text-sm border-r border-gray-200 last:border-r-0 ${getCellBackground(address)}`;
+                        
                         return (
-                          <td key={col} className="whitespace-nowrap px-3 py-2 text-sm border-r border-gray-200 last:border-r-0">
-                            <input
-                              type="text"
-                              value={formatValue(value)}
-                              onChange={(e) => handleValueChange(address, e.target.value)}
-                              className="w-full h-6 font-mono text-sm bg-transparent focus:bg-blue-50 focus:outline-none rounded text-center"
-                              aria-label={`Memory address ${formatAddress(address)} value`}
-                            />
+                          <td key={col} className={cellClass}>
+                            <div className="relative">
+                              {label && (
+                                <div className="absolute -top-2 -left-1 text-xs text-blue-500 font-bold">
+                                  {label}
+                                </div>
+                              )}
+                              <input
+                                type="text"
+                                value={formatValue(value)}
+                                onChange={(e) => handleValueChange(address, e.target.value)}
+                                className={`w-full h-6 font-mono text-sm bg-transparent focus:bg-blue-50 focus:outline-none rounded text-center ${label ? 'mt-2' : ''}`}
+                                aria-label={`Memory address ${formatAddress(address)} value`}
+                                title={label ? `${label}: ${formatAddress(address)}` : formatAddress(address)}
+                              />
+                              {value >= 32 && value <= 126 && (
+                                <div className="absolute -bottom-2 left-0 text-xs text-gray-500 w-full text-center">
+                                  {String.fromCharCode(value)}
+                                </div>
+                              )}
+                            </div>
                           </td>
                         );
                       } else {
                         const index = Math.floor((row * colCount + col) / 4);
                         const byteOffset = (row * colCount + col) % 4;
-                        const instruction = assembledInstructions[index];
+                        const instruction = assembledInstructions.find(inst => inst.segment === 'text' && inst.address === index * 4);
                         let byteValue = '';
                         if (instruction) {
                           const fullHex = instruction.hex.replace('0x', '');

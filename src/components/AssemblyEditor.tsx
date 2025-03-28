@@ -58,7 +58,25 @@ export function AssemblyEditor() {
   useEffect(() => {
     // 表格部分的高亮滚动
     if (tableBodyRef.current && currentInstructionIndex !== null && currentInstructionIndex >= 0) {
-      const highlightedRow = tableBodyRef.current.querySelector(`tr:nth-child(${currentInstructionIndex + 1})`);
+      // 找到当前PC对应的行
+      const currentPC = currentInstructionIndex * 4;
+      const rows = tableBodyRef.current.querySelectorAll('tr');
+      let highlightedRow = null;
+      
+      // 查找包含当前PC地址的行
+      for (const row of rows) {
+        const firstCell = row.querySelector('td:first-child');
+        if (firstCell && firstCell.textContent?.includes(`0x${currentPC.toString(16).padStart(8, '0')}`)) {
+          highlightedRow = row;
+          break;
+        }
+      }
+      
+      // 如果找不到，则找已高亮的行
+      if (!highlightedRow) {
+        highlightedRow = tableBodyRef.current.querySelector('.bg-yellow-50')?.parentElement;
+      }
+                             
       if (highlightedRow) {
         highlightedRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }
@@ -162,57 +180,39 @@ export function AssemblyEditor() {
   const assembleCode = () => {
     setError(null);
     useCircuitStore.getState().resetSimulation();
+    
     try {
       const assemblerInstance = new Assembler();
       const instructions = assemblerInstance.assemble(editorCode);
       
-      // 将汇编指令与机器码对应
-      // 首先构建指令映射表
-      const instructionMapping: { sourceLine: string; expandedInsts: string[] }[] = [];
-      const sourceLines = editorCode.split('\n');
-      
-      for (const line of sourceLines) {
-        const trimmedLine = line.split('#')[0].trim();
-        // 跳过空行、注释行、标签行和段指令
-        if (trimmedLine && !trimmedLine.endsWith(':') && trimmedLine !== '.data' && trimmedLine !== '.text') {
-          const expandedInsts = expandPseudoInstruction(trimmedLine);
-          instructionMapping.push({
-            sourceLine: line.trim(),
-            expandedInsts
-          });
-        }
+      // 处理内存数据（如果存在）
+      // @ts-ignore - memoryData是我们特殊添加的属性
+      if (instructions.length > 0 && instructions[0].memoryData) {
+        // @ts-ignore
+        const memoryData = instructions[0].memoryData;
+        
+        // 在resetSimulation之后确保内存数据被正确设置
+        // 增加延迟确保内存数据写入在模拟开始之前完成
+        setTimeout(() => {
+          // 先清空内存，然后设置新的内存数据
+          useCircuitStore.getState().updateMemory(memoryData);
+        }, 50);
+        
+        // 从结果中删除memoryData属性，防止影响后续处理
+        // @ts-ignore
+        delete instructions[0].memoryData;
       }
-
-      // 然后映射每条机器码指令
-      let currentInstructionIndex = 0;
-      const instructionsWithAssembly = instructions.map((inst, i) => {
-        let sourceLine = '';
-        let expandedInst = '';
-        
-        // 找到当前指令对应的源代码行
-        let accumulator = 0;
-        for (const mapping of instructionMapping) {
-          if (i >= accumulator && i < accumulator + mapping.expandedInsts.length) {
-            sourceLine = mapping.sourceLine;
-            expandedInst = mapping.expandedInsts[i - accumulator];
-            
-            // 替换分支指令中的标签为地址
-            if (expandedInst) {
-              Object.entries(assemblerInstance.getLabelMap()).forEach(([label, address]) => {
-                const labelRegex = new RegExp(`\\b${label}\\b`, 'g');
-                expandedInst = expandedInst.replace(labelRegex, `0x${address.toString(16).padStart(8, '0')}`);
-              });
-            }
-            break;
-          }
-          accumulator += mapping.expandedInsts.length;
-        }
-        
+      
+      // 过滤掉数据段指令，只保留文本段指令
+      const textInstructions = instructions.filter(inst => inst.segment !== 'data');
+      
+      // 将汇编指令与机器码对应
+      // 此处我们将使用展开后的伪指令作为assembly
+      const instructionsWithAssembly = textInstructions.map((inst) => {
+        // 保留原有的assembly字段，它已经是展开后的实际指令
         return {
           ...inst,
-          assembly: expandedInst || '',
-          source: sourceLine || '',
-          sourceLineIndex: getSourceLineFromInstructionIndex(i)  // 保存源代码行号
+          sourceLineIndex: -1 // 稍后会设置正确的行号
         };
       });
       
@@ -380,13 +380,15 @@ export function AssemblyEditor() {
                 </thead>
                 <tbody className="divide-y divide-gray-100">
                   {assembledInstructions.length > 0 ? (
-                    assembledInstructions.map((inst, i) => (
+                    assembledInstructions
+                      .filter(inst => inst.segment !== 'data') // 过滤掉数据段指令
+                      .map((inst, i) => (
                       <tr 
                         key={i} 
-                        className={`${i === currentInstructionIndex ? 'bg-yellow-50 hover:bg-yellow-100' : 'hover:bg-gray-50'} transition-colors duration-150`}
+                        className={`${currentInstructionIndex * 4 === inst.address ? 'bg-yellow-50 hover:bg-yellow-100' : 'hover:bg-gray-50'} transition-colors duration-150`}
                         id={`instruction-row-${i}`}
                       >
-                        <td className="py-2 px-3 font-mono text-gray-600 text-xs whitespace-nowrap overflow-hidden text-ellipsis">{`0x${(i * 4).toString(16).padStart(8, '0')}`}</td>
+                        <td className="py-2 px-3 font-mono text-gray-600 text-xs whitespace-nowrap overflow-hidden text-ellipsis">{`0x${(inst.address !== undefined ? inst.address : i * 4).toString(16).padStart(8, '0')}`}</td>
                         <td className="py-2 px-3 font-mono text-blue-600 text-xs whitespace-nowrap overflow-hidden text-ellipsis">{inst.hex}</td>
                         <td className="py-2 px-3 font-mono text-xs whitespace-nowrap">{inst.assembly}</td>
                         <td className="py-2 px-3 font-mono text-gray-600 text-xs whitespace-nowrap overflow-hidden text-ellipsis">{inst.source}</td>

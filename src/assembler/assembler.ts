@@ -169,6 +169,17 @@ export const expandPseudoInstruction = (line: string): string[] => {
         ];
       }
     }
+    case 'la': {
+      if (parts.length !== 3) throw new AssemblerError(`la指令语法错误：需要2个操作数`, {
+        errorType: '操作数错误',
+        instruction: lineWithoutComment,
+        suggestion: 'la指令格式：la rd, symbol（例如：la a0, msg）'
+      });
+      // la rd, symbol - 加载标签地址到寄存器
+      // 在第一遍扫描时，标签地址未知，所以只能返回占位符
+      // 在实际汇编过程中会替换为lui+addi指令
+      return [`la ${parts[1]}, ${parts[2]}`];
+    }
     case 'mv': {
       if (parts.length !== 3) throw new AssemblerError('mv指令需要2个操作数');
       // mv rd, rs 等价于 addi rd, rs, 0
@@ -229,6 +240,35 @@ export const parseInstruction = (line: string, currentAddress: number, labelMap:
                op === 'srl' || op === 'sra' ? '101' :
                op === 'or' ? '110' : '111',
         funct7: op === 'sub' || op === 'sra' ? '0100000' : '0000000'
+      };
+    }
+    case 'la': {
+      if (parts.length !== 3) throw new AssemblerError(`${op}指令需要2个操作数`, {
+        errorType: '操作数错误',
+        instruction: lineWithoutComment,
+        suggestion: `la指令格式：la rd, symbol（例如：la a0, msg）`
+      });
+      
+      const rd = parseRegister(parts[1]);
+      const symbol = parts[2];
+      
+      if (!(symbol in labelMap)) {
+        throw new AssemblerError(`未定义的标签: ${symbol}`, {
+          errorType: '标签错误',
+          instruction: lineWithoutComment,
+          suggestion: '请确保标签已在代码中定义'
+        });
+      }
+      
+      const address = labelMap[symbol];
+      // 首先生成lui指令部分
+      const upper = (address >> 12) & 0xFFFFF;
+      
+      return {
+        type: 'U',
+        opcode: '0110111', // lui的opcode
+        rd,
+        imm: upper
       };
     }
     case 'addi':
@@ -412,8 +452,15 @@ export const generateMachineCode = (inst: Instruction): string => {
 
   // 符号扩展函数
   const signExtend = (value: number, bits: number) => {
+    // 检查最高位是否为1（负数）
     const signBit = 1 << (bits - 1);
-    return (value & (signBit - 1)) - (value & signBit);
+    if (value & signBit) {
+      // 如果是负数，则进行符号扩展
+      return value | (~0 << bits);
+    } else {
+      // 如果是正数，则保持不变
+      return value;
+    }
   };
 
   switch (inst.type) {
@@ -427,7 +474,9 @@ export const generateMachineCode = (inst: Instruction): string => {
       break;
 
     case 'I':
-      const iImm = signExtend(inst.imm!, 12);
+      // 直接使用原始的立即数值，不进行符号扩展
+      const iImm = inst.imm!;
+      
       machineCode |= (inst.rd! & 0x1F) << 7;
       machineCode |= (parseInt(inst.funct3!, 2) & 0x7) << 12;
       machineCode |= (inst.rs1! & 0x1F) << 15;
@@ -438,8 +487,10 @@ export const generateMachineCode = (inst: Instruction): string => {
         // 对于移位指令，立即数只使用低5位
         machineCode |= ((iImm & 0x1F) << 20) >>> 0;
       } else {
+        // 对于其他I型指令，使用低12位
         machineCode |= ((iImm & 0xFFF) << 20) >>> 0;
       }
+      
       break;
 
     case 'S':
@@ -498,208 +549,390 @@ export class Assembler {
   private currentSegment: 'text' | 'data' = 'text';
   private textAddress = 0;
   private dataAddress = 0;
+  private readonly GP_BASE = 0x10000000;  // GP 寄存器基址
+  
   public getLabelMap(): Record<string, number> {
     return this.labelMap;
   }
+  
   public assemble(code: string): AssembledInstruction[] {
     this.labelMap = {};
     this.currentAddress = 0;
     this.currentSegment = 'text';
     this.textAddress = 0;
-    this.dataAddress = 0;
+    this.dataAddress = this.GP_BASE; // 数据段从GP寄存器基址开始
 
-    // 第一遍：收集标签和处理段指令
+    // 第一遍：只收集标签所在的地址，不处理数据的地址偏移
+    // 预先处理标签，单独一遍扫描
+    let currentAddr = 0;
+    let inDataSegment = false;
+    
+    // 首先分离所有行并保存它们（忽略注释和空行）
+    const allLines: {text: string, hasLabel: boolean, label?: string, instr?: string}[] = [];
+    
     code.split('\n').forEach(line => {
       const trimmedLine = line.trim();
       if (!trimmedLine || trimmedLine.startsWith('#')) return;
       
-      // 处理段指令
-      if (trimmedLine === '.text') {
-        this.currentSegment = 'text';
-        this.currentAddress = this.textAddress;
-        return;
-      } else if (trimmedLine === '.data') {
-        this.currentSegment = 'data';
-        this.currentAddress = this.dataAddress;
-        return;
-      }
+      const entry: {text: string, hasLabel: boolean, label?: string, instr?: string} = {
+        text: trimmedLine,
+        hasLabel: false
+      };
       
+      // 检查是否有标签
       const labelMatch = trimmedLine.match(/^([a-zA-Z0-9_]+):/);
       if (labelMatch) {
-        this.labelMap[labelMatch[1]] = this.currentAddress;
-        return;
+        entry.hasLabel = true;
+        entry.label = labelMatch[1];
+        
+        // 提取标签后的指令或数据
+        const afterLabel = trimmedLine.substring(labelMatch[0].length).trim();
+        if (afterLabel) {
+          entry.instr = afterLabel;
+        }
+      } else {
+        entry.instr = trimmedLine;
       }
       
-      // 如果不是纯标签行，则增加地址
-      if (!trimmedLine.endsWith(':')) {
-        if (this.currentSegment === 'text') {
-          // 处理伪指令，每个伪指令可能展开为多条基本指令
-          const expandedInstructions = expandPseudoInstruction(trimmedLine);
-          this.currentAddress += 4 * expandedInstructions.length;
-          this.textAddress = this.currentAddress;
-        } else if (this.currentSegment === 'data') {
-          // 处理数据定义指令
-          if (trimmedLine.startsWith('.word')) {
-            const parts = trimmedLine.split(/\s+/).slice(1);
-            this.currentAddress += 4 * parts.length;
-          } else if (trimmedLine.startsWith('.byte')) {
-            const parts = trimmedLine.split(/\s+/).slice(1);
-            this.currentAddress += parts.length;
-          } else if (trimmedLine.startsWith('.half')) {
-            const parts = trimmedLine.split(/\s+/).slice(1);
-            this.currentAddress += 2 * parts.length;
-          } else if (trimmedLine.startsWith('.ascii') || trimmedLine.startsWith('.asciz')) {
-            const match = trimmedLine.match(/"(.*)"/);
+      allLines.push(entry);
+    });
+    
+    // 现在进行第一遍遍历，只收集.text和.data指令和标签的位置
+    currentAddr = 0;
+    inDataSegment = false;
+    
+    for (let i = 0; i < allLines.length; i++) {
+      const entry = allLines[i];
+      
+      // 处理段指令
+      if (entry.instr === '.text') {
+        inDataSegment = false;
+        currentAddr = 0; // 代码段从0开始
+        continue;
+      } else if (entry.instr === '.data') {
+        inDataSegment = true;
+        currentAddr = this.GP_BASE; // 数据段从GP_BASE开始
+        continue;
+      }
+      
+      // 如果有标签，记录它的地址
+      if (entry.hasLabel) {
+        this.labelMap[entry.label!] = currentAddr;
+      }
+      
+      // 根据指令或数据类型更新地址
+      if (entry.instr) {
+        if (!inDataSegment) {
+          // 处理代码段
+          const expandedInstrs = expandPseudoInstruction(entry.instr);
+          currentAddr += 4 * expandedInstrs.length;
+        } else {
+          // 处理数据段
+          if (entry.instr.startsWith('.word')) {
+            const parts = entry.instr.split(/\s+/).slice(1);
+            currentAddr += 4 * parts.length;
+          } else if (entry.instr.startsWith('.byte')) {
+            const parts = entry.instr.split(/\s+/).slice(1);
+            currentAddr += parts.length;
+          } else if (entry.instr.startsWith('.half')) {
+            const parts = entry.instr.split(/\s+/).slice(1);
+            currentAddr += 2 * parts.length;
+          } else if (entry.instr.startsWith('.ascii') || entry.instr.startsWith('.asciz')) {
+            const match = entry.instr.match(/"(.*)"/);
             if (match) {
               const str = match[1];
-              this.currentAddress += trimmedLine.startsWith('.asciz') ? str.length + 1 : str.length;
+              const increment = entry.instr.startsWith('.asciz') ? str.length + 1 : str.length;
+              currentAddr += increment;
             }
           }
-          this.dataAddress = this.currentAddress;
         }
       }
-    });
-
-    // 第二遍：生成指令和数据
+    }
+    
+    // 完成标签收集后，开始第二遍正式汇编
     this.currentAddress = 0;
     this.currentSegment = 'text';
     
     const result: AssembledInstruction[] = [];
+    const memoryBytes: Record<number, number> = {}; // 用于跟踪内存中的每个字节
     
-    code.split('\n').forEach(line => {
-      const trimmedLine = line.trim();
-      if (!trimmedLine || trimmedLine.startsWith('#')) return;
-      
-      // 处理段指令 - 不将段指令添加到结果中，只更改当前段
-      if (trimmedLine === '.text') {
-        this.currentSegment = 'text';
+    // 第二遍：生成实际的指令和数据
+    let currentSection = 'text';
+    
+    for (const entry of allLines) {
+      // 处理段指令
+      if (entry.instr === '.text') {
+        currentSection = 'text';
         this.currentAddress = result.filter(inst => inst.segment === 'text').reduce((acc, inst) => acc + 4, 0);
-        return;
-      } else if (trimmedLine === '.data') {
-        this.currentSegment = 'data';
-        this.currentAddress = result.filter(inst => inst.segment === 'data').reduce((acc, inst) => {
+        continue;
+      } else if (entry.instr === '.data') {
+        currentSection = 'data';
+        this.currentAddress = this.GP_BASE + result.filter(inst => inst.segment === 'data').reduce((acc, inst) => {
           if (inst.data) {
             return acc + inst.data.length;
           }
           return acc;
         }, 0);
-        return;
+        continue;
       }
       
-      // 跳过标签行
-      if (trimmedLine.match(/^[a-zA-Z0-9_]+:$/)) return;
+      // 跳过纯标签行
+      if (!entry.instr) continue;
       
-      // 处理指令或数据
-      if (this.currentSegment === 'text') {
+      const instruction = entry.instr;
+      
+      if (currentSection === 'text') {
         // 处理代码段指令
-        if (!trimmedLine.startsWith('.')) {
+        if (!instruction.startsWith('.')) {
           // 展开伪指令
-          const expandedInstructions = expandPseudoInstruction(trimmedLine);
-          expandedInstructions.forEach(expandedLine => {
-            const parsedInst = parseInstruction(expandedLine, this.currentAddress, this.labelMap);
-            const hex = generateMachineCode(parsedInst);
-            const binary = (parseInt(hex.slice(2), 16) >>> 0).toString(2).padStart(32, '0');
-            result.push({ 
-              hex, 
-              binary, 
-              assembly: expandedLine,
-              source: trimmedLine,
-              segment: 'text',
-              address: this.currentAddress
-            });
-            this.currentAddress += 4;
+          const expandedInstructions = expandPseudoInstruction(instruction);
+          expandedInstructions.forEach((expandedLine, i) => {
+            try {
+              // 特殊处理 la 指令的第二部分 (addi)
+              if (expandedLine.startsWith('la ')) {
+                const parts = expandedLine.split(/[\s,]+/).filter(Boolean);
+                if (parts.length === 3) {
+                  const rd = parts[1];
+                  const symbol = parts[2];
+                  
+                  if (symbol in this.labelMap) {
+                    const address = this.labelMap[symbol];
+                    
+                    // 计算地址在数据段中的偏移量
+                    let offset = 0;
+                    let baseImm = 0x10000; // 默认的lui立即数，对应0x10000000
+                    
+                    // 检查标签是在数据段还是在代码段
+                    if (address >= this.GP_BASE) {
+                      // 数据段标签
+                      offset = address - this.GP_BASE;
+                    } else {
+                      // 代码段标签
+                      baseImm = address >>> 12;
+                      offset = address & 0xFFF;
+                    }
+                    
+                    // 确保偏移量在12位有符号整数范围内 (-2048 到 2047)
+                    if (offset < -2048 || offset > 2047) {
+                      console.warn(`警告: ${symbol} 的偏移量 ${offset} 超出了12位有符号整数范围`);
+                    }
+                    
+                    // 生成 lui 指令
+                    const luiInst = {
+                      type: 'U' as const,
+                      opcode: '0110111',
+                      rd: parseRegister(rd),
+                      imm: baseImm
+                    };
+                    const luiHex = generateMachineCode(luiInst);
+                    const luiBinary = (parseInt(luiHex.slice(2), 16) >>> 0).toString(2).padStart(32, '0');
+                    
+                    result.push({
+                      hex: luiHex,
+                      binary: luiBinary,
+                      assembly: `lui ${rd}, 0x${baseImm.toString(16)}`,
+                      source: expandedLine,
+                      segment: 'text',
+                      address: this.currentAddress
+                    });
+                    this.currentAddress += 4;
+                    
+                    // 生成 addi 指令
+                    const addiInst = {
+                      type: 'I' as const,
+                      opcode: '0010011',
+                      rd: parseRegister(rd),
+                      rs1: parseRegister(rd),
+                      imm: offset,
+                      funct3: '000'
+                    };
+                    const addiHex = generateMachineCode(addiInst);
+                    const addiBinary = (parseInt(addiHex.slice(2), 16) >>> 0).toString(2).padStart(32, '0');
+                    
+                    result.push({
+                      hex: addiHex,
+                      binary: addiBinary,
+                      assembly: `addi ${rd}, ${rd}, ${offset}`,
+                      source: expandedLine,
+                      segment: 'text',
+                      address: this.currentAddress
+                    });
+                    this.currentAddress += 4;
+                  }
+                }
+                return; // la 指令已处理完毕，跳过正常的处理
+              }
+              
+              // 处理其他指令
+              const parsedInst = parseInstruction(expandedLine, this.currentAddress, this.labelMap);
+              const hex = generateMachineCode(parsedInst);
+              const binary = (parseInt(hex.slice(2), 16) >>> 0).toString(2).padStart(32, '0');
+              result.push({ 
+                hex, 
+                binary, 
+                assembly: expandedLine,
+                source: entry.text,
+                segment: 'text',
+                address: this.currentAddress
+              });
+              this.currentAddress += 4;
+            } catch (error) {
+              if (error instanceof AssemblerError) {
+                throw new AssemblerError(error.message, {
+                  ...error,
+                  lineNumber: 0
+                });
+              } else {
+                throw error;
+              }
+            }
           });
         }
-      } else if (this.currentSegment === 'data') {
+      } else if (currentSection === 'data') {
         // 处理数据段指令
-        if (trimmedLine.startsWith('.word')) {
-          const parts = trimmedLine.split(/\s+/).slice(1);
-          const data = parts.map(part => {
-            if (part.startsWith('0x')) {
-              return parseInt(part.slice(2), 16);
-            } else {
-              return parseInt(part);
-            }
-          });
+        try {
+          let dataBytes: number[] = [];
+          let dataSize = 0;
           
-          result.push({
-            hex: '0x' + data.map(d => d.toString(16).padStart(8, '0')).join(''),
-            binary: data.map(d => d.toString(2).padStart(32, '0')).join(''),
-            assembly: trimmedLine,
-            source: trimmedLine,
-            segment: 'data',
-            address: this.currentAddress,
-            data: data
-          });
-          
-          this.currentAddress += 4 * data.length;
-        } else if (trimmedLine.startsWith('.byte')) {
-          const parts = trimmedLine.split(/\s+/).slice(1);
-          const data = parts.map(part => {
-            if (part.startsWith('0x')) {
-              return parseInt(part.slice(2), 16) & 0xFF;
-            } else {
-              return parseInt(part) & 0xFF;
-            }
-          });
-          
-          result.push({
-            hex: '0x' + data.map(d => d.toString(16).padStart(2, '0')).join(''),
-            binary: data.map(d => d.toString(2).padStart(8, '0')).join(''),
-            assembly: trimmedLine,
-            source: trimmedLine,
-            segment: 'data',
-            address: this.currentAddress,
-            data: data
-          });
-          
-          this.currentAddress += data.length;
-        } else if (trimmedLine.startsWith('.half')) {
-          const parts = trimmedLine.split(/\s+/).slice(1);
-          const data = parts.map(part => {
-            if (part.startsWith('0x')) {
-              return parseInt(part.slice(2), 16) & 0xFFFF;
-            } else {
-              return parseInt(part) & 0xFFFF;
-            }
-          });
-          
-          result.push({
-            hex: '0x' + data.map(d => d.toString(16).padStart(4, '0')).join(''),
-            binary: data.map(d => d.toString(2).padStart(16, '0')).join(''),
-            assembly: trimmedLine,
-            source: trimmedLine,
-            segment: 'data',
-            address: this.currentAddress,
-            data: data
-          });
-          
-          this.currentAddress += 2 * data.length;
-        } else if (trimmedLine.startsWith('.ascii') || trimmedLine.startsWith('.asciz')) {
-          const match = trimmedLine.match(/"(.*)"/);
-          if (match) {
-            const str = match[1];
-            const data = Array.from(str).map(c => c.charCodeAt(0));
+          if (instruction.startsWith('.word')) {
+            const parts = instruction.split(/\s+/).slice(1);
+            const data = parts.map(part => {
+              if (part.startsWith('0x')) {
+                return parseInt(part.slice(2), 16);
+              } else {
+                return parseInt(part);
+              }
+            });
             
-            if (trimmedLine.startsWith('.asciz')) {
-              data.push(0); // 添加空字符结尾
-            }
+            dataBytes = [];
+            // 存储为小端序
+            data.forEach(value => {
+              dataBytes.push(value & 0xFF);
+              dataBytes.push((value >> 8) & 0xFF);
+              dataBytes.push((value >> 16) & 0xFF);
+              dataBytes.push((value >> 24) & 0xFF);
+            });
+            dataSize = 4 * data.length;
             
+            // 添加到结果数组
             result.push({
-              hex: '0x' + data.map(d => d.toString(16).padStart(2, '0')).join(''),
-              binary: data.map(d => d.toString(2).padStart(8, '0')).join(''),
-              assembly: trimmedLine,
-              source: trimmedLine,
+              hex: '0x' + data.map(d => d.toString(16).padStart(8, '0')).join(''),
+              binary: data.map(d => d.toString(2).padStart(32, '0')).join(''),
+              assembly: instruction,
+              source: entry.text,
               segment: 'data',
               address: this.currentAddress,
               data: data
             });
             
-            this.currentAddress += data.length;
+          } else if (instruction.startsWith('.byte')) {
+            const parts = instruction.split(/\s+/).slice(1);
+            const data = parts.map(part => {
+              if (part.startsWith('0x')) {
+                return parseInt(part.slice(2), 16) & 0xFF;
+              } else {
+                return parseInt(part) & 0xFF;
+              }
+            });
+            
+            dataBytes = data;
+            dataSize = data.length;
+            
+            result.push({
+              hex: '0x' + data.map(d => d.toString(16).padStart(2, '0')).join(''),
+              binary: data.map(d => d.toString(2).padStart(8, '0')).join(''),
+              assembly: instruction,
+              source: entry.text,
+              segment: 'data',
+              address: this.currentAddress,
+              data: data
+            });
+            
+          } else if (instruction.startsWith('.half')) {
+            const parts = instruction.split(/\s+/).slice(1);
+            const data = parts.map(part => {
+              if (part.startsWith('0x')) {
+                return parseInt(part.slice(2), 16) & 0xFFFF;
+              } else {
+                return parseInt(part) & 0xFFFF;
+              }
+            });
+            
+            dataBytes = [];
+            // 存储为小端序
+            data.forEach(value => {
+              dataBytes.push(value & 0xFF);
+              dataBytes.push((value >> 8) & 0xFF);
+            });
+            dataSize = 2 * data.length;
+            
+            result.push({
+              hex: '0x' + data.map(d => d.toString(16).padStart(4, '0')).join(''),
+              binary: data.map(d => d.toString(2).padStart(16, '0')).join(''),
+              assembly: instruction,
+              source: entry.text,
+              segment: 'data',
+              address: this.currentAddress,
+              data: data
+            });
+            
+          } else if (instruction.startsWith('.ascii') || instruction.startsWith('.asciz')) {
+            const match = instruction.match(/"(.*)"/);
+            if (match) {
+              const str = match[1];
+              const data = Array.from(str).map(c => c.charCodeAt(0));
+              
+              if (instruction.startsWith('.asciz')) {
+                data.push(0); // 添加空字符结尾
+              }
+              
+              dataBytes = data;
+              dataSize = data.length;
+              
+              result.push({
+                hex: '0x' + data.map(d => d.toString(16).padStart(2, '0')).join(''),
+                binary: data.map(d => d.toString(2).padStart(8, '0')).join(''),
+                assembly: instruction,
+                source: entry.text,
+                segment: 'data',
+                address: this.currentAddress,
+                data: data
+              });
+            }
+          }
+          
+          // 存储到内存模型中并更新地址
+          if (dataBytes.length > 0) {
+            dataBytes.forEach((value, i) => {
+              memoryBytes[this.currentAddress + i] = value;
+            });
+            
+            this.currentAddress += dataSize;
+          }
+        } catch (error) {
+          if (error instanceof AssemblerError) {
+            throw new AssemblerError(error.message, {
+              ...error,
+              lineNumber: 0
+            });
+          } else {
+            throw error;
           }
         }
       }
-    });
+    }
+    
+    // 将内存数据添加到结果中
+    // 作为一个特殊的属性添加到第一个结果元素上
+    if (result.length > 0) {
+      const memoryData: Record<string, number> = {};
+      Object.entries(memoryBytes).forEach(([addr, value]) => {
+        memoryData[`0x${parseInt(addr).toString(16).padStart(8, '0')}`] = value;
+      });
+      
+      // @ts-ignore - 添加一个特殊的属性用于传递内存数据
+      result[0].memoryData = memoryData;
+    }
     
     return result;
   }
