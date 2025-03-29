@@ -12,6 +12,7 @@ import ReactFlow, {
   applyEdgeChanges,
   MarkerType,
   ConnectionMode,
+  BackgroundVariant,
 } from 'reactflow';
 import 'reactflow/dist/style.css';
 
@@ -305,7 +306,7 @@ export function CircuitCanvas() {
         maxZoom={3}
         fitView
       >
-        <Background />
+        <Background variant={BackgroundVariant.Dots} gap={12} size={1} color="#bbb" />
         <Controls />
         <Panel position="top-right" className="bg-white p-2 rounded-lg shadow-lg mr-4 mt-4">
           <div className="flex flex-col space-y-2">

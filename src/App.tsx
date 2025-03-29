@@ -98,7 +98,7 @@ function App() {
   const outputMessages = useCircuitStore((state) => state.outputMessages);
 
   return (
-    <div className="flex flex-col h-screen bg-gray-100">
+    <div className="flex flex-col h-screen bg-gray-200">
       <header className="bg-white border-b border-gray-200 flex-shrink-0 shadow-sm">
         <div className="container mx-auto px-4">
           <div className="flex items-center h-14">
