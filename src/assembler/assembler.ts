@@ -202,6 +202,16 @@ export const expandPseudoInstruction = (line: string, lineNumber?: number): stri
       // j offset equivalent to jal x0, offset
       return [`jal x0, ${parts[1]}`];
     }
+    case 'call': {
+      if (parts.length !== 2) throw new AssemblerError('call instruction requires 1 operand', {
+        lineNumber: lineNumber,
+        errorType: 'Operand Error',
+        instruction: lineWithoutComment,
+        suggestion: 'call instruction format: call label (e.g., call function_name)'
+      });
+      // call label equivalent to jal ra, label
+      return [`jal ra, ${parts[1]}`];
+    }
     case 'ret': {
       // ret equivalent to jalr x0, ra, 0
       return ['jalr x0, ra, 0'];

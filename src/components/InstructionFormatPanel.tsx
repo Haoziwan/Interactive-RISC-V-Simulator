@@ -83,6 +83,7 @@ const instructionFormats: InstructionFormat[] = [
       'la rd, symbol - Load Address (expands to lui+addi)',
       'mv rd, rs - Move (expands to addi rd, rs, 0)',
       'j offset - Jump (expands to jal x0, offset)',
+      'call label - Call subroutine (expands to jal ra, label)',
       'ret - Return from subroutine (expands to jalr x0, ra, 0)',
       'nop - No Operation (expands to addi x0, x0, 0)'
     ]
