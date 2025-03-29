@@ -45,8 +45,11 @@ export function AssemblyEditor() {
         // 定义令牌类型
         tokenizer: {
           root: [
-            // 注释
+            // 注释 - Must be first to have highest priority
             [/#.*$/, 'comment'],
+            
+            // 寄存器 - Improve pattern to properly match double-digit registers
+            [/\b(x[0-9]|x[1-2][0-9]|x3[0-1]|zero|ra|sp|gp|tp|t[0-6]|s[0-9]|s1[0-1]|a[0-7])\b/, 'register'],
             
             // 标签定义 (修改为仅匹配以冒号结尾的标签)
             [/[a-zA-Z0-9_]+:/, 'label'],
@@ -54,23 +57,20 @@ export function AssemblyEditor() {
             // 段定义
             [/\.(text|data|section|global|align|byte|half|word|dword|float|double|ascii|asciz|zero)/, 'directive'],
             
-            // 寄存器
-            [/(x[0-9]|x[1-2][0-9]|x3[0-1]|zero|ra|sp|gp|tp|t[0-6]|s[0-9]|s1[0-1]|a[0-7])/, 'register'],
-            
             // 基本指令
             [/\b(add|sub|and|or|xor|sll|srl|sra|slt|sltu|addi|andi|ori|xori|slli|srli|srai|slti|sltiu|lb|lh|lw|ld|lbu|lhu|lwu|sb|sh|sw|sd|beq|bne|blt|bge|bltu|bgeu|jal|jalr|lui|auipc|ecall|ebreak)\b/, 'keyword'],
             
             // 伪指令
             [/\b(li|la|mv|not|neg|seqz|snez|sltz|sgtz|j|jr|call|ret|bgt|ble|bgtu|bleu|nop)\b/, 'keyword.pseudo'],
             
-            // 变量和标签引用 (新增规则匹配变量引用)
-            [/\b[a-zA-Z][a-zA-Z0-9_]*\b/, 'identifier'],
-            
-            // 数字（十六进制）
+            // 数字（十六进制）- Move before decimal numbers
             [/0x[0-9a-fA-F]+/, 'number.hex'],
             
             // 数字（十进制）
             [/\b[0-9]+\b/, 'number'],
+            
+            // 变量和标签引用 (新增规则匹配变量引用)
+            [/\b[a-zA-Z][a-zA-Z0-9_]*\b/, 'identifier'],
             
             // 字符串
             [/".*?"/, 'string'],
