@@ -89,12 +89,12 @@ export function AssemblyEditor() {
           { token: 'comment', foreground: '777777', fontStyle: 'italic' },
           { token: 'label', foreground: '0000ff', fontStyle: 'bold' },
           { token: 'directive', foreground: '800080', fontStyle: 'bold' },
-          { token: 'register', foreground: '008080' },
+          { token: 'register', foreground: '000000' },
           { token: 'keyword', foreground: 'A52A2A', fontStyle: 'bold' },
           { token: 'keyword.pseudo', foreground: 'B8860B' },
           { token: 'identifier', foreground: '0000ff' }, // 变量名与标签颜色一致
-          { token: 'number.hex', foreground: '0000ff' },
-          { token: 'number', foreground: '0000ff' },
+          { token: 'number.hex', foreground: '008000' },
+          { token: 'number', foreground: '008000' },
           { token: 'string', foreground: 'ff0000' },
           { token: 'delimiter', foreground: '000000' },
         ],
@@ -577,6 +577,7 @@ export function AssemblyEditor() {
           <Editor
             height="calc(100vh - 140px)"
             defaultLanguage="riscv"
+            language="riscv"
             value={editorCode}
             onChange={(value) => setEditorCode(value || '')}
             theme="riscv-theme"
@@ -591,6 +592,33 @@ export function AssemblyEditor() {
               renderWhitespace: 'all'
             }}
             onMount={handleEditorDidMount}
+            beforeMount={(monaco) => {
+          
+              // Define the theme directly without checking if it exists
+              monaco.editor.defineTheme('riscv-theme', {
+                base: 'vs',
+                inherit: true,
+                rules: [
+                    { token: 'comment', foreground: '777777', fontStyle: 'italic' },
+                    { token: 'label', foreground: '0000ff', fontStyle: 'bold' },
+                    { token: 'directive', foreground: '800080', fontStyle: 'bold' },
+                    { token: 'register', foreground: '000000' },
+                    { token: 'keyword', foreground: 'A52A2A', fontStyle: 'bold' },
+                    { token: 'keyword.pseudo', foreground: 'B8860B' },
+                    { token: 'identifier', foreground: '0000ff' }, // 变量名与标签颜色一致
+                    { token: 'number.hex', foreground: '008000' },
+                    { token: 'number', foreground: '008000' },
+                    { token: 'string', foreground: 'ff0000' },
+                    { token: 'delimiter', foreground: '000000' },
+                ],
+                colors: {
+                  'editor.foreground': '#000000',
+                  'editor.background': '#FFFFFF',
+                  'editor.lineHighlightBackground': '#F0F0F0',
+                }
+              });
+      
+            }}
           />
         </div>
 
