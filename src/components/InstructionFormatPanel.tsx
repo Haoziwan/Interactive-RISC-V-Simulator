@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { BookOpen } from 'lucide-react';
 
 // Define an interface for instruction formats; each format includes a type label and an array of instructions.
 interface InstructionFormat {
@@ -99,6 +100,17 @@ const instructionFormats: InstructionFormat[] = [
       '.ascii "string" - Define ASCII string (not null terminated)',
       '.asciz "string" - Define ASCII string (null terminated)'
     ]
+  },
+  {
+    type: 'ECALL Instructions',
+    instructions: [
+      'ecall - Environment Call (System Call)',
+      'a7=1: Print Integer (a0 = integer to print)',
+      'a7=4: Print String (a0 = address of string)',
+      'a7=10: Exit Program',
+      'a7=11: Print Character (a0 = character code)',
+      'a7=93: Exit Program (Linux compatible)'
+    ]
   }
 ];
 
@@ -108,20 +120,7 @@ export function InstructionFormatPanel() {
   const [isExpanded, setIsExpanded] = useState(false);
 
   return (
-    <div className="mt-2 relative">
-      {/* Title section: clicking toggles the expanded state */}
-      <div 
-        className="flex items-center cursor-pointer select-none"
-        onClick={() => setIsExpanded(!isExpanded)}
-      >
-        <h3 className="font-semibold">
-          Supported Instruction Formats
-        </h3>
-        <span className="ml-2 text-gray-500">
-          {isExpanded ? '▼' : '▶'}
-        </span>
-      </div>
-
+    <div className="relative">
       {/* When expanded, display a modal-like panel with an overlay */}
       {isExpanded && (
         <>
@@ -156,5 +155,56 @@ export function InstructionFormatPanel() {
         </>
       )}
     </div>
+  );
+}
+
+// A button component that toggles the instruction format panel
+export function InstructionFormatButton() {
+  const [isExpanded, setIsExpanded] = useState(false);
+  
+  return (
+    <>
+      <button
+        onClick={() => setIsExpanded(!isExpanded)}
+        className="flex items-center"
+        title="Instruction Guide"
+      >
+        <BookOpen className="w-4 h-4" />
+      </button>
+      
+      {/* When expanded, display the panel */}
+      {isExpanded && (
+        <>
+          {/* Overlay: clicking on it will collapse the panel */}
+          <div 
+            className="fixed inset-0 bg-black bg-opacity-50 z-[100]" 
+            onClick={() => setIsExpanded(false)} 
+          />
+          <div 
+            className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[80vw] grid grid-cols-3 gap-4 text-sm bg-white p-6 rounded-lg shadow-xl border border-gray-200 transition-all duration-300 ease-in-out z-[101] max-h-[80vh] overflow-y-auto"
+            style={{ opacity: isExpanded ? 1 : 0, scale: isExpanded ? '1' : '0.95' }}
+          >
+            {instructionFormats.map((format) => (
+              <div 
+                key={format.type} 
+                className="min-w-0 p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors duration-200"
+              >
+                <h4 className="font-semibold text-gray-800 mb-3">{format.type}</h4>
+                <ul className="list-none space-y-2">
+                  {format.instructions.map((instruction, index) => (
+                    <li 
+                      key={index} 
+                      className="text-xs text-gray-600 hover:text-gray-900 transition-colors duration-200"
+                    >
+                      {instruction}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </>
+      )}
+    </>
   );
 }

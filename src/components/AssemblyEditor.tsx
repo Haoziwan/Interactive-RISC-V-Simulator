@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useCircuitStore } from '../store/circuitStore';
 import { Assembler, expandPseudoInstruction, AssemblerError, AssembledInstruction } from '../assembler/assembler';
-import { InstructionFormatPanel } from './InstructionFormatPanel';
 import Editor, { useMonaco } from '@monaco-editor/react';
 
 // 扩展AssembledInstruction类型，确保包含originalLineNumber
@@ -471,7 +470,7 @@ export function AssemblyEditor() {
               </button>
               <select
                 className="px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200"
-                onChange={(e) => loadTestProgram(e.target.value as 'fibonacci' | 'gcd')}
+                onChange={(e) => loadTestProgram(e.target.value)}
                 defaultValue=""
               >
                 <option value="" disabled>Load Example Program</option>
@@ -485,6 +484,7 @@ export function AssemblyEditor() {
                 <option value="j_type_test">J-Type Test</option>
                 <option value="data_segment_test">Data Segment Test</option>
                 <option value="pseudo_instructions_test">Pseudo-Instructions Test</option>
+                <option value="ecall_test">ECALL Test</option>
               </select>
               <button
                 onClick={assembleCode}
@@ -496,7 +496,7 @@ export function AssemblyEditor() {
           </div>
           
           <Editor
-            height="calc(100vh - 160px)"
+            height="calc(100vh - 140px)"
             defaultLanguage="plaintext"
             value={editorCode}
             onChange={(value) => setEditorCode(value || '')}
@@ -513,8 +513,6 @@ export function AssemblyEditor() {
             }}
             onMount={handleEditorDidMount}
           />
-
-          <InstructionFormatPanel />
         </div>
 
         {/* 右侧结果部分 */}
@@ -548,7 +546,7 @@ export function AssemblyEditor() {
               )}
             </div>
 
-            <div ref={tableBodyRef} className="overflow-auto h-[calc(100vh-10rem)] w-full border border-gray-200 rounded-lg shadow-sm">
+            <div ref={tableBodyRef} className="overflow-auto h-[calc(100vh-9rem)] w-full border border-gray-200 rounded-lg shadow-sm">
               <table className="w-full text-sm table-fixed border-collapse">
                 <thead className="bg-gray-50 sticky top-0 z-10 shadow-sm">
                   <tr>

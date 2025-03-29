@@ -6,6 +6,8 @@ import { ConfigPanel } from './components/ConfigPanel';
 import { AssemblyEditor } from './components/AssemblyEditor';
 import { RegPanel } from './components/RegPanel';
 import { MemoryView } from './components/MemoryView';
+import { OutputPanel } from './components/OutputPanel';
+import { InstructionFormatButton } from './components/InstructionFormatPanel';
 import { ChevronDown, ChevronRight, Code, Database, Cpu, Play, Pause, RotateCcw, StepForward, StepBack } from 'lucide-react';
 import { useCircuitStore } from './store/circuitStore';
 
@@ -51,6 +53,7 @@ function TabButton({ isActive, onClick, children }: TabButtonProps) {
 
 function App() {
   const [activeTab, setActiveTab] = useState('code');
+  const [showOutput, setShowOutput] = useState(false);
 
   const renderContent = () => {
     return (
@@ -92,6 +95,7 @@ function App() {
   };
 
   const isSimulating = useCircuitStore((state) => state.isSimulating);
+  const outputMessages = useCircuitStore((state) => state.outputMessages);
 
   return (
     <div className="flex flex-col h-screen bg-gray-100">
@@ -173,12 +177,30 @@ function App() {
                 </div>
               </div>
             </div>
+            
+            {/* Right-aligned buttons */}
+            <div className="flex items-center space-x-3 ml-4">
+              <div className="p-1.5 rounded-md bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors">
+                <InstructionFormatButton />
+              </div>
+              <button
+                onClick={() => setShowOutput(!showOutput)}
+                className={`flex items-center gap-1 text-xs px-2 py-1 rounded-md transition-colors ${outputMessages.length > 0 ? 'bg-blue-100 text-blue-700 hover:bg-blue-200' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
+                title={showOutput ? 'Hide Output Console' : 'Show Output Console'}
+              >
+                <span>{showOutput ? 'Hide Output' : 'Show Output'}</span>
+                {outputMessages.length > 0 && <span className="ml-0.5 px-1 py-0.5 text-xs bg-blue-500 text-white rounded-full">{outputMessages.length}</span>}
+              </button>
+            </div>
           </div>
         </div>
       </header>
       <main className="flex-1 overflow-hidden">
         {renderContent()}
       </main>
+      
+      {/* Output Panel */}
+      {showOutput && <OutputPanel initialWidth={350} minWidth={250} maxWidth={600} />}
     </div>
   );
 }

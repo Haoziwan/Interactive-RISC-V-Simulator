@@ -27,6 +27,7 @@ interface CircuitState {
     currentInstructionIndex: number;
     stepCount: number;
   }>;
+  outputMessages: string[];
   updatePcValue: (value: number) => void;
   updateMemory: (memory: { [key: string]: number }) => void;
   clearMemory: () => void;
@@ -51,6 +52,8 @@ interface CircuitState {
   updateConnectionMode: (mode: ConnectionMode) => void;
   setAssembledInstructions: (instructions: Array<{hex: string; binary: string; assembly?: string; source?: string; segment?: 'text' | 'data', address?: number, data?: number[]}>) => void;
   setEditorCode: (code: string) => void;
+  addOutputMessage: (message: string) => void;
+  clearOutputMessages: () => void;
 }
 
 const initialCircuit: Circuit = {
@@ -78,6 +81,7 @@ export const useCircuitStore = create<CircuitState>()((set, get) => ({
   pcValue: 0,
   currentInstructionIndex: 0,
   simulationHistory: [],
+  outputMessages: [],
   updatePcValue: (value: number) => set({ 
     pcValue: value,
     currentInstructionIndex: value / 4
@@ -286,11 +290,15 @@ export const useCircuitStore = create<CircuitState>()((set, get) => ({
         return node;
       }),
       isSimulating: false,
+      isProcessing: false,
       stepCount: 0,
       simulationTimer: null,
       pcValue: 0,
       currentInstructionIndex: 0,
-      simulationHistory: []
+      simulationHistory: [],
+      outputMessages: [], // Clear output messages when simulation is reset
+      registers: {}, // Clear registers
+      memory: state.memory // Preserve memory to keep data segment loaded by the assembler
     }));
     
     // 延迟到下一个事件循环设置寄存器默认值，但保留内存中的数据段
@@ -318,14 +326,70 @@ export const useCircuitStore = create<CircuitState>()((set, get) => ({
       
       // 检查是否为ecall指令且为退出程序请求
       const currentInstruction = state.assembledInstructions[currentPc / 4];
-      if (currentInstruction && currentInstruction.hex === '0x00000073' && state.registers[17] === 93) {
-        if (state.simulationTimer !== null) {
-          window.clearInterval(state.simulationTimer);
+      if (currentInstruction && currentInstruction.hex === '0x00000073') {
+        // ECALL instruction
+        const syscallNumber = state.registers[17]; // a7 register holds the system call number
+        
+        // Handle various ECALL operations
+        switch (syscallNumber) {
+          case 1: // Print integer
+            const a0Value = state.registers[10] || 0; // a0 register holds the integer to print
+            get().addOutputMessage(`${a0Value}`);
+            break;
+          
+          case 4: // Print string
+            // a0 should contain the address of the string
+            const stringAddr = state.registers[10] || 0;
+            let outputString = '';
+            let currentAddr = stringAddr;
+            let currentByte;
+            
+            // Read string from memory byte by byte until null terminator
+            do {
+              const byteAddrHex = '0x' + currentAddr.toString(16);
+              currentByte = state.memory[byteAddrHex];
+              if (currentByte !== undefined && currentByte !== 0) {
+                // Check for newline character (ASCII 10)
+                if (currentByte === 10) {
+                  outputString += '\n';
+                } else {
+                  outputString += String.fromCharCode(currentByte);
+                }
+              }
+              currentAddr++;
+            } while (currentByte !== undefined && currentByte !== 0);
+            
+            // Replace literal '\n' with actual newline
+            get().addOutputMessage(outputString);
+            break;
+            
+          case 10: // Exit program
+            get().addOutputMessage("\nProgram exited with code: 0");
+            break;
+            
+          case 11: // Print character
+            const charCode = state.registers[10] || 0; // a0 register holds the character code
+            // Check for newline character (ASCII 10)
+            if (charCode === 10) {
+              get().addOutputMessage('\n');
+            } else {
+              get().addOutputMessage(String.fromCharCode(charCode));
+            }
+            break;
+            
+          case 93: // Exit (Linux compatible)
+            if (state.simulationTimer !== null) {
+              window.clearInterval(state.simulationTimer);
+            }
+            get().addOutputMessage("\nProgram exited with code: 0");
+            return {
+              isSimulating: false,
+              simulationTimer: null
+            };
+            
+          default:
+            get().addOutputMessage(`Unsupported ECALL operation: ${syscallNumber}`);
         }
-        return {
-          isSimulating: false,
-          simulationTimer: null
-        };
       }
       
       // 如果已经执行到最后一条指令，自动暂停模拟，pipeline还需要多执行几句
@@ -452,4 +516,8 @@ export const useCircuitStore = create<CircuitState>()((set, get) => ({
       connectionMode: mode
     }))
   })),
+  addOutputMessage: (message: string) => set((state) => ({
+    outputMessages: [...state.outputMessages, message.replace(/\\n/g, '\n')]
+  })),
+  clearOutputMessages: () => set({ outputMessages: [] }),
 }));
