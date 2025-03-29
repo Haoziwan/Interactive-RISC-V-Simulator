@@ -4,43 +4,51 @@ A web-based application for visualizing RISC-V processor register states and dat
 
 ## Features
 
-- Real-time display of 32 RISC-V registers
-- Support for standard RISC-V register naming conventions
-- Hexadecimal format register value display
-- Responsive design for various screen sizes
-- Visual datapath editor
-- RISC-V assembly code editing and execution
-- Real-time memory state visualization
+- RISC-V Assembly Editor: Write and edit RISC-V assembly code with syntax highlighting
+- Instruction Execution: Step-by-step or continuous execution of RISC-V programs
+- Register State Visualization: Real-time display of register values during program execution
+- Memory Visualization: View and monitor memory contents during program execution
+- Output Console: View program output from system calls
+- Predefined Example Programs: Load example programs to learn RISC-V programming
+- Multiple Datapath Models: Choose between basic datapath and pipelined datapath visualizations
+- Interactive Simulation: Pause, step, and reset simulation at any point
+- Error Highlighting: Immediate feedback on assembly code errors
+
 
 ## Tech Stack
 
 - React: User interface construction
-- TypeScript: Type-safe code development
 - Tailwind CSS: Rapid responsive interface development
 - Vite: Modern build tool
 - ReactFlow: Datapath visualization
 - Zustand: State management
 
 ## Architecture
-
 The project consists of the following main modules:
 
-- **Assembler Module**: Converts RISC-V assembly code to machine code
-  - Supports parsing and generation of R, I, S, B, U, J type instructions
-  - Provides comprehensive error checking and feedback
+- **Assembly Editor**: Provides a Monaco-based editor for writing RISC-V assembly code
+  - Syntax highlighting and error detection
+  - Support for loading example programs
+  - Real-time assembly to machine code conversion
 
-- **Datapath Simulator**: Visualizes RISC-V processor datapath
-  - Supports custom datapath components
-  - Real-time data flow visualization
-  - Configurable component parameters
+- **Assembler**: Converts RISC-V assembly code to machine code
+  - Supports R, I, S, B, U, J type instructions and pseudo-instructions
+  - Handles labels, data segments, and immediate values
+  - Provides detailed error messages with line numbers
 
-- **Register Panel**: Displays processor register states in real-time
-  - Supports 32 general-purpose registers
-  - Real-time register value updates
+- **Circuit Simulator**: Visualizes and simulates the RISC-V processor datapath
+  - Supports both basic and pipelined datapath models
+  - Interactive component connections using ReactFlow
+  - Real-time signal propagation between components
 
-- **Memory View**: Shows system memory state
-  - Memory content visualization
-  - Supports memory read/write operations
+- **Register File**: Displays all 32 RISC-V registers with real-time updates
+  - Shows register values in different formats (hex, decimal, binary)
+  - Highlights register changes during execution
+
+- **Memory System**: Manages instruction and data memory
+  - Displays memory contents in a structured view
+  - Supports data segment initialization from assembly
+  - Handles system calls for I/O operations via memory-mapped registers
 
 ## Quick Start
 
@@ -54,33 +62,6 @@ npm install
 npm run dev
 ```
 
-## Usage Guide
-
-### Code Editor
-
-In the code editor tab, you can:
-- Write RISC-V assembly code
-- Use supported instruction set (R, I, S, B, U, J type instructions)
-- Add labels and comments
-- Run code and observe execution results
-
-### Datapath Editor
-
-In the datapath tab, you can:
-- Drag and drop components from the component library
-- Connect components to create datapath
-- Configure component parameters
-- Observe data flow
-
-### Memory View
-
-In the memory view tab, you can:
-- View memory contents
-- Monitor memory changes
-- Modify memory values
-
-## Development Guide
-
 ### Project Structure
 
 ```
@@ -92,20 +73,6 @@ src/
 └── examples/        # Example code and configurations
 ```
 
-### Adding New Features
-
-1. Adding new instruction support:
-   - Implement instruction parsing in `assembler.ts`
-   - Add corresponding test cases
-
-2. Adding new datapath components:
-   - Create new component in `components/nodes/`
-   - Register component in `CircuitCanvas.tsx`
-   - Add component to the component library
-
-3. Extending memory functionality:
-   - Modify memory store in `circuitStore.ts`
-   - Update memory view component
 
 ### Testing
 
