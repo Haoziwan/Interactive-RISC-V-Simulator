@@ -28,6 +28,85 @@ export function AssemblyEditor() {
   const isSimulating = useCircuitStore((state) => state.isSimulating);
   const stepCount = useCircuitStore((state) => state.stepCount);
 
+  // 注册RISC-V汇编语言
+  useEffect(() => {
+    if (monaco) {
+      // 注册RISC-V汇编语言
+      monaco.languages.register({ id: 'riscv' });
+
+      // 定义RISC-V汇编语言的token提供者
+      monaco.languages.setMonarchTokensProvider('riscv', {
+        // 设置默认令牌类型
+        defaultToken: 'invalid',
+        
+        // 大小写不敏感
+        ignoreCase: true,
+        
+        // 定义令牌类型
+        tokenizer: {
+          root: [
+            // 注释
+            [/#.*$/, 'comment'],
+            
+            // 标签定义 (修改为仅匹配以冒号结尾的标签)
+            [/[a-zA-Z0-9_]+:/, 'label'],
+            
+            // 段定义
+            [/\.(text|data|section|global|align|byte|half|word|dword|float|double|ascii|asciz|zero)/, 'directive'],
+            
+            // 寄存器
+            [/(x[0-9]|x[1-2][0-9]|x3[0-1]|zero|ra|sp|gp|tp|t[0-6]|s[0-9]|s1[0-1]|a[0-7])/, 'register'],
+            
+            // 基本指令
+            [/\b(add|sub|and|or|xor|sll|srl|sra|slt|sltu|addi|andi|ori|xori|slli|srli|srai|slti|sltiu|lb|lh|lw|ld|lbu|lhu|lwu|sb|sh|sw|sd|beq|bne|blt|bge|bltu|bgeu|jal|jalr|lui|auipc|ecall|ebreak)\b/, 'keyword'],
+            
+            // 伪指令
+            [/\b(li|la|mv|not|neg|seqz|snez|sltz|sgtz|j|jr|call|ret|bgt|ble|bgtu|bleu|nop)\b/, 'keyword.pseudo'],
+            
+            // 变量和标签引用 (新增规则匹配变量引用)
+            [/\b[a-zA-Z][a-zA-Z0-9_]*\b/, 'identifier'],
+            
+            // 数字（十六进制）
+            [/0x[0-9a-fA-F]+/, 'number.hex'],
+            
+            // 数字（十进制）
+            [/\b[0-9]+\b/, 'number'],
+            
+            // 字符串
+            [/".*?"/, 'string'],
+            
+            // 分隔符
+            [/[,()]/, 'delimiter'],
+          ],
+        },
+      });
+      
+      // 定义编辑器主题
+      monaco.editor.defineTheme('riscv-theme', {
+        base: 'vs',
+        inherit: true,
+        rules: [
+          { token: 'comment', foreground: '777777', fontStyle: 'italic' },
+          { token: 'label', foreground: '0000ff', fontStyle: 'bold' },
+          { token: 'directive', foreground: '800080', fontStyle: 'bold' },
+          { token: 'register', foreground: '008080' },
+          { token: 'keyword', foreground: 'A52A2A', fontStyle: 'bold' },
+          { token: 'keyword.pseudo', foreground: 'B8860B' },
+          { token: 'identifier', foreground: '0000ff' }, // 变量名与标签颜色一致
+          { token: 'number.hex', foreground: '0000ff' },
+          { token: 'number', foreground: '0000ff' },
+          { token: 'string', foreground: 'ff0000' },
+          { token: 'delimiter', foreground: '000000' },
+        ],
+        colors: {
+          'editor.foreground': '#000000',
+          'editor.background': '#FFFFFF',
+          'editor.lineHighlightBackground': '#F0F0F0',
+        }
+      });
+    }
+  }, [monaco]);
+
   // 保存编辑器实例的引用
   const handleEditorDidMount = (editor: any) => {
     editorRef.current = editor;
@@ -497,10 +576,10 @@ export function AssemblyEditor() {
           
           <Editor
             height="calc(100vh - 140px)"
-            defaultLanguage="plaintext"
+            defaultLanguage="riscv"
             value={editorCode}
             onChange={(value) => setEditorCode(value || '')}
-            theme="vs"
+            theme="riscv-theme"
             options={{
               minimap: { enabled: false },
               fontSize: 14,
