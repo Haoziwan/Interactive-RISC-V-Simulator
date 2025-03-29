@@ -183,10 +183,17 @@ export const expandPseudoInstruction = (line: string, lineNumber?: number): stri
         suggestion: 'la instruction format: la rd, symbol (e.g., la a0, msg)',
         lineNumber: lineNumber
       });
-      // la rd, symbol - load address of symbol into register
-      // during first pass, symbol address is unknown, so return placeholder
-      // during actual assembly it will be replaced with lui+addi
-      return [`la ${parts[1]}, ${parts[2]}`];
+      
+      // la rd, symbol - similar to li, expand to two instructions
+      // during first pass, placeholder values are used because actual symbol address is unknown
+      // during second pass, these will be filled with proper values
+      const rd = parts[1];
+      const symbol = parts[2];
+      
+      return [
+        `lui ${rd}, %LA_HI_${symbol}%`,   // Placeholder for high 20 bits
+        `addi ${rd}, ${rd}, %LA_LO_${symbol}%`  // Placeholder for low 12 bits
+      ];
     }
     case 'mv': {
       if (parts.length !== 3) throw new AssemblerError('mv instruction requires 2 operands', {
@@ -263,35 +270,6 @@ export const parseInstruction = (line: string, currentAddress: number, labelMap:
                op === 'srl' || op === 'sra' ? '101' :
                op === 'or' ? '110' : '111',
         funct7: op === 'sub' || op === 'sra' ? '0100000' : '0000000'
-      };
-    }
-    case 'la': {
-      if (parts.length !== 3) throw new AssemblerError(`${op} instruction requires 2 operands`, {
-        errorType: 'Operand Error',
-        instruction: lineWithoutComment,
-        suggestion: `la instruction format: la rd, symbol (e.g., la a0, msg)`
-      });
-      
-      const rd = parseRegister(parts[1]);
-      const symbol = parts[2];
-      
-      if (!(symbol in labelMap)) {
-        throw new AssemblerError(`Undefined label: ${symbol}`, {
-          errorType: 'Label Error',
-          instruction: lineWithoutComment,
-          suggestion: 'Please ensure the label is defined in the code'
-        });
-      }
-      
-      const address = labelMap[symbol];
-      // First generate lui instruction part
-      const upper = (address >> 12) & 0xFFFFF;
-      
-      return {
-        type: 'U',
-        opcode: '0110111', // lui opcode
-        rd,
-        imm: upper
       };
     }
     case 'addi':
@@ -729,81 +707,99 @@ export class Assembler {
             const expandedInstructions = expandPseudoInstruction(instruction, entry.lineNumber);
             expandedInstructions.forEach((expandedLine, i) => {
               try {
-                // Special handling for la instruction second part (addi)
-                if (expandedLine.startsWith('la ')) {
-                  const parts = expandedLine.split(/[\s,]+/).filter(Boolean);
-                  if (parts.length === 3) {
-                    const rd = parts[1];
-                    const symbol = parts[2];
+                // Process placeholders for la instruction
+                if (expandedLine.includes('%LA_HI_') || expandedLine.includes('%LA_LO_')) {
+                  // Extract symbol name from placeholder
+                  const match = expandedLine.match(/%LA_(HI|LO)_([a-zA-Z0-9_]+)%/);
+                  if (match) {
+                    const type = match[1]; // HI or LO
+                    const symbol = match[2];
                     
-                    if (symbol in this.labelMap) {
-                      const address = this.labelMap[symbol];
+                    if (!(symbol in this.labelMap)) {
+                      throw new AssemblerError(`Undefined label: ${symbol}`, {
+                        errorType: 'Label Error',
+                        instruction: expandedLine,
+                        suggestion: 'Please ensure the label is defined in the code',
+                        lineNumber: entry.lineNumber
+                      });
+                    }
+                    
+                    const address = this.labelMap[symbol];
+                    
+                    if (type === 'HI') {
+                      // For lui instruction, calculate upper 20 bits
+                      const baseImm = address >= this.GP_BASE ? 
+                        0x10000 : // For data segment
+                        (address >>> 12); // For code segment
+                        
+                      const luiParts = expandedLine.split(/[\s,]+/).filter(Boolean);
+                      const rd = luiParts[1];
                       
-                      // Calculate address offset in data segment
-                      let offset = 0;
-                      let baseImm = 0x10000; // Default lui immediate, corresponding to 0x10000000
-                      
-                      // Check if label is in data segment or code segment
-                      if (address >= this.GP_BASE) {
-                        // Data segment label
-                        offset = address - this.GP_BASE;
-                      } else {
-                        // Code segment label
-                        baseImm = address >>> 12;
-                        offset = address & 0xFFF;
-                      }
-                      
-                      // Ensure offset is within 12-bit signed integer range (-2048 to 2047)
-                      if (offset < -2048 || offset > 2047) {
-                        console.warn(`Warning: ${symbol} offset ${offset} exceeds 12-bit signed integer range`);
-                      }
-                      
-                      // Generate lui instruction
+                      // Generate lui instruction with proper immediate
                       const luiInst = {
                         type: 'U' as const,
                         opcode: '0110111',
                         rd: parseRegister(rd),
                         imm: baseImm
                       };
+                      
                       const luiHex = generateMachineCode(luiInst);
                       const luiBinary = (parseInt(luiHex.slice(2), 16) >>> 0).toString(2).padStart(32, '0');
                       
+                      // Add to result
                       result.push({
                         hex: luiHex,
                         binary: luiBinary,
                         assembly: `lui ${rd}, 0x${baseImm.toString(16)}`,
-                        source: expandedLine,
+                        source: entry.text,
                         segment: 'text',
                         address: this.currentAddress,
                         originalLineNumber: entry.lineNumber
                       });
-                      this.currentAddress += 4;
+                      
+                    } else if (type === 'LO') {
+                      // For addi instruction, calculate lower 12 bits
+                      let offset = address >= this.GP_BASE ? 
+                        (address - this.GP_BASE) : // For data segment
+                        (address & 0xFFF); // For code segment
+                      
+                      const addiParts = expandedLine.split(/[\s,]+/).filter(Boolean);
+                      const rd = addiParts[1];
+                      const rs1 = addiParts[2];
+                      
+                      // Ensure offset is within 12-bit signed integer range
+                      if (offset < -2048 || offset > 2047) {
+                        console.warn(`Warning: ${symbol} offset ${offset} exceeds 12-bit signed integer range`);
+                      }
                       
                       // Generate addi instruction
                       const addiInst = {
                         type: 'I' as const,
                         opcode: '0010011',
                         rd: parseRegister(rd),
-                        rs1: parseRegister(rd),
+                        rs1: parseRegister(rs1),
                         imm: offset,
                         funct3: '000'
                       };
+                      
                       const addiHex = generateMachineCode(addiInst);
                       const addiBinary = (parseInt(addiHex.slice(2), 16) >>> 0).toString(2).padStart(32, '0');
                       
+                      // Add to result
                       result.push({
                         hex: addiHex,
                         binary: addiBinary,
-                        assembly: `addi ${rd}, ${rd}, ${offset}`,
-                        source: expandedLine,
+                        assembly: `addi ${rd}, ${rs1}, ${offset}`,
+                        source: entry.text,
                         segment: 'text',
                         address: this.currentAddress,
                         originalLineNumber: entry.lineNumber
                       });
-                      this.currentAddress += 4;
                     }
+                    
+                    this.currentAddress += 4;
+                    return; // Placeholder processed, skip normal processing
                   }
-                  return; // la instruction processed, skip normal processing
                 }
                 
                 // Process other instructions
@@ -829,7 +825,7 @@ export class Assembler {
                 } else {
                   throw new AssemblerError(`Error processing instruction: ${error instanceof Error ? error.message : String(error)}`, {
                     lineNumber: entry.lineNumber,
-                    instruction: instruction
+                    instruction: expandedLine
                   });
                 }
               }
