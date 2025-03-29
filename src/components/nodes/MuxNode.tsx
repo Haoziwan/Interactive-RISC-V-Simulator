@@ -25,12 +25,12 @@ export function MuxNode({ data, id, selected }: {
   const inputsRef = React.useRef<{[key: string]: number}>({});
   const portCount = data.portCount || 2;
 
-  // 监听输入连接的变化并更新输出值
+  // Monitor input connection changes and update output value
   const updateInputConnections = () => {
     const newInputs: {[key: string]: number} = {};
     let hasChanges = false;
 
-    // 获取源节点的值
+    // Get source node value
     const getSourceNodeValue = (edge: any) => {
       if (!edge) return null;
       const sourceNode = nodes.find(node => node.id === edge.source);
@@ -51,7 +51,7 @@ export function MuxNode({ data, id, selected }: {
       return null;
     };
 
-    // 处理所有输入端口
+    // Process all input ports
     for (let i = 0; i < portCount; i++) {
       const inputEdge = edges.find(edge => edge.target === id && edge.targetHandle === `in${i}`);
       const newValue = getSourceNodeValue(inputEdge);
@@ -65,31 +65,31 @@ export function MuxNode({ data, id, selected }: {
       }
     }
 
-    // 处理选择信号
+    // Process select signal
       const selectEdge = edges.find(edge => edge.target === id && edge.targetHandle === 'select');
       const selectValue = getSourceNodeValue(selectEdge);
       const currentSelect = selectValue !== null ? String(selectValue) : (data.select || '0');
 
       if (hasChanges || currentSelect !== data.select) {
-        // 更新ref中的值
+        // Update values in ref
         inputsRef.current = newInputs;
 
-        // 计算选择的输入端口索引
+        // Calculate selected input port index
         const selectIndex = parseInt(currentSelect) % portCount;
         const outputValue = newInputs[`in${selectIndex}`] || 0;
 
-        // 更新节点数据
+        // Update node data
         updateNodeData(id, {
           ...data,
           value: outputValue,
           select: currentSelect
         });
 
-        // 更新状态
+        // Update state
         setInputs(Object.values(newInputs));
       }
   };
-  // 监听输入连接的变化
+  // Monitor input connection changes
   React.useEffect(() => {
     updateInputConnections();
   }, [edges, id, nodes, data, portCount]);
@@ -114,12 +114,12 @@ export function MuxNode({ data, id, selected }: {
       {showConfig && (
         <div className="absolute z-10 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 p-2">
           <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700 mb-1">输入端口数量</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Number of Input Ports</label>
             <div className="flex items-center space-x-2">
               <button
                 onClick={() => setTempPortCount(Math.max(2, tempPortCount - 1))}
                 className="px-2 py-1 border rounded-md hover:bg-gray-100"
-                title="减少端口数量"
+                title="Decrease port count"
               >
                 -
               </button>
@@ -127,7 +127,7 @@ export function MuxNode({ data, id, selected }: {
               <button
                 onClick={() => setTempPortCount(Math.min(8, tempPortCount + 1))}
                 className="px-2 py-1 border rounded-md hover:bg-gray-100"
-                title="增加端口数量"
+                title="Increase port count"
               >
                 +
               </button>
@@ -141,7 +141,7 @@ export function MuxNode({ data, id, selected }: {
               }}
               className="px-3 py-1 border rounded-md hover:bg-gray-100 text-sm"
             >
-              取消
+              Cancel
             </button>
             <button
               onClick={() => {
@@ -153,7 +153,7 @@ export function MuxNode({ data, id, selected }: {
               }}
               className="px-3 py-1 bg-blue-500 text-white rounded-md hover:bg-blue-600 text-sm"
             >
-              确认
+              Confirm
             </button>
           </div>
         </div>
@@ -172,7 +172,7 @@ export function MuxNode({ data, id, selected }: {
         </div>
       </div>
 
-      {/* 输入端口 */}
+      {/* Input ports */}
       {Array.from({ length: portCount }).map((_, i) => (
         <Handle
           key={`in${i}`}
@@ -185,7 +185,7 @@ export function MuxNode({ data, id, selected }: {
         />
       ))}
 
-      {/* 输出端口 */}
+      {/* Output port */}
       <Handle
         type="source"
         position={Position.Right}
@@ -195,7 +195,7 @@ export function MuxNode({ data, id, selected }: {
         title="Output"
       />
 
-      {/* 选择信号端口 */}
+      {/* Select signal port */}
       <Handle
         type="target"
         position={Position.Bottom}
