@@ -16,6 +16,7 @@ export function AssemblyEditor() {
   const editorRef = useRef<any>(null);
   const monaco = useMonaco();
   const [decorations, setDecorations] = useState<string[]>([]);
+  const [labelMap, setLabelMap] = useState<Record<string, number>>({});
   
   // 使用store中的状态
   const editorCode = useCircuitStore((state) => state.editorCode);
@@ -282,6 +283,9 @@ export function AssemblyEditor() {
       const assemblerInstance = new Assembler();
       const instructions = assemblerInstance.assemble(editorCode);
       
+      // 保存标签映射表，用于标签地址转换
+      setLabelMap(assemblerInstance.getLabelMap());
+      
       // 处理内存数据（如果存在）
       // @ts-ignore - memoryData是我们特殊添加的属性
       if (instructions.length > 0 && instructions[0].memoryData) {
@@ -351,6 +355,72 @@ export function AssemblyEditor() {
     } catch (err) {
       setError('加载示例程序失败');
     }
+  };
+
+  // 转换标签到真实地址的函数
+  const translateLabels = (assembly: string | undefined): string => {
+    if (!assembly) return '';
+    
+    // 解析组装后的指令
+    const parts = assembly.split(/[\s,]+/).filter(Boolean);
+    if (parts.length < 2) return assembly;  // 至少需要有指令和一个操作数
+    
+    const op = parts[0].toLowerCase();
+    
+    // 跳转和分支指令列表
+    const branchInstructions = ['beq', 'bne', 'blt', 'bge', 'bltu', 'bgeu'];
+    const jumpInstructions = ['jal', 'j', 'call'];
+    const loadAddressInstr = ['la'];
+    
+    let result = assembly;
+    
+    // 格式化地址为8位十六进制
+    const formatAddress = (address: number): string => {
+      return `0x${address.toString(16).padStart(8, '0')}`;
+    };
+    
+    // 处理分支指令（最后一个操作数是标签）
+    if (branchInstructions.includes(op) && parts.length >= 4) {
+      const label = parts[parts.length - 1];
+      if (labelMap[label] !== undefined) {
+        const address = labelMap[label];
+        result = result.replace(label, formatAddress(address));
+      }
+    } 
+    // 处理跳转指令
+    else if (jumpInstructions.includes(op)) {
+      const label = parts[parts.length - 1];
+      if (labelMap[label] !== undefined) {
+        const address = labelMap[label];
+        result = result.replace(label, formatAddress(address));
+      }
+    }
+    // 处理加载地址指令
+    else if (loadAddressInstr.includes(op)) {
+      const label = parts[parts.length - 1];
+      if (labelMap[label] !== undefined) {
+        const address = labelMap[label];
+        result = result.replace(label, formatAddress(address));
+      }
+    }
+    // 处理jalr指令（可能含有偏移量和标签）
+    else if (op === 'jalr' && parts.length >= 3) {
+      // jalr指令格式: jalr rd, offset(rs1)
+      // 或简化形式: jalr rs1
+      const lastPart = parts[parts.length - 1];
+      
+      // 查找格式：offset(rs1)中的标签
+      const offsetMatch = lastPart.match(/([^(]+)\(([^)]+)\)/);
+      if (offsetMatch) {
+        const offset = offsetMatch[1].trim();
+        if (labelMap[offset] !== undefined) {
+          const address = labelMap[offset];
+          result = result.replace(offset, formatAddress(address));
+        }
+      }
+    }
+    
+    return result;
   };
 
   return (
@@ -500,7 +570,7 @@ export function AssemblyEditor() {
                       >
                         <td className="py-2 px-3 font-mono text-gray-600 text-xs whitespace-nowrap overflow-hidden text-ellipsis">{`0x${(inst.address !== undefined ? inst.address : i * 4).toString(16).padStart(8, '0')}`}</td>
                         <td className="py-2 px-3 font-mono text-blue-600 text-xs whitespace-nowrap overflow-hidden text-ellipsis">{inst.hex}</td>
-                        <td className="py-2 px-3 font-mono text-xs whitespace-nowrap">{inst.assembly}</td>
+                        <td className="py-2 px-3 font-mono text-xs whitespace-nowrap">{translateLabels(inst.assembly)}</td>
                         <td className="py-2 px-3 font-mono text-gray-600 text-xs whitespace-nowrap overflow-hidden text-ellipsis">{inst.source}</td>
                       </tr>
                     ))
