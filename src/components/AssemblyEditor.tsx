@@ -66,8 +66,8 @@ export function AssemblyEditor() {
             // 数字（十六进制）- Move before decimal numbers
             [/0x[0-9a-fA-F]+/, 'number.hex'],
             
-            // 数字（十进制）
-            [/\b[0-9]+\b/, 'number'],
+            // 数字（十进制）- Updated to include negative numbers
+            [/-?[0-9]+\b/, 'number'],
             
             // 变量和标签引用 (新增规则匹配变量引用)
             [/\b[a-zA-Z][a-zA-Z0-9_]*\b/, 'identifier'],
