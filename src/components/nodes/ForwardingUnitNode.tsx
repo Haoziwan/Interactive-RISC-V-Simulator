@@ -247,7 +247,7 @@ export function ForwardingUnitNode({ data, id, selected }: {
         id="rs1"
         className="w-3 h-3 bg-blue-400"
         style={{ top: '35%' }}
-        title="ID/EX.Rs1 - 当前指令的rs1寄存器号"
+        title="ID/EX.Rs1 - Current instruction's rs1 register number"
       />
       <Handle
         type="target"
@@ -255,7 +255,7 @@ export function ForwardingUnitNode({ data, id, selected }: {
         id="rs2"
         className="w-3 h-3 bg-blue-400"
         style={{ top: '65%' }}
-        title="ID/EX.Rs2 - 当前指令的rs2寄存器号"
+        title="ID/EX.Rs2 - Current instruction's rs2 register number"
       />
       <Handle
         type="target"
@@ -263,7 +263,7 @@ export function ForwardingUnitNode({ data, id, selected }: {
         id="exMemRd"
         className="w-3 h-3 bg-blue-400"
         style={{ top: '25%' }}
-        title="EX/MEM.Rd - 上一条指令的目标寄存器号"
+        title="EX/MEM.Rd - Previous instruction's destination register"
       />
       <Handle
         type="target"
@@ -271,7 +271,7 @@ export function ForwardingUnitNode({ data, id, selected }: {
         id="exMemRegWrite"
         className="w-3 h-3 bg-blue-400"
         style={{ top: '40%' }}
-        title="EX/MEM.RegWrite - 上一条指令的寄存器写入控制信号"
+        title="EX/MEM.RegWrite - Previous instruction's register write control signal"
       />
       <Handle
         type="target"
@@ -279,7 +279,7 @@ export function ForwardingUnitNode({ data, id, selected }: {
         id="memWbRd"
         className="w-3 h-3 bg-blue-400"
         style={{ top: '60%' }}
-        title="MEM/WB.Rd - 前两条指令的目标寄存器号"
+        title="MEM/WB.Rd - Two instructions ago's destination register"
       />
       <Handle
         type="target"
@@ -287,12 +287,12 @@ export function ForwardingUnitNode({ data, id, selected }: {
         id="memWbRegWrite"
         className="w-3 h-3 bg-blue-400"
         style={{ top: '75%' }}
-        title="MEM/WB.RegWrite - 前两条指令的寄存器写入控制信号"
+        title="MEM/WB.RegWrite - Two instructions ago's register write control signal"
       />
 
       {/* 显示当前状态和输入值 */}
       <div className="text-xs text-gray-600 mt-2 border-t pt-1 border-gray-100">
-        <div className="font-semibold">输入:</div>
+        <div className="font-semibold">Inputs:</div>
         <div className="flex justify-between">
           <span>ID/EX.Rs1:</span>
           <span>{data.rs1 || 0}</span>
@@ -321,7 +321,7 @@ export function ForwardingUnitNode({ data, id, selected }: {
 
       {/* 显示输出状态 */}
       <div className="text-xs text-gray-600 mt-2 border-t pt-1 border-gray-100">
-        <div className="font-semibold">输出:</div>
+        <div className="font-semibold">Outputs:</div>
         <div className="flex justify-between">
           <span>Forward A:</span>
           <span>{data.forwardA || 0}</span>
@@ -339,7 +339,7 @@ export function ForwardingUnitNode({ data, id, selected }: {
         id="forwardA"
         className="w-3 h-3 bg-green-400"
         style={{ left: '35%' }}
-        title="Forward A - ALU操作数A的选择信号"
+        title="Forward A - ALU operand A selection signal"
       />
       <Handle
         type="source"
@@ -347,7 +347,7 @@ export function ForwardingUnitNode({ data, id, selected }: {
         id="forwardB"
         className="w-3 h-3 bg-green-400"
         style={{ left: '65%' }}
-        title="Forward B - ALU操作数B的选择信号"
+        title="Forward B - ALU operand B selection signal"
       />
     </div>
   );

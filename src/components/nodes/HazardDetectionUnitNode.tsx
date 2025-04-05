@@ -167,7 +167,7 @@ export function HazardDetectionUnitNode({ data, id, selected }: {
 
       {/* 显示输入值 */}
       <div className="text-xs text-gray-600 mt-2 border-t pt-1 border-gray-100">
-        <div className="font-semibold">输入:</div>
+        <div className="font-semibold">Inputs:</div>
         <div className="flex justify-between">
           <span>ID/EX.MemRead:</span>
           <span>{data.idExMemRead || 0}</span>
@@ -188,7 +188,7 @@ export function HazardDetectionUnitNode({ data, id, selected }: {
 
       {/* 显示当前状态 */}
       <div className={`text-xs mt-2 pt-1 border-t ${hazardDetected ? 'text-red-600 border-red-200' : 'text-gray-600 border-gray-100'}`}>
-        <div className="font-semibold">输出:</div>
+        <div className="font-semibold">Outputs:</div>
         <div className="flex justify-between">
           <span>PC Write:</span>
           <span>{data.pcWrite !== undefined ? data.pcWrite : 1}</span>
@@ -203,8 +203,8 @@ export function HazardDetectionUnitNode({ data, id, selected }: {
         </div>
         <div className="mt-1 text-center">
           {hazardDetected ? 
-            <span className="bg-red-100 text-red-800 px-2 py-0.5 rounded font-medium">检测到Load-Use冒险!</span> : 
-            <span className="bg-green-100 text-green-800 px-2 py-0.5 rounded font-medium">无冒险</span>
+            <span className="bg-red-100 text-red-800 px-2 py-0.5 rounded font-medium">Load-Use Hazard Detected!</span> : 
+            <span className="bg-green-100 text-green-800 px-2 py-0.5 rounded font-medium">No Hazard</span>
           }
         </div>
       </div>

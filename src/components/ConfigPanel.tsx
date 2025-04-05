@@ -232,6 +232,69 @@ export function ConfigPanel() {
             </div>
           </div>
         );
+      case 'forwarding-unit':
+        return (
+          <div className="space-y-4">
+            <h3 className="font-medium">Forwarding Unit</h3>
+            <div className="space-y-2">
+              <div className="bg-blue-50 p-3 rounded-md mb-3">
+                <h4 className="text-sm font-medium text-blue-800 mb-1">Component Description</h4>
+                <p className="text-sm text-blue-700">The Forwarding Unit detects data hazards in pipelined execution by comparing register numbers between instructions. It generates forwarding control signals to bypass values from later pipeline stages when needed, eliminating pipeline stalls for data dependencies.</p>
+                <h4 className="text-sm font-medium text-blue-800 mt-2 mb-1">Ports</h4>
+                <ul className="text-sm text-blue-700 list-disc pl-5">
+                  <li><span className="font-medium">ID/EX.Rs1:</span> Current instruction's first source register number</li>
+                  <li><span className="font-medium">ID/EX.Rs2:</span> Current instruction's second source register number</li>
+                  <li><span className="font-medium">EX/MEM.Rd:</span> Previous instruction's destination register number</li>
+                  <li><span className="font-medium">EX/MEM.RegWrite:</span> Previous instruction's register write enable signal</li>
+                  <li><span className="font-medium">MEM/WB.Rd:</span> Two instructions ago's destination register number</li>
+                  <li><span className="font-medium">MEM/WB.RegWrite:</span> Two instructions ago's register write enable signal</li>
+                  <li><span className="font-medium">ForwardA:</span> 2-bit control signal for ALU operand A forwarding (0=no forward, 1=MEM/WB, 2=EX/MEM)</li>
+                  <li><span className="font-medium">ForwardB:</span> 2-bit control signal for ALU operand B forwarding (0=no forward, 1=MEM/WB, 2=EX/MEM)</li>
+                </ul>
+                <h4 className="text-sm font-medium text-blue-800 mt-2 mb-1">Execution Logic</h4>
+                <p className="text-sm text-blue-700">The Forwarding Unit operates combinationally:<br/>
+                - For ForwardA (Rs1):<br/>
+                &nbsp;&nbsp;• If EX/MEM.RegWrite=1 and EX/MEM.Rd=Rs1 and EX/MEM.Rd≠0 → Forward from EX/MEM (priority)<br/>
+                &nbsp;&nbsp;• Else if MEM/WB.RegWrite=1 and MEM/WB.Rd=Rs1 and MEM/WB.Rd≠0 → Forward from MEM/WB<br/>
+                - For ForwardB (Rs2):<br/>
+                &nbsp;&nbsp;• If EX/MEM.RegWrite=1 and EX/MEM.Rd=Rs2 and EX/MEM.Rd≠0 → Forward from EX/MEM (priority)<br/>
+                &nbsp;&nbsp;• Else if MEM/WB.RegWrite=1 and MEM/WB.Rd=Rs2 and MEM/WB.Rd≠0 → Forward from MEM/WB<br/>
+                This logic ensures correct values are forwarded to ALU inputs when data dependencies exist between instructions.</p>
+              </div>
+              <p className="text-sm text-gray-500">No configuration needed</p>
+            </div>
+          </div>
+        );
+      case 'hazard-detection-unit':
+        return (
+          <div className="space-y-4">
+            <h3 className="font-medium">Hazard Detection Unit</h3>
+            <div className="space-y-2">
+              <div className="bg-blue-50 p-3 rounded-md mb-3">
+                <h4 className="text-sm font-medium text-blue-800 mb-1">Component Description</h4>
+                <p className="text-sm text-blue-700">The Hazard Detection Unit identifies load-use data hazards where a load instruction is followed by an instruction that uses the loaded data. It generates stall signals to pause the pipeline for one cycle when such hazards are detected.</p>
+                <h4 className="text-sm font-medium text-blue-800 mt-2 mb-1">Ports</h4>
+                <ul className="text-sm text-blue-700 list-disc pl-5">
+                  <li><span className="font-medium">ID/EX.MemRead:</span> Previous instruction's memory read enable signal</li>
+                  <li><span className="font-medium">ID/EX.Rt:</span> Previous instruction's target register number</li>
+                  <li><span className="font-medium">IF/ID.Rs:</span> Current instruction's first source register number</li>
+                  <li><span className="font-medium">IF/ID.Rt:</span> Current instruction's second source register number</li>
+                  <li><span className="font-medium">PC Write:</span> Output signal to freeze PC (0=stall, 1=normal)</li>
+                  <li><span className="font-medium">IF/ID Write:</span> Output signal to freeze IF/ID pipeline register (0=stall, 1=normal)</li>
+                  <li><span className="font-medium">Control Mux:</span> Output signal to zero out control signals (1=insert NOP, 0=normal)</li>
+                </ul>
+                <h4 className="text-sm font-medium text-blue-800 mt-2 mb-1">Execution Logic</h4>
+                <p className="text-sm text-blue-700">The Hazard Detection Unit operates combinationally:<br/>
+                - When ID/EX.MemRead=1 and (ID/EX.Rt=IF/ID.Rs or ID/EX.Rt=IF/ID.Rt) and ID/EX.Rt≠0:<br/>
+                &nbsp;&nbsp;• PC Write=0 (freeze PC)<br/>
+                &nbsp;&nbsp;• IF/ID Write=0 (freeze IF/ID register)<br/>
+                &nbsp;&nbsp;• Control Mux=1 (insert NOP in ID/EX stage)<br/>
+                This creates a one-cycle bubble in the pipeline to allow the load instruction to complete before the dependent instruction proceeds.</p>
+              </div>
+              <p className="text-sm text-gray-500">No configuration needed</p>
+            </div>
+          </div>
+        );
       case 'register':
         return (
           <div className="space-y-4">
