@@ -127,7 +127,7 @@ export function PCNode({ data, id, selected }: { data: PCNodeData; id: string; s
         type="target" 
         position={Position.Left} 
         id="pcWrite" 
-        className="w-3 h-3 bg-blue-400" 
+        className="w-3 h-3 bg-yellow-400" 
         style={{ top: '65%' }}
         title="PC Write Enable"
       />

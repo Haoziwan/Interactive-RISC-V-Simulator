@@ -211,7 +211,7 @@ export function ControlNode({ data, id, selected }: { data: ControlNodeData; id:
         type="target" 
         position={Position.Top} 
         id="controlMux" 
-        className="w-3 h-3 bg-blue-400" 
+        className="w-3 h-3 bg-yellow-400" 
         style={{ left: '50%' }}
         title="Control Mux (0=Normal, 1=NOP)"
       />
