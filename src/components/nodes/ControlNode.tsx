@@ -9,7 +9,8 @@ interface ControlNodeData {
   memRead?: number;
   memWrite?: number;
   aluOp?: number;
-  aluSrc?: number;
+  aluSrc1?: number;
+  aluSrc2?: number;
   memToReg?: number;
   controlMux?: number; // 控制多路复用器信号，来自冒险检测单元
 }
@@ -71,7 +72,8 @@ export function ControlNode({ data, id, selected }: { data: ControlNodeData; id:
           memRead: 0,
           memWrite: 0,
           aluOp: 0,
-          aluSrc: 0,
+          aluSrc1: 0,
+          aluSrc2: 0,
           memToReg: 0
         };
       } else if (currentOpcode) {
@@ -83,7 +85,8 @@ export function ControlNode({ data, id, selected }: { data: ControlNodeData; id:
               memRead: 0,
               memWrite: 0,
               aluOp: parseInt('10', 2),
-              aluSrc: 0,
+              aluSrc1: 0,
+              aluSrc2: 0,
               memToReg: 0
             };
             break;
@@ -93,7 +96,8 @@ export function ControlNode({ data, id, selected }: { data: ControlNodeData; id:
               memRead: 0,
               memWrite: 0,
               aluOp: parseInt('11', 2),
-              aluSrc: 1,
+              aluSrc1: 0,
+              aluSrc2: 1,
               memToReg: 0
             };
             break;
@@ -103,7 +107,8 @@ export function ControlNode({ data, id, selected }: { data: ControlNodeData; id:
               memRead: 1,
               memWrite: 0,
               aluOp: parseInt('00', 2),
-              aluSrc: 1,
+              aluSrc1: 0,
+              aluSrc2: 1,
               memToReg: 1
             };
             break;
@@ -113,7 +118,8 @@ export function ControlNode({ data, id, selected }: { data: ControlNodeData; id:
               memRead: 0,
               memWrite: 1,
               aluOp: parseInt('00', 2),
-              aluSrc: 1,
+              aluSrc1: 0,
+              aluSrc2: 1,
               memToReg: 0
             };
             break;
@@ -123,7 +129,8 @@ export function ControlNode({ data, id, selected }: { data: ControlNodeData; id:
               memRead: 0,
               memWrite: 0,
               aluOp: parseInt('01', 2),
-              aluSrc: 0,
+              aluSrc1: 0,
+              aluSrc2: 0,
               memToReg: 0
             };
             break;
@@ -134,18 +141,30 @@ export function ControlNode({ data, id, selected }: { data: ControlNodeData; id:
               memRead: 0,
               memWrite: 0,
               aluOp: parseInt('00', 2),
-              aluSrc: 1,
+              aluSrc1: 0,
+              aluSrc2: 1,
               memToReg: 2
             };
             break;
           case '0110111': // U-type (lui)
+            controlSignals = {
+              regWrite: 1,
+              memRead: 0,
+              memWrite: 0,
+              aluOp: parseInt('00', 2),
+              aluSrc1: 2, // LUI指令时aluSrc1为2
+              aluSrc2: 1,
+              memToReg: 0
+            };
+            break;
           case '0010111': // U-type (auipc)
             controlSignals = {
               regWrite: 1,
               memRead: 0,
               memWrite: 0,
               aluOp: parseInt('00', 2),
-              aluSrc: 1,
+              aluSrc1: 1, // AUIPC指令时aluSrc1为1
+              aluSrc2: 1,
               memToReg: 0
             };
             break;
@@ -220,8 +239,12 @@ export function ControlNode({ data, id, selected }: { data: ControlNodeData; id:
               <span>{data.regWrite ?? 0}</span>
             </div>
             <div className="flex justify-between items-center relative">
-              <span>ALUSrc:</span>
-              <span>{data.aluSrc ?? 0}</span>
+              <span>ALUSrc1:</span>
+              <span>{data.aluSrc1 ?? 0}</span>
+            </div>
+            <div className="flex justify-between items-center relative">
+              <span>ALUSrc2:</span>
+              <span>{data.aluSrc2 ?? 0}</span>
             </div>
             <div className="flex justify-between items-center relative">
               <span>MemRead:</span>
@@ -242,12 +265,13 @@ export function ControlNode({ data, id, selected }: { data: ControlNodeData; id:
           </div>
         </div>
       </div>
-      <Handle type="source" position={Position.Right} id="regWrite" className="w-3 h-3 bg-green-400" style={{ top: '30%' }} title="RegWrite" />
-      <Handle type="source" position={Position.Right} id="aluSrc" className="w-3 h-3 bg-green-400" style={{ top: '42%' }} title="ALUSrc" />
-      <Handle type="source" position={Position.Right} id="memRead" className="w-3 h-3 bg-green-400" style={{ top: '54%' }} title="MemRead" />
-      <Handle type="source" position={Position.Right} id="memWrite" className="w-3 h-3 bg-green-400" style={{ top: '66%' }} title="MemWrite" />
-      <Handle type="source" position={Position.Right} id="aluOp" className="w-3 h-3 bg-green-400" style={{ top: '78%' }} title="ALUOp" />
-      <Handle type="source" position={Position.Right} id="memToReg" className="w-3 h-3 bg-green-400" style={{ top: '90%' }} title="MemToReg" />
+      <Handle type="source" position={Position.Right} id="regWrite" className="w-3 h-3 bg-green-400" style={{ top: '32%' }} title="RegWrite" />
+      <Handle type="source" position={Position.Right} id="aluSrc1" className="w-3 h-3 bg-green-400" style={{ top: '41%' }} title="ALUSrc1" />
+      <Handle type="source" position={Position.Right} id="aluSrc2" className="w-3 h-3 bg-green-400" style={{ top: '50%' }} title="ALUSrc2" />
+      <Handle type="source" position={Position.Right} id="memRead" className="w-3 h-3 bg-green-400" style={{ top: '59%' }} title="MemRead" />
+      <Handle type="source" position={Position.Right} id="memWrite" className="w-3 h-3 bg-green-400" style={{ top: '68%' }} title="MemWrite" />
+      <Handle type="source" position={Position.Right} id="aluOp" className="w-3 h-3 bg-green-400" style={{ top: '77%' }} title="ALUOp" />
+      <Handle type="source" position={Position.Right} id="memToReg" className="w-3 h-3 bg-green-400" style={{ top: '86%' }} title="MemToReg" />
     </div>
   );
 }

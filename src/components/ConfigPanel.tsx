@@ -324,32 +324,32 @@ export function ConfigPanel() {
       case 'control':
         return (
           <div className="space-y-4">
-            <h3 className="font-medium">Control Unit </h3>
+            <h3 className="font-medium">Control Unit</h3>
             <div className="space-y-2">
               <div className="bg-blue-50 p-3 rounded-md mb-3">
                 <h4 className="text-sm font-medium text-blue-800 mb-1">Component Description</h4>
-                <p className="text-sm text-blue-700">The Control Unit is the "brain" of the processor that decodes instructions and generates control signals to coordinate all other components. It determines the datapath configuration for each instruction type.</p>
+                <p className="text-sm text-blue-700">The Control Unit decodes RISC-V instructions and generates control signals that coordinate the operation of various datapath components. It examines the opcode field of the instruction to determine the instruction type and required operations.</p>
                 <h4 className="text-sm font-medium text-blue-800 mt-2 mb-1">Ports</h4>
                 <ul className="text-sm text-blue-700 list-disc pl-5">
-                  <li><span className="font-medium">Opcode:</span> 7-bit instruction opcode field (bits 6-0) that identifies the instruction type</li>
-                  <li><span className="font-medium">RegWrite:</span> Output control signal (1-bit) that enables writing to the register file</li>
-                  <li><span className="font-medium">MemRead:</span> Output control signal (1-bit) that enables reading from data memory</li>
-                  <li><span className="font-medium">MemWrite:</span> Output control signal (1-bit) that enables writing to data memory</li>
-                  <li><span className="font-medium">ALUSrc:</span> Output control signal (1-bit) that selects between register and immediate value for ALU's second input</li>
-                  <li><span className="font-medium">ALUOp:</span> Output control signal (2-bit) that indicates the general type of ALU operation</li>
-                  <li><span className="font-medium">MemtoReg:</span> Output control signal (1-bit) that selects between ALU result and memory data for register write</li>
-                  <li><span className="font-medium">Branch:</span> Output control signal (1-bit) that indicates a branch instruction</li>
-                  <li><span className="font-medium">Jump:</span> Output control signal (1-bit) that indicates a jump instruction</li>
+                  <li><span className="font-medium">Instruction[6:0]:</span> Opcode field of the instruction</li>
+                  <li><span className="font-medium">ALUSrc1[1:0]:</span> 2-bit control signal selecting ALU's first input (0: Register, 1: PC for AUIPC, 2: Zero for LUI)</li>
+                  <li><span className="font-medium">ALUSrc2:</span> Control signal selecting ALU's second input (0: Register, 1: Immediate)</li>
+                  <li><span className="font-medium">MemtoReg:</span> Control signal selecting write-back data source (0: ALU Result, 1: Memory Data, 2: PC+4)</li>
+                  <li><span className="font-medium">RegWrite:</span> Enable signal for register file writing</li>
+                  <li><span className="font-medium">MemRead:</span> Enable signal for memory reading</li>
+                  <li><span className="font-medium">MemWrite:</span> Enable signal for memory writing</li>
+                  <li><span className="font-medium">Branch:</span> Control signal indicating branch instruction</li>
+                  <li><span className="font-medium">ALUOp[1:0]:</span> Control signal for ALU operation type</li>
                 </ul>
                 <h4 className="text-sm font-medium text-blue-800 mt-2 mb-1">Execution Logic</h4>
-                <p className="text-sm text-blue-700">The Control Unit decodes the 7-bit opcode to determine instruction type and sets control signals accordingly:<br/>
-                - R-type (opcode=0110011): RegWrite=1, ALUSrc=0, MemtoReg=0, MemRead=0, MemWrite=0, Branch=0, Jump=0, ALUOp=10<br/>
-                - I-type Load (opcode=0000011): RegWrite=1, ALUSrc=1, MemtoReg=1, MemRead=1, MemWrite=0, Branch=0, Jump=0, ALUOp=00<br/>
-                - S-type Store (opcode=0100011): RegWrite=0, ALUSrc=1, MemtoReg=X, MemRead=0, MemWrite=1, Branch=0, Jump=0, ALUOp=00<br/>
-                - B-type Branch (opcode=1100011): RegWrite=0, ALUSrc=0, MemtoReg=X, MemRead=0, MemWrite=0, Branch=1, Jump=0, ALUOp=01<br/>
-                - I-type ALU (opcode=0010011): RegWrite=1, ALUSrc=1, MemtoReg=0, MemRead=0, MemWrite=0, Branch=0, Jump=0, ALUOp=11<br/>
-                - J-type Jump (opcode=1101111): RegWrite=1, ALUSrc=X, MemtoReg=X, MemRead=0, MemWrite=0, Branch=0, Jump=1, ALUOp=XX<br/>
-                The Control Unit operates combinationally with no clock required, generating signals immediately when the opcode changes.</p>
+                <p className="text-sm text-blue-700">The Control Unit operates combinationally based on the instruction opcode:<br/>
+                - R-type: RegWrite=1, ALUSrc1=0, ALUSrc2=0, MemtoReg=0, ALUOp=10<br/>
+                - I-type (ALU): RegWrite=1, ALUSrc1=0, ALUSrc2=1, MemtoReg=0, ALUOp=11<br/>
+                - I-type (Load): RegWrite=1, ALUSrc1=0, ALUSrc2=1, MemtoReg=1, MemRead=1, ALUOp=00<br/>
+                - S-type: ALUSrc1=0, ALUSrc2=1, MemWrite=1, ALUOp=00<br/>
+                - B-type: ALUSrc1=0, ALUSrc2=0, Branch=1, ALUOp=01<br/>
+                - AUIPC: RegWrite=1, ALUSrc1=1, ALUSrc2=1, MemtoReg=0, ALUOp=00<br/>
+                - LUI: RegWrite=1, ALUSrc1=2, ALUSrc2=1, MemtoReg=0, ALUOp=00</p>
               </div>
               <p className="text-sm text-gray-500">No configuration needed</p>
             </div>

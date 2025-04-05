@@ -1,5 +1,5 @@
 {
-  "name": "circuit-2025-03-02T11-21-44-328Z",
+  "name": "circuit-2025-04-05T08-47-15-650Z",
   "nodes": [
     {
       "id": "register-1740456812349",
@@ -13,12 +13,12 @@
         "readReg1": 0,
         "readReg2": 0,
         "writeReg": 0,
-        "writeData": 0,
+        "writeData": 305418240,
         "regWrite": false,
         "readData1": 0,
         "readData2": 0
       },
-      "width": 186,
+      "width": 218,
       "height": 167,
       "selected": false,
       "positionAbsolute": {
@@ -36,11 +36,11 @@
       },
       "data": {
         "label": "IMM-GEN",
-        "instruction": "11111111110000010000000100010011",
-        "immediate": -4,
-        "format": "I"
+        "instruction": "00010010001101000101000010110111",
+        "immediate": 305418240,
+        "format": "U"
       },
-      "width": 182,
+      "width": 218,
       "height": 95,
       "selected": false,
       "positionAbsolute": {
@@ -85,10 +85,11 @@
       "data": {
         "label": "PC",
         "value": 0,
-        "reset": false
+        "reset": false,
+        "pcWrite": 1
       },
       "width": 202,
-      "height": 95,
+      "height": 119,
       "selected": false,
       "positionAbsolute": {
         "x": -468.6232828989902,
@@ -121,8 +122,8 @@
       "id": "control-1740456985517",
       "type": "control",
       "position": {
-        "x": 353.4453443735349,
-        "y": 27.013702730954208
+        "x": 336.7766912016883,
+        "y": 15.17528688637384
       },
       "data": {
         "label": "CONTROL",
@@ -134,14 +135,17 @@
         "jump": 0,
         "aluSrc": 0,
         "memToReg": 0,
-        "opcode": "0000000"
+        "opcode": "0000000",
+        "aluSrc1": 2,
+        "aluSrc2": 1,
+        "controlMux": 0
       },
       "width": 160,
-      "height": 267,
+      "height": 319,
       "selected": false,
       "positionAbsolute": {
-        "x": 353.4453443735349,
-        "y": 27.013702730954208
+        "x": 336.7766912016883,
+        "y": 15.17528688637384
       },
       "dragging": false
     },
@@ -174,10 +178,10 @@
       },
       "data": {
         "label": "MEMORY",
-        "address": 0,
+        "address": 305418240,
         "memRead": 0,
         "readData": 0,
-        "writeData": 16,
+        "writeData": 0,
         "memWrite": 0
       },
       "width": 206,
@@ -188,27 +192,6 @@
         "x": 1072.0130565963225,
         "y": 679.588469316856
       }
-    },
-    {
-      "id": "mux-1740457185388",
-      "type": "mux",
-      "position": {
-        "x": 631.9084001459481,
-        "y": 653.7097073354882
-      },
-      "data": {
-        "label": "MUX",
-        "value": 0,
-        "select": "0"
-      },
-      "width": 108,
-      "height": 123,
-      "selected": false,
-      "positionAbsolute": {
-        "x": 631.9084001459481,
-        "y": 653.7097073354882
-      },
-      "dragging": false
     },
     {
       "id": "alu-control-1740457192016",
@@ -262,11 +245,11 @@
       },
       "data": {
         "label": "MUX",
-        "value": 0,
+        "value": 305418240,
         "select": "0",
         "portCount": 3
       },
-      "width": 108,
+      "width": 160,
       "height": 147,
       "selected": false,
       "positionAbsolute": {
@@ -279,23 +262,23 @@
       "id": "alu-1740457259779",
       "type": "alu",
       "position": {
-        "x": 746.4892373321377,
-        "y": 331.7234180722028
+        "x": 904.9941230539848,
+        "y": 438.83939518192597
       },
       "data": {
         "label": "ALU",
         "a": 0,
-        "b": 0,
+        "b": 305418240,
         "operation": 2,
-        "result": 0,
-        "zero": 1
+        "result": 305418240,
+        "zero": 0
       },
-      "width": 144,
+      "width": 183,
       "height": 167,
       "selected": false,
       "positionAbsolute": {
-        "x": 746.4892373321377,
-        "y": 331.7234180722028
+        "x": 904.9941230539848,
+        "y": 438.83939518192597
       },
       "dragging": false
     },
@@ -323,19 +306,19 @@
       "id": "fork-1740457413673",
       "type": "fork",
       "position": {
-        "x": 1015.56004559711,
-        "y": 385.9508284928251
+        "x": 1145.3712644038133,
+        "y": 382.62233570290965
       },
       "data": {
         "label": "FORK",
-        "value": 0
+        "value": 305418240
       },
       "width": 32,
       "height": 32,
       "selected": false,
       "positionAbsolute": {
-        "x": 1015.56004559711,
-        "y": 385.9508284928251
+        "x": 1145.3712644038133,
+        "y": 382.62233570290965
       },
       "dragging": false
     },
@@ -343,19 +326,20 @@
       "id": "fork-1740457481300",
       "type": "fork",
       "position": {
-        "x": -130.50985875082193,
-        "y": 287.64404523498376
+        "x": -128.84561235586426,
+        "y": 290.9725380248992
       },
       "data": {
         "label": "FORK",
-        "value": 0
+        "value": 0,
+        "portCount": 3
       },
       "width": 32,
-      "height": 32,
+      "height": 48,
       "selected": false,
       "positionAbsolute": {
-        "x": -130.50985875082193,
-        "y": 287.64404523498376
+        "x": -128.84561235586426,
+        "y": 290.9725380248992
       },
       "dragging": false
     },
@@ -390,8 +374,8 @@
         "label": "ADD",
         "value": 4
       },
-      "width": 66,
-      "height": 75,
+      "width": 80,
+      "height": 80,
       "selected": false,
       "positionAbsolute": {
         "x": -129.9993757823354,
@@ -430,7 +414,7 @@
         "label": "JUMP-CONTROL",
         "funct3": 0,
         "opcode": 0,
-        "zero": 1,
+        "zero": 0,
         "jump": 0,
         "jalr": 0
       },
@@ -452,10 +436,10 @@
       },
       "data": {
         "label": "ADD",
-        "value": -4
+        "value": 305418240
       },
-      "width": 66,
-      "height": 75,
+      "width": 80,
+      "height": 80,
       "selected": false,
       "positionAbsolute": {
         "x": 793.5275281648062,
@@ -472,7 +456,7 @@
       },
       "data": {
         "label": "FORK",
-        "value": -4
+        "value": 305418240
       },
       "width": 32,
       "height": 32,
@@ -495,7 +479,7 @@
         "value": 4,
         "select": "0"
       },
-      "width": 108,
+      "width": 160,
       "height": 123,
       "selected": false,
       "positionAbsolute": {
@@ -582,6 +566,68 @@
       "positionAbsolute": {
         "x": 559.6082410306024,
         "y": -213.65378859526504
+      },
+      "dragging": false
+    },
+    {
+      "id": "mux-1743841921971",
+      "type": "mux",
+      "position": {
+        "x": 710.3714747110963,
+        "y": 639.3445428563022
+      },
+      "data": {
+        "label": "MUX",
+        "value": 305418240,
+        "select": "1"
+      },
+      "width": 160,
+      "height": 123,
+      "selected": false,
+      "positionAbsolute": {
+        "x": 710.3714747110963,
+        "y": 639.3445428563022
+      },
+      "dragging": false
+    },
+    {
+      "id": "mux-1743842151951",
+      "type": "mux",
+      "position": {
+        "x": 729.7651707374424,
+        "y": 393.97649687523017
+      },
+      "data": {
+        "label": "MUX",
+        "value": 0,
+        "select": "2",
+        "portCount": 3
+      },
+      "width": 108,
+      "height": 147,
+      "selected": false,
+      "positionAbsolute": {
+        "x": 729.7651707374424,
+        "y": 393.97649687523017
+      },
+      "dragging": false
+    },
+    {
+      "id": "constant-1743842223462",
+      "type": "constant",
+      "position": {
+        "x": 554.9715831304827,
+        "y": 474.1581919813883
+      },
+      "data": {
+        "label": "CONSTANT"
+      },
+      "width": 96,
+      "height": 39,
+      "selected": false,
+      "positionAbsolute": {
+        "x": 554.9715831304827,
+        "y": 474.1581919813883
       },
       "dragging": false
     }
@@ -821,26 +867,6 @@
         "color": "#999"
       },
       "source": "fork-1740457285226",
-      "sourceHandle": "output-2",
-      "target": "mux-1740457185388",
-      "targetHandle": "in0",
-      "id": "efork-1740457285226-mux-1740457185388-1",
-      "selected": false
-    },
-    {
-      "type": "smoothstep",
-      "animated": false,
-      "style": {
-        "stroke": "#999",
-        "strokeWidth": 1
-      },
-      "markerEnd": {
-        "type": "arrow",
-        "width": 20,
-        "height": 20,
-        "color": "#999"
-      },
-      "source": "fork-1740457285226",
       "sourceHandle": "output-1",
       "target": "memory-1740457029513",
       "targetHandle": "writeData",
@@ -865,26 +891,6 @@
       "target": "alu-1740457259779",
       "targetHandle": "control",
       "id": "ealu-control-1740457192016-alu-1740457259779-1",
-      "selected": false
-    },
-    {
-      "type": "smoothstep",
-      "animated": false,
-      "style": {
-        "stroke": "#999",
-        "strokeWidth": 1
-      },
-      "markerEnd": {
-        "type": "arrow",
-        "width": 20,
-        "height": 20,
-        "color": "#999"
-      },
-      "source": "control-1740456985517",
-      "sourceHandle": "aluSrc",
-      "target": "mux-1740457185388",
-      "targetHandle": "select",
-      "id": "econtrol-1740456985517-mux-1740457185388-1",
       "selected": false
     },
     {
@@ -985,26 +991,6 @@
       "target": "register-1740456812349",
       "targetHandle": "writeData",
       "id": "emux-1740457249603-register-1740456812349-1",
-      "selected": false
-    },
-    {
-      "type": "smoothstep",
-      "animated": false,
-      "style": {
-        "stroke": "#999",
-        "strokeWidth": 1
-      },
-      "markerEnd": {
-        "type": "arrow",
-        "width": 20,
-        "height": 20,
-        "color": "#999"
-      },
-      "source": "mux-1740457185388",
-      "sourceHandle": "out",
-      "target": "alu-1740457259779",
-      "targetHandle": "b",
-      "id": "emux-1740457185388-alu-1740457259779-1",
       "selected": false
     },
     {
@@ -1185,26 +1171,6 @@
       "target": "fork-1740457651094",
       "targetHandle": "input",
       "id": "eimm-gen-1740456815567-fork-1740457651094-1",
-      "selected": false
-    },
-    {
-      "type": "smoothstep",
-      "animated": false,
-      "style": {
-        "stroke": "#999",
-        "strokeWidth": 1
-      },
-      "markerEnd": {
-        "type": "arrow",
-        "width": 20,
-        "height": 20,
-        "color": "#999"
-      },
-      "source": "fork-1740457651094",
-      "sourceHandle": "output-2",
-      "target": "mux-1740457185388",
-      "targetHandle": "in1",
-      "id": "efork-1740457651094-mux-1740457185388-1",
       "selected": false
     },
     {
@@ -1501,26 +1467,6 @@
         "color": "#999"
       },
       "source": "fork-1740464547221",
-      "sourceHandle": "output-2",
-      "target": "alu-1740457259779",
-      "targetHandle": "a",
-      "id": "efork-1740464547221-alu-1740457259779-1",
-      "selected": false
-    },
-    {
-      "type": "smoothstep",
-      "animated": false,
-      "style": {
-        "stroke": "#999",
-        "strokeWidth": 1
-      },
-      "markerEnd": {
-        "type": "arrow",
-        "width": 20,
-        "height": 20,
-        "color": "#999"
-      },
-      "source": "fork-1740464547221",
       "sourceHandle": "output-1",
       "target": "mux-1740464449901",
       "targetHandle": "in1",
@@ -1586,10 +1532,190 @@
       "targetHandle": "in2",
       "id": "efork-1740914252490-mux-1740457249603-1",
       "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "fork-1740457651094",
+      "sourceHandle": "output-2",
+      "target": "mux-1743841921971",
+      "targetHandle": "in1",
+      "id": "efork-1740457651094-mux-1743841921971-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "fork-1740457285226",
+      "sourceHandle": "output-2",
+      "target": "mux-1743841921971",
+      "targetHandle": "in0",
+      "id": "efork-1740457285226-mux-1743841921971-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "control-1740456985517",
+      "sourceHandle": "aluSrc2",
+      "target": "mux-1743841921971",
+      "targetHandle": "select",
+      "id": "econtrol-1740456985517-mux-1743841921971-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "mux-1743841921971",
+      "sourceHandle": "out",
+      "target": "alu-1740457259779",
+      "targetHandle": "b",
+      "id": "emux-1743841921971-alu-1740457259779-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "fork-1740464547221",
+      "sourceHandle": "output-2",
+      "target": "mux-1743842151951",
+      "targetHandle": "in0",
+      "id": "efork-1740464547221-mux-1743842151951-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "mux-1743842151951",
+      "sourceHandle": "out",
+      "target": "alu-1740457259779",
+      "targetHandle": "a",
+      "id": "emux-1743842151951-alu-1740457259779-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "control-1740456985517",
+      "sourceHandle": "aluSrc1",
+      "target": "mux-1743842151951",
+      "targetHandle": "select",
+      "id": "econtrol-1740456985517-mux-1743842151951-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 3
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "fork-1740457481300",
+      "sourceHandle": "output-3",
+      "target": "mux-1743842151951",
+      "targetHandle": "in1",
+      "id": "efork-1740457481300-mux-1743842151951-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 3
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "constant-1743842223462",
+      "sourceHandle": "value",
+      "target": "mux-1743842151951",
+      "targetHandle": "in2",
+      "id": "econstant-1743842223462-mux-1743842151951-1",
+      "selected": false
     }
   ],
   "isSimulating": false,
   "editorCode": "",
   "assembledInstructions": [],
-  "savedAt": "2025-03-02T11:21:44.329Z"
+  "savedAt": "2025-04-05T08:47:15.651Z"
 }
