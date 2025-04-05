@@ -11,6 +11,7 @@ interface ControlNodeData {
   aluOp?: number;
   aluSrc?: number;
   memToReg?: number;
+  controlMux?: number; // 控制多路复用器信号，来自冒险检测单元
 }
 
 export function ControlNode({ data, id, selected }: { data: ControlNodeData; id: string; selected?: boolean }) {
@@ -23,131 +24,158 @@ export function ControlNode({ data, id, selected }: { data: ControlNodeData; id:
   // 更新输入连接的函数
   const updateInputConnections = () => {
     const inputEdges = edges.filter(edge => edge.target === id);
+    let hasChanges = false;
+    let currentControlMux = data.controlMux ?? 0;
+    let currentOpcode = data.opcode;
     
     inputEdges.forEach(edge => {
       const sourceNode = nodes.find(node => node.id === edge.source);
       if (sourceNode?.data && typeof sourceNode.data === 'object') {
         const portId = edge.targetHandle;
-        let sourceValue: string | undefined;
-  
-        if (portId && sourceNode.data[portId as keyof typeof sourceNode.data] !== undefined) {
-          sourceValue = String(sourceNode.data[portId as keyof typeof sourceNode.data]);
-        } else if ('value' in sourceNode.data) {
-          sourceValue = String((sourceNode.data as { value?: number | string }).value);
-        }
-  
-        if (portId === 'opcode' && sourceValue) {
-          const binaryValue = parseInt(sourceValue).toString(2).padStart(7, '0');
+        
+        if (portId === 'controlMux') {
+          const sourceValue = sourceNode.data[edge.sourceHandle as keyof typeof sourceNode.data];
+          const muxValue = typeof sourceValue === 'number' ? sourceValue : 0;
           
-          // 只有当opcode真正改变时才更新状态
-          if (binaryValue !== data.opcode) {
-            setDisplayOpcode(binaryValue);
-            
-            // 根据opcode生成控制信号
-            const op = binaryValue.slice(0, 7);
-            let controlSignals;
-            
-            switch (op) {
-              case '0110011': // R-type
-                controlSignals = {
-                  regWrite: 1,
-                  memRead: 0,
-                  memWrite: 0,
-                  aluOp: parseInt('10', 2),
-                  aluSrc: 0,
-                  memToReg: 0
-                };
-                break;
-              case '0010011': // I-type ALU
-                controlSignals = {
-                  regWrite: 1,
-                  memRead: 0,
-                  memWrite: 0,
-                  aluOp: parseInt('11', 2),
-                  aluSrc: 1,
-                  memToReg: 0
-                };
-                break;
-              case '0000011': // I-type Load
-                controlSignals = {
-                  regWrite: 1,
-                  memRead: 1,
-                  memWrite: 0,
-                  aluOp: parseInt('00', 2),
-                  aluSrc: 1,
-                  memToReg: 1
-                };
-                break;
-              case '0100011': // S-type
-                controlSignals = {
-                  regWrite: 0,
-                  memRead: 0,
-                  memWrite: 1,
-                  aluOp: parseInt('00', 2),
-                  aluSrc: 1,
-                  memToReg: 0
-                };
-                break;
-              case '1100011': // B-type
-                controlSignals = {
-                  regWrite: 0,
-                  memRead: 0,
-                  memWrite: 0,
-                  aluOp: parseInt('01', 2),
-                  aluSrc: 0,
-                  memToReg: 0
-                };
-                break;
-              case '1101111': // J-type (jal)
-              case '1100111': // I-type (jalr)
-                controlSignals = {
-                  regWrite: 1,
-                  memRead: 0,
-                  memWrite: 0,
-                  aluOp: parseInt('00', 2),
-                  aluSrc: 1,
-                  memToReg: 2
-                };
-                break;
-              case '0110111': // U-type (lui)
-              case '0010111': // U-type (auipc)
-                controlSignals = {
-                  regWrite: 1,
-                  memRead: 0,
-                  memWrite: 0,
-                  aluOp: parseInt('00', 2),
-                  aluSrc: 1,
-                  memToReg: 0
-                };
-                break;
-              default:
-                controlSignals = {
-                  regWrite: 0,
-                  memRead: 0,
-                  memWrite: 0,
-                  aluOp: parseInt('00', 2),
-                  aluSrc: 0,
-                  memToReg: 0
-                };
+          if (muxValue !== currentControlMux) {
+            currentControlMux = muxValue;
+            hasChanges = true;
+          }
+        } else if (portId === 'opcode') {
+          let sourceValue: string | undefined;
+          
+          if (portId && sourceNode.data[portId as keyof typeof sourceNode.data] !== undefined) {
+            sourceValue = String(sourceNode.data[portId as keyof typeof sourceNode.data]);
+          } else if ('value' in sourceNode.data) {
+            sourceValue = String((sourceNode.data as { value?: number | string }).value);
+          }
+          
+          if (sourceValue) {
+            const binaryValue = parseInt(sourceValue).toString(2).padStart(7, '0');
+            if (binaryValue !== currentOpcode) {
+              currentOpcode = binaryValue;
+              setDisplayOpcode(binaryValue);
+              hasChanges = true;
             }
-            
-            // 更新节点数据
-            updateNodeData(id, {
-              ...data,
-              ...controlSignals,
-              opcode: binaryValue
-            });
           }
         }
       }
     });
+    
+    if (hasChanges) {
+      let controlSignals;
+      // 如果controlMux为1（hazard检测器发出暂停信号），则所有控制信号为0
+      if (currentControlMux === 1) {
+        controlSignals = {
+          regWrite: 0,
+          memRead: 0,
+          memWrite: 0,
+          aluOp: 0,
+          aluSrc: 0,
+          memToReg: 0
+        };
+      } else if (currentOpcode) {
+        const op = currentOpcode.slice(0, 7);
+        switch (op) {
+          case '0110011': // R-type
+            controlSignals = {
+              regWrite: 1,
+              memRead: 0,
+              memWrite: 0,
+              aluOp: parseInt('10', 2),
+              aluSrc: 0,
+              memToReg: 0
+            };
+            break;
+          case '0010011': // I-type ALU
+            controlSignals = {
+              regWrite: 1,
+              memRead: 0,
+              memWrite: 0,
+              aluOp: parseInt('11', 2),
+              aluSrc: 1,
+              memToReg: 0
+            };
+            break;
+          case '0000011': // I-type Load
+            controlSignals = {
+              regWrite: 1,
+              memRead: 1,
+              memWrite: 0,
+              aluOp: parseInt('00', 2),
+              aluSrc: 1,
+              memToReg: 1
+            };
+            break;
+          case '0100011': // S-type
+            controlSignals = {
+              regWrite: 0,
+              memRead: 0,
+              memWrite: 1,
+              aluOp: parseInt('00', 2),
+              aluSrc: 1,
+              memToReg: 0
+            };
+            break;
+          case '1100011': // B-type
+            controlSignals = {
+              regWrite: 0,
+              memRead: 0,
+              memWrite: 0,
+              aluOp: parseInt('01', 2),
+              aluSrc: 0,
+              memToReg: 0
+            };
+            break;
+          case '1101111': // J-type (jal)
+          case '1100111': // I-type (jalr)
+            controlSignals = {
+              regWrite: 1,
+              memRead: 0,
+              memWrite: 0,
+              aluOp: parseInt('00', 2),
+              aluSrc: 1,
+              memToReg: 2
+            };
+            break;
+          case '0110111': // U-type (lui)
+          case '0010111': // U-type (auipc)
+            controlSignals = {
+              regWrite: 1,
+              memRead: 0,
+              memWrite: 0,
+              aluOp: parseInt('00', 2),
+              aluSrc: 1,
+              memToReg: 0
+            };
+            break;
+          default:
+            controlSignals = {
+              regWrite: 0,
+              memRead: 0,
+              memWrite: 0,
+              aluOp: parseInt('00', 2),
+              aluSrc: 0,
+              memToReg: 0
+            };
+        }
+      }
+      
+      if (controlSignals) {
+        updateNodeData(id, {
+          ...data,
+          ...controlSignals,
+          opcode: currentOpcode,
+          controlMux: currentControlMux
+        });
+      }
+    }
   };
   
-  // 监听输入连接的变化
   React.useEffect(() => {
     updateInputConnections();
   }, [edges, nodes, id, data]);
-  
+
   return (
     <div className={`px-2 py-4 shadow-md rounded-md bg-white border-2 w-40 ${
       selected ? 'border-blue-500' : 'border-gray-200'
@@ -159,6 +187,14 @@ export function ControlNode({ data, id, selected }: { data: ControlNodeData; id:
         className="w-3 h-3 bg-blue-400" 
         style={{ top: '10%' }}
         title="Instruction Opcode"
+      />
+      <Handle 
+        type="target" 
+        position={Position.Top} 
+        id="controlMux" 
+        className="w-3 h-3 bg-blue-400" 
+        style={{ left: '50%' }}
+        title="Control Mux (0=Normal, 1=NOP)"
       />
       <div className="flex flex-col items-start">
         <div className="text-lg font-bold mb-2">Control Unit</div>
@@ -177,6 +213,7 @@ export function ControlNode({ data, id, selected }: { data: ControlNodeData; id:
               default: return 'Unknown';
             }
           })()}</div>
+          <div className="mt-1 text-xs">MUX: {data.controlMux ?? 0}</div>
           <div className="flex flex-col gap-y-4">
             <div className="flex justify-between items-center relative">
               <span>RegWrite:</span>

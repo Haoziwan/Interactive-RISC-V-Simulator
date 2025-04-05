@@ -36,6 +36,7 @@ import { PipelineRegisterNode } from './nodes/PipelineRegisterNode';
 import { useCircuitStore } from '../store/circuitStore';
 import { Play, Pause, RotateCcw, StepForward, CheckCircle, Trash2 } from 'lucide-react';
 import { ForwardingUnitNode } from './nodes/ForwardingUnitNode';
+import { HazardDetectionUnitNode } from './nodes/HazardDetectionUnitNode';
 
 const nodeTypes = {
   alu: ALUNode,
@@ -56,6 +57,7 @@ const nodeTypes = {
   'instr-distributer': InstrDistributerNode,
   'jump-control': JumpControlNode,
   'forwarding-unit': ForwardingUnitNode,
+  'hazard-detection-unit': HazardDetectionUnitNode,
 };
 
 // 定义必需的组件和它们允许的数量

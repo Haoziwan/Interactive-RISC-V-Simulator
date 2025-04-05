@@ -6,6 +6,7 @@ interface PCNodeData {
   label: string;
   value?: number;
   reset?: boolean;
+  pcWrite?: number;
 }
 
 export function PCNode({ data, id, selected }: { data: PCNodeData; id: string; selected?: boolean }) {
@@ -15,6 +16,7 @@ export function PCNode({ data, id, selected }: { data: PCNodeData; id: string; s
   const pcValue = useCircuitStore((state) => state.pcValue);
   const value = pcValue ?? 0;
   const reset = data.reset ?? false;
+  const pcWrite = data.pcWrite ?? 1;
   const [inputValue, setInputValue] = React.useState<number>(pcValue ?? 0);
   const nodes = useNodes();
   const edges = useEdges();
@@ -42,10 +44,29 @@ export function PCNode({ data, id, selected }: { data: PCNodeData; id: string; s
     }
   }, [reset, id, data, updateNodeData, updatePcValue]);
 
-  // 监听输入连接的变化
-
+  // 监听pcWrite信号和输入连接的变化
   const updateInputConnections = () => {
-    // 找到连接到此节点的边
+    // 检查pcWrite信号
+    const pcWriteEdge = edges.find(edge => edge.target === id && edge.targetHandle === 'pcWrite');
+    let pcWriteValue = 1; // 默认可写入
+    
+    if (pcWriteEdge) {
+      const sourceNode = nodes.find(node => node.id === pcWriteEdge.source);
+      if (sourceNode?.data && typeof sourceNode.data === 'object') {
+        const sourceValue = sourceNode.data[pcWriteEdge.sourceHandle as keyof typeof sourceNode.data];
+        pcWriteValue = typeof sourceValue === 'number' ? sourceValue : 1;
+      }
+    }
+    
+    // 更新pcWrite状态
+    if (pcWriteValue !== data.pcWrite) {
+      updateNodeData(id, {
+        ...data,
+        pcWrite: pcWriteValue
+      });
+    }
+
+    // 查找next输入信号
     const inputEdge = edges.find(edge => edge.target === id && edge.targetHandle === 'next');
     if (inputEdge) {
       // 找到源节点
@@ -55,6 +76,7 @@ export function PCNode({ data, id, selected }: { data: PCNodeData; id: string; s
       }
     }
   };
+
   // 监听输入连接的变化
   React.useEffect(() => {
     updateInputConnections();
@@ -63,25 +85,28 @@ export function PCNode({ data, id, selected }: { data: PCNodeData; id: string; s
   // 监听时钟信号(stepCount)
   React.useEffect(() => {
     if (!reset) {
-      // 首先将当前保存的输入值更新为寄存器的值
-      handleValueChange(inputValue);
-      
-      // 在下一个事件循环中更新输入值
-      setTimeout(() => {
-        // 获取所有边
-        const edges = useCircuitStore.getState().edges;
-        // 找到所有连接到当前节点末端口的边
-        const inputEdges = edges.filter(edge => edge.target === id && edge.targetHandle === 'next');
+      // 检查pcWrite信号，只有当pcWrite=1时才更新PC值
+      if (pcWrite === 1) {
+        // 首先将当前保存的输入值更新为寄存器的值
+        handleValueChange(inputValue);
         
-        // 如果有输入连接，获取输入值并保存
-        if (inputEdges.length > 0) {
-          const inputEdge = inputEdges[0]; // 获取第一个输入连接
-          const sourceNode = useCircuitStore.getState().nodes.find(node => node.id === inputEdge.source);
-          if (sourceNode && sourceNode.data && typeof sourceNode.data.value === 'number') {
-            setInputValue(sourceNode.data.value);
+        // 在下一个事件循环中更新输入值
+        setTimeout(() => {
+          // 获取所有边
+          const edges = useCircuitStore.getState().edges;
+          // 找到所有连接到当前节点末端口的边
+          const inputEdges = edges.filter(edge => edge.target === id && edge.targetHandle === 'next');
+          
+          // 如果有输入连接，获取输入值并保存
+          if (inputEdges.length > 0) {
+            const inputEdge = inputEdges[0]; // 获取第一个输入连接
+            const sourceNode = useCircuitStore.getState().nodes.find(node => node.id === inputEdge.source);
+            if (sourceNode && sourceNode.data && typeof sourceNode.data.value === 'number') {
+              setInputValue(sourceNode.data.value);
+            }
           }
-        }
-      }, 0);
+        }, 0);
+      }
     }
   }, [stepCount]);
 
@@ -94,8 +119,17 @@ export function PCNode({ data, id, selected }: { data: PCNodeData; id: string; s
         position={Position.Left} 
         id="next" 
         className="w-3 h-3 bg-blue-400" 
-        style={{ top: '50%' }}
+        style={{ top: '35%' }}
         title="Next Instruction Address"
+      />
+      
+      <Handle 
+        type="target" 
+        position={Position.Left} 
+        id="pcWrite" 
+        className="w-3 h-3 bg-blue-400" 
+        style={{ top: '65%' }}
+        title="PC Write Enable"
       />
       
       <div className="flex items-center">
@@ -103,6 +137,7 @@ export function PCNode({ data, id, selected }: { data: PCNodeData; id: string; s
           <div className="text-lg font-bold">PC</div>
           <div className="text-gray-500">Current: 0x{value.toString(16).padStart(8, '0')}</div>
           <div className="text-gray-500">Next: 0x{inputValue.toString(16).padStart(8, '0')}</div>
+          <div className="text-gray-500">PCWrite: {pcWrite}</div>
         </div>
       </div>
 

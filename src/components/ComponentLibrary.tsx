@@ -14,7 +14,8 @@ import {
   Tag,
   Hash as HashIcon,
   SplitSquareHorizontal,
-  ArrowLeftRight
+  ArrowLeftRight,
+  AlertTriangle
 } from 'lucide-react';
 import { useCircuitStore } from '../store/circuitStore';
 
@@ -128,6 +129,12 @@ const components = [
     label: 'Forwarding Unit',
     icon: <ArrowLeftRight className="w-6 h-6" />,
     description: 'Data Forwarding Unit for Pipeline Hazard Control',
+  },
+  {
+    type: 'hazard-detection-unit',
+    label: 'Hazard Detection Unit',
+    icon: <AlertTriangle className="w-6 h-6" />,
+    description: 'Detects and resolves pipeline hazards by stalling',
   }
 ];
 
