@@ -1,5 +1,5 @@
 {
-    "name": "circuit-2025-04-05T06-38-00-984Z",
+    "name": "circuit-2025-04-05T12-16-31-443Z",
     "nodes": [
       {
         "id": "register-1740456812349",
@@ -89,7 +89,7 @@
           "pcWrite": 1
         },
         "width": 202,
-        "height": 95,
+        "height": 119,
         "selected": false,
         "positionAbsolute": {
           "x": -595.4745808819598,
@@ -123,8 +123,8 @@
         "id": "control-1740456985517",
         "type": "control",
         "position": {
-          "x": 37.64271823694668,
-          "y": 87.03864708279741
+          "x": 90.90194514517134,
+          "y": 160.80324134150408
         },
         "data": {
           "label": "CONTROL",
@@ -139,11 +139,11 @@
           "opcode": "0000000"
         },
         "width": 160,
-        "height": 267,
+        "height": 319,
         "selected": false,
         "positionAbsolute": {
-          "x": 37.64271823694668,
-          "y": 87.03864708279741
+          "x": 90.90194514517134,
+          "y": 160.80324134150408
         },
         "dragging": false
       },
@@ -195,8 +195,8 @@
         "id": "mux-1740457185388",
         "type": "mux",
         "position": {
-          "x": 897.3906964309703,
-          "y": 558.039752989859
+          "x": 734.3321196485659,
+          "y": 499.80454699614324
         },
         "data": {
           "label": "MUX",
@@ -207,8 +207,8 @@
         "height": 123,
         "selected": false,
         "positionAbsolute": {
-          "x": 897.3906964309703,
-          "y": 558.039752989859
+          "x": 734.3321196485659,
+          "y": 499.80454699614324
         },
         "dragging": false
       },
@@ -604,8 +604,8 @@
         "id": "pipeline-register-1740741309409",
         "type": "pipeline-register",
         "position": {
-          "x": 382.73052743260666,
-          "y": -60.12565530500194
+          "x": 393.17558231611395,
+          "y": 1.3092152806286776
         },
         "data": {
           "label": "",
@@ -655,8 +655,8 @@
         "height": 680,
         "selected": false,
         "positionAbsolute": {
-          "x": 382.73052743260666,
-          "y": -60.12565530500194
+          "x": 393.17558231611395,
+          "y": 1.3092152806286776
         },
         "dragging": false
       },
@@ -1904,8 +1904,8 @@
         "type": "smoothstep",
         "animated": false,
         "style": {
-          "stroke": "#999",
-          "strokeWidth": 1
+          "stroke": "#3182ce",
+          "strokeWidth": 3
         },
         "markerEnd": {
           "type": "arrow",
@@ -3359,10 +3359,30 @@
         "targetHandle": "input",
         "id": "emux-1743834619525-fork-1740457285226-1",
         "selected": false
+      },
+      {
+        "type": "smoothstep",
+        "animated": false,
+        "style": {
+          "stroke": "#999",
+          "strokeWidth": 3
+        },
+        "markerEnd": {
+          "type": "arrow",
+          "width": 20,
+          "height": 20,
+          "color": "#999"
+        },
+        "source": "control-1740456985517",
+        "sourceHandle": "aluSrc2",
+        "target": "pipeline-register-1740741309409",
+        "targetHandle": "input-10",
+        "id": "econtrol-1740456985517-pipeline-register-1740741309409-7",
+        "selected": false
       }
     ],
     "isSimulating": false,
     "editorCode": "",
     "assembledInstructions": [],
-    "savedAt": "2025-04-05T06:38:00.984Z"
+    "savedAt": "2025-04-05T12:16:31.444Z"
   }

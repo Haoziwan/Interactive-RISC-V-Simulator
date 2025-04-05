@@ -223,11 +223,11 @@ export function MemoryView() {
             className="flex items-center px-4 py-2 text-sm bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
           >
             <Save className="w-4 h-4 mr-2" />
-            Export Memory
+            Export 
           </button>
           <label className="flex items-center px-4 py-2 text-sm bg-gray-600 text-white rounded-md hover:bg-gray-700 transition-colors cursor-pointer focus-within:ring-2 focus-within:ring-gray-500 focus-within:ring-offset-2">
             <FileInput className="w-4 h-4 mr-2" />
-            Import Memory
+            Import 
             <input
               type="file"
               accept=".json"
@@ -235,6 +235,16 @@ export function MemoryView() {
               className="hidden"
             />
           </label>
+          <button
+            onClick={() => {
+              if (window.confirm('Are you sure you want to clear the memory?')) {
+                useCircuitStore.getState().clearMemory();
+              }
+            }}
+            className="flex items-center px-4 py-2 text-sm bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+          >
+            <RefreshCw className="w-4 h-4" />
+          </button>
         </div>
       </div>
       
