@@ -250,6 +250,18 @@ export function ComponentLibrary() {
                     .then(data => {
                       loadCircuit(JSON.stringify(data));
                     });
+                } else if (selectedExample === 'pipeline-forward') {
+                  fetch('/datapath/pipeline-forward.json')
+                    .then(response => response.json())
+                    .then(data => {
+                      loadCircuit(JSON.stringify(data));
+                    });
+                } else if (selectedExample === 'pipeline-hazard') {
+                  fetch('/datapath/pipeline-hazard.json')
+                    .then(response => response.json())
+                    .then(data => {
+                      loadCircuit(JSON.stringify(data));
+                    });
                 } else if (selectedExample === 'empty-datapath') {
                   loadCircuit(JSON.stringify({ nodes: [], edges: [] }));
                 }
@@ -262,6 +274,8 @@ export function ComponentLibrary() {
               <option value="empty-datapath">empty</option>
               <option value="basic-datapath">basic datapath</option>
               <option value="basic-pipeline">pipeline datapath</option>
+              <option value="pipeline-forward">pipeline forward</option>
+              <option value="pipeline-hazard">pipeline hazard</option>
             </select>
             <BookOpen className="w-3.5 h-3.5 absolute right-2 top-1/2 transform -translate-y-1/2 pointer-events-none text-white opacity-80" />
           </div>
