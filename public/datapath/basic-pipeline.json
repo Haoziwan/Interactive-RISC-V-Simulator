@@ -1,5 +1,5 @@
 {
-  "name": "circuit-2025-03-06T03-52-54-944Z",
+  "name": "circuit-2025-04-05T06-17-20-164Z",
   "nodes": [
     {
       "id": "register-1740456812349",
@@ -36,9 +36,9 @@
       },
       "data": {
         "label": "IMM-GEN",
-        "instruction": "00000000000000000000000110010011",
-        "immediate": 0,
-        "format": "I"
+        "instruction": "00000000010000011100011001100011",
+        "immediate": 12,
+        "format": "B"
       },
       "width": 182,
       "height": 95,
@@ -85,10 +85,11 @@
       "data": {
         "label": "PC",
         "value": 0,
-        "reset": false
+        "reset": false,
+        "pcWrite": 1
       },
       "width": 202,
-      "height": 95,
+      "height": 119,
       "selected": false,
       "positionAbsolute": {
         "x": -595.4745808819598,
@@ -106,8 +107,7 @@
       "data": {
         "label": "INSTRUCTION-MEMORY",
         "instructions": [],
-        "pc": 0,
-        "value": null
+        "pc": 0
       },
       "width": 273,
       "height": 95,
@@ -135,10 +135,11 @@
         "jump": 0,
         "aluSrc": 0,
         "memToReg": 0,
-        "opcode": "0000000"
+        "opcode": "0000000",
+        "controlMux": 0
       },
       "width": 160,
-      "height": 267,
+      "height": 287,
       "selected": false,
       "positionAbsolute": {
         "x": 95.60117417303195,
@@ -587,10 +588,11 @@
         "output-2": 0,
         "value": 0,
         "reset": false,
-        "outputValue": 0
+        "outputValue": 0,
+        "writeEnable": 1
       },
-      "width": 80,
-      "height": 900,
+      "width": 120,
+      "height": 400,
       "selected": false,
       "positionAbsolute": {
         "x": -146.8296043009575,
@@ -621,11 +623,12 @@
           0,
           0,
           0,
+          0,
           0
         ],
         "output-0": 0,
         "name": "ID/EX",
-        "portCount": 14,
+        "portCount": 15,
         "output-1": 0,
         "output-2": 0,
         "output-3": 0,
@@ -641,10 +644,11 @@
         "output-13": 0,
         "value": 0,
         "reset": false,
-        "outputValue": 0
+        "outputValue": 0,
+        "output-14": 0
       },
-      "width": 85,
-      "height": 900,
+      "width": 120,
+      "height": 600,
       "selected": false,
       "positionAbsolute": {
         "x": 418.6050686404767,
@@ -669,11 +673,12 @@
           0,
           0,
           0,
+          0,
           0
         ],
         "output-0": 0,
         "name": "EX/MEM",
-        "portCount": 8,
+        "portCount": 9,
         "value": 0,
         "reset": false,
         "outputValue": 0,
@@ -683,10 +688,11 @@
         "output-4": 0,
         "output-5": 0,
         "output-6": 0,
-        "output-7": 0
+        "output-7": 0,
+        "output-8": 0
       },
-      "width": 105,
-      "height": 900,
+      "width": 120,
+      "height": 400,
       "selected": false,
       "positionAbsolute": {
         "x": 1150.3209333836173,
@@ -708,21 +714,23 @@
           0,
           0,
           0,
+          0,
           0
         ],
         "output-0": 0,
         "name": "MEM/WB",
-        "portCount": 5,
+        "portCount": 6,
         "value": 0,
         "reset": false,
         "outputValue": 0,
         "output-1": 0,
         "output-2": 0,
         "output-3": 0,
-        "output-4": 0
+        "output-4": 0,
+        "output-5": 0
       },
-      "width": 111,
-      "height": 900,
+      "width": 120,
+      "height": 400,
       "selected": false,
       "dragging": false,
       "positionAbsolute": {
@@ -1190,26 +1198,6 @@
       "target": "pc-1740456929935",
       "targetHandle": "next",
       "id": "emux-1740457672408-pc-1740456929935-1",
-      "selected": false
-    },
-    {
-      "type": "smoothstep",
-      "animated": false,
-      "style": {
-        "stroke": "#999",
-        "strokeWidth": 1
-      },
-      "markerEnd": {
-        "type": "arrow",
-        "width": 20,
-        "height": 20,
-        "color": "#999"
-      },
-      "source": "control-1740456985517",
-      "sourceHandle": "regWrite",
-      "target": "register-1740456812349",
-      "targetHandle": "regWrite",
-      "id": "econtrol-1740456985517-register-1740456812349-1",
       "selected": false
     },
     {
@@ -2317,7 +2305,7 @@
       "animated": false,
       "style": {
         "stroke": "#999",
-        "strokeWidth": 3
+        "strokeWidth": 1
       },
       "markerEnd": {
         "type": "arrow",
@@ -2337,7 +2325,7 @@
       "animated": false,
       "style": {
         "stroke": "#999",
-        "strokeWidth": 3
+        "strokeWidth": 1
       },
       "markerEnd": {
         "type": "arrow",
@@ -2351,10 +2339,90 @@
       "targetHandle": "input-0",
       "id": "epipeline-register-1740738478102-pipeline-register-1740741309409-2",
       "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 3
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "control-1740456985517",
+      "sourceHandle": "regWrite",
+      "target": "pipeline-register-1740741309409",
+      "targetHandle": "input-14",
+      "id": "econtrol-1740456985517-pipeline-register-1740741309409-6",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 3
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "pipeline-register-1740741309409",
+      "sourceHandle": "output-14",
+      "target": "pipeline-register-1741232616529",
+      "targetHandle": "input-8",
+      "id": "epipeline-register-1740741309409-pipeline-register-1741232616529-6",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 3
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "pipeline-register-1741232616529",
+      "sourceHandle": "output-8",
+      "target": "pipeline-register-1741232826695",
+      "targetHandle": "input-5",
+      "id": "epipeline-register-1741232616529-pipeline-register-1741232826695-5",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 3
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "pipeline-register-1741232826695",
+      "sourceHandle": "output-5",
+      "target": "register-1740456812349",
+      "targetHandle": "regWrite",
+      "id": "epipeline-register-1741232826695-register-1740456812349-2",
+      "selected": false
     }
   ],
   "isSimulating": false,
   "editorCode": "",
   "assembledInstructions": [],
-  "savedAt": "2025-03-06T03:52:54.944Z"
+  "savedAt": "2025-04-05T06:17:20.164Z"
 }
