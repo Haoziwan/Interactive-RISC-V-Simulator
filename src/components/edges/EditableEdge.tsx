@@ -18,6 +18,7 @@ interface IntermediatePoint {
 // Interface for edge data including intermediate points
 interface EditableEdgeData {
   intermediatePoints?: IntermediatePoint[];
+  lineType?: 'straight' | 'step';
   [key: string]: any;
 }
 
@@ -81,6 +82,40 @@ const getPolylinePath = (
   return path;
 };
 
+// Get path based on line type
+const getPath = (
+  sourceX: number, sourceY: number,
+  targetX: number, targetY: number,
+  intermediatePoints: IntermediatePoint[] = [],
+  lineType: 'straight' | 'step' = 'straight'
+) => {
+  if (lineType === 'straight') {
+    return getPolylinePath(sourceX, sourceY, targetX, targetY, intermediatePoints);
+  } else if (lineType === 'step') {
+    // For step, we'll use intermediate points to create custom step paths
+    if (intermediatePoints.length === 0) {
+      // Default step path if no points
+      const midX = (sourceX + targetX) / 2;
+      return `M ${sourceX},${sourceY} H ${midX} V ${targetY} H ${targetX}`;
+    }
+    // Custom step path using intermediate points
+    let path = `M ${sourceX},${sourceY}`;
+    intermediatePoints.forEach((point, index) => {
+      if (index === 0) {
+        // First point: horizontal then vertical
+        path += ` H ${point.x} V ${point.y}`;
+      } else {
+        // Subsequent points: horizontal then vertical
+        path += ` H ${point.x} V ${point.y}`;
+      }
+    });
+    // Final step to target
+    path += ` H ${targetX} V ${targetY}`;
+    return path;
+  }
+  return getPolylinePath(sourceX, sourceY, targetX, targetY);
+};
+
 export default function EditableEdge({
   id,
   source,
@@ -100,12 +135,13 @@ export default function EditableEdge({
   const [draggedPointIndex, setDraggedPointIndex] = useState<number | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   
-  // Ensure we have a valid data object with intermediatePoints array
+  // Ensure we have a valid data object with intermediatePoints array and lineType
   const edgeData: EditableEdgeData = data || {};
   const intermediatePoints = edgeData.intermediatePoints || [];
+  const lineType = edgeData.lineType || 'straight';
 
   // Create a path drawing function for the edge
-  const path = getPolylinePath(sourceX, sourceY, targetX, targetY, intermediatePoints);
+  const path = getPath(sourceX, sourceY, targetX, targetY, intermediatePoints, lineType);
 
   // Handle click on the edge path to add a new point
   const handleEdgeClick = useCallback((event: React.MouseEvent) => {
@@ -301,7 +337,7 @@ export default function EditableEdge({
         markerEnd={markerEnd}
       />
       
-      {/* Only render control points if the edge is selected */}
+      {/* Render control points for all line types when selected */}
       {selected && intermediatePoints.map((point, index) => (
         <g 
           key={`${id}-${index}`} 

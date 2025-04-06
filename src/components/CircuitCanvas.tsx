@@ -101,6 +101,7 @@ export function CircuitCanvas() {
   const [edgeColor, setEdgeColor] = useState('#999');
   const [edgeWidth, setEdgeWidth] = useState(3);
   const [showEdgeSettings, setShowEdgeSettings] = useState(false);
+  const [editableLineType, setEditableLineType] = useState<'straight' | 'step'>('step');
   
   React.useEffect(() => {
     // Load basic datapath when component mounts
@@ -233,8 +234,11 @@ export function CircuitCanvas() {
           height: 20,
           color: edgeColor,
         },
-        // Initialize data with empty intermediatePoints array if it's an editable edge
-        data: edgeType === 'editableEdge' ? { intermediatePoints: [] } : undefined,
+        // Initialize data with empty intermediatePoints array and lineType if it's an editable edge
+        data: edgeType === 'editableEdge' ? { 
+          intermediatePoints: [],
+          lineType: editableLineType
+        } : undefined,
         // Ensure editable edges are selectable and interactive
         selectable: true,
         focusable: true,
@@ -242,7 +246,7 @@ export function CircuitCanvas() {
       };
       addEdge(newEdge);
     },
-    [addEdge, edgeType, edgeAnimated, edgeColor, edgeWidth, nodes]
+    [addEdge, edgeType, edgeAnimated, edgeColor, edgeWidth, nodes, editableLineType]
   );
   const onDrop = useCallback(
     (event: React.DragEvent) => {
@@ -322,12 +326,13 @@ export function CircuitCanvas() {
             height: 20,
             color: edge.selected ? '#3b82f6' : edgeColor,
           },
-          // Preserve any existing data, including intermediatePoints
+          // Preserve any existing data, including intermediatePoints and lineType
           data: {
             ...edge.data,
-            // Ensure intermediatePoints exists for editable edges
+            // Ensure intermediatePoints and lineType exist for editable edges
             ...(edge.type === 'editableEdge' && {
               intermediatePoints: edge.data?.intermediatePoints || [],
+              lineType: edge.data?.lineType || 'step',
             }),
           },
           // Enhanced interaction properties
@@ -395,12 +400,16 @@ export function CircuitCanvas() {
                       // Update all edges to the new type and initialize intermediatePoints if needed
                       useCircuitStore.getState().updateEdgeType(newEdgeType);
                       
-                      // If switching to editable edge, initialize intermediatePoints for all edges
+                      // If switching to editable edge, initialize intermediatePoints and lineType for all edges
                       if (newEdgeType === 'editableEdge') {
                         useCircuitStore.setState((state) => ({
                           edges: state.edges.map(edge => ({
                             ...edge,
-                            data: { ...edge.data, intermediatePoints: edge.data?.intermediatePoints || [] }
+                            data: { 
+                              ...edge.data, 
+                              intermediatePoints: edge.data?.intermediatePoints || [],
+                              lineType: edge.data?.lineType || 'step'
+                            }
                           }))
                         }));
                       }
@@ -414,6 +423,38 @@ export function CircuitCanvas() {
                     ))}
                   </select>
                 </div>
+
+                {/* Add line type selector for editable edges */}
+                {edgeType === 'editableEdge' && (
+                  <div className="flex flex-col space-y-1">
+                    <label className="text-xs text-gray-600">Line Type</label>
+                    <select
+                      value={editableLineType}
+                      onChange={(e) => {
+                        const newLineType = e.target.value as 'straight' | 'step';
+                        setEditableLineType(newLineType);
+                        
+                        // Update all editable edges to use the new line type
+                        useCircuitStore.setState((state) => ({
+                          edges: state.edges.map(edge => ({
+                            ...edge,
+                            data: {
+                              ...edge.data,
+                              ...(edge.type === 'editableEdge' && {
+                                lineType: newLineType
+                              })
+                            }
+                          }))
+                        }));
+                      }}
+                      className="px-2 py-1 rounded border border-gray-200 text-sm"
+                    >
+                      <option value="step">Step Line</option>
+                      <option value="straight">Straight Line</option>
+                    </select>
+                  </div>
+                )}
+
                 <div className="flex flex-col space-y-1">
                   <label className="text-xs text-gray-600">Connection Mode</label>
                   <select
