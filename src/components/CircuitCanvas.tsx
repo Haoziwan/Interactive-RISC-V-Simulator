@@ -37,6 +37,7 @@ import { useCircuitStore } from '../store/circuitStore';
 import { Play, Pause, RotateCcw, StepForward, CheckCircle, Trash2 } from 'lucide-react';
 import { ForwardingUnitNode } from './nodes/ForwardingUnitNode';
 import { HazardDetectionUnitNode } from './nodes/HazardDetectionUnitNode';
+import EditableEdge from './edges/EditableEdge';
 
 const nodeTypes = {
   alu: ALUNode,
@@ -58,6 +59,11 @@ const nodeTypes = {
   'jump-control': JumpControlNode,
   'forwarding-unit': ForwardingUnitNode,
   'hazard-detection-unit': HazardDetectionUnitNode,
+};
+
+// Define edge types
+const edgeTypes = {
+  editableEdge: EditableEdge,
 };
 
 // 定义必需的组件和它们允许的数量
@@ -154,6 +160,14 @@ export function CircuitCanvas() {
   const handlePaneClick = useCallback(() => {
     setSelectedNode(null);
     setSelectedEdge(null);
+    
+    // Clear the selected state from all edges
+    useCircuitStore.setState((state) => ({
+      edges: state.edges.map(e => ({
+        ...e,
+        selected: false,
+      }))
+    }));
   }, [setSelectedNode, setSelectedEdge]);
 
   const onNodesChange: OnNodesChange = useCallback(
@@ -173,8 +187,19 @@ export function CircuitCanvas() {
   );
 
   const onEdgeClick = useCallback(
-    (_: React.MouseEvent, edge: Edge) => {
+    (event: React.MouseEvent, edge: Edge) => {
+      event.stopPropagation();
+      
+      // Select the edge
       setSelectedEdge(edge);
+      
+      // Update the edges to mark this one as selected
+      useCircuitStore.setState((state) => ({
+        edges: state.edges.map(e => ({
+          ...e,
+          selected: e.id === edge.id,
+        }))
+      }));
     },
     [setSelectedEdge]
   );
@@ -208,6 +233,12 @@ export function CircuitCanvas() {
           height: 20,
           color: edgeColor,
         },
+        // Initialize data with empty intermediatePoints array if it's an editable edge
+        data: edgeType === 'editableEdge' ? { intermediatePoints: [] } : undefined,
+        // Ensure editable edges are selectable and interactive
+        selectable: true,
+        focusable: true,
+        updatable: true,
       };
       addEdge(newEdge);
     },
@@ -252,6 +283,7 @@ export function CircuitCanvas() {
     { value: 'default', label: 'default' },
     { value: 'step', label: 'step' },
     { value: 'smoothstep', label: 'smoothstep' },
+    { value: 'editableEdge', label: 'editable' },
   ];
   const defaultEdgeOptions = {
     type: edgeType,
@@ -279,14 +311,30 @@ export function CircuitCanvas() {
           ...edge,
           style: {
             ...defaultEdgeOptions.style,
-            stroke: selectedEdge?.id === edge.id ? '#3b82f6' : edgeColor,
+            stroke: edge.selected ? '#3b82f6' : edgeColor,
+            strokeWidth: edge.selected ? edgeWidth + 1 : edgeWidth,
+            // Add dashed style if it's an editable edge and selected to indicate edit mode
+            strokeDasharray: (edge.type === 'editableEdge' && edge.selected) ? '5,5' : undefined,
           },
           markerEnd: {
             type: 'arrow' as MarkerType,
             width: 20,
             height: 20,
-            color: selectedEdge?.id === edge.id ? '#3b82f6' : edgeColor,
-          }
+            color: edge.selected ? '#3b82f6' : edgeColor,
+          },
+          // Preserve any existing data, including intermediatePoints
+          data: {
+            ...edge.data,
+            // Ensure intermediatePoints exists for editable edges
+            ...(edge.type === 'editableEdge' && {
+              intermediatePoints: edge.data?.intermediatePoints || [],
+            }),
+          },
+          // Enhanced interaction properties
+          selectable: true,
+          focusable: true,
+          updatable: true,
+          interactionWidth: 20,
         }))}
         onConnect={onConnect}
         onDrop={onDrop}
@@ -297,6 +345,7 @@ export function CircuitCanvas() {
         onEdgesChange={onEdgesChange}
         onPaneClick={handlePaneClick}
         nodeTypes={nodeTypes}
+        edgeTypes={edgeTypes}
         nodesConnectable={true}
         nodesDraggable={true}
         edgesUpdatable={true}
@@ -306,10 +355,23 @@ export function CircuitCanvas() {
         connectionMode={connectionMode}
         minZoom={0.2}
         maxZoom={3}
+        panOnScroll={true}
+        // Only allow panning when no edge is selected
+        panOnDrag={!selectedEdge}
         fitView
       >
         <Background variant={BackgroundVariant.Dots} gap={12} size={1} color="#bbb" />
         <Controls />
+        
+        {/* Help panel for editable edges */}
+        {selectedEdge && selectedEdge.type === 'editableEdge' && (
+          <Panel position="bottom-center" className="bg-white p-2 rounded-lg shadow-lg mb-4">
+            <div className="text-xs text-gray-600">
+              <strong>Editable Edge:</strong> Click on edge to add points • Drag points to reposition • Right-click points to delete
+            </div>
+          </Panel>
+        )}
+        
         <Panel position="top-right" className="bg-white p-2 rounded-lg shadow-lg mr-4 mt-4">
           <div className="flex flex-col space-y-2">
             <div className="flex items-center justify-between mb-1">
@@ -327,8 +389,21 @@ export function CircuitCanvas() {
                   <select
                     value={edgeType}
                     onChange={(e) => {
-                      setEdgeType(e.target.value);
-                      useCircuitStore.getState().updateEdgeType(e.target.value);
+                      const newEdgeType = e.target.value;
+                      setEdgeType(newEdgeType);
+                      
+                      // Update all edges to the new type and initialize intermediatePoints if needed
+                      useCircuitStore.getState().updateEdgeType(newEdgeType);
+                      
+                      // If switching to editable edge, initialize intermediatePoints for all edges
+                      if (newEdgeType === 'editableEdge') {
+                        useCircuitStore.setState((state) => ({
+                          edges: state.edges.map(edge => ({
+                            ...edge,
+                            data: { ...edge.data, intermediatePoints: edge.data?.intermediatePoints || [] }
+                          }))
+                        }));
+                      }
                     }}
                     className="px-2 py-1 rounded border border-gray-200 text-sm"
                   >

@@ -187,7 +187,14 @@ export const useCircuitStore = create<CircuitState>()((set, get) => ({
           pc: node.data.pc
         }
       })),
-      edges: state.edges,
+      edges: state.edges.map(edge => ({
+        ...edge,
+        // Ensure we save intermediatePoints data for editable edges
+        data: edge.type === 'editableEdge' ? {
+          ...edge.data,
+          intermediatePoints: edge.data?.intermediatePoints || []
+        } : edge.data
+      })),
       isSimulating: state.isSimulating,
       editorCode: state.editorCode,
       assembledInstructions: state.assembledInstructions,
@@ -501,7 +508,18 @@ export const useCircuitStore = create<CircuitState>()((set, get) => ({
   updateEdgeType: (type: string) => set((state) => ({
     edges: state.edges.map((edge) => ({
       ...edge,
-      type
+      type,
+      // Initialize intermediatePoints array when switching to editable edge
+      data: {
+        ...edge.data,
+        ...(type === 'editableEdge' && {
+          intermediatePoints: edge.data?.intermediatePoints || []
+        })
+      },
+      // Ensure edges have correct interaction properties
+      selectable: true,
+      focusable: true,
+      updatable: true,
     }))
   })),
   updateEdgeAnimated: (animated: boolean) => set((state) => ({
