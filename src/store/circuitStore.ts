@@ -393,7 +393,7 @@ export const useCircuitStore = create<CircuitState>()((set, get) => ({
       }
       
       // 如果已经执行到最后一条指令，自动暂停模拟，pipeline还需要多执行几句
-      if (currentPc > maxPc + 2*4 || currentPc < 0) {
+      if (currentPc > maxPc + 4*4 || currentPc < 0) {
         if (state.simulationTimer !== null) {
           window.clearInterval(state.simulationTimer);
         }
