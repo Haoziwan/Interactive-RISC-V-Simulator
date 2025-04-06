@@ -182,8 +182,8 @@ export function PipelineRegisterNode({ data, id, selected }: { data: PipelineReg
     return acc;
   }, {} as { [key: string]: number | string });
 
-  // 计算一个合适的高度，基于端口数量
-  const registerHeight = Math.max(400, portCount * 40);
+  // 计算一个合适的高度，基于端口数量，设置最小高度为160px
+  const registerHeight = Math.max(160, portCount * 60);
 
   return (
     <div className={`relative py-4 shadow-md rounded-md bg-white border-2 w-[120px] ${selected ? 'border-blue-500' : 'border-gray-200'}`} 
@@ -202,16 +202,18 @@ export function PipelineRegisterNode({ data, id, selected }: { data: PipelineReg
           </button>
         </div>
 
-        {/* 仅对IF/ID寄存器显示写使能输入端口 */}
-        {name === 'IF/ID' && (
+        {/* 仅对IF/ID寄存器显示写使能输入端口，其他类型显示空白占位符 */}
+        {name === 'IF/ID' ? (
           <Handle 
             type="target" 
             position={Position.Top} 
             id="writeEnable" 
             className="w-3 h-3 bg-blue-400" 
-            style={{ left: '50%', top: 0 }}
+            style={{ left: '50%', transform: 'translateX(-50%)', top: -6 }}
             title="Write Enable"
           />
+        ) : (
+          <div style={{ height: '15px' }} /> /* 空白占位符，保持端口位置一致 */
         )}
 
         {/* 状态显示 */}
@@ -263,10 +265,15 @@ export function PipelineRegisterNode({ data, id, selected }: { data: PipelineReg
                 </button>
               </div>
             </div>
-            <div className="flex justify-end">
+            <div className="flex justify-end space-x-2">
+              <button
+                onClick={() => setShowConfig(false)}
+                className="px-3 py-1.5 bg-gray-500 text-white text-sm rounded-md hover:bg-gray-600"
+              >
+                Cancel
+              </button>
               <button
                 onClick={() => {
-                  // 应用配置更改
                   if (tempConfig.name !== name || tempConfig.portCount !== portCount) {
                     const newPortCount = tempConfig.portCount ?? portCount;
                     const newValues = Array(newPortCount).fill(0);
@@ -304,7 +311,7 @@ export function PipelineRegisterNode({ data, id, selected }: { data: PipelineReg
             return (
               <div 
                 key={index} 
-                className="flex w-full items-center justify-between absolute left-0 right-0 px-0"
+                className="flex w-full items-center justify-between absolute left-0 right-0 px-2"
                 style={{ top: `${yPosition}%` }}
               >
                 <Handle
@@ -315,10 +322,11 @@ export function PipelineRegisterNode({ data, id, selected }: { data: PipelineReg
                   style={{ left: -6 }}
                   title={`Input ${index}`}
                 />
-                <div className="flex-1 mx-2 text-xs text-center overflow-hidden">
-                  {typeof values[index] === 'number' 
-                    ? values[index] 
-                    : values[index]}
+                <div className="text-xs text-gray-500 mx-2">
+                  In: {inputValues[index]}
+                </div>
+                <div className="text-xs font-medium text-gray-700 mx-2">
+                  {values[index]}
                 </div>
                 <Handle
                   type="source"
