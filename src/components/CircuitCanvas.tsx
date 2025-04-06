@@ -360,7 +360,7 @@ export function CircuitCanvas() {
         panOnDrag={!selectedEdge}
         fitView
       >
-        <Background variant={BackgroundVariant.Dots} gap={12} size={1} color="#bbb" />
+        <Background variant={BackgroundVariant.Dots} gap={24} size={1.5} color="#bbb" />
         <Controls />
         
         {/* Help panel for editable edges */}
