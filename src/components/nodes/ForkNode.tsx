@@ -83,12 +83,12 @@ export function ForkNode({ data, id, selected }: { data: ForkNodeData; id: strin
       {showConfig && (
         <div className="absolute z-10 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 p-2">
           <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700 mb-1">分支数量</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Branch Count</label>
             <div className="flex items-center space-x-2">
               <button
                 onClick={() => setTempPortCount(Math.max(2, tempPortCount - 1))}
                 className="px-2 py-1 border rounded-md hover:bg-gray-100"
-                title="减少分支"
+                title="Decrease Branches"
               >
                 -
               </button>
@@ -96,7 +96,7 @@ export function ForkNode({ data, id, selected }: { data: ForkNodeData; id: strin
               <button
                 onClick={() => setTempPortCount(Math.min(8, tempPortCount + 1))}
                 className="px-2 py-1 border rounded-md hover:bg-gray-100"
-                title="增加分支"
+                title="Increase Branches"
               >
                 +
               </button>
@@ -110,7 +110,7 @@ export function ForkNode({ data, id, selected }: { data: ForkNodeData; id: strin
               }}
               className="px-3 py-1 border rounded-md hover:bg-gray-100 text-sm"
             >
-              取消
+              Cancel
             </button>
             <button
               onClick={() => {
@@ -122,7 +122,7 @@ export function ForkNode({ data, id, selected }: { data: ForkNodeData; id: strin
               }}
               className="px-3 py-1 bg-blue-500 text-white rounded-md hover:bg-blue-600 text-sm"
             >
-              确认
+              Confirm
             </button>
           </div>
         </div>
