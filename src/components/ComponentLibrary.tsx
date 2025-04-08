@@ -272,8 +272,8 @@ export function ComponentLibrary() {
             >
               <option value="">select</option>
               <option value="empty-datapath">empty</option>
-              <option value="basic-datapath">basic datapath</option>
-              <option value="basic-pipeline">pipeline datapath</option>
+              <option value="basic-datapath">single cycle</option>
+              <option value="basic-pipeline">pipeline</option>
               <option value="pipeline-forward">pipeline forward</option>
               <option value="pipeline-hazard">pipeline hazard</option>
             </select>
