@@ -112,7 +112,7 @@ function App() {
                   onClick={() => setActiveTab('code')}
                 >
                   <Code className="w-4 h-4" />
-                  <span className="text-sm">Code Editor</span>
+                  <span className="text-sm">Editor</span>
                 </TabButton>
                 <TabButton
                   isActive={activeTab === 'datapath'}
@@ -126,7 +126,7 @@ function App() {
                   onClick={() => setActiveTab('memory')}
                 >
                   <Database className="w-4 h-4" />
-                  <span className="text-sm">Memory View</span>
+                  <span className="text-sm">Memory</span>
                 </TabButton>
               </div>
               <div className="flex items-center space-x-2">
