@@ -2,6 +2,27 @@ import { create } from 'zustand';
 import { Connection, Edge, Node, ConnectionMode } from 'reactflow';
 import { Circuit } from '../types/Circuit';
 
+interface CacheEntry {
+  tag: number;
+  valid: boolean;
+  dirty: boolean;
+  data: number[];
+  lastAccess: number;
+}
+
+interface CacheSet {
+  entries: CacheEntry[];
+  lru: number;
+}
+
+interface CacheStats {
+  hits: number;
+  misses: number;
+  hitRate: number;
+  missRate: number;
+  writebacks: number;
+}
+
 interface CircuitState {
   nodes: Node[];
   edges: Edge[];
@@ -54,6 +75,20 @@ interface CircuitState {
   setEditorCode: (code: string) => void;
   addOutputMessage: (message: string) => void;
   clearOutputMessages: () => void;
+  cache: {
+    config: {
+      size: number;      // Total cache size in bytes
+      blockSize: number; // Block size in bytes
+      ways: number;      // Number of ways (associativity)
+      sets: number;      // Number of sets
+    };
+    sets: CacheSet[];
+    stats: CacheStats;
+  };
+  initializeCache: () => void;
+  clearCache: () => void;
+  updateCacheStats: (hit: boolean, writeback: boolean) => void;
+  reset: () => void;
 }
 
 const initialCircuit: Circuit = {
@@ -253,10 +288,15 @@ export const useCircuitStore = create<CircuitState>()((set, get) => ({
   },
   resetSimulation: () => {
     const state = get();
+    const { clearCache } = state;
+    
     // 如果正在运行，先停止模拟
     if (state.simulationTimer !== null) {
       window.clearInterval(state.simulationTimer);
     }
+
+    // 清空缓存
+    clearCache();
 
     set((state) => ({
       nodes: state.nodes.map((node) => {
@@ -538,4 +578,117 @@ export const useCircuitStore = create<CircuitState>()((set, get) => ({
     outputMessages: [...state.outputMessages, message.replace(/\\n/g, '\n')]
   })),
   clearOutputMessages: () => set({ outputMessages: [] }),
+  cache: {
+    config: {
+      size: 32 * 1024,  // 32KB total cache size
+      blockSize: 16,    // 16 bytes per block (4 words)
+      ways: 4,          // 4-way set associative
+      sets: 512         // 32KB / (16 bytes * 4 ways) = 512 sets
+    },
+    sets: [],
+    stats: {
+      hits: 0,
+      misses: 0,
+      hitRate: 0,
+      missRate: 0,
+      writebacks: 0
+    }
+  },
+  initializeCache: () => {
+    const { config } = get().cache;
+    const sets: CacheSet[] = Array(config.sets).fill(null).map(() => ({
+      entries: Array(config.ways).fill(null).map(() => ({
+        tag: 0,
+        valid: false,
+        dirty: false,
+        data: Array(config.blockSize / 4).fill(0), // Assuming 32-bit words
+        lastAccess: 0
+      })),
+      lru: 0
+    }));
+
+    set(state => ({
+      cache: {
+        ...state.cache,
+        sets,
+        stats: {
+          hits: 0,
+          misses: 0,
+          hitRate: 0,
+          missRate: 0,
+          writebacks: 0
+        }
+      }
+    }));
+  },
+  clearCache: () => {
+    set(state => ({
+      cache: {
+        ...state.cache,
+        sets: state.cache.sets.map(set => ({
+          ...set,
+          entries: set.entries.map(entry => ({
+            ...entry,
+            valid: false,
+            dirty: false,
+            data: Array(state.cache.config.blockSize / 4).fill(0),
+            lastAccess: 0
+          }))
+        })),
+        stats: {
+          hits: 0,
+          misses: 0,
+          hitRate: 0,
+          missRate: 0,
+          writebacks: 0
+        }
+      }
+    }));
+  },
+  updateCacheStats: (hit: boolean, writeback: boolean = false) => {
+    set(state => {
+      const stats = { ...state.cache.stats };
+      if (hit) {
+        stats.hits++;
+      } else {
+        stats.misses++;
+      }
+      if (writeback) {
+        stats.writebacks++;
+      }
+      const total = stats.hits + stats.misses;
+      stats.hitRate = total > 0 ? stats.hits / total : 0;
+      stats.missRate = total > 0 ? stats.misses / total : 0;
+
+      return {
+        cache: {
+          ...state.cache,
+          stats
+        }
+      };
+    });
+  },
+  reset: () => {
+    set({
+      memory: {},
+      registers: Array(32).fill(0),
+      pcValue: 0,
+      stepCount: 0,
+      nodes: [],
+      edges: [],
+      selectedNode: null,
+      selectedEdge: null,
+      cache: {
+        ...get().cache,
+        sets: [],
+        stats: {
+          hits: 0,
+          misses: 0,
+          hitRate: 0,
+          missRate: 0,
+          writebacks: 0
+        }
+      }
+    });
+  },
 }));

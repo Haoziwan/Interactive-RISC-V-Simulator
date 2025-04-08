@@ -8,7 +8,8 @@ import { RegPanel } from './components/RegPanel';
 import { MemoryView } from './components/MemoryView';
 import { OutputPanel } from './components/OutputPanel';
 import { InstructionFormatButton } from './components/InstructionFormatPanel';
-import { ChevronDown, ChevronRight, Code, Database, Cpu, Play, Pause, RotateCcw, StepForward, StepBack } from 'lucide-react';
+import { CacheView } from './components/CacheView';
+import { ChevronDown, ChevronRight, Code, Database, Cpu, Play, Pause, RotateCcw, StepForward, StepBack, Layers } from 'lucide-react';
 import { useCircuitStore } from './store/circuitStore';
 
 interface CollapsibleSectionProps {
@@ -71,6 +72,12 @@ function App() {
             </div>
           </div>
 
+          <div style={{ display: activeTab === 'cache' ? 'flex' : 'none' }} className="h-full">
+            <div className="flex-1 p-4">
+              <CacheView />
+            </div>
+          </div>
+
           <div style={{ display: activeTab === 'datapath' ? 'flex' : 'none' }} className="h-full">
             <ResizablePanels
               leftPanel={<ComponentLibrary />}
@@ -127,6 +134,13 @@ function App() {
                 >
                   <Database className="w-4 h-4" />
                   <span className="text-sm">Memory</span>
+                </TabButton>
+                <TabButton
+                  isActive={activeTab === 'cache'}
+                  onClick={() => setActiveTab('cache')}
+                >
+                  <Layers className="w-4 h-4" />
+                  <span className="text-sm">Cache</span>
                 </TabButton>
               </div>
               <div className="flex items-center space-x-2">

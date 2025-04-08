@@ -358,7 +358,7 @@ export function ConfigPanel() {
       case 'memory':
         return (
           <div className="space-y-4">
-            <h3 className="font-medium">Memory </h3>
+            <h3 className="font-medium">Memory</h3>
             <div className="space-y-2">
               <div className="bg-blue-50 p-3 rounded-md mb-3">
                 <h4 className="text-sm font-medium text-blue-800 mb-1">Component Description</h4>
@@ -372,10 +372,20 @@ export function ConfigPanel() {
                   <li><span className="font-medium">Clock:</span> System clock signal that synchronizes write operations</li>
                   <li><span className="font-medium">Read Data:</span> 32-bit data output from the specified address when MemRead is active</li>
                 </ul>
+                <h4 className="text-sm font-medium text-blue-800 mt-2 mb-1">Cache Configuration</h4>
+                <ul className="text-sm text-blue-700 list-disc pl-5">
+                  <li><span className="font-medium">Cache Size:</span> 32 KB total cache size</li>
+                  <li><span className="font-medium">Block Size:</span> 64 bytes per cache block</li>
+                  <li><span className="font-medium">Associativity:</span> 4-way set associative</li>
+                  <li><span className="font-medium">Sets:</span> 128 cache sets</li>
+                  <li><span className="font-medium">Replacement Policy:</span> LRU (Least Recently Used)</li>
+                  <li><span className="font-medium">Write Policy:</span> Write-back with dirty bit</li>
+                </ul>
                 <h4 className="text-sm font-medium text-blue-800 mt-2 mb-1">Execution Logic</h4>
-                <p className="text-sm text-blue-700">The Data Memory operates with the following behavior:<br/>
-                - Read operations: When MemRead is high, the memory outputs the 32-bit data stored at the specified address through the Read Data port. Reads are typically combinational (available in the same clock cycle).<br/>
-                - Write operations: When MemWrite is high, on the rising edge of the clock, the 32-bit data at Write Data input is stored at the specified address.<br/>
+                <p className="text-sm text-blue-700">
+                - Read operations: When MemRead is high, the memory first checks the cache. If there's a cache hit, data is returned from cache. On a cache miss, data is fetched from memory and stored in cache.<br/>
+                - Write operations: When MemWrite is high, on the rising edge of the clock, the 32-bit data at Write Data input is written to both cache and memory.<br/>
+                - Cache replacement: When a cache miss occurs and there's no free way, the LRU policy selects a victim block for replacement. If the victim block is dirty, it is written back to memory first.<br/>
                 - Byte addressing: Memory is byte-addressable, but most operations work with word (4-byte) alignments. The RISC-V architecture supports different load/store sizes (byte, half-word, word) with proper alignment.<br/>
                 - Address alignment: For word operations, addresses should be multiples of 4. Some implementations handle unaligned accesses, but with performance penalties.<br/>
                 - Data memory is completely separate from instruction memory in the Harvard architecture used by most RISC processors.</p>
