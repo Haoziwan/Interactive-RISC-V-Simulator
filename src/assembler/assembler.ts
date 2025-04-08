@@ -848,7 +848,7 @@ export class Assembler {
           let dataSize = 0;
           
           if (instruction.startsWith('.word')) {
-            const parts = instruction.split(/\s+/).slice(1);
+            const parts = instruction.split(/[\s,]+/).slice(1);
             const data = parts.map(part => {
               if (part.startsWith('0x')) {
                 return parseInt(part.slice(2), 16);
@@ -867,6 +867,15 @@ export class Assembler {
             });
             dataSize = 4 * data.length;
             
+            // Store each word in memory
+            data.forEach((value, index) => {
+              const addr = this.currentAddress + (index * 4);
+              memoryBytes[addr] = value & 0xFF;
+              memoryBytes[addr + 1] = (value >> 8) & 0xFF;
+              memoryBytes[addr + 2] = (value >> 16) & 0xFF;
+              memoryBytes[addr + 3] = (value >> 24) & 0xFF;
+            });
+            
             // Add to result array
             result.push({
               hex: '0x' + data.map(d => d.toString(16).padStart(8, '0')).join(''),
@@ -879,14 +888,30 @@ export class Assembler {
               originalLineNumber: entry.lineNumber
             });
             
+            // Store each word in memory
+            data.forEach((value, index) => {
+              const addr = this.currentAddress + (index * 4);
+              memoryBytes[addr] = value & 0xFF;
+              memoryBytes[addr + 1] = (value >> 8) & 0xFF;
+              memoryBytes[addr + 2] = (value >> 16) & 0xFF;
+              memoryBytes[addr + 3] = (value >> 24) & 0xFF;
+            });
+            
           } else if (instruction.startsWith('.byte')) {
-            const parts = instruction.split(/\s+/).slice(1);
+            const parts = instruction.split(/[\s,]+/).slice(1);
             const data = parts.map(part => {
               if (part.startsWith('0x')) {
                 return parseInt(part.slice(2), 16) & 0xFF;
+              } else if (part.startsWith('\'') && part.endsWith('\'') && part.length === 3) {
+                return part.charCodeAt(1) & 0xFF;
               } else {
                 return parseInt(part) & 0xFF;
               }
+            });
+            
+            // Store each byte in memory
+            data.forEach((value, index) => {
+              memoryBytes[this.currentAddress + index] = value;
             });
             
             dataBytes = data;
@@ -904,13 +929,20 @@ export class Assembler {
             });
             
           } else if (instruction.startsWith('.half')) {
-            const parts = instruction.split(/\s+/).slice(1);
+            const parts = instruction.split(/[\s,]+/).slice(1);
             const data = parts.map(part => {
               if (part.startsWith('0x')) {
                 return parseInt(part.slice(2), 16) & 0xFFFF;
               } else {
                 return parseInt(part) & 0xFFFF;
               }
+            });
+            
+            // Store each half word in memory
+            data.forEach((value, index) => {
+              const addr = this.currentAddress + (index * 2);
+              memoryBytes[addr] = value & 0xFF;
+              memoryBytes[addr + 1] = (value >> 8) & 0xFF;
             });
             
             dataBytes = [];
