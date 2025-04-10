@@ -1,12 +1,7 @@
-import React, { useState, useCallback, useRef, useEffect } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import {
-  Edge,
   EdgeProps,
-  getBezierPath,
-  BaseEdge,
-  EdgeLabelRenderer,
   useReactFlow,
-  Position,
   Node,
 } from 'reactflow';
 
@@ -119,14 +114,10 @@ const getPath = (
 
 export default function EditableEdge({
   id,
-  source,
-  target,
   sourceX,
   sourceY,
   targetX,
   targetY,
-  sourcePosition,
-  targetPosition,
   style = {},
   markerEnd,
   data,
@@ -134,7 +125,6 @@ export default function EditableEdge({
 }: EdgeProps) {
   const reactFlowInstance = useReactFlow();
   const [draggedPointIndex, setDraggedPointIndex] = useState<number | null>(null);
-  const [isDragging, setIsDragging] = useState(false);
   
   // Ensure we have a valid data object with intermediatePoints array and lineType
   const edgeData: EditableEdgeData = data || {};
@@ -228,12 +218,6 @@ export default function EditableEdge({
     );
   }, [id, sourceX, sourceY, targetX, targetY, intermediatePoints, reactFlowInstance, selected]);
 
-  // Function to snap a coordinate to the nearest grid point
-  // Enhanced to provide better grid snapping behavior
-  const snapToGrid = (value: number, gridSize: number): number => {
-    return Math.round(value / gridSize) * gridSize;
-  };
-  
   // Function to find the nearest grid point with a threshold for snapping
   const snapToGridWithThreshold = (value: number, gridSize: number, threshold: number = 10): number => {
     const nearestGridPoint = Math.round(value / gridSize) * gridSize;
@@ -293,6 +277,8 @@ export default function EditableEdge({
     return closestPoint;
   };
 
+  const [isDragging, setIsDragging] = useState(false);
+
   // Handle starting to drag a point
   const handlePointDragStart = useCallback((event: React.MouseEvent, index: number) => {
     // Prevent default and stop propagation to avoid triggering other events
@@ -308,8 +294,8 @@ export default function EditableEdge({
       moveEvent.preventDefault();
       moveEvent.stopPropagation();
       
-      // Get the current viewport to account for panning and zooming
-      const viewport = reactFlowInstance.getViewport();
+  
+
       
       // Convert client coords to flow coords accounting for pan and zoom
       const flowPosition = reactFlowInstance.screenToFlowPosition({
@@ -473,13 +459,6 @@ export default function EditableEdge({
       }
     };
   }, []);
-
-  const getForegroundColor = () => {
-    if (style && typeof style.stroke === 'string') {
-      return style.stroke;
-    }
-    return '#555';
-  };
 
   return (
     <>
