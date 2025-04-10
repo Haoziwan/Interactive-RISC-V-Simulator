@@ -7,6 +7,7 @@ import {
   EdgeLabelRenderer,
   useReactFlow,
   Position,
+  Node,
 } from 'reactflow';
 
 // Interface for the intermediate points
@@ -180,7 +181,33 @@ export default function EditableEdge({
     if (closestSegment.index === -1) return;
 
     // Create a new list of intermediate points with the new point inserted at the right position
-    const newPoint = { x: closestSegment.point.x, y: closestSegment.point.y };
+    // Apply snapping to the new point
+    const gridSize = 24;
+    const gridThreshold = 12;
+    const nodeThreshold = 15;
+    
+    // First check if we should snap to a node connection point
+    const nearestNodePoint = findNearestNodePoint(
+      closestSegment.point.x, 
+      closestSegment.point.y, 
+      reactFlowInstance,
+      nodeThreshold
+    );
+    
+    // Determine the final coordinates with snapping
+    let finalX, finalY;
+    
+    if (nearestNodePoint.isSnapped) {
+      // Snap to the node point
+      finalX = nearestNodePoint.x;
+      finalY = nearestNodePoint.y;
+    } else {
+      // Fall back to grid snapping
+      finalX = snapToGridWithThreshold(closestSegment.point.x, gridSize, gridThreshold);
+      finalY = snapToGridWithThreshold(closestSegment.point.y, gridSize, gridThreshold);
+    }
+    
+    const newPoint = { x: finalX, y: finalY };
     const newIntermediatePoints = [...intermediatePoints];
     newIntermediatePoints.splice(closestSegment.index, 0, newPoint);
 
@@ -200,6 +227,71 @@ export default function EditableEdge({
       })
     );
   }, [id, sourceX, sourceY, targetX, targetY, intermediatePoints, reactFlowInstance, selected]);
+
+  // Function to snap a coordinate to the nearest grid point
+  // Enhanced to provide better grid snapping behavior
+  const snapToGrid = (value: number, gridSize: number): number => {
+    return Math.round(value / gridSize) * gridSize;
+  };
+  
+  // Function to find the nearest grid point with a threshold for snapping
+  const snapToGridWithThreshold = (value: number, gridSize: number, threshold: number = 10): number => {
+    const nearestGridPoint = Math.round(value / gridSize) * gridSize;
+    const distanceToGridPoint = Math.abs(value - nearestGridPoint);
+    
+    // If we're within the threshold distance of a grid point, snap to it
+    if (distanceToGridPoint <= threshold) {
+      return nearestGridPoint;
+    }
+    
+    // Otherwise, return the original value
+    return value;
+  };
+  
+  // Function to find the nearest node connection point
+  const findNearestNodePoint = (
+    x: number, y: number,
+    reactFlowInstance: any,
+    threshold: number = 15
+  ): { x: number, y: number, isSnapped: boolean } => {
+    // Get all nodes from the flow
+    const allNodes = reactFlowInstance.getNodes();
+    let closestPoint = { x, y, isSnapped: false };
+    let minDistance = threshold;
+    
+    // Check each node for potential snap points
+    allNodes.forEach((node: Node) => {
+      // Node center point
+      const nodeX = node.position.x + (node.width || 0) / 2;
+      const nodeY = node.position.y + (node.height || 0) / 2;
+      
+      // Check distance to node center
+      const dist = distance(x, y, nodeX, nodeY);
+      if (dist < minDistance) {
+        minDistance = dist;
+        closestPoint = { x: nodeX, y: nodeY, isSnapped: true };
+      }
+      
+      // Check node corners and connection points
+      // Top-left, top-right, bottom-left, bottom-right
+      const corners = [
+        { x: node.position.x, y: node.position.y },
+        { x: node.position.x + (node.width || 0), y: node.position.y },
+        { x: node.position.x, y: node.position.y + (node.height || 0) },
+        { x: node.position.x + (node.width || 0), y: node.position.y + (node.height || 0) }
+      ];
+      
+      corners.forEach(corner => {
+        const dist = distance(x, y, corner.x, corner.y);
+        if (dist < minDistance) {
+          minDistance = dist;
+          closestPoint = { x: corner.x, y: corner.y, isSnapped: true };
+        }
+      });
+    });
+    
+    return closestPoint;
+  };
 
   // Handle starting to drag a point
   const handlePointDragStart = useCallback((event: React.MouseEvent, index: number) => {
@@ -225,12 +317,55 @@ export default function EditableEdge({
         y: moveEvent.clientY,
       });
       
-      // Update the position of the dragged point
+      // Snap to grid - using 24 as the grid size (matching the Background gap in CircuitCanvas)
+      const gridSize = 24;
+      // Use enhanced snapping with threshold for better UX
+      const gridThreshold = 12; // Half of the grid size for optimal snapping feel
+      const nodeThreshold = 15; // Threshold for snapping to node connection points
+      
+      // First check if we should snap to a node connection point
+      const nearestNodePoint = findNearestNodePoint(
+        flowPosition.x, 
+        flowPosition.y, 
+        reactFlowInstance,
+        nodeThreshold
+      );
+      
+      // If we found a close node point, use that; otherwise use grid snapping
+      let finalX, finalY;
+      let isSnapped = false;
+      
+      if (nearestNodePoint.isSnapped) {
+        // Snap to the node point
+        finalX = nearestNodePoint.x;
+        finalY = nearestNodePoint.y;
+        isSnapped = true;
+      } else {
+        // Fall back to grid snapping
+        finalX = snapToGridWithThreshold(flowPosition.x, gridSize, gridThreshold);
+        finalY = snapToGridWithThreshold(flowPosition.y, gridSize, gridThreshold);
+        
+        // Check if we snapped to grid
+        isSnapped = (
+          Math.abs(finalX - flowPosition.x) <= gridThreshold || 
+          Math.abs(finalY - flowPosition.y) <= gridThreshold
+        );
+      }
+      
+      // Update the position of the dragged point with snapped coordinates
       const newIntermediatePoints = [...intermediatePoints];
       newIntermediatePoints[index] = {
-        x: flowPosition.x,
-        y: flowPosition.y,
+        x: finalX,
+        y: finalY,
       };
+      
+      // Visual feedback for snapping (could be enhanced with CSS)
+      if (isSnapped) {
+        // Add a class to the body to indicate snapping
+        document.body.classList.add('snapping-active');
+      } else {
+        document.body.classList.remove('snapping-active');
+      }
       
       // Update the edge
       reactFlowInstance.setEdges((edges) =>
@@ -263,8 +398,9 @@ export default function EditableEdge({
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('mouseup', handleMouseUp);
       
-      // Remove the class from the body to indicate dragging has ended
+      // Remove all classes from the body related to dragging and snapping
       document.body.classList.remove('dragging-point');
+      document.body.classList.remove('snapping-active');
     };
     
     // Add the event listeners
@@ -304,8 +440,37 @@ export default function EditableEdge({
   // Cleanup event listeners if component unmounts
   useEffect(() => {
     return () => {
-      // Remove any lingering drag classes
+      // Remove any lingering drag and snap classes
       document.body.classList.remove('dragging-point');
+      document.body.classList.remove('snapping-active');
+    };
+  }, []);
+  
+  // Add CSS styles for snapping visual feedback
+  useEffect(() => {
+    // Add a style element for our custom CSS if it doesn't exist
+    if (!document.getElementById('editable-edge-styles')) {
+      const styleEl = document.createElement('style');
+      styleEl.id = 'editable-edge-styles';
+      styleEl.innerHTML = `
+        .snapping-active .point-handle {
+          filter: drop-shadow(0 0 5px #3b82f6);
+          transform: scale(1.2);
+          transition: transform 0.1s ease-out;
+        }
+        .dragging-point {
+          cursor: grabbing !important;
+        }
+      `;
+      document.head.appendChild(styleEl);
+    }
+    
+    // Clean up the style element when component unmounts
+    return () => {
+      const styleEl = document.getElementById('editable-edge-styles');
+      if (styleEl) {
+        document.head.removeChild(styleEl);
+      }
     };
   }, []);
 
@@ -370,4 +535,4 @@ export default function EditableEdge({
       ))}
     </>
   );
-} 
+}
