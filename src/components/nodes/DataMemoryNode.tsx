@@ -182,6 +182,10 @@ export function DataMemoryNode({ data, id, selected }: { data: DataMemoryNodeDat
     lruEntry.lastAccess = stepCount;
   };
 
+  // 记录读取位置和状态
+  const [readAddress, setReadAddress] = React.useState<number>(0);
+  const [shouldRead, setShouldRead] = React.useState<boolean>(false);
+
   const updateInputConnections = () => {
     // 找到连接到此节点的边
     const addressEdge = edges.find(edge => edge.target === id && edge.targetHandle === 'address');
@@ -199,16 +203,12 @@ export function DataMemoryNode({ data, id, selected }: { data: DataMemoryNodeDat
       let readData = 0;
 
       if (newMemRead > 0) {
-        // 首先尝试从缓存读取
-        const cachedData = readFromCache(newAddress);
-        if (cachedData !== null) {
-          readData = cachedData;
-        } else {
-          // 缓存未命中，从内存读取
           readData = memory[addressHex] || 0;
         }
-      }
-  
+      // 记录读取位置和状态，用于cache
+      setReadAddress(newAddress);
+      setShouldRead(newMemRead > 0);
+      
       updateNodeData(id, {
         ...data,
         address: newAddress,
@@ -222,6 +222,18 @@ export function DataMemoryNode({ data, id, selected }: { data: DataMemoryNodeDat
   React.useEffect(() => {
     updateInputConnections();
   }, [edges, id, nodes, memory]);
+
+  // 监听时钟信号执行缓存模拟读取
+  React.useEffect(() => {
+    if (shouldRead) {
+      const addressHex = `0x${readAddress.toString(16).padStart(8, '0')}`;
+      let readData = 0;
+      
+      // 模拟缓存读取（仅用于统计）
+      const cachedData = readFromCache(readAddress);
+
+    }
+  }, [stepCount]);
   
   // 监听时钟信号（时序逻辑部分：写入操作）
   React.useEffect(() => {
