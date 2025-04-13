@@ -12,6 +12,7 @@ interface RegisterFileNodeData {
   reset?: boolean;
   readData1?: number;
   readData2?: number;
+  writeFirst?: boolean;
 }
 
 export function RegisterFileNode({ data, id, selected }: { data: RegisterFileNodeData; id: string; selected?: boolean }) {
@@ -29,13 +30,6 @@ export function RegisterFileNode({ data, id, selected }: { data: RegisterFileNod
   
   const nodes = useNodes();
   const edges = useEdges();
-  const inputsRef = React.useRef({
-    readReg1: 0,
-    readReg2: 0,
-    writeReg: 0,
-    writeData: 0,
-    regWrite: false
-  });
   // Get input port value (combinational logic)
   const getInputValue = (edge: any) => {
     if (!edge) return null;
@@ -68,34 +62,30 @@ export function RegisterFileNode({ data, id, selected }: { data: RegisterFileNod
     const writeDataEdge = edges.find(edge => edge.target === id && edge.targetHandle === 'writeData');
     const regWriteEdge = edges.find(edge => edge.target === id && edge.targetHandle === 'regWrite');
 
-    const newReadReg1 = Number(getInputValue(readReg1Edge) ?? inputsRef.current.readReg1);
-    const newReadReg2 = Number(getInputValue(readReg2Edge) ?? inputsRef.current.readReg2);
-    const newWriteReg = Number(getInputValue(writeRegEdge) ?? inputsRef.current.writeReg);
-    const newWriteData = Number(getInputValue(writeDataEdge) ?? inputsRef.current.writeData);
-    const newRegWrite = Boolean(getInputValue(regWriteEdge) ?? inputsRef.current.regWrite);
+    const newReadReg1 = Number(getInputValue(readReg1Edge) ?? data.readReg1 ?? 0);
+    const newReadReg2 = Number(getInputValue(readReg2Edge) ?? data.readReg2 ?? 0);
+    const newWriteReg = Number(getInputValue(writeRegEdge) ?? data.writeReg ?? 0);
+    const newWriteData = Number(getInputValue(writeDataEdge) ?? data.writeData ?? 0);
+    const newRegWrite = Boolean(getInputValue(regWriteEdge) ?? data.regWrite ?? false);
 
     // Calculate read data regardless of input changes
-    const readData1 = newReadReg1 === 0 ? 0 : (registers[newReadReg1] || 0);
-    const readData2 = newReadReg2 === 0 ? 0 : (registers[newReadReg2] || 0);
+    const writeFirst = data.writeFirst || false;
+    const readData1 = newReadReg1 === 0 ? 0 : 
+      (writeFirst && newRegWrite && newReadReg1 === newWriteReg) ? newWriteData : (registers[newReadReg1] || 0);
+    const readData2 = newReadReg2 === 0 ? 0 : 
+      (writeFirst && newRegWrite && newReadReg2 === newWriteReg) ? newWriteData : (registers[newReadReg2] || 0);
 
     // Update node data if inputs changed or register values changed
-    const hasChanges = newReadReg1 !== inputsRef.current.readReg1 ||
-                      newReadReg2 !== inputsRef.current.readReg2 ||
-                      newWriteReg !== inputsRef.current.writeReg ||
-                      newWriteData !== inputsRef.current.writeData ||
-                      newRegWrite !== inputsRef.current.regWrite ||
+    const hasChanges = newReadReg1 !== (data.readReg1 || 0) ||
+                      newReadReg2 !== (data.readReg2 || 0) ||
+                      newWriteReg !== (data.writeReg || 0) ||
+                      newWriteData !== (data.writeData || 0) ||
+                      newRegWrite !== (data.regWrite || false) ||
                       readData1 !== data.readData1 ||
                       readData2 !== data.readData2;
 
     if (hasChanges) {
-      // Update values in ref
-      inputsRef.current = {
-        readReg1: newReadReg1,
-        readReg2: newReadReg2,
-        writeReg: newWriteReg,
-        writeData: newWriteData,
-        regWrite: newRegWrite
-      };
+
 
       // Update node data
       updateNodeData(id, {
@@ -117,12 +107,22 @@ export function RegisterFileNode({ data, id, selected }: { data: RegisterFileNod
 
   // Monitor clock signal (stepCount) and handle register write (sequential logic)
   React.useEffect(() => {
-    if (!reset && inputsRef.current.regWrite && inputsRef.current.writeReg !== 0) {
+    if (!reset && data.regWrite && data.writeReg && data.writeReg !== 0) {
       updateRegisters({
-        [inputsRef.current.writeReg]: inputsRef.current.writeData
+        [data.writeReg]: data.writeData || 0
       });
     }
   }, [stepCount, reset]);
+
+  const [showConfig, setShowConfig] = React.useState(false);
+  const [tempWriteFirst, setTempWriteFirst] = React.useState(data.writeFirst ?? false);
+  
+  // 确保在showConfig变化时同步tempWriteFirst状态
+  React.useEffect(() => {
+    if (showConfig) {
+      setTempWriteFirst(data.writeFirst ?? false);
+    }
+  }, [showConfig, data.writeFirst]);
 
   return (
     <div className={`px-4 py-2 shadow-md rounded-md bg-white border-2 ${
@@ -190,6 +190,56 @@ export function RegisterFileNode({ data, id, selected }: { data: RegisterFileNod
         title="Read Data 2"
       />
       
+      <button
+        onClick={() => setShowConfig(!showConfig)}
+        className="absolute top-2 right-2 p-1 rounded-md hover:bg-gray-100"
+        title="Configure"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-gray-500" viewBox="0 0 20 20" fill="currentColor">
+          <path fillRule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.532 1.532 0 01-.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clipRule="evenodd" />
+        </svg>
+      </button>
+
+      {showConfig && (
+        <div className="absolute z-10 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 p-2 right-0">
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700 mb-1">Write First</label>
+            <div className="flex items-center">
+              <input
+                type="checkbox"
+                checked={tempWriteFirst}
+                onChange={(e) => setTempWriteFirst(e.target.checked)}
+                className="h-4 w-4 text-blue-600 rounded"
+              />
+              <span className="ml-2 text-sm text-gray-700">Enable write-first</span>
+            </div>
+          </div>
+          <div className="flex justify-end space-x-2">
+            <button
+              onClick={() => {
+                setShowConfig(false);
+                setTempWriteFirst(data.writeFirst || false);
+              }}
+              className="px-3 py-1 border rounded-md hover:bg-gray-100 text-sm"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={() => {
+                updateNodeData(id, {
+                  ...data,
+                  writeFirst: tempWriteFirst
+                });
+                setShowConfig(false);
+              }}
+              className="px-3 py-1 bg-blue-500 text-white rounded-md hover:bg-blue-600 text-sm"
+            >
+              Confirm
+            </button>
+          </div>
+        </div>
+      )}
+
       <div className="flex items-center">
         <div className="ml-2">
           <div className="text-lg font-bold">Register File</div>
@@ -198,6 +248,7 @@ export function RegisterFileNode({ data, id, selected }: { data: RegisterFileNod
           <div className="text-gray-500">Write Reg: x{writeReg}</div>
           <div className="text-gray-500">Write Data: {writeData}</div>
           <div className="text-gray-500">RegWrite: {regWrite ? '1' : '0'}</div>
+          <div className="text-gray-500">WriteFirst: {data.writeFirst ? 'true' : 'false'}</div>
         </div>
       </div>
     </div>

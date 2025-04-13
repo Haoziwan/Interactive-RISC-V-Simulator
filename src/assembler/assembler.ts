@@ -625,6 +625,11 @@ export class Assembler {
       
       // Update address based on instruction or data type
       if (entry.instr) {
+        // Skip directive instructions like .globl that don't generate code
+        if (entry.instr.startsWith('.globl')) {
+          continue;
+        }
+        
         if (!inDataSegment) {
           // Process code segment
           try {
@@ -698,6 +703,11 @@ export class Assembler {
       if (!entry.instr) continue;
       
       const instruction = entry.instr;
+      
+      // Skip directive instructions like .globl that don't generate code
+      if (instruction.startsWith('.globl')) {
+        continue;
+      }
       
       if (currentSection === 'text') {
         // Process code segment instructions

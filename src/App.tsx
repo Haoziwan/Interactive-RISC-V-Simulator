@@ -10,6 +10,7 @@ import { OutputPanel } from './components/OutputPanel';
 import { InstructionFormatButton } from './components/InstructionFormatPanel';
 import { CacheView } from './components/CacheView';
 import { ChevronDown, ChevronRight, Code, Database, Cpu, Play, Pause, RotateCcw, StepForward, StepBack, Layers } from 'lucide-react';
+import { ErrorBoundary } from './components/ErrorBoundary';
 import { useCircuitStore } from './store/circuitStore';
 
 interface CollapsibleSectionProps {
@@ -210,7 +211,9 @@ function App() {
         </div>
       </header>
       <main className="flex-1 overflow-hidden">
-        {renderContent()}
+        <ErrorBoundary>
+          {renderContent()}
+        </ErrorBoundary>
       </main>
       
       {/* Output Panel */}
