@@ -1,5 +1,5 @@
 {
-  "name": "circuit-2025-04-06T10-03-37-274Z",
+  "name": "circuit-2025-04-13T11-46-56-382Z",
   "nodes": [
     {
       "id": "register-1740456812349",
@@ -10,16 +10,17 @@
       },
       "data": {
         "label": "REGISTER",
-        "readReg1": 2,
-        "readReg2": 5,
-        "writeReg": 5,
-        "writeData": 7,
-        "regWrite": true,
-        "readData1": 40,
-        "readData2": 5
+        "readReg1": 0,
+        "readReg2": 0,
+        "writeReg": 0,
+        "writeData": 0,
+        "regWrite": false,
+        "readData1": 0,
+        "readData2": 0,
+        "writeFirst": true
       },
-      "width": 196,
-      "height": 167,
+      "width": 186,
+      "height": 191,
       "selected": false,
       "positionAbsolute": {
         "x": 117.33414558969218,
@@ -58,12 +59,12 @@
       },
       "data": {
         "label": "INSTR-DISTRIBUTER",
-        "value": "0x00512023",
-        "opcode": 35,
+        "value": 0,
+        "opcode": 0,
         "rd": 0,
-        "funct3": 2,
-        "rs1": 2,
-        "rs2": 5,
+        "funct3": 0,
+        "rs1": 0,
+        "rs2": 0,
         "funct7": 0
       },
       "width": 160,
@@ -84,7 +85,7 @@
       },
       "data": {
         "label": "PC",
-        "value": 80,
+        "value": 0,
         "reset": false,
         "pcWrite": 1
       },
@@ -106,30 +107,11 @@
       },
       "data": {
         "label": "INSTRUCTION-MEMORY",
-        "instructions": [
-          "0x00a00093",
-          "0x00000113",
-          "0x00000193",
-          "0x00100213",
-          "0x00000293",
-          "0x00312023",
-          "0x00410113",
-          "0x00412023",
-          "0x00410113",
-          "0x00200313",
-          "0x02130063",
-          "0x004182b3",
-          "0x00512023",
-          "0x004001b3",
-          "0x00500233",
-          "0x00410113",
-          "0x00130313",
-          "0xfe5ff06f"
-        ],
-        "pc": 20
+        "instructions": [],
+        "pc": 0
       },
       "width": 273,
-      "height": 111,
+      "height": 95,
       "selected": false,
       "positionAbsolute": {
         "x": -755.4302421625299,
@@ -148,13 +130,13 @@
         "label": "CONTROL",
         "regWrite": 0,
         "memRead": 0,
-        "memWrite": 1,
+        "memWrite": 0,
         "aluOp": 0,
         "branch": 0,
         "jump": 0,
         "aluSrc": 0,
         "memToReg": 0,
-        "opcode": "0100011",
+        "opcode": "0000000",
         "aluSrc1": 0,
         "aluSrc2": 1,
         "controlMux": 0
@@ -177,7 +159,7 @@
       },
       "data": {
         "label": "FORK",
-        "value": 35
+        "value": 0
       },
       "width": 32,
       "height": 32,
@@ -197,7 +179,7 @@
       },
       "data": {
         "label": "MEMORY",
-        "address": 40,
+        "address": 0,
         "memRead": 0,
         "readData": 0,
         "writeData": 4,
@@ -222,7 +204,7 @@
       "data": {
         "label": "ALU-CONTROL",
         "aluOp": 0,
-        "funct3": 2,
+        "funct3": 0,
         "funct7": 0,
         "aluControl": 2
       },
@@ -244,7 +226,7 @@
       },
       "data": {
         "label": "FORK",
-        "value": 2
+        "value": 0
       },
       "width": 32,
       "height": 32,
@@ -264,7 +246,7 @@
       },
       "data": {
         "label": "MUX",
-        "value": 7,
+        "value": 0,
         "select": "0",
         "portCount": 3
       },
@@ -286,11 +268,11 @@
       },
       "data": {
         "label": "ALU",
-        "a": 40,
+        "a": 0,
         "b": 0,
         "operation": 2,
-        "result": 40,
-        "zero": 0
+        "result": 0,
+        "zero": 1
       },
       "width": 144,
       "height": 167,
@@ -310,7 +292,7 @@
       },
       "data": {
         "label": "FORK",
-        "value": 7
+        "value": 0
       },
       "width": 32,
       "height": 32,
@@ -330,7 +312,7 @@
       },
       "data": {
         "label": "FORK",
-        "value": 40,
+        "value": 0,
         "portCount": 4
       },
       "width": 32,
@@ -351,7 +333,7 @@
       },
       "data": {
         "label": "FORK",
-        "value": 80,
+        "value": 0,
         "portCount": 3
       },
       "width": 32,
@@ -392,7 +374,7 @@
       },
       "data": {
         "label": "ADD",
-        "value": 84
+        "value": 4
       },
       "width": 80,
       "height": 80,
@@ -412,7 +394,7 @@
       },
       "data": {
         "label": "FORK",
-        "value": 80
+        "value": 0
       },
       "width": 32,
       "height": 32,
@@ -432,9 +414,9 @@
       },
       "data": {
         "label": "JUMP-CONTROL",
-        "funct3": 2,
-        "opcode": 35,
-        "zero": 0,
+        "funct3": 0,
+        "opcode": 0,
+        "zero": 1,
         "jump": 0,
         "jalr": 0
       },
@@ -456,7 +438,7 @@
       },
       "data": {
         "label": "ADD",
-        "value": 72
+        "value": 0
       },
       "width": 80,
       "height": 80,
@@ -496,7 +478,7 @@
       },
       "data": {
         "label": "MUX",
-        "value": 84,
+        "value": 4,
         "select": "0"
       },
       "width": 108,
@@ -517,7 +499,7 @@
       },
       "data": {
         "label": "FORK",
-        "value": "0x00512023"
+        "value": 0
       },
       "width": 32,
       "height": 32,
@@ -537,7 +519,7 @@
       },
       "data": {
         "label": "MUX",
-        "value": 72,
+        "value": 0,
         "select": "0"
       },
       "width": 108,
@@ -558,7 +540,7 @@
       },
       "data": {
         "label": "FORK",
-        "value": 40
+        "value": 0
       },
       "width": 32,
       "height": 32,
@@ -578,7 +560,7 @@
       },
       "data": {
         "label": "FORK",
-        "value": 84
+        "value": 4
       },
       "width": 32,
       "height": 32,
@@ -599,7 +581,7 @@
       "data": {
         "label": "MUX",
         "value": 0,
-        "select": "1"
+        "select": "0"
       },
       "width": 108,
       "height": 123,
@@ -619,7 +601,7 @@
       },
       "data": {
         "label": "MUX",
-        "value": 40,
+        "value": 0,
         "select": "0",
         "portCount": 3
       },
@@ -662,20 +644,20 @@
         "label": "",
         "writeEnable": 1,
         "values": [
-          80,
-          76,
-          76,
-          "0x00512023"
+          0,
+          0,
+          0,
+          0
         ],
-        "output-0": 80,
+        "output-0": 0,
         "name": "IF/ID",
         "portCount": 4,
         "value": 0,
         "reset": false,
         "outputValue": 0,
-        "output-1": 76,
-        "output-2": 76,
-        "output-3": "0x00512023"
+        "output-1": 0,
+        "output-2": 0,
+        "output-3": 0
       },
       "width": 120,
       "height": 240,
@@ -697,56 +679,55 @@
         "label": "",
         "writeEnable": 1,
         "values": [
-          1,
-          0,
-          1,
-          0,
-          0,
-          76,
-          72,
-          72,
-          35,
-          0,
-          0,
-          2,
-          40,
-          5,
           0,
           0,
           0,
-          2,
-          5,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
           0
         ],
-        "output-0": 1,
+        "output-0": 0,
         "name": "ID/EX",
-        "portCount": 20,
+        "portCount": 19,
         "value": 0,
         "reset": false,
         "outputValue": 0,
         "output-1": 0,
-        "output-2": 1,
+        "output-2": 0,
         "output-3": 0,
         "output-4": 0,
-        "output-5": 76,
-        "output-6": 72,
-        "output-7": 72,
-        "output-8": 35,
+        "output-5": 0,
+        "output-6": 0,
+        "output-7": 0,
+        "output-8": 0,
         "output-9": 0,
         "output-10": 0,
-        "output-11": 2,
-        "output-12": 40,
-        "output-13": 5,
+        "output-11": 0,
+        "output-12": 0,
+        "output-13": 0,
         "output-14": 0,
         "output-15": 0,
         "output-16": 0,
-        "output-17": 2,
-        "output-18": 5,
+        "output-17": 0,
+        "output-18": 0,
         "output-19": 0
       },
       "width": 120,
-      "height": 1200,
-      "selected": false,
+      "height": 1140,
+      "selected": true,
       "positionAbsolute": {
         "x": 474.18393266162605,
         "y": -289.16572312971573
@@ -765,11 +746,11 @@
         "writeEnable": 1,
         "values": [
           0,
-          1,
-          52,
           0,
-          40,
-          7,
+          0,
+          0,
+          0,
+          0,
           0,
           0
         ],
@@ -779,11 +760,11 @@
         "value": 0,
         "reset": false,
         "outputValue": 0,
-        "output-1": 1,
-        "output-2": 52,
+        "output-1": 0,
+        "output-2": 0,
         "output-3": 0,
-        "output-4": 40,
-        "output-5": 7,
+        "output-4": 0,
+        "output-5": 0,
         "output-6": 0,
         "output-7": 0
       },
@@ -807,24 +788,24 @@
         "label": "",
         "writeEnable": 1,
         "values": [
-          7,
-          48,
           0,
           0,
-          1,
-          5
+          0,
+          0,
+          0,
+          0
         ],
-        "output-0": 7,
+        "output-0": 0,
         "name": "MEM/WB",
         "portCount": 6,
         "value": 0,
         "reset": false,
         "outputValue": 0,
-        "output-1": 48,
+        "output-1": 0,
         "output-2": 0,
         "output-3": 0,
-        "output-4": 1,
-        "output-5": 5
+        "output-4": 0,
+        "output-5": 0
       },
       "width": 120,
       "height": 360,
@@ -846,8 +827,8 @@
         "label": "HAZARD-DETECTION-UNIT",
         "idExMemRead": 0,
         "idExRt": 0,
-        "ifIdRs": 2,
-        "ifIdRt": 5,
+        "ifIdRs": 0,
+        "ifIdRt": 0,
         "pcWrite": 1,
         "ifIdWrite": 1,
         "controlMux": 0,
@@ -871,14 +852,14 @@
       },
       "data": {
         "label": "FORWARDING-UNIT",
-        "rs1": 2,
-        "rs2": 5,
+        "rs1": 0,
+        "rs2": 0,
         "exMemRd": 0,
-        "memWbRd": 5,
+        "memWbRd": 0,
         "exMemRegWrite": 0,
-        "memWbRegWrite": 1,
+        "memWbRegWrite": 0,
         "forwardA": 0,
-        "forwardB": 1
+        "forwardB": 0
       },
       "width": 156,
       "height": 225,
@@ -898,8 +879,8 @@
       },
       "data": {
         "label": "MUX",
-        "value": 7,
-        "select": "1",
+        "value": 0,
+        "select": "0",
         "portCount": 3
       },
       "width": 108,
@@ -920,7 +901,7 @@
       },
       "data": {
         "label": "MUX",
-        "value": 40,
+        "value": 0,
         "select": "0",
         "portCount": 3
       },
@@ -942,7 +923,7 @@
       },
       "data": {
         "label": "FORK",
-        "value": 7
+        "value": 0
       },
       "width": 32,
       "height": 32,
@@ -3217,9 +3198,7 @@
     }
   ],
   "isSimulating": false,
-  "editorCode": "# Fibonacci Sequence Program\n# Calculate the first n numbers in the Fibonacci sequence\n# n is stored in x1, results are stored in memory\n\n# Initialization\naddi x1, x0, 10    # n = 10 (calculate first 10 numbers)\naddi x2, x0, 0     # address index\naddi x3, x0, 0     # f(n-2)\naddi x4, x0, 1     # f(n-1)\naddi x5, x0, 0     # current f(n)\n\n# Store first two numbers\nsw x3, 0(x2)       # store f(0)\naddi x2, x2, 4     # address + 4\nsw x4, 0(x2)       # store f(1)\naddi x2, x2, 4     # address + 4\naddi x6, x0, 2     # i = 2\n\nloop:\nbeq x6, x1, end    # if i == n, end\n\n# Calculate f(n) = f(n-1) + f(n-2)\nadd x5, x3, x4     # f(n) = f(n-2) + f(n-1)\nsw x5, 0(x2)       # store f(n)\n\n# Update variables\nadd x3, x0, x4     # f(n-2) = f(n-1)\nadd x4, x0, x5     # f(n-1) = f(n)\naddi x2, x2, 4     # address + 4\naddi x6, x6, 1     # i++\njal x0, loop       # continue loop\n\nend:",
-  "assembledInstructions": [
-    
-  ],
-  "savedAt": "2025-04-06T10:03:37.274Z"
+  "editorCode": "",
+  "assembledInstructions": [],
+  "savedAt": "2025-04-13T11:46:56.383Z"
 }
