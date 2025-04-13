@@ -41,7 +41,7 @@ export function CacheView() {
   };
 
   const formatValue = (value: number) => {
-    return `0x${value.toString(16).padStart(8, '0')}`;
+    return `0x${(value >>> 0).toString(16).padStart(8, '0')}`;
   };
 
   return (
@@ -161,4 +161,4 @@ export function CacheView() {
       </div>
     </div>
   );
-} 
+}
