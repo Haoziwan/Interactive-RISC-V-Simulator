@@ -8,6 +8,7 @@ import { RegPanel } from './components/RegPanel';
 import { MemoryView } from './components/MemoryView';
 import { OutputPanel } from './components/OutputPanel';
 import { InstructionFormatButton } from './components/InstructionFormatPanel';
+import { ErrorBoundary } from './components/ErrorBoundary';
 import { ChevronDown, ChevronRight, Code, Database, Cpu, Play, Pause, RotateCcw, StepForward, StepBack } from 'lucide-react';
 import { useCircuitStore } from './store/circuitStore';
 
@@ -196,7 +197,9 @@ function App() {
         </div>
       </header>
       <main className="flex-1 overflow-hidden">
-        {renderContent()}
+        <ErrorBoundary>
+          {renderContent()}
+        </ErrorBoundary>
       </main>
       
       {/* Output Panel */}
