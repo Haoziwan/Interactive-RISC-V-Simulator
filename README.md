@@ -1,6 +1,7 @@
 # RISC-V Simulator
 
 A web-based application for visualizing RISC-V processor register states and datapath. Users can write and execute RISC-V assembly code, observe register state changes during instruction execution, and track instruction flow through a visual datapath.
+![image](https://github.com/user-attachments/assets/5b9bb32b-d216-4999-952f-53846fba6322)
 
 ## Features
 
