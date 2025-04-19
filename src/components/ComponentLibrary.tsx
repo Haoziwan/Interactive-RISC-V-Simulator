@@ -16,7 +16,10 @@ import {
   SplitSquareHorizontal,
   ArrowLeftRight,
   AlertTriangle,
-  FlaskConical
+  FlaskConical,
+  Download,
+  Upload,
+  FolderOpen
 } from 'lucide-react';
 import { useCircuitStore } from '../store/circuitStore';
 
@@ -216,6 +219,7 @@ export function ComponentLibrary() {
         <div className="flex justify-between items-center mb-3">
           <h2 className="text-lg font-semibold tracking-tight text-gray-800">Components</h2>
           <button
+            type="button"
             onClick={() => setShowAssemblyResult(!showAssemblyResult)}
             className="p-1.5 rounded-md hover:bg-gray-100 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
             title={showAssemblyResult ? "Show Components" : "Show Assembly Result"}
@@ -223,68 +227,75 @@ export function ComponentLibrary() {
             <SplitSquareHorizontal className="w-4 h-4 text-gray-600" />
           </button>
         </div>
-        <div className="flex flex-wrap gap-1.5 mb-4">
-          <button
-            onClick={handleSave}
-            className="flex items-center px-2.5 py-1 text-xs font-medium bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 min-w-0 whitespace-nowrap overflow-hidden shadow-sm"
-          >
-            <Save className="w-3.5 h-3.5 mr-1 flex-shrink-0" />
-            <span className="truncate">save</span>
-          </button>
-          <label className="flex items-center px-2.5 py-1 text-xs font-medium bg-gray-500 text-white rounded-md hover:bg-gray-600 transition-colors cursor-pointer min-w-0 whitespace-nowrap overflow-hidden shadow-sm focus-within:ring-2 focus-within:ring-gray-500 focus-within:ring-opacity-50">
-            <FileInput className="w-3.5 h-3.5 mr-1 flex-shrink-0" />
-            <span className="truncate">load</span>
-            <input
-              type="file"
-              accept=".json"
-              onChange={handleLoad}
-              className="hidden"
-            />
-          </label>
-          <div className="relative min-w-0 flex-1">
-            <select
-              onChange={(e) => {
-                const selectedExample = e.target.value;
-                if (selectedExample === 'basic-datapath') {
-                  fetch('/datapath/basic-datapath.json')
-                    .then(response => response.json())
-                    .then(data => {
-                      loadCircuit(JSON.stringify(data));
-                    });
-                } else if (selectedExample === 'basic-pipeline') {
-                  fetch('/datapath/basic-pipeline.json')
-                    .then(response => response.json())
-                    .then(data => {
-                      loadCircuit(JSON.stringify(data));
-                    });
-                } else if (selectedExample === 'pipeline-forward') {
-                  fetch('/datapath/pipeline-forward.json')
-                    .then(response => response.json())
-                    .then(data => {
-                      loadCircuit(JSON.stringify(data));
-                    });
-                } else if (selectedExample === 'pipeline-hazard') {
-                  fetch('/datapath/pipeline-hazard.json')
-                    .then(response => response.json())
-                    .then(data => {
-                      loadCircuit(JSON.stringify(data));
-                    });
-                } else if (selectedExample === 'empty-datapath') {
-                  loadCircuit(JSON.stringify({ nodes: [], edges: [] }));
-                }
-              }}
-              className="w-full flex items-center px-2.5 py-1 text-xs font-medium bg-green-500 text-white rounded-md hover:bg-green-600 transition-colors appearance-none cursor-pointer pr-7 truncate shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50"
-              title="Select Example Circuit"
-              aria-label="Select example circuit to load"
+        <div className="flex items-center mb-4">
+          {/* Circuit Actions Group - All in one row */}
+          <div className="flex rounded-md shadow-sm overflow-hidden">
+            {/* Save Button */}
+            <button
+              type="button"
+              onClick={handleSave}
+              className="flex items-center px-3 py-1.5 text-xs font-medium bg-blue-100 text-blue-800 border border-blue-300 hover:bg-blue-200 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 whitespace-nowrap rounded-l-md"
+              title="Save circuit to file"
             >
-              <option value="">select</option>
-              <option value="empty-datapath">empty</option>
-              <option value="basic-datapath">single cycle</option>
-              <option value="basic-pipeline">pipeline</option>
-              {/* <option value="pipeline-hazard">pipeline hazard</option> */}
-              <option value="pipeline-forward">pipeline with hazard control</option>
-            </select>
-            <BookOpen className="w-3.5 h-3.5 absolute right-2 top-1/2 transform -translate-y-1/2 pointer-events-none text-white opacity-80" />
+              <Download className="w-3.5 h-3.5 mr-1.5 flex-shrink-0" />
+              <span>Save</span>
+            </button>
+
+            {/* Load Button */}
+            <label className="flex items-center px-3 py-1.5 text-xs font-medium bg-blue-100 text-blue-800 border-l-0 border-r-0 border-t border-b border-blue-300 hover:bg-blue-200 transition-colors cursor-pointer whitespace-nowrap focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-opacity-50">
+              <Upload className="w-3.5 h-3.5 mr-1.5 flex-shrink-0" />
+              <span>Load</span>
+              <input
+                type="file"
+                accept=".json"
+                onChange={handleLoad}
+                className="hidden"
+              />
+            </label>
+
+            {/* Examples Dropdown - Now part of the button group */}
+            <div className="relative">
+              <div className="flex items-center">
+                <select
+                  onChange={(e) => {
+                    const selectedExample = e.target.value;
+                    if (selectedExample === '') return;
+
+                    if (selectedExample === 'empty-datapath') {
+                      loadCircuit(JSON.stringify({ nodes: [], edges: [] }));
+                      return;
+                    }
+
+                    fetch(`/datapath/${selectedExample}.json`)
+                      .then(response => response.json())
+                      .then(data => {
+                        loadCircuit(JSON.stringify(data));
+                      })
+                      .catch(err => {
+                        console.error('Failed to load example:', err);
+                      });
+                  }}
+                  className="h-full w-[120px] pl-8 pr-8 py-1.5 text-xs font-medium bg-blue-100 text-blue-800 border border-blue-300 border-l-0 hover:bg-blue-200 transition-colors appearance-none cursor-pointer rounded-r-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+                  title="Select Example Circuit"
+                  aria-label="Select example circuit to load"
+                >
+                  <option value="">Example</option>
+                  <option value="empty-datapath">Empty</option>
+                  <option value="basic-datapath">Single Cycle</option>
+                  <option value="basic-pipeline">Pipeline</option>
+                  {/* <option value="pipeline-hazard">Pipeline Hazard</option> */}
+                  <option value="pipeline-forward">Pipeline with Hazard Control</option>
+                </select>
+                <div className="absolute left-2 top-1/2 transform -translate-y-1/2 pointer-events-none">
+                  <FolderOpen className="w-3.5 h-3.5 text-blue-700" />
+                </div>
+                <div className="absolute right-2 top-1/2 transform -translate-y-1/2 pointer-events-none">
+                  <svg className="w-3.5 h-3.5 text-blue-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
         <div className="space-y-1.5 overflow-y-auto max-h-[calc(100vh-12rem)]">
