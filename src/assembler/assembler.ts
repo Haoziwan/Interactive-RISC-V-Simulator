@@ -183,10 +183,10 @@ export const expandPseudoInstruction = (line: string, lineNumber?: number): stri
         }
         // 如果低12位为0，只需lui
         if (lower === 0) {
-          return [`lui ${rd}, 0x${upper.toString(16)}`];
+          return [`lui ${rd}, ${upper}`];
         }
         return [
-          `lui ${rd}, 0x${upper.toString(16)}`,
+          `lui ${rd}, ${upper}`,
           `addi ${rd}, ${rd}, ${lower}`
         ];
       }
