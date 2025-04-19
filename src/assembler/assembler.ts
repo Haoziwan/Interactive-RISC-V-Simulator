@@ -599,8 +599,8 @@ export class Assembler {
 
     code.split('\n').forEach((line, index) => {
       const lineNumber = index + 1; // 1-indexed line numbers
-      const trimmedLine = line.trim();
-      if (!trimmedLine || trimmedLine.startsWith('#')) return;
+      const trimmedLine = line.split('#')[0].trim(); // Remove comments before trimming
+      if (!trimmedLine) return;
 
       const entry: {text: string, hasLabel: boolean, label?: string, instr?: string, lineNumber: number} = {
         text: trimmedLine,
