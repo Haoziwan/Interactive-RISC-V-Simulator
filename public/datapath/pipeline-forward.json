@@ -1,5 +1,5 @@
 {
-  "name": "circuit-2025-04-13T11-46-56-382Z",
+  "name": "circuit-2025-04-19T04-47-52-695Z",
   "nodes": [
     {
       "id": "register-1740456812349",
@@ -19,8 +19,8 @@
         "readData2": 0,
         "writeFirst": true
       },
-      "width": 186,
-      "height": 191,
+      "width": 187,
+      "height": 192,
       "selected": false,
       "positionAbsolute": {
         "x": 117.33414558969218,
@@ -42,7 +42,7 @@
         "format": "S"
       },
       "width": 182,
-      "height": 95,
+      "height": 96,
       "selected": false,
       "positionAbsolute": {
         "x": -35.64079256032062,
@@ -68,7 +68,7 @@
         "funct7": 0
       },
       "width": 160,
-      "height": 171,
+      "height": 172,
       "selected": false,
       "positionAbsolute": {
         "x": -118.32112666432624,
@@ -90,7 +90,7 @@
         "pcWrite": 1
       },
       "width": 202,
-      "height": 119,
+      "height": 120,
       "selected": false,
       "positionAbsolute": {
         "x": -678.1696072758366,
@@ -110,8 +110,8 @@
         "instructions": [],
         "pc": 0
       },
-      "width": 273,
-      "height": 95,
+      "width": 274,
+      "height": 96,
       "selected": false,
       "positionAbsolute": {
         "x": -755.4302421625299,
@@ -142,7 +142,7 @@
         "controlMux": 0
       },
       "width": 160,
-      "height": 319,
+      "height": 320,
       "selected": false,
       "positionAbsolute": {
         "x": 35.8921056356462,
@@ -182,11 +182,11 @@
         "address": 0,
         "memRead": 0,
         "readData": 0,
-        "writeData": 4,
+        "writeData": 0,
         "memWrite": 0
       },
       "width": 206,
-      "height": 191,
+      "height": 192,
       "selected": false,
       "dragging": false,
       "positionAbsolute": {
@@ -208,8 +208,8 @@
         "funct7": 0,
         "aluControl": 2
       },
-      "width": 182,
-      "height": 143,
+      "width": 183,
+      "height": 144,
       "selected": false,
       "positionAbsolute": {
         "x": 793.0121606015736,
@@ -250,8 +250,8 @@
         "select": "0",
         "portCount": 3
       },
-      "width": 108,
-      "height": 147,
+      "width": 109,
+      "height": 148,
       "selected": false,
       "positionAbsolute": {
         "x": 2141.7149023017773,
@@ -274,8 +274,8 @@
         "result": 0,
         "zero": 1
       },
-      "width": 144,
-      "height": 167,
+      "width": 145,
+      "height": 168,
       "selected": false,
       "positionAbsolute": {
         "x": 1159.4573351225336,
@@ -357,7 +357,7 @@
         "value": 4
       },
       "width": 96,
-      "height": 39,
+      "height": 40,
       "selected": false,
       "positionAbsolute": {
         "x": -522.6369617158804,
@@ -420,8 +420,8 @@
         "jump": 0,
         "jalr": 0
       },
-      "width": 178,
-      "height": 167,
+      "width": 179,
+      "height": 168,
       "selected": false,
       "positionAbsolute": {
         "x": 934.8536512237379,
@@ -481,8 +481,8 @@
         "value": 4,
         "select": "0"
       },
-      "width": 108,
-      "height": 123,
+      "width": 109,
+      "height": 124,
       "selected": false,
       "positionAbsolute": {
         "x": -553.1350089853556,
@@ -522,8 +522,8 @@
         "value": 0,
         "select": "0"
       },
-      "width": 108,
-      "height": 123,
+      "width": 109,
+      "height": 124,
       "selected": false,
       "positionAbsolute": {
         "x": 947.5862271968979,
@@ -583,8 +583,8 @@
         "value": 0,
         "select": "0"
       },
-      "width": 108,
-      "height": 123,
+      "width": 109,
+      "height": 124,
       "selected": false,
       "positionAbsolute": {
         "x": 981.2706089134803,
@@ -605,8 +605,8 @@
         "select": "0",
         "portCount": 3
       },
-      "width": 108,
-      "height": 147,
+      "width": 109,
+      "height": 148,
       "selected": false,
       "positionAbsolute": {
         "x": 920.5546291668821,
@@ -625,7 +625,7 @@
         "label": "CONSTANT"
       },
       "width": 96,
-      "height": 39,
+      "height": 40,
       "selected": false,
       "positionAbsolute": {
         "x": 692.4159464314246,
@@ -657,7 +657,8 @@
         "outputValue": 0,
         "output-1": 0,
         "output-2": 0,
-        "output-3": 0
+        "output-3": 0,
+        "flush": 0
       },
       "width": 120,
       "height": 240,
@@ -723,11 +724,12 @@
         "output-16": 0,
         "output-17": 0,
         "output-18": 0,
-        "output-19": 0
+        "output-19": 0,
+        "flush": 0
       },
       "width": 120,
       "height": 1140,
-      "selected": true,
+      "selected": false,
       "positionAbsolute": {
         "x": 474.18393266162605,
         "y": -289.16572312971573
@@ -883,8 +885,8 @@
         "select": "0",
         "portCount": 3
       },
-      "width": 108,
-      "height": 147,
+      "width": 109,
+      "height": 148,
       "selected": false,
       "positionAbsolute": {
         "x": 1325.592418349941,
@@ -905,8 +907,8 @@
         "select": "0",
         "portCount": 3
       },
-      "width": 108,
-      "height": 147,
+      "width": 109,
+      "height": 148,
       "selected": false,
       "positionAbsolute": {
         "x": 1111.5729587585074,
@@ -931,6 +933,25 @@
       "positionAbsolute": {
         "x": 2302.896250302,
         "y": 431.95531541963106
+      },
+      "dragging": false
+    },
+    {
+      "id": "branch-hazard-unit-1745038000279",
+      "type": "branch-hazard-unit",
+      "position": {
+        "x": 269.621408291561,
+        "y": -648.3928151823305
+      },
+      "data": {
+        "label": "BRANCH-HAZARD-UNIT"
+      },
+      "width": 212,
+      "height": 168,
+      "selected": false,
+      "positionAbsolute": {
+        "x": 269.621408291561,
+        "y": -648.3928151823305
       },
       "dragging": false
     }
@@ -3195,10 +3216,79 @@
       "targetHandle": "select",
       "id": "eforwarding-unit-1743933234088-mux-1743933463513-1",
       "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "jump-control-1740457549626",
+      "sourceHandle": "jump",
+      "target": "branch-hazard-unit-1745038000279",
+      "targetHandle": "branchTaken",
+      "selectable": true,
+      "focusable": true,
+      "updatable": true,
+      "id": "ejump-control-1740457549626-branch-hazard-unit-1745038000279-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "branch-hazard-unit-1745038000279",
+      "sourceHandle": "ifIdFlush",
+      "target": "pipeline-register-1743928603546",
+      "targetHandle": "flush",
+      "selectable": true,
+      "focusable": true,
+      "updatable": true,
+      "id": "ebranch-hazard-unit-1745038000279-pipeline-register-1743928603546-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 3
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "branch-hazard-unit-1745038000279",
+      "sourceHandle": "idExFlush",
+      "target": "pipeline-register-1743929763213",
+      "targetHandle": "flush",
+      "selectable": true,
+      "focusable": true,
+      "updatable": true,
+      "id": "ebranch-hazard-unit-1745038000279-pipeline-register-1743929763213-1",
+      "selected": false
     }
   ],
   "isSimulating": false,
   "editorCode": "",
   "assembledInstructions": [],
-  "savedAt": "2025-04-13T11:46:56.383Z"
+  "savedAt": "2025-04-19T04:47:52.696Z"
 }
