@@ -164,7 +164,7 @@ export const expandPseudoInstruction = (line: string, lineNumber?: number): stri
           lineNumber: lineNumber
         });
       }
-      
+
       if (imm >= -2048 && imm < 2048) {
         return [`addi ${rd}, x0, ${imm}`];
       } else {
@@ -183,13 +183,13 @@ export const expandPseudoInstruction = (line: string, lineNumber?: number): stri
         suggestion: 'la instruction format: la rd, symbol (e.g., la a0, msg)',
         lineNumber: lineNumber
       });
-      
+
       // la rd, symbol - similar to li, expand to two instructions
       // during first pass, placeholder values are used because actual symbol address is unknown
       // during second pass, these will be filled with proper values
       const rd = parts[1];
       const symbol = parts[2];
-      
+
       return [
         `lui ${rd}, %LA_HI_${symbol}%`,   // Placeholder for high 20 bits
         `addi ${rd}, ${rd}, %LA_LO_${symbol}%`  // Placeholder for low 12 bits
@@ -249,7 +249,16 @@ export const parseInstruction = (line: string, currentAddress: number, labelMap:
     case 'srl':
     case 'sra':
     case 'slt':
-    case 'sltu': {
+    case 'sltu':
+    // M extension instructions
+    case 'mul':
+    case 'mulh':
+    case 'mulhsu':
+    case 'mulhu':
+    case 'div':
+    case 'divu':
+    case 'rem':
+    case 'remu': {
       if (parts.length !== 4) throw new AssemblerError(`${op} instruction requires 3 operands`, {
         errorType: 'Operand Error',
         instruction: lineWithoutComment,
@@ -262,14 +271,16 @@ export const parseInstruction = (line: string, currentAddress: number, labelMap:
         rd: parseRegister(parts[1]),
         rs1: parseRegister(parts[2]),
         rs2: parseRegister(parts[3]),
-        funct3: op === 'add' || op === 'sub' ? '000' :
-               op === 'sll' ? '001' :
-               op === 'slt' ? '010' :
-               op === 'sltu' ? '011' :
-               op === 'xor' ? '100' :
-               op === 'srl' || op === 'sra' ? '101' :
-               op === 'or' ? '110' : '111',
-        funct7: op === 'sub' || op === 'sra' ? '0100000' : '0000000'
+        funct3: op === 'add' || op === 'sub' || op === 'mul' ? '000' :
+               op === 'sll' || op === 'mulh' ? '001' :
+               op === 'slt' || op === 'mulhsu' ? '010' :
+               op === 'sltu' || op === 'mulhu' ? '011' :
+               op === 'xor' || op === 'div' ? '100' :
+               op === 'srl' || op === 'sra' || op === 'divu' ? '101' :
+               op === 'or' || op === 'rem' ? '110' : '111',
+        funct7: op === 'mul' || op === 'mulh' || op === 'mulhsu' || op === 'mulhu' ||
+                op === 'div' || op === 'divu' || op === 'rem' || op === 'remu' ? '0000001' :
+                op === 'sub' || op === 'sra' ? '0100000' : '0000000'
       };
     }
     case 'addi':
@@ -361,13 +372,13 @@ export const parseInstruction = (line: string, currentAddress: number, labelMap:
   });
       const targetLabel = parts[3];
       let offset: number;
-      
+
       if (targetLabel in labelMap) {
         offset = labelMap[targetLabel] - currentAddress;
       } else {
         offset = parseImmediate(targetLabel, 13);
       }
-      
+
       return {
         type: 'B',
         opcode: '1100011',
@@ -395,13 +406,13 @@ export const parseInstruction = (line: string, currentAddress: number, labelMap:
       if (parts.length !== 3) throw new AssemblerError(`${op} instruction requires 2 operands`);
       const targetLabel = parts[2];
       let offset: number;
-      
+
       if (targetLabel in labelMap) {
         offset = labelMap[targetLabel] - currentAddress;
       } else {
         offset = parseImmediate(targetLabel, 21);
       }
-      
+
       return {
         type: 'J',
         opcode: '1101111',
@@ -477,11 +488,11 @@ export const generateMachineCode = (inst: Instruction): string => {
     case 'I':
       // Directly use the original immediate value, no sign extension
       const iImm = inst.imm!;
-      
+
       machineCode |= (inst.rd! & 0x1F) << 7;
       machineCode |= (parseInt(inst.funct3!, 2) & 0x7) << 12;
       machineCode |= (inst.rs1! & 0x1F) << 15;
-      
+
       // For shift instructions (slli, srli, srai), need special handling for funct7 field
       if (inst.funct7) {
         machineCode |= (parseInt(inst.funct7, 2) & 0x7F) << 25;
@@ -491,7 +502,7 @@ export const generateMachineCode = (inst: Instruction): string => {
         // For other I-type instructions, use low 12 bits
         machineCode |= ((iImm & 0xFFF) << 20) >>> 0;
       }
-      
+
       break;
 
     case 'S':
@@ -505,20 +516,20 @@ export const generateMachineCode = (inst: Instruction): string => {
 
     case 'B':
       const bImm = signExtend(inst.imm!, 13); // No need to left shift 1
-    
+
       machineCode |= ((bImm & 0x1000) >> 12) << 31; // imm[12] -> bit 31
       machineCode |= ((bImm & 0x7E0) >> 5) << 25;   // imm[10:5] -> bits 30:25
       machineCode |= ((bImm & 0x1E) >> 1) << 8;     // imm[4:1] -> bits 11:8
       machineCode |= ((bImm & 0x800) >> 11) << 7;   // imm[11] -> bit 7
-    
+
       machineCode |= (parseInt(inst.funct3!, 2) & 0x7) << 12; // funct3 -> bits 14:12
       machineCode |= (inst.rs1! & 0x1F) << 15; // rs1 -> bits 19:15
       machineCode |= (inst.rs2! & 0x1F) << 20; // rs2 -> bits 24:20
-    
+
       // machineCode |= 0b1100011; // B type instruction opcode
-    
+
       break;
-      
+
 
     case 'U':
       machineCode |= (inst.rd! & 0x1F) << 7;
@@ -527,17 +538,17 @@ export const generateMachineCode = (inst: Instruction): string => {
 
     case 'J':
       const jImm = signExtend(inst.imm!, 21); // Immediate extend to 21 bits
-    
+
       machineCode |= ((jImm & 0x100000) >> 20) << 31; // imm[20] -> bit 31
       machineCode |= ((jImm & 0xFF000) >> 12) << 12;  // imm[19:12] -> bits 19:12
       machineCode |= ((jImm & 0x800) >> 11) << 20;    // imm[11] -> bit 20
       machineCode |= ((jImm & 0x7FE) >> 1) << 21;     // imm[10:1] -> bits 30:21
-    
+
       machineCode |= (inst.rd! & 0x1F) << 7; // rd -> bits 11:7
       machineCode |= 0b1101111; // JAL opcode
-    
+
       break;
-      
+
   }
 
   // Ensure return is unsigned 32-bit integer hexadecimal representation
@@ -551,11 +562,11 @@ export class Assembler {
   private textAddress = 0;
   private dataAddress = 0;
   private readonly GP_BASE = 0x10000000;  // GP register base address
-  
+
   public getLabelMap(): Record<string, number> {
     return this.labelMap;
   }
-  
+
   public assemble(code: string): AssembledInstruction[] {
     this.labelMap = {};
     this.currentAddress = 0;
@@ -567,27 +578,27 @@ export class Assembler {
     // Preprocess labels separately
     let currentAddr = 0;
     let inDataSegment = false;
-    
+
     // First separate all lines and save them (ignoring comments and empty lines)
     const allLines: {text: string, hasLabel: boolean, label?: string, instr?: string, lineNumber: number}[] = [];
-    
+
     code.split('\n').forEach((line, index) => {
       const lineNumber = index + 1; // 1-indexed line numbers
       const trimmedLine = line.trim();
       if (!trimmedLine || trimmedLine.startsWith('#')) return;
-      
+
       const entry: {text: string, hasLabel: boolean, label?: string, instr?: string, lineNumber: number} = {
         text: trimmedLine,
         hasLabel: false,
         lineNumber: lineNumber
       };
-      
+
       // Check for label
       const labelMatch = trimmedLine.match(/^([a-zA-Z0-9_]+):/);
       if (labelMatch) {
         entry.hasLabel = true;
         entry.label = labelMatch[1];
-        
+
         // Extract instruction or data after label
         const afterLabel = trimmedLine.substring(labelMatch[0].length).trim();
         if (afterLabel) {
@@ -596,17 +607,17 @@ export class Assembler {
       } else {
         entry.instr = trimmedLine;
       }
-      
+
       allLines.push(entry);
     });
-    
+
     // Now perform first pass traversal, collect .text and .data instruction and label locations
     currentAddr = 0;
     inDataSegment = false;
-    
+
     for (let i = 0; i < allLines.length; i++) {
       const entry = allLines[i];
-      
+
       // Process segment instructions
       if (entry.instr === '.text') {
         inDataSegment = false;
@@ -617,19 +628,19 @@ export class Assembler {
         currentAddr = this.GP_BASE; // Data segment starts from GP_BASE
         continue;
       }
-      
+
       // If there is a label, record its address
       if (entry.hasLabel) {
         this.labelMap[entry.label!] = currentAddr;
       }
-      
+
       // Update address based on instruction or data type
       if (entry.instr) {
         // Skip directive instructions like .globl that don't generate code
         if (entry.instr.startsWith('.globl')) {
           continue;
         }
-        
+
         if (!inDataSegment) {
           // Process code segment
           try {
@@ -671,17 +682,17 @@ export class Assembler {
         }
       }
     }
-    
+
     // After label collection, start second pass for actual assembly
     this.currentAddress = 0;
     this.currentSegment = 'text';
-    
+
     const result: AssembledInstruction[] = [];
     const memoryBytes: Record<number, number> = {}; // Used to track each byte in memory
-    
+
     // Second pass: Generate actual instructions and data
     let currentSection = 'text';
-    
+
     for (const entry of allLines) {
       // Process segment instructions
       if (entry.instr === '.text') {
@@ -698,17 +709,17 @@ export class Assembler {
         }, 0);
         continue;
       }
-      
+
       // Skip pure label lines
       if (!entry.instr) continue;
-      
+
       const instruction = entry.instr;
-      
+
       // Skip directive instructions like .globl that don't generate code
       if (instruction.startsWith('.globl')) {
         continue;
       }
-      
+
       if (currentSection === 'text') {
         // Process code segment instructions
         if (!instruction.startsWith('.')) {
@@ -724,7 +735,7 @@ export class Assembler {
                   if (match) {
                     const type = match[1]; // HI or LO
                     const symbol = match[2];
-                    
+
                     if (!(symbol in this.labelMap)) {
                       throw new AssemblerError(`Undefined label: ${symbol}`, {
                         errorType: 'Label Error',
@@ -733,18 +744,18 @@ export class Assembler {
                         lineNumber: entry.lineNumber
                       });
                     }
-                    
+
                     const address = this.labelMap[symbol];
-                    
+
                     if (type === 'HI') {
                       // For lui instruction, calculate upper 20 bits
-                      const baseImm = address >= this.GP_BASE ? 
+                      const baseImm = address >= this.GP_BASE ?
                         0x10000 : // For data segment
                         (address >>> 12); // For code segment
-                        
+
                       const luiParts = expandedLine.split(/[\s,]+/).filter(Boolean);
                       const rd = luiParts[1];
-                      
+
                       // Generate lui instruction with proper immediate
                       const luiInst = {
                         type: 'U' as const,
@@ -752,10 +763,10 @@ export class Assembler {
                         rd: parseRegister(rd),
                         imm: baseImm
                       };
-                      
+
                       const luiHex = generateMachineCode(luiInst);
                       const luiBinary = (parseInt(luiHex.slice(2), 16) >>> 0).toString(2).padStart(32, '0');
-                      
+
                       // Add to result
                       result.push({
                         hex: luiHex,
@@ -766,22 +777,22 @@ export class Assembler {
                         address: this.currentAddress,
                         originalLineNumber: entry.lineNumber
                       });
-                      
+
                     } else if (type === 'LO') {
                       // For addi instruction, calculate lower 12 bits
-                      let offset = address >= this.GP_BASE ? 
+                      let offset = address >= this.GP_BASE ?
                         (address - this.GP_BASE) : // For data segment
                         (address & 0xFFF); // For code segment
-                      
+
                       const addiParts = expandedLine.split(/[\s,]+/).filter(Boolean);
                       const rd = addiParts[1];
                       const rs1 = addiParts[2];
-                      
+
                       // Ensure offset is within 12-bit signed integer range
                       if (offset < -2048 || offset > 2047) {
                         console.warn(`Warning: ${symbol} offset ${offset} exceeds 12-bit signed integer range`);
                       }
-                      
+
                       // Generate addi instruction
                       const addiInst = {
                         type: 'I' as const,
@@ -791,10 +802,10 @@ export class Assembler {
                         imm: offset,
                         funct3: '000'
                       };
-                      
+
                       const addiHex = generateMachineCode(addiInst);
                       const addiBinary = (parseInt(addiHex.slice(2), 16) >>> 0).toString(2).padStart(32, '0');
-                      
+
                       // Add to result
                       result.push({
                         hex: addiHex,
@@ -806,19 +817,19 @@ export class Assembler {
                         originalLineNumber: entry.lineNumber
                       });
                     }
-                    
+
                     this.currentAddress += 4;
                     return; // Placeholder processed, skip normal processing
                   }
                 }
-                
+
                 // Process other instructions
                 const parsedInst = parseInstruction(expandedLine, this.currentAddress, this.labelMap, entry.lineNumber);
                 const hex = generateMachineCode(parsedInst);
                 const binary = (parseInt(hex.slice(2), 16) >>> 0).toString(2).padStart(32, '0');
-                result.push({ 
-                  hex, 
-                  binary, 
+                result.push({
+                  hex,
+                  binary,
                   assembly: expandedLine,
                   source: entry.text,
                   segment: 'text',
@@ -856,7 +867,7 @@ export class Assembler {
         try {
           let dataBytes: number[] = [];
           let dataSize = 0;
-          
+
           if (instruction.startsWith('.word')) {
             const parts = instruction.split(/[\s,]+/).slice(1);
             const data = parts.map(part => {
@@ -866,7 +877,7 @@ export class Assembler {
                 return parseInt(part);
               }
             });
-            
+
             dataBytes = [];
             // Store as little-endian
             data.forEach(value => {
@@ -876,7 +887,7 @@ export class Assembler {
               dataBytes.push((value >> 24) & 0xFF);
             });
             dataSize = 4 * data.length;
-            
+
             // Store each word in memory
             data.forEach((value, index) => {
               const addr = this.currentAddress + (index * 4);
@@ -885,7 +896,7 @@ export class Assembler {
               memoryBytes[addr + 2] = (value >> 16) & 0xFF;
               memoryBytes[addr + 3] = (value >> 24) & 0xFF;
             });
-            
+
             // Add to result array
             result.push({
               hex: '0x' + data.map(d => d.toString(16).padStart(8, '0')).join(''),
@@ -897,7 +908,7 @@ export class Assembler {
               data: data,
               originalLineNumber: entry.lineNumber
             });
-            
+
             // Store each word in memory
             data.forEach((value, index) => {
               const addr = this.currentAddress + (index * 4);
@@ -906,7 +917,7 @@ export class Assembler {
               memoryBytes[addr + 2] = (value >> 16) & 0xFF;
               memoryBytes[addr + 3] = (value >> 24) & 0xFF;
             });
-            
+
           } else if (instruction.startsWith('.byte')) {
             const parts = instruction.split(/[\s,]+/).slice(1);
             const data = parts.map(part => {
@@ -918,15 +929,15 @@ export class Assembler {
                 return parseInt(part) & 0xFF;
               }
             });
-            
+
             // Store each byte in memory
             data.forEach((value, index) => {
               memoryBytes[this.currentAddress + index] = value;
             });
-            
+
             dataBytes = data;
             dataSize = data.length;
-            
+
             result.push({
               hex: '0x' + data.map(d => d.toString(16).padStart(2, '0')).join(''),
               binary: data.map(d => d.toString(2).padStart(8, '0')).join(''),
@@ -937,7 +948,7 @@ export class Assembler {
               data: data,
               originalLineNumber: entry.lineNumber
             });
-            
+
           } else if (instruction.startsWith('.half')) {
             const parts = instruction.split(/[\s,]+/).slice(1);
             const data = parts.map(part => {
@@ -947,14 +958,14 @@ export class Assembler {
                 return parseInt(part) & 0xFFFF;
               }
             });
-            
+
             // Store each half word in memory
             data.forEach((value, index) => {
               const addr = this.currentAddress + (index * 2);
               memoryBytes[addr] = value & 0xFF;
               memoryBytes[addr + 1] = (value >> 8) & 0xFF;
             });
-            
+
             dataBytes = [];
             // Store as little-endian
             data.forEach(value => {
@@ -962,7 +973,7 @@ export class Assembler {
               dataBytes.push((value >> 8) & 0xFF);
             });
             dataSize = 2 * data.length;
-            
+
             result.push({
               hex: '0x' + data.map(d => d.toString(16).padStart(4, '0')).join(''),
               binary: data.map(d => d.toString(2).padStart(16, '0')).join(''),
@@ -973,20 +984,20 @@ export class Assembler {
               data: data,
               originalLineNumber: entry.lineNumber
             });
-            
+
           } else if (instruction.startsWith('.ascii') || instruction.startsWith('.asciz')) {
             const match = instruction.match(/"(.*)"/);
             if (match) {
               const str = match[1];
               const data = Array.from(str).map(c => c.charCodeAt(0));
-              
+
               if (instruction.startsWith('.asciz')) {
                 data.push(0); // Add null character at the end
               }
-              
+
               dataBytes = data;
               dataSize = data.length;
-              
+
               result.push({
                 hex: '0x' + data.map(d => d.toString(16).padStart(2, '0')).join(''),
                 binary: data.map(d => d.toString(2).padStart(8, '0')).join(''),
@@ -999,13 +1010,13 @@ export class Assembler {
               });
             }
           }
-          
+
           // Store to memory model and update address
           if (dataBytes.length > 0) {
             dataBytes.forEach((value, i) => {
               memoryBytes[this.currentAddress + i] = value;
             });
-            
+
             this.currentAddress += dataSize;
           }
         } catch (error: unknown) {
@@ -1023,7 +1034,7 @@ export class Assembler {
         }
       }
     }
-    
+
     // Add memory data to result
     // As a special attribute added to the first result element
     if (result.length > 0) {
@@ -1031,11 +1042,11 @@ export class Assembler {
       Object.entries(memoryBytes).forEach(([addr, value]) => {
         memoryData[`0x${parseInt(addr).toString(16).padStart(8, '0')}`] = value;
       });
-      
+
       // @ts-ignore - Add a special attribute for passing memory data
       result[0].memoryData = memoryData;
     }
-    
+
     return result;
   }
 }

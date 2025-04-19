@@ -78,6 +78,19 @@ const instructionFormats: InstructionFormat[] = [
     ]
   },
   {
+    type: 'M-Extension Instructions',
+    instructions: [
+      'mul rd, rs1, rs2 - Multiplication (lower 32 bits)',
+      'mulh rd, rs1, rs2 - Multiplication High (signed×signed)',
+      'mulhu rd, rs1, rs2 - Multiplication High (unsigned×unsigned)',
+      'mulhsu rd, rs1, rs2 - Multiplication High (signed×unsigned)',
+      'div rd, rs1, rs2 - Division (signed)',
+      'divu rd, rs1, rs2 - Division (unsigned)',
+      'rem rd, rs1, rs2 - Remainder (signed)',
+      'remu rd, rs1, rs2 - Remainder (unsigned)'
+    ]
+  },
+  {
     type: 'Pseudo-Instructions',
     instructions: [
       'li rd, imm - Load Immediate (expands to lui+addi or addi)',
@@ -125,24 +138,24 @@ export function InstructionFormatPanel() {
       {isExpanded && (
         <>
           {/* Overlay: clicking on it will collapse the panel */}
-          <div 
-            className="fixed inset-0 bg-black bg-opacity-50 z-[100]" 
-            onClick={() => setIsExpanded(false)} 
+          <div
+            className="fixed inset-0 bg-black bg-opacity-50 z-[100]"
+            onClick={() => setIsExpanded(false)}
           />
-          <div 
+          <div
             className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[80vw] grid grid-cols-3 gap-4 text-sm bg-white p-6 rounded-lg shadow-xl border border-gray-200 transition-all duration-300 ease-in-out z-[101] max-h-[80vh] overflow-y-auto"
             style={{ opacity: isExpanded ? 1 : 0, scale: isExpanded ? '1' : '0.95' }}
           >
             {instructionFormats.map((format) => (
-              <div 
-                key={format.type} 
+              <div
+                key={format.type}
                 className="min-w-0 p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors duration-200"
               >
                 <h4 className="font-semibold text-gray-800 mb-3">{format.type}</h4>
                 <ul className="list-none space-y-2">
                   {format.instructions.map((instruction, index) => (
-                    <li 
-                      key={index} 
+                    <li
+                      key={index}
                       className="text-xs text-gray-600 hover:text-gray-900 transition-colors duration-200"
                     >
                       {instruction}
@@ -161,7 +174,7 @@ export function InstructionFormatPanel() {
 // A button component that toggles the instruction format panel
 export function InstructionFormatButton() {
   const [isExpanded, setIsExpanded] = useState(false);
-  
+
   return (
     <>
       <button
@@ -171,29 +184,29 @@ export function InstructionFormatButton() {
       >
         <BookOpen className="w-4 h-4" />
       </button>
-      
+
       {/* When expanded, display the panel */}
       {isExpanded && (
         <>
           {/* Overlay: clicking on it will collapse the panel */}
-          <div 
-            className="fixed inset-0 bg-black bg-opacity-50 z-[100]" 
-            onClick={() => setIsExpanded(false)} 
+          <div
+            className="fixed inset-0 bg-black bg-opacity-50 z-[100]"
+            onClick={() => setIsExpanded(false)}
           />
-          <div 
+          <div
             className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[80vw] grid grid-cols-3 gap-4 text-sm bg-white p-6 rounded-lg shadow-xl border border-gray-200 transition-all duration-300 ease-in-out z-[101] max-h-[80vh] overflow-y-auto"
             style={{ opacity: isExpanded ? 1 : 0, scale: isExpanded ? '1' : '0.95' }}
           >
             {instructionFormats.map((format) => (
-              <div 
-                key={format.type} 
+              <div
+                key={format.type}
                 className="min-w-0 p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors duration-200"
               >
                 <h4 className="font-semibold text-gray-800 mb-3">{format.type}</h4>
                 <ul className="list-none space-y-2">
                   {format.instructions.map((instruction, index) => (
-                    <li 
-                      key={index} 
+                    <li
+                      key={index}
                       className="text-xs text-gray-600 hover:text-gray-900 transition-colors duration-200"
                     >
                       {instruction}

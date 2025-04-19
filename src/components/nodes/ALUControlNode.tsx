@@ -15,7 +15,7 @@ export function ALUControlNode({ data, id, selected }: { data: ALUControlNodeDat
   const updateNodeData = useCircuitStore((state) => state.updateNodeData);
   const nodes = useNodes();
   const edges = useEdges();
-  
+
   // 监听输入连接的变化
   const updateInputConnections = () => {
     const inputEdges = edges.filter(edge => edge.target === id);
@@ -23,7 +23,7 @@ export function ALUControlNode({ data, id, selected }: { data: ALUControlNodeDat
     let inputFunct3 = data.funct3 ?? 0;
     let inputFunct7 = data.funct7 ?? 0;
     let hasChanges = false;
-    
+
     const getSourceNodeValue = (edge: any) => {
       if (!edge) return null;
       const sourceNode = nodes.find(node => node.id === edge.source);
@@ -43,7 +43,7 @@ export function ALUControlNode({ data, id, selected }: { data: ALUControlNodeDat
       }
       return null;
     };
-    
+
     inputEdges.forEach(edge => {
       const sourceValue = getSourceNodeValue(edge);
       const portId = edge.targetHandle;
@@ -96,18 +96,34 @@ export function ALUControlNode({ data, id, selected }: { data: ALUControlNodeDat
           }
         } else if (aluOp === '10') {
           // R-type指令：根据funct3和funct7确定
-          switch (funct3) {
-            case '000':
-              return funct7 === '0000000' ? '0010' : '0110'; // ADD (2) / SUB (6)
-            case '001': return '1011'; // SLL (11)
-            case '010': return '0111'; // SLT (7)
-            case '011': return '1010'; // SLTU (10)
-            case '100': return '0011'; // XOR (3)
-            case '101':
-              return funct7 === '0000000' ? '1000' : '1001'; // SRL (8) / SRA (9)
-            case '110': return '0001'; // OR (1)
-            case '111': return '0000'; // AND (0)
-            default: return '0000';
+          if (funct7 === '0000001') {
+            // M extension instructions (multiplication and division)
+            switch (funct3) {
+              case '000': return '1100'; // MUL (12)
+              case '001': return '1101'; // MULH (13)
+              case '010': return '1111'; // MULHSU (15)
+              case '011': return '1110'; // MULHU (14)
+              case '100': return '10000'; // DIV (16)
+              case '101': return '10001'; // DIVU (17)
+              case '110': return '10010'; // REM (18)
+              case '111': return '10011'; // REMU (19)
+              default: return '0000';
+            }
+          } else {
+            // Standard R-type instructions
+            switch (funct3) {
+              case '000':
+                return funct7 === '0000000' ? '0010' : '0110'; // ADD (2) / SUB (6)
+              case '001': return '1011'; // SLL (11)
+              case '010': return '0111'; // SLT (7)
+              case '011': return '1010'; // SLTU (10)
+              case '100': return '0011'; // XOR (3)
+              case '101':
+                return funct7 === '0000000' ? '1000' : '1001'; // SRL (8) / SRA (9)
+              case '110': return '0001'; // OR (1)
+              case '111': return '0000'; // AND (0)
+              default: return '0000';
+            }
           }
         } else if (aluOp === '11') {
           // I-type特殊指令
@@ -137,7 +153,7 @@ export function ALUControlNode({ data, id, selected }: { data: ALUControlNodeDat
       });
     }
   };
-  
+
   // 优化useEffect的依赖数组
   React.useEffect(() => {
     updateInputConnections();
@@ -146,32 +162,32 @@ export function ALUControlNode({ data, id, selected }: { data: ALUControlNodeDat
     <div className={`relative px-4 py-2 shadow-md rounded-md bg-white border-2 ${
       selected ? 'border-blue-500' : 'border-gray-200'
     }`}>
-      
-      <Handle 
-        type="target" 
-        position={Position.Top} 
-        id="aluOp" 
-        className="w-3 h-3 bg-blue-400" 
-        style={{ left: '50%' }} 
-        title="ALU Operation Code" 
+
+      <Handle
+        type="target"
+        position={Position.Top}
+        id="aluOp"
+        className="w-3 h-3 bg-blue-400"
+        style={{ left: '50%' }}
+        title="ALU Operation Code"
       />
-      <Handle 
-        type="target" 
-        position={Position.Left} 
-        id="funct3" 
-        className="w-3 h-3 bg-blue-400" 
-        style={{ top: '40%' }} 
-        title="Function Code 3" 
+      <Handle
+        type="target"
+        position={Position.Left}
+        id="funct3"
+        className="w-3 h-3 bg-blue-400"
+        style={{ top: '40%' }}
+        title="Function Code 3"
       />
-      <Handle 
-        type="target" 
-        position={Position.Left} 
-        id="funct7" 
-        className="w-3 h-3 bg-blue-400" 
-        style={{ top: '60%' }} 
-        title="Function Code 7" 
+      <Handle
+        type="target"
+        position={Position.Left}
+        id="funct7"
+        className="w-3 h-3 bg-blue-400"
+        style={{ top: '60%' }}
+        title="Function Code 7"
       />
-      
+
       <div className="flex items-center">
         <div className="ml-2">
           <div className="text-lg font-bold">ALU Control</div>
@@ -182,13 +198,13 @@ export function ALUControlNode({ data, id, selected }: { data: ALUControlNodeDat
         </div>
       </div>
 
-      <Handle 
-        type="source" 
-        position={Position.Right} 
-        id="aluControl" 
-        className="w-3 h-3 bg-green-400" 
-        style={{ top: '50%' }} 
-        title="ALU Control Signal" 
+      <Handle
+        type="source"
+        position={Position.Right}
+        id="aluControl"
+        className="w-3 h-3 bg-green-400"
+        style={{ top: '50%' }}
+        title="ALU Control Signal"
       />
     </div>
   );
