@@ -23,12 +23,22 @@ export function BranchHazardUnitNode({ data, id, selected }: { data: BranchHazar
   // 获取源节点的值
   const getSourceNodeValue = (edge: any) => {
     if (!edge) return null;
-    
     const sourceNode = nodes.find(node => node.id === edge.source);
-    if (!sourceNode || !sourceNode.data) return null;
-    
-    const sourceValue = sourceNode.data[edge.sourceHandle];
-    return typeof sourceValue === 'number' ? sourceValue : null;
+    if (sourceNode?.data && typeof sourceNode.data === 'object') {
+      const portId = edge.sourceHandle;
+      let sourceValue: number | undefined;
+
+      if (portId && sourceNode.data[portId as keyof typeof sourceNode.data] !== undefined) {
+        const value = sourceNode.data[portId as keyof typeof sourceNode.data];
+        sourceValue = typeof value === 'number' ? value : undefined;
+      } else if ('value' in sourceNode.data) { // Fallback if portId doesn't match
+        const value = (sourceNode.data as { value?: number }).value;
+        sourceValue = typeof value === 'number' ? value : undefined;
+      }
+
+      return sourceValue ?? null;
+    }
+    return null;
   };
   
   // 更新节点状态
