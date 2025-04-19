@@ -73,7 +73,7 @@ export function DataMemoryNode({ data, id, selected }: { data: DataMemoryNodeDat
     // 从内存加载数据到缓存
     const blockStartAddress = address - blockOffset;
     const blockData = Array(config.blockSize / 4).fill(0);
-    
+
     // 加载整个缓存块的数据
     for (let i = 0; i < config.blockSize / 4; i++) {
       const memAddress = blockStartAddress + i * 4;
@@ -144,7 +144,7 @@ export function DataMemoryNode({ data, id, selected }: { data: DataMemoryNodeDat
 
     // 缓存未命中，需要替换
     updateCacheStats(false, false);
-    
+
     // 查找无效的缓存行
     entry = set.entries.find(e => !e.valid);
     if (entry) {
@@ -190,15 +190,22 @@ export function DataMemoryNode({ data, id, selected }: { data: DataMemoryNodeDat
     // 找到连接到此节点的边
     const addressEdge = edges.find(edge => edge.target === id && edge.targetHandle === 'address');
     const memReadEdge = edges.find(edge => edge.target === id && edge.targetHandle === 'memRead');
-  
+    const writeDataEdge = edges.find(edge => edge.target === id && edge.targetHandle === 'writeData');
+    const memWriteEdge = edges.find(edge => edge.target === id && edge.targetHandle === 'memWrite');
+
     const newAddress = Number(getInputValue(addressEdge) ?? data.address ?? 0);
     const newMemRead = Number(getInputValue(memReadEdge) ?? data.memRead ?? 0);
-  
+    const newWriteData = Number(getInputValue(writeDataEdge) ?? data.writeData ?? 0);
+    const newMemWrite = Number(getInputValue(memWriteEdge) ?? data.memWrite ?? 0);
+
     // 只有当输入值发生实际变化时才更新
-    const hasChanges = newAddress !== (data.address || 0) || newMemRead !== (data.memRead || 0);
-  
+    const hasChanges = newAddress !== (data.address || 0) ||
+                      newMemRead !== (data.memRead || 0) ||
+                      newWriteData !== (data.writeData || 0) ||
+                      newMemWrite !== (data.memWrite || 0);
+
     if (hasChanges) {
-      // 更新节点数据（只更新读取相关的状态）
+      // 更新节点数据（更新所有输入端口状态）
       const addressHex = `0x${newAddress.toString(16).padStart(8, '0')}`;
       let readData = 0;
 
@@ -208,66 +215,47 @@ export function DataMemoryNode({ data, id, selected }: { data: DataMemoryNodeDat
       // 记录读取位置和状态，用于cache
       setReadAddress(newAddress);
       setShouldRead(newMemRead > 0);
-      
+
       updateNodeData(id, {
         ...data,
         address: newAddress,
         memRead: newMemRead,
+        writeData: newWriteData,
+        memWrite: newMemWrite,
         readData: readData
       });
     }
   };
-  
-  // 监听输入连接的变化（组合逻辑部分：读取操作）
+
+  // 监听输入连接的变化（组合逻辑部分：所有输入端口更新）
   React.useEffect(() => {
     updateInputConnections();
   }, [edges, id, nodes, memory]);
 
-  // 监听时钟信号执行缓存模拟读取
+  // 监听时钟信号执行缓存模拟读取和内存写入（时序逻辑部分）
   React.useEffect(() => {
+    // 读取操作 - 模拟缓存读取（仅用于统计）
     if (shouldRead) {
-      const addressHex = `0x${readAddress.toString(16).padStart(8, '0')}`;
-      let readData = 0;
-      
-      // 模拟缓存读取（仅用于统计）
       const cachedData = readFromCache(readAddress);
-
     }
-  }, [stepCount]);
-  
-  // 监听时钟信号（时序逻辑部分：写入操作）
-  React.useEffect(() => {
-    // 找到连接到此节点的边
-    const writeDataEdge = edges.find(edge => edge.target === id && edge.targetHandle === 'writeData');
-    const memWriteEdge = edges.find(edge => edge.target === id && edge.targetHandle === 'memWrite');
-  
-    const newWriteData = Number(getInputValue(writeDataEdge) ?? data.writeData ?? 0);
-    const newMemWrite = Number(getInputValue(memWriteEdge) ?? data.memWrite ?? 0);
-    const newAddress = data.address || 0;
-  
-    // 只有当输入值发生实际变化时才更新
-    const hasChanges = newWriteData !== (data.writeData || 0) || newMemWrite !== (data.memWrite || 0);
-  
-    if (hasChanges) {
-      // 更新节点数据（写入相关的状态）
-      const addressHex = `0x${newAddress.toString(16).padStart(8, '0')}`;
-  
-      // 写入数据
-      if (newMemWrite > 0 && newWriteData !== memory[addressHex]) {
-        // 首先写入缓存
-        writeToCache(newAddress, newWriteData);
-        // 然后更新内存
-        updateMemory({
-          [addressHex]: newWriteData
-        });
-      }
-  
-      // 更新节点状态
-      updateNodeData(id, {
-        ...data,
-        writeData: newWriteData,
-        memWrite: newMemWrite
+
+    // 写入操作 - 实际更新内存状态
+    const address = data.address || 0;
+    const writeData = data.writeData || 0;
+    const memWrite = data.memWrite || 0;
+
+    if (memWrite > 0) {
+      const addressHex = `0x${address.toString(16).padStart(8, '0')}`;
+
+      // // 只有当要写入的数据与当前内存中的数据不同时才执行写入
+      // if (writeData !== memory[addressHex]) {
+      // 首先写入缓存
+      writeToCache(address, writeData);
+      // 然后更新内存
+      updateMemory({
+        [addressHex]: writeData
       });
+      // }
     }
   }, [stepCount]);
 
@@ -276,49 +264,49 @@ export function DataMemoryNode({ data, id, selected }: { data: DataMemoryNodeDat
       selected ? 'border-blue-500' : 'border-gray-200'
     }`}>
       {/* Control ports on left */}
-      <Handle 
-        type="target" 
-        position={Position.Top} 
-        id="memWrite" 
-        className="w-3 h-3 bg-yellow-400" 
+      <Handle
+        type="target"
+        position={Position.Top}
+        id="memWrite"
+        className="w-3 h-3 bg-yellow-400"
         style={{ left: '30%' }}
         title="Write Enable Signal"
       />
-      <Handle 
-        type="target" 
-        position={Position.Top} 
-        id="memRead" 
-        className="w-3 h-3 bg-yellow-400" 
+      <Handle
+        type="target"
+        position={Position.Top}
+        id="memRead"
+        className="w-3 h-3 bg-yellow-400"
         style={{ left: '70%' }}
         title="Read Enable Signal"
       />
-      <Handle 
-        type="target" 
-        position={Position.Left} 
-        id="address" 
-        className="w-3 h-3 bg-blue-400" 
+      <Handle
+        type="target"
+        position={Position.Left}
+        id="address"
+        className="w-3 h-3 bg-blue-400"
         style={{ top: '30%' }}
         title="Memory Address"
       />
-      <Handle 
-        type="target" 
-        position={Position.Left} 
-        id="writeData" 
-        className="w-3 h-3 bg-blue-400" 
+      <Handle
+        type="target"
+        position={Position.Left}
+        id="writeData"
+        className="w-3 h-3 bg-blue-400"
         style={{ top: '70%' }}
         title="Write Data"
       />
-  
+
       {/* Output port on right */}
-      <Handle 
-        type="source" 
-        position={Position.Right} 
-        id="readData" 
-        className="w-3 h-3 bg-green-400" 
+      <Handle
+        type="source"
+        position={Position.Right}
+        id="readData"
+        className="w-3 h-3 bg-green-400"
         style={{ top: '50%' }}
         title="Read Data"
       />
-  
+
       <div className="ml-2">
         <div className="text-lg font-bold">Data Memory</div>
         <div className="text-gray-500">Address: 0x{(data.address || 0).toString(16).padStart(8, '0')}</div>
