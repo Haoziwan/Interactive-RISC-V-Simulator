@@ -1,10 +1,10 @@
 import React from 'react';
-import { 
-  Cpu, 
-  Database, 
-  GitCompare, 
-  ArrowRightLeft, 
-  Hash, 
+import {
+  Cpu,
+  Database,
+  GitCompare,
+  ArrowRightLeft,
+  Hash,
   Save,
   FileInput,
   BookOpen,
@@ -15,13 +15,14 @@ import {
   Hash as HashIcon,
   SplitSquareHorizontal,
   ArrowLeftRight,
-  AlertTriangle
+  AlertTriangle,
+  FlaskConical
 } from 'lucide-react';
 import { useCircuitStore } from '../store/circuitStore';
 
 const components = [
 
-  
+
   {
     type: 'constant',
     label: 'Constant',
@@ -135,6 +136,12 @@ const components = [
     label: 'Hazard Detection Unit',
     icon: <AlertTriangle className="w-6 h-6" />,
     description: 'Detects and resolves pipeline hazards by stalling',
+  },
+  {
+    type: 'branch-hazard-unit',
+    label: 'Branch Hazard Unit',
+    icon: <FlaskConical className="w-6 h-6" />,
+    description: 'Resolves control hazards by flushing the pipeline',
   }
 ];
 
@@ -154,11 +161,11 @@ export function ComponentLibrary() {
     try {
       // 检查浏览器是否支持 File System Access API
       if ('showSaveFilePicker' in window) {
-        const handle = await (window as unknown as { 
-          showSaveFilePicker: (options: { 
-            suggestedName: string; 
-            types: { description: string; accept: { [key: string]: string[] } }[] 
-          }) => Promise<FileSystemFileHandle> 
+        const handle = await (window as unknown as {
+          showSaveFilePicker: (options: {
+            suggestedName: string;
+            types: { description: string; accept: { [key: string]: string[] } }[]
+          }) => Promise<FileSystemFileHandle>
         }).showSaveFilePicker({
           suggestedName: `circuit-${new Date().toISOString().replace(/[:.]/g, '-')}.json`,
           types: [{

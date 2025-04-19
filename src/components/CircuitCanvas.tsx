@@ -37,6 +37,7 @@ import { useCircuitStore } from '../store/circuitStore';
 import { Play, Pause, RotateCcw, StepForward, CheckCircle, Trash2 } from 'lucide-react';
 import { ForwardingUnitNode } from './nodes/ForwardingUnitNode';
 import { HazardDetectionUnitNode } from './nodes/HazardDetectionUnitNode';
+import { BranchHazardUnitNode } from './nodes/BranchHazardUnitNode';
 import EditableEdge from './edges/EditableEdge';
 
 const nodeTypes = {
@@ -59,6 +60,7 @@ const nodeTypes = {
   'jump-control': JumpControlNode,
   'forwarding-unit': ForwardingUnitNode,
   'hazard-detection-unit': HazardDetectionUnitNode,
+  'branch-hazard-unit': BranchHazardUnitNode,
 };
 
 // Define edge types
@@ -102,7 +104,7 @@ export function CircuitCanvas() {
   const [edgeWidth, setEdgeWidth] = useState(3);
   const [showEdgeSettings, setShowEdgeSettings] = useState(false);
   const [editableLineType, setEditableLineType] = useState<'straight' | 'step'>('step');
-  
+
   React.useEffect(() => {
     // Load basic datapath when component mounts
     fetch('/datapath/basic-datapath.json')
@@ -114,7 +116,7 @@ export function CircuitCanvas() {
         console.error('Error loading basic datapath:', error);
       });
   }, []);
-  
+
   const validateCircuit = useCallback(() => {
     const errors: string[] = [];
     const componentCounts: { [key: string]: number } = {};
@@ -161,7 +163,7 @@ export function CircuitCanvas() {
   const handlePaneClick = useCallback(() => {
     setSelectedNode(null);
     setSelectedEdge(null);
-    
+
     // Clear the selected state from all edges
     useCircuitStore.setState((state) => ({
       edges: state.edges.map(e => ({
@@ -190,10 +192,10 @@ export function CircuitCanvas() {
   const onEdgeClick = useCallback(
     (event: React.MouseEvent, edge: Edge) => {
       event.stopPropagation();
-      
+
       // Select the edge
       setSelectedEdge(edge);
-      
+
       // Update the edges to mark this one as selected
       useCircuitStore.setState((state) => ({
         edges: state.edges.map(e => ({
@@ -235,7 +237,7 @@ export function CircuitCanvas() {
           color: edgeColor,
         },
         // Initialize data with empty intermediatePoints array and lineType if it's an editable edge
-        data: edgeType === 'editableEdge' ? { 
+        data: edgeType === 'editableEdge' ? {
           intermediatePoints: [],
           lineType: editableLineType
         } : undefined,
@@ -367,7 +369,7 @@ export function CircuitCanvas() {
       >
         <Background variant={BackgroundVariant.Dots} gap={24} size={1.5} color="#bbb" />
         <Controls />
-        
+
         {/* Help panel for editable edges */}
         {selectedEdge && selectedEdge.type === 'editableEdge' && (
           <Panel position="bottom-center" className="bg-white p-2 rounded-lg shadow-lg mb-4">
@@ -376,7 +378,7 @@ export function CircuitCanvas() {
             </div>
           </Panel>
         )}
-        
+
         <Panel position="top-right" className="bg-white p-2 rounded-lg shadow-lg mr-4 mt-4">
           <div className="flex flex-col space-y-2">
             <div className="flex items-center justify-between mb-1">
@@ -396,17 +398,17 @@ export function CircuitCanvas() {
                     onChange={(e) => {
                       const newEdgeType = e.target.value;
                       setEdgeType(newEdgeType);
-                      
+
                       // Update all edges to the new type and initialize intermediatePoints if needed
                       useCircuitStore.getState().updateEdgeType(newEdgeType);
-                      
+
                       // If switching to editable edge, initialize intermediatePoints and lineType for all edges
                       if (newEdgeType === 'editableEdge') {
                         useCircuitStore.setState((state) => ({
                           edges: state.edges.map(edge => ({
                             ...edge,
-                            data: { 
-                              ...edge.data, 
+                            data: {
+                              ...edge.data,
                               intermediatePoints: edge.data?.intermediatePoints || [],
                               lineType: edge.data?.lineType || 'step'
                             }
@@ -433,7 +435,7 @@ export function CircuitCanvas() {
                       onChange={(e) => {
                         const newLineType = e.target.value as 'straight' | 'step';
                         setEditableLineType(newLineType);
-                        
+
                         // Update all editable edges to use the new line type
                         useCircuitStore.setState((state) => ({
                           edges: state.edges.map(edge => ({

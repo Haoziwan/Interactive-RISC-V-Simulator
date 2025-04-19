@@ -295,6 +295,32 @@ export function ConfigPanel() {
             </div>
           </div>
         );
+      case 'branch-hazard-unit':
+        return (
+          <div className="space-y-4">
+            <h3 className="font-medium">Branch Hazard Unit</h3>
+            <div className="space-y-2">
+              <div className="bg-blue-50 p-3 rounded-md mb-3">
+                <h4 className="text-sm font-medium text-blue-800 mb-1">Component Description</h4>
+                <p className="text-sm text-blue-700">The Branch Hazard Unit resolves control hazards that occur when branch instructions are taken. It flushes the pipeline stages containing incorrectly fetched instructions, effectively implementing the flush method of control hazard resolution.</p>
+                <h4 className="text-sm font-medium text-blue-800 mt-2 mb-1">Ports</h4>
+                <ul className="text-sm text-blue-700 list-disc pl-5">
+                  <li><span className="font-medium">branchTaken:</span> Input signal indicating that a branch is taken (connect to Jump Control's jump output)</li>
+                  <li><span className="font-medium">ifIdFlush:</span> Output signal to flush the IF/ID pipeline register (1=flush, 0=normal)</li>
+                  <li><span className="font-medium">idExFlush:</span> Output signal to flush the ID/EX pipeline register (1=flush, 0=normal)</li>
+                </ul>
+                <h4 className="text-sm font-medium text-blue-800 mt-2 mb-1">Execution Logic</h4>
+                <p className="text-sm text-blue-700">The Branch Hazard Unit operates combinationally:<br/>
+                - When branchTaken=1 (a branch or jump instruction is taken):<br/>
+                &nbsp;&nbsp;• ifIdFlush=1 (flush the IF/ID register)<br/>
+                &nbsp;&nbsp;• idExFlush=1 (flush the ID/EX register)<br/>
+                <br/>
+                This flushes the pipeline stages containing instructions that were incorrectly fetched after the branch, effectively inserting NOPs and preventing the execution of instructions that should be skipped due to the branch. This is a critical component for correct program flow in pipelined processors.</p>
+              </div>
+              <p className="text-sm text-gray-500">No configuration needed</p>
+            </div>
+          </div>
+        );
       case 'register':
         return (
           <div className="space-y-4">
@@ -595,7 +621,7 @@ export function ConfigPanel() {
             </div>
           </div>
         );
-        
+
       default:
         return (
           <div className="space-y-4">
@@ -607,11 +633,11 @@ export function ConfigPanel() {
   };
 
   return (
-    <div 
+    <div
       className="absolute bottom-0 bg-white border-l border-t border-gray-200 shadow-lg transition-all duration-300 rounded-t-lg overflow-hidden"
-      style={{ 
+      style={{
         width: '20rem',
-        right: '0rem', 
+        right: '0rem',
         maxHeight: 'calc(100vh - 5rem)',
         transform: isExpanded ? 'translateY(0)' : 'translateY(calc(100% - 2.5rem))',
         opacity: isExpanded ? 1 : 0.95
@@ -630,7 +656,7 @@ export function ConfigPanel() {
           )}
         </button>
       </div>
-      <div 
+      <div
         className="overflow-y-auto bg-white"
         style={{
           maxHeight: isExpanded ? 'calc(100vh - 8rem)' : 0,

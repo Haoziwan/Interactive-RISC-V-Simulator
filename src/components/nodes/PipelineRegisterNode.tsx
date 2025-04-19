@@ -9,6 +9,7 @@ interface PipelineRegisterNodeData {
   portCount?: number;
   values?: (number | string)[];
   writeEnable?: number;
+  flush?: number;
 }
 
 export function PipelineRegisterNode({ data, id, selected }: { data: PipelineRegisterNodeData; id: string; selected?: boolean }) {
@@ -19,6 +20,7 @@ export function PipelineRegisterNode({ data, id, selected }: { data: PipelineReg
   const portCount = data.portCount ?? 1;
   const values = data.values ?? Array(portCount).fill(0);
   const writeEnable = data.writeEnable ?? 1;
+  const flush = data.flush ?? 0;
   const [inputValues, setInputValues] = React.useState<(number | string)[]>(Array(portCount).fill(0));
   const [showConfig, setShowConfig] = useState(false);
   const [tempConfig, setTempConfig] = useState<{ name?: string; portCount?: number }>({ name, portCount });
@@ -38,7 +40,7 @@ export function PipelineRegisterNode({ data, id, selected }: { data: PipelineReg
       const zeroValues = Array(portCount).fill(0);
       handleValueChange(zeroValues);
       setInputValues(zeroValues);
-      
+
       // 创建所有输出端口的零值映射
       const zeroOutputValues = zeroValues.reduce((acc, _, index) => {
         acc[`output-${index}`] = 0;
@@ -64,7 +66,7 @@ export function PipelineRegisterNode({ data, id, selected }: { data: PipelineReg
     if (name === 'IF/ID') {
       const writeEnableEdge = edges.find(edge => edge.target === id && edge.targetHandle === 'writeEnable');
       let writeEnableValue = 1; // 默认可写入
-      
+
       if (writeEnableEdge) {
         const sourceNode = nodes.find(node => node.id === writeEnableEdge.source);
         if (sourceNode?.data && typeof sourceNode.data === 'object') {
@@ -72,12 +74,34 @@ export function PipelineRegisterNode({ data, id, selected }: { data: PipelineReg
           writeEnableValue = typeof sourceValue === 'number' ? sourceValue : 1;
         }
       }
-      
+
       // 更新writeEnable状态
       if (writeEnableValue !== data.writeEnable) {
         updateNodeData(id, {
           ...data,
           writeEnable: writeEnableValue
+        });
+      }
+    }
+
+    // 检查flush信号（对IF/ID和ID/EX寄存器有效）
+    if (name === 'IF/ID' || name === 'ID/EX') {
+      const flushEdge = edges.find(edge => edge.target === id && edge.targetHandle === 'flush');
+      let flushValue = 0; // 默认不清除
+
+      if (flushEdge) {
+        const sourceNode = nodes.find(node => node.id === flushEdge.source);
+        if (sourceNode?.data && typeof sourceNode.data === 'object') {
+          const sourceValue = sourceNode.data[flushEdge.sourceHandle as keyof typeof sourceNode.data];
+          flushValue = typeof sourceValue === 'number' ? sourceValue : 0;
+        }
+      }
+
+      // 更新flush状态
+      if (flushValue !== data.flush) {
+        updateNodeData(id, {
+          ...data,
+          flush: flushValue
         });
       }
     }
@@ -120,12 +144,37 @@ export function PipelineRegisterNode({ data, id, selected }: { data: PipelineReg
   // 监听时钟信号(stepCount)
   React.useEffect(() => {
     if (!reset) {
+      // 检查是否需要清除寄存器（flush信号）
+      if (flush === 1) {
+        // 清除寄存器内容（设置为0）
+        const zeroValues = Array(portCount).fill(0);
+        handleValueChange(zeroValues);
+
+        // 创建所有输出端口的零值映射
+        const zeroOutputValues = zeroValues.reduce((acc, _, index) => {
+          acc[`output-${index}`] = 0;
+          return acc;
+        }, {} as { [key: string]: number | string });
+
+        // 更新节点数据，包括输出端口的值
+        updateNodeData(id, {
+          ...data,
+          values: zeroValues,
+          ...zeroOutputValues,
+          flush: 0  // 重置flush信号
+        });
+
+        // 更新输入值
+        setInputValues(zeroValues);
+        return; // 不执行后续的正常更新逻辑
+      }
+
       // 仅当writeEnable=1或非IF/ID寄存器时，在时钟上升沿更新寄存器值
       if (name !== 'IF/ID' || writeEnable === 1) {
         // 在时钟上升沿更新寄存器值和输出端口的值
         const newValues = [...inputValues];
         handleValueChange(newValues);
-        
+
         // 更新节点数据，包括输出端口的值
         const outputValues = newValues.reduce((acc, value, index) => {
           acc[`output-${index}`] = value;
@@ -146,7 +195,7 @@ export function PipelineRegisterNode({ data, id, selected }: { data: PipelineReg
       // 处理每个输入端口
       for (let i = 0; i < portCount; i++) {
         const inputEdges = edges.filter(edge => edge.target === id && edge.targetHandle === `input-${i}`);
-        
+
         if (inputEdges.length > 0) {
           const inputEdge = inputEdges[0];
           const sourceNode = nodes.find(node => node.id === inputEdge.source);
@@ -186,7 +235,7 @@ export function PipelineRegisterNode({ data, id, selected }: { data: PipelineReg
   const registerHeight = Math.max(160, portCount * 60);
 
   return (
-    <div className={`relative py-4 shadow-md rounded-md bg-white border-2 w-[120px] ${selected ? 'border-blue-500' : 'border-gray-200'}`} 
+    <div className={`relative py-4 shadow-md rounded-md bg-white border-2 w-[120px] ${selected ? 'border-blue-500' : 'border-gray-200'}`}
          style={{ height: registerHeight }}>
       <div className="flex flex-col items-center h-full">
         <div className="flex items-center justify-between w-full px-2 mb-4">
@@ -202,24 +251,45 @@ export function PipelineRegisterNode({ data, id, selected }: { data: PipelineReg
           </button>
         </div>
 
-        {/* 仅对IF/ID寄存器显示写使能输入端口，其他类型显示空白占位符 */}
-        {name === 'IF/ID' ? (
-          <Handle 
-            type="target" 
-            position={Position.Top} 
-            id="writeEnable" 
-            className="w-3 h-3 bg-blue-400" 
-            style={{ left: '50%', transform: 'translateX(-50%)', top: -6 }}
-            title="Write Enable"
-          />
-        ) : (
-          <div style={{ height: '15px' }} /> /* 空白占位符，保持端口位置一致 */
-        )}
+        {/* 控制信号输入端口 */}
+        <div className="flex justify-center w-full">
+          {/* 仅对IF/ID寄存器显示写使能输入端口 */}
+          {name === 'IF/ID' && (
+            <Handle
+              type="target"
+              position={Position.Top}
+              id="writeEnable"
+              className="w-3 h-3 bg-blue-400"
+              style={{ left: '30%', top: -6 }}
+              title="Write Enable"
+            />
+          )}
+
+          {/* 对IF/ID和ID/EX寄存器显示flush输入端口 */}
+          {(name === 'IF/ID' || name === 'ID/EX') && (
+            <Handle
+              type="target"
+              position={Position.Top}
+              id="flush"
+              className="w-3 h-3 bg-red-400"
+              style={{ left: '70%', top: -6 }}
+              title="Flush"
+            />
+          )}
+
+          {/* 如果没有任何控制信号，显示空白占位符 */}
+          {name !== 'IF/ID' && name !== 'ID/EX' && (
+            <div style={{ height: '15px' }} /> /* 空白占位符，保持端口位置一致 */
+          )}
+        </div>
 
         {/* 状态显示 */}
         <div className="w-full mb-4 px-2">
           {name === 'IF/ID' && (
             <div className="text-xs text-gray-600">Write: {writeEnable}</div>
+          )}
+          {(name === 'IF/ID' || name === 'ID/EX') && (
+            <div className="text-xs text-gray-600">Flush: {flush}</div>
           )}
         </div>
 
@@ -277,12 +347,12 @@ export function PipelineRegisterNode({ data, id, selected }: { data: PipelineReg
                   if (tempConfig.name !== name || tempConfig.portCount !== portCount) {
                     const newPortCount = tempConfig.portCount ?? portCount;
                     const newValues = Array(newPortCount).fill(0);
-                    
+
                     // 从旧值复制尽可能多的值
                     for (let i = 0; i < Math.min(portCount, newPortCount); i++) {
                       newValues[i] = values[i];
                     }
-                    
+
                     // 更新节点数据
                     updateNodeData(id, {
                       ...data,
@@ -290,7 +360,7 @@ export function PipelineRegisterNode({ data, id, selected }: { data: PipelineReg
                       portCount: newPortCount,
                       values: newValues
                     });
-                    
+
                     // 更新输入值
                     setInputValues(newValues);
                   }
@@ -309,8 +379,8 @@ export function PipelineRegisterNode({ data, id, selected }: { data: PipelineReg
           {Array.from({ length: portCount }).map((_, index) => {
             const yPosition = (index * (100 / portCount)) + (100 / (2 * portCount));
             return (
-              <div 
-                key={index} 
+              <div
+                key={index}
                 className="flex w-full items-center justify-between absolute left-0 right-0 px-2"
                 style={{ top: `${yPosition}%` }}
               >
