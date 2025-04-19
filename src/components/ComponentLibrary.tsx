@@ -282,7 +282,7 @@ export function ComponentLibrary() {
               <option value="basic-datapath">single cycle</option>
               <option value="basic-pipeline">pipeline</option>
               {/* <option value="pipeline-hazard">pipeline hazard</option> */}
-              <option value="pipeline-forward">pipeline forward</option>
+              <option value="pipeline-forward">pipeline with hazard control</option>
             </select>
             <BookOpen className="w-3.5 h-3.5 absolute right-2 top-1/2 transform -translate-y-1/2 pointer-events-none text-white opacity-80" />
           </div>
