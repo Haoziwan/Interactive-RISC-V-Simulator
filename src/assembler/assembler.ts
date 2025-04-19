@@ -165,13 +165,28 @@ export const expandPseudoInstruction = (line: string, lineNumber?: number): stri
         });
       }
 
+      // 12位以内直接用addi
       if (imm >= -2048 && imm < 2048) {
         return [`addi ${rd}, x0, ${imm}`];
       } else {
-        const upper = (imm + 0x800) >> 12;
-        const lower = imm - (upper << 12);
+        // 处理32位立即数，兼容负数
+        let upper = (imm >> 12);
+        let lower = imm & 0xFFF;
+        // 处理负数addi的补码
+        if (lower >= 0x800) {
+          lower = lower - 0x1000;
+          upper = upper + 1;
+        }
+        // 如果高20位为0且低12位为负数，直接addi
+        if (upper === 0 && lower !== 0 && imm < 0) {
+          return [`addi ${rd}, x0, ${lower}`];
+        }
+        // 如果低12位为0，只需lui
+        if (lower === 0) {
+          return [`lui ${rd}, 0x${upper.toString(16)}`];
+        }
         return [
-          `lui ${rd}, ${upper}`,
+          `lui ${rd}, 0x${upper.toString(16)}`,
           `addi ${rd}, ${rd}, ${lower}`
         ];
       }
