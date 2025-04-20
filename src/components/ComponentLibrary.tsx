@@ -234,16 +234,16 @@ export function ComponentLibrary() {
             <button
               type="button"
               onClick={handleSave}
-              className="flex items-center px-3 py-1.5 text-xs font-medium bg-blue-100 text-blue-800 border border-blue-300 hover:bg-blue-200 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 whitespace-nowrap rounded-l-md"
+              className="flex items-center px-2 py-1 text-xs font-medium bg-blue-100 text-blue-800 border border-blue-300 hover:bg-blue-200 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 whitespace-nowrap rounded-l-md"
               title="Save circuit to file"
             >
-              <Download className="w-3.5 h-3.5 mr-1.5 flex-shrink-0" />
+              <Download className="w-3 h-3 mr-1 flex-shrink-0" />
               <span>Save</span>
             </button>
 
             {/* Load Button */}
-            <label className="flex items-center px-3 py-1.5 text-xs font-medium bg-blue-100 text-blue-800 border-l-0 border-r-0 border-t border-b border-blue-300 hover:bg-blue-200 transition-colors cursor-pointer whitespace-nowrap focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-opacity-50">
-              <Upload className="w-3.5 h-3.5 mr-1.5 flex-shrink-0" />
+            <label className="flex items-center px-2 py-1 text-xs font-medium bg-blue-100 text-blue-800 border-l-0 border-r-0 border-t border-b border-blue-300 hover:bg-blue-200 transition-colors cursor-pointer whitespace-nowrap focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-opacity-50">
+              <Upload className="w-3 h-3 mr-1 flex-shrink-0" />
               <span>Load</span>
               <input
                 type="file"
@@ -275,7 +275,7 @@ export function ComponentLibrary() {
                         console.error('Failed to load example:', err);
                       });
                   }}
-                  className="h-full w-[120px] pl-8 pr-8 py-1.5 text-xs font-medium bg-blue-100 text-blue-800 border border-blue-300 border-l-0 hover:bg-blue-200 transition-colors appearance-none cursor-pointer rounded-r-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+                  className="h-full w-[100px] pl-6 pr-6 py-1 text-xs font-medium bg-blue-100 text-blue-800 border border-blue-300 border-l-0 hover:bg-blue-200 transition-colors appearance-none cursor-pointer rounded-r-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
                   title="Select Example Circuit"
                   aria-label="Select example circuit to load"
                 >
@@ -286,11 +286,11 @@ export function ComponentLibrary() {
                   {/* <option value="pipeline-hazard">Pipeline Hazard</option> */}
                   <option value="pipeline-forward">Pipeline with Hazard Control</option>
                 </select>
-                <div className="absolute left-2 top-1/2 transform -translate-y-1/2 pointer-events-none">
-                  <FolderOpen className="w-3.5 h-3.5 text-blue-700" />
+                <div className="absolute left-1.5 top-1/2 transform -translate-y-1/2 pointer-events-none">
+                  <FolderOpen className="w-3 h-3 text-blue-700" />
                 </div>
-                <div className="absolute right-2 top-1/2 transform -translate-y-1/2 pointer-events-none">
-                  <svg className="w-3.5 h-3.5 text-blue-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="absolute right-1.5 top-1/2 transform -translate-y-1/2 pointer-events-none">
+                  <svg className="w-3 h-3 text-blue-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                   </svg>
                 </div>
