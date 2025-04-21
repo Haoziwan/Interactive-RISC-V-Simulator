@@ -504,8 +504,15 @@ export const useCircuitStore = create<CircuitState>()((set, get) => ({
             break;
 
           case 10: // Exit program
+            if (state.simulationTimer !== null) {
+              window.clearInterval(state.simulationTimer);
+            }
             get().addOutputMessage("\nProgram exited with code: 0");
-            break;
+            return {
+              isSimulating: false,
+              simulationTimer: null,
+              pcValue: -1 // Set PC to negative value to ensure program stops execution
+            };
 
           case 11: // Print character
             const charCode = state.registers[10] || 0; // a0 register holds the character code
@@ -524,7 +531,8 @@ export const useCircuitStore = create<CircuitState>()((set, get) => ({
             get().addOutputMessage("\nProgram exited with code: 0");
             return {
               isSimulating: false,
-              simulationTimer: null
+              simulationTimer: null,
+              pcValue: -1 // Set PC to negative value to ensure program stops execution
             };
 
           default:
