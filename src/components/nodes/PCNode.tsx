@@ -90,22 +90,6 @@ export function PCNode({ data, id, selected }: { data: PCNodeData; id: string; s
         // 首先将当前保存的输入值更新为寄存器的值
         handleValueChange(inputValue);
         
-        // 在下一个事件循环中更新输入值
-        setTimeout(() => {
-          // 获取所有边
-          const edges = useCircuitStore.getState().edges;
-          // 找到所有连接到当前节点末端口的边
-          const inputEdges = edges.filter(edge => edge.target === id && edge.targetHandle === 'next');
-          
-          // 如果有输入连接，获取输入值并保存
-          if (inputEdges.length > 0) {
-            const inputEdge = inputEdges[0]; // 获取第一个输入连接
-            const sourceNode = useCircuitStore.getState().nodes.find(node => node.id === inputEdge.source);
-            if (sourceNode && sourceNode.data && typeof sourceNode.data.value === 'number') {
-              setInputValue(sourceNode.data.value);
-            }
-          }
-        }, 0);
       }
     }
   }, [stepCount]);

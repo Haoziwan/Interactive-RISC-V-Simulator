@@ -188,40 +188,6 @@ export function PipelineRegisterNode({ data, id, selected }: { data: PipelineReg
         });
       }
 
-      // 更新输入值
-      const newInputValues = [...inputValues];
-      let hasChanges = false;
-
-      // 处理每个输入端口
-      for (let i = 0; i < portCount; i++) {
-        const inputEdges = edges.filter(edge => edge.target === id && edge.targetHandle === `input-${i}`);
-
-        if (inputEdges.length > 0) {
-          const inputEdge = inputEdges[0];
-          const sourceNode = nodes.find(node => node.id === inputEdge.source);
-          if (sourceNode?.data && typeof sourceNode.data === 'object') {
-            const portId = inputEdge.sourceHandle;
-            let sourceValue: number | string | undefined;
-
-            if (portId && sourceNode.data[portId as keyof typeof sourceNode.data] !== undefined) {
-              const value = sourceNode.data[portId as keyof typeof sourceNode.data];
-              sourceValue = (typeof value === 'number' || typeof value === 'string') ? value : undefined;
-            } else if ('value' in sourceNode.data) {
-              const value = (sourceNode.data as { value?: number | string }).value;
-              sourceValue = (typeof value === 'number' || typeof value === 'string') ? value : undefined;
-            }
-
-            if (sourceValue !== undefined && sourceValue !== newInputValues[i]) {
-              newInputValues[i] = sourceValue;
-              hasChanges = true;
-            }
-          }
-        }
-      }
-
-      if (hasChanges) {
-        setInputValues(newInputValues);
-      }
     }
   }, [stepCount]);
 
