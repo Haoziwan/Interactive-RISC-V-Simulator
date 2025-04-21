@@ -513,6 +513,7 @@ export function AssemblyEditor() {
             <h2 className="text-lg font-semibold">Code Editor</h2>
             <div className="flex items-center gap-2">
               <button
+                type="button"
                 onClick={() => {
                   const input = document.createElement('input');
                   input.type = 'file';
@@ -536,6 +537,7 @@ export function AssemblyEditor() {
                 Import
               </button>
               <button
+                type="button"
                 onClick={() => {
                   const blob = new Blob([editorCode], { type: 'text/plain' });
                   const url = URL.createObjectURL(blob);
@@ -554,10 +556,16 @@ export function AssemblyEditor() {
                 className="px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200"
                 onChange={(e) => loadTestProgram(e.target.value)}
                 defaultValue=""
+                title="Load example RISC-V assembly program"
+                aria-label="Load example RISC-V assembly program"
               >
                 <option value="" disabled>Load Example Program</option>
-                <option value="fibonacci">Fibonacci Program</option>
-                <option value="gcd">GCD Program</option>
+
+                  <option value="fibonacci">Fibonacci Program</option>
+                  <option value="gcd">GCD Program</option>
+                  <option value="bubble_sort">Bubble Sort</option>
+                  <option value="binary_search">Binary Search</option>
+
                 {/* <option value="r_type_test">R-Type Test</option>
                 <option value="i_type_test">I-Type Test</option>
                 <option value="s_type_test">S-Type Test</option>
@@ -569,6 +577,7 @@ export function AssemblyEditor() {
                 <option value="ecall_test">ECALL Test</option> */}
               </select>
               <button
+                type="button"
                 onClick={assembleCode}
                 className="px-4 py-1.5 text-sm font-medium text-white bg-blue-500 border border-blue-600 rounded-md shadow-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200"
               >
@@ -639,6 +648,7 @@ export function AssemblyEditor() {
               <h3 className="text-lg font-semibold">Result</h3>
               {assembledInstructions.length > 0 && (
                 <button
+                  type="button"
                   onClick={() => {
                     const machineCode = assembledInstructions.map(inst => inst.hex).join('\n');
                     const blob = new Blob([machineCode], { type: 'text/plain' });
