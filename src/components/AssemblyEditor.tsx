@@ -561,20 +561,19 @@ export function AssemblyEditor() {
               >
                 <option value="" disabled>Load Example Program</option>
 
-                  <option value="fibonacci">Fibonacci Program</option>
-                  <option value="gcd">GCD Program</option>
-                  <option value="bubble_sort">Bubble Sort</option>
-                  <option value="binary_search">Binary Search</option>
+                {/* Algorithm Examples */}
+                <option value="bubble_sort">Bubble Sort</option>
+                <option value="binary_search">Binary Search</option>
+                <option value="fibonacci">Fibonacci Program</option>
+                <option value="gcd">GCD Program</option>
+                 <option value="prime_check">Prime Number Checker</option>
 
-                {/* <option value="r_type_test">R-Type Test</option>
-                <option value="i_type_test">I-Type Test</option>
-                <option value="s_type_test">S-Type Test</option>
-                <option value="b_type_test">B-Type Test</option>
-                <option value="u_type_test">U-Type Test</option>
-                <option value="j_type_test">J-Type Test</option>
-                <option value="data_segment_test">Data Segment Test</option>
-                <option value="pseudo_instructions_test">Pseudo-Instructions Test</option>
-                <option value="ecall_test">ECALL Test</option> */}
+                {/* Data Structure Examples */}
+              
+                <option value="matrix_multiply">Matrix Multiplication</option>
+                <option value="string_operations">String Operations</option>
+                
+
               </select>
               <button
                 type="button"

@@ -192,7 +192,7 @@ function App() {
                     value={useCircuitStore((state) => state.simulationInterval)}
                     onChange={(e) => useCircuitStore.setState({ simulationInterval: parseInt(e.target.value) })}
                     className="w-32 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
-                    title="Simulation Interval (ms)"
+                    title="Simulation Interval (ms) (not the actual exec interval)"
                   />
                   <span className="text-sm text-gray-600 min-w-[4rem]">
                     {useCircuitStore((state) => state.simulationInterval)}ms
@@ -234,7 +234,7 @@ function App() {
       </main>
 
       {/* Output Panel */}
-      {showOutput && <OutputPanel initialWidth={350} minWidth={250} maxWidth={600} />}
+      {showOutput && <OutputPanel initialWidth={500} minWidth={250} maxWidth={1000} initialHeight={250} maxHeight={600} />}
 
       {/* Performance Popup */}
       {showPerformance && (

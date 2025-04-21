@@ -11,17 +11,17 @@ interface OutputPanelProps {
   maxWidth?: number;
 }
 
-export function OutputPanel({ 
-  initialHeight = 150, 
-  minHeight = 50, 
-  maxHeight = 400,
-  initialWidth = 400,
+export function OutputPanel({
+  initialHeight = 250,
+  minHeight = 50,
+  maxHeight = 600,
+  initialWidth = 500,
   minWidth = 200,
-  maxWidth = 800
+  maxWidth = 1000
 }: OutputPanelProps) {
   const outputMessages = useCircuitStore((state) => state.outputMessages);
   const clearOutputMessages = useCircuitStore((state) => state.clearOutputMessages);
-  
+
   const [height, setHeight] = useState(initialHeight);
   const [width, setWidth] = useState(initialWidth);
   const [isDragging, setIsDragging] = useState(false);
@@ -31,14 +31,14 @@ export function OutputPanel({
   const lastHeight = useRef(initialHeight);
   const lastWidth = useRef(initialWidth);
   const outputEndRef = useRef<HTMLDivElement>(null);
-  
+
   // Auto-scroll to the bottom when messages are added
   useEffect(() => {
     if (outputEndRef.current) {
       outputEndRef.current.scrollIntoView({ behavior: 'smooth' });
     }
   }, [outputMessages]);
-  
+
   // Handle mouse events for resizing height
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
@@ -50,22 +50,22 @@ export function OutputPanel({
         }
       }
     };
-    
+
     const handleMouseUp = () => {
       setIsDragging(false);
     };
-    
+
     if (isDragging) {
       document.addEventListener('mousemove', handleMouseMove);
       document.addEventListener('mouseup', handleMouseUp);
     }
-    
+
     return () => {
       document.removeEventListener('mousemove', handleMouseMove);
       document.removeEventListener('mouseup', handleMouseUp);
     };
   }, [isDragging, minHeight, maxHeight]);
-  
+
   // Handle mouse events for resizing width
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
@@ -77,32 +77,32 @@ export function OutputPanel({
         }
       }
     };
-    
+
     const handleMouseUp = () => {
       setIsResizingWidth(false);
     };
-    
+
     if (isResizingWidth) {
       document.addEventListener('mousemove', handleMouseMove);
       document.addEventListener('mouseup', handleMouseUp);
     }
-    
+
     return () => {
       document.removeEventListener('mousemove', handleMouseMove);
       document.removeEventListener('mouseup', handleMouseUp);
     };
   }, [isResizingWidth, minWidth, maxWidth]);
-  
+
   const handleMouseDown = (e: React.MouseEvent) => {
     e.preventDefault();
     setIsDragging(true);
   };
-  
+
   const handleWidthResizeStart = (e: React.MouseEvent) => {
     e.preventDefault();
     setIsResizingWidth(true);
   };
-  
+
   const toggleCollapse = () => {
     if (isCollapsed) {
       setHeight(lastHeight.current);
@@ -113,7 +113,7 @@ export function OutputPanel({
       setIsCollapsed(true);
     }
   };
-  
+
   const toggleMaximize = () => {
     if (isMaximized) {
       setHeight(lastHeight.current);
@@ -127,32 +127,32 @@ export function OutputPanel({
       setIsMaximized(true);
     }
   };
-  
+
   return (
-    <div 
+    <div
       className="fixed bottom-0 left-0 bg-white border-t border-r border-gray-200 shadow-lg z-10 rounded-tr-md"
-      style={{ 
+      style={{
         height: `${height}px`,
         width: `${width}px`
       }}
     >
       {/* Resize handle for height */}
-      <div 
+      <div
         className="absolute top-0 left-0 right-0 h-1 bg-gray-200 cursor-ns-resize"
         onMouseDown={handleMouseDown}
       />
-      
+
       {/* Resize handle for width */}
-      <div 
+      <div
         className="absolute top-0 bottom-0 right-0 w-1 bg-gray-200 cursor-ew-resize"
         onMouseDown={handleWidthResizeStart}
       />
-      
+
       {/* Header */}
       <div className="px-4 py-1 border-b border-gray-200 bg-gray-50 flex justify-between items-center">
         <h3 className="text-sm font-medium text-gray-700">Output Console</h3>
         <div className="flex items-center space-x-2">
-          <button 
+          <button
             onClick={clearOutputMessages}
             className="px-2 py-0.5 text-xs bg-gray-100 text-gray-600 hover:bg-gray-200 hover:text-gray-700 transition-colors rounded"
             title="Clear console"
@@ -175,9 +175,9 @@ export function OutputPanel({
           </button>
         </div>
       </div>
-      
+
       {/* Output content */}
-      <div 
+      <div
         className="p-2 overflow-y-auto font-mono text-sm text-gray-800 bg-gray-50"
         style={{ height: `calc(100% - 32px)` }} // 32px is the header height
       >
@@ -192,4 +192,4 @@ export function OutputPanel({
       </div>
     </div>
   );
-} 
+}
