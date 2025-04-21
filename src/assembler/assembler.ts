@@ -1129,7 +1129,7 @@ export class Assembler {
                       // auipc with 0x10000 immediate sets the base to PC + 0x10000000
                       // We need a negative offset to access the correct address
                       // The store instruction is at currentAddress + 4, so we need to adjust the calculation
-                      offset = address - ((this.currentAddress + 4) + 0x10000000);
+                      offset = address - ((this.currentAddress) + 0x10000000) + 4;
                       // Ensure offset is within 12-bit signed range (-2048 to 2047)
                       if (offset < -2048 || offset > 2047) {
                         console.warn(`Warning: ${symbol} offset ${offset} exceeds 12-bit signed integer range`);
