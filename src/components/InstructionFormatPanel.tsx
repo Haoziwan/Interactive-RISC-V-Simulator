@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { BookOpen } from 'lucide-react';
+import { InstructionFormatDiagram } from './InstructionFormatDiagram';
 
 // Define an interface for instruction formats; each format includes a type label and an array of instructions.
 interface InstructionFormat {
@@ -198,27 +199,35 @@ export function InstructionFormatPanel() {
             onClick={() => setIsExpanded(false)}
           />
           <div
-            className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[80vw] grid grid-cols-3 gap-4 text-sm bg-white p-6 rounded-lg shadow-xl border border-gray-200 transition-all duration-300 ease-in-out z-[101] max-h-[80vh] overflow-y-auto"
+            className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[80vw] text-sm bg-white p-6 rounded-lg shadow-xl border border-gray-200 transition-all duration-300 ease-in-out z-[101] max-h-[80vh] overflow-y-auto"
             style={{ opacity: isExpanded ? 1 : 0, scale: isExpanded ? '1' : '0.95' }}
           >
-            {instructionFormats.map((format) => (
-              <div
-                key={format.type}
-                className="min-w-0 p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors duration-200"
-              >
-                <h4 className="font-semibold text-gray-800 mb-3">{format.type}</h4>
-                <ul className="list-none space-y-2">
-                  {format.instructions.map((instruction, index) => (
-                    <li
-                      key={index}
-                      className="text-xs text-gray-600 hover:text-gray-900 transition-colors duration-200"
-                    >
-                      {instruction}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
+            {/* Instruction Format Diagrams */}
+            <div className="mb-6">
+              <InstructionFormatDiagram />
+            </div>
+
+            {/* Instruction List */}
+            <div className="grid grid-cols-3 gap-4">
+              {instructionFormats.map((format) => (
+                <div
+                  key={format.type}
+                  className="min-w-0 p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors duration-200"
+                >
+                  <h4 className="font-semibold text-gray-800 mb-3">{format.type}</h4>
+                  <ul className="list-none space-y-2">
+                    {format.instructions.map((instruction, index) => (
+                      <li
+                        key={index}
+                        className="text-xs text-gray-600 hover:text-gray-900 transition-colors duration-200"
+                      >
+                        {instruction}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
           </div>
         </>
       )}
@@ -233,6 +242,7 @@ export function InstructionFormatButton() {
   return (
     <>
       <button
+        type="button"
         onClick={() => setIsExpanded(!isExpanded)}
         className="flex items-center"
         title="Instruction Guide"
@@ -249,27 +259,35 @@ export function InstructionFormatButton() {
             onClick={() => setIsExpanded(false)}
           />
           <div
-            className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[80vw] grid grid-cols-3 gap-4 text-sm bg-white p-6 rounded-lg shadow-xl border border-gray-200 transition-all duration-300 ease-in-out z-[101] max-h-[80vh] overflow-y-auto"
+            className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[80vw] text-sm bg-white p-6 rounded-lg shadow-xl border border-gray-200 transition-all duration-300 ease-in-out z-[101] max-h-[80vh] overflow-y-auto"
             style={{ opacity: isExpanded ? 1 : 0, scale: isExpanded ? '1' : '0.95' }}
           >
-            {instructionFormats.map((format) => (
-              <div
-                key={format.type}
-                className="min-w-0 p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors duration-200"
-              >
-                <h4 className="font-semibold text-gray-800 mb-3">{format.type}</h4>
-                <ul className="list-none space-y-2">
-                  {format.instructions.map((instruction, index) => (
-                    <li
-                      key={index}
-                      className="text-xs text-gray-600 hover:text-gray-900 transition-colors duration-200"
-                    >
-                      {instruction}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
+            {/* Instruction Format Diagrams */}
+            <div className="mb-6">
+              <InstructionFormatDiagram />
+            </div>
+
+            {/* Instruction List */}
+            <div className="grid grid-cols-3 gap-4">
+              {instructionFormats.map((format) => (
+                <div
+                  key={format.type}
+                  className="min-w-0 p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors duration-200"
+                >
+                  <h4 className="font-semibold text-gray-800 mb-3">{format.type}</h4>
+                  <ul className="list-none space-y-2">
+                    {format.instructions.map((instruction, index) => (
+                      <li
+                        key={index}
+                        className="text-xs text-gray-600 hover:text-gray-900 transition-colors duration-200"
+                      >
+                        {instruction}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
           </div>
         </>
       )}
