@@ -9,7 +9,8 @@ import { MemoryView } from './components/MemoryView';
 import { OutputPanel } from './components/OutputPanel';
 import { InstructionFormatButton } from './components/InstructionFormatPanel';
 import { CacheView } from './components/CacheView';
-import { ChevronDown, ChevronRight, Code, Database, Cpu, Play, Pause, RotateCcw, StepForward, StepBack, Layers } from 'lucide-react';
+import { PerformanceView } from './components/PerformanceView';
+import { ChevronDown, ChevronRight, Code, Database, Cpu, Play, Pause, RotateCcw, StepForward, StepBack, Layers, BarChart } from 'lucide-react';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { useCircuitStore } from './store/circuitStore';
 
@@ -56,6 +57,7 @@ function TabButton({ isActive, onClick, children }: TabButtonProps) {
 function App() {
   const [activeTab, setActiveTab] = useState('code');
   const [showOutput, setShowOutput] = useState(false);
+  const [showPerformance, setShowPerformance] = useState(false);
 
   const renderContent = () => {
     return (
@@ -78,6 +80,8 @@ function App() {
               <CacheView />
             </div>
           </div>
+
+
 
           <div style={{ display: activeTab === 'datapath' ? 'flex' : 'none' }} className="h-full">
             <ResizablePanels
@@ -146,6 +150,7 @@ function App() {
               </div>
               <div className="flex items-center space-x-2">
                 <button
+                  type="button"
                   onClick={() => useCircuitStore.getState().toggleSimulation()}
                   className="p-2.5 rounded-lg hover:bg-gray-100 transition-colors text-gray-700 hover:text-blue-600"
                   title={isSimulating ? 'Pause Simulation' : 'Start Simulation'}
@@ -153,6 +158,7 @@ function App() {
                   {isSimulating ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5" />}
                 </button>
                 <button
+                  type="button"
                   onClick={() => useCircuitStore.getState().stepBackSimulation()}
                   className="p-2.5 rounded-lg hover:bg-gray-100 transition-colors text-gray-700 hover:text-blue-600"
                   title="Step Back"
@@ -161,6 +167,7 @@ function App() {
                   <StepBack className="w-5 h-5" />
                 </button>
                 <button
+                  type="button"
                   onClick={() => useCircuitStore.getState().stepSimulation()}
                   className="p-2.5 rounded-lg hover:bg-gray-100 transition-colors text-gray-700 hover:text-blue-600"
                   title="Single Step"
@@ -169,6 +176,7 @@ function App() {
                   <StepForward className="w-5 h-5" />
                 </button>
                 <button
+                  type="button"
                   onClick={() => useCircuitStore.getState().resetSimulation()}
                   className="p-2.5 rounded-lg hover:bg-gray-100 transition-colors text-gray-700 hover:text-blue-600"
                   title="Reset Simulation"
@@ -192,13 +200,22 @@ function App() {
                 </div>
               </div>
             </div>
-            
+
             {/* Right-aligned buttons */}
             <div className="flex items-center space-x-3 ml-4">
               <div className="p-1.5 rounded-md bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors">
                 <InstructionFormatButton />
               </div>
               <button
+                type="button"
+                onClick={() => setShowPerformance(!showPerformance)}
+                className="p-1.5 rounded-md bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors"
+                title="Performance Analysis"
+              >
+                <BarChart className="w-4 h-4" />
+              </button>
+              <button
+                type="button"
                 onClick={() => setShowOutput(!showOutput)}
                 className={`flex items-center gap-1 text-xs px-2 py-1 rounded-md transition-colors ${outputMessages.length > 0 ? 'bg-blue-100 text-blue-700 hover:bg-blue-200' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
                 title={showOutput ? 'Hide Output Console' : 'Show Output Console'}
@@ -215,9 +232,34 @@ function App() {
           {renderContent()}
         </ErrorBoundary>
       </main>
-      
+
       {/* Output Panel */}
       {showOutput && <OutputPanel initialWidth={350} minWidth={250} maxWidth={600} />}
+
+      {/* Performance Popup */}
+      {showPerformance && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg shadow-xl w-[80%] max-w-5xl h-[80%] max-h-[800px] flex flex-col">
+            <div className="flex justify-between items-center p-4 border-b border-gray-200">
+              <h2 className="text-xl font-bold text-gray-800">Performance Analysis</h2>
+              <button
+                type="button"
+                onClick={() => setShowPerformance(false)}
+                className="p-1.5 rounded-md hover:bg-gray-100 transition-colors"
+                title="Close Performance Analysis"
+                aria-label="Close Performance Analysis"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            <div className="flex-1 overflow-auto">
+              <PerformanceView />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

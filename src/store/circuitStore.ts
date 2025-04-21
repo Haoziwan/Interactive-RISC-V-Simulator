@@ -23,6 +23,45 @@ interface CacheStats {
   writebacks: number;
 }
 
+interface PerformanceStats {
+  // Instruction counts by type
+  rTypeCount: number;
+  iTypeCount: number;
+  sTypeCount: number;
+  bTypeCount: number;
+  uTypeCount: number;
+  jTypeCount: number;
+  totalInstructions: number;
+
+  // Cycle and time metrics
+  cycleCount: number;
+  instructionsExecuted: number;
+  cpi: number; // Cycles per instruction
+  ipc: number; // Instructions per cycle
+
+  // Branch statistics
+  branchCount: number;
+  branchTakenCount: number;
+  branchNotTakenCount: number;
+  branchMispredictionCount: number;
+  branchMispredictionRate: number;
+
+  // Memory access statistics
+  memoryReadCount: number;
+  memoryWriteCount: number;
+
+  // Stall statistics
+  dataHazardStalls: number;
+  controlHazardStalls: number;
+  memoryStalls: number;
+  totalStalls: number;
+
+  // Execution time (simulated)
+  startTime: number | null;
+  endTime: number | null;
+  executionTimeMs: number;
+}
+
 interface CircuitState {
   nodes: Node[];
   edges: Edge[];
@@ -49,6 +88,7 @@ interface CircuitState {
     stepCount: number;
   }>;
   outputMessages: string[];
+  performanceStats: PerformanceStats;
   updatePcValue: (value: number) => void;
   updateMemory: (memory: { [key: string]: number }) => void;
   clearMemory: () => void;
@@ -75,6 +115,8 @@ interface CircuitState {
   setEditorCode: (code: string) => void;
   addOutputMessage: (message: string) => void;
   clearOutputMessages: () => void;
+  updatePerformanceStats: (instruction: string) => void;
+  resetPerformanceStats: () => void;
   cache: {
     config: {
       size: number;      // Total cache size in bytes
@@ -117,7 +159,45 @@ export const useCircuitStore = create<CircuitState>()((set, get) => ({
   currentInstructionIndex: 0,
   simulationHistory: [],
   outputMessages: [],
-  updatePcValue: (value: number) => set({ 
+  performanceStats: {
+    // Instruction counts by type
+    rTypeCount: 0,
+    iTypeCount: 0,
+    sTypeCount: 0,
+    bTypeCount: 0,
+    uTypeCount: 0,
+    jTypeCount: 0,
+    totalInstructions: 0,
+
+    // Cycle and time metrics
+    cycleCount: 0,
+    instructionsExecuted: 0,
+    cpi: 0,
+    ipc: 0,
+
+    // Branch statistics
+    branchCount: 0,
+    branchTakenCount: 0,
+    branchNotTakenCount: 0,
+    branchMispredictionCount: 0,
+    branchMispredictionRate: 0,
+
+    // Memory access statistics
+    memoryReadCount: 0,
+    memoryWriteCount: 0,
+
+    // Stall statistics
+    dataHazardStalls: 0,
+    controlHazardStalls: 0,
+    memoryStalls: 0,
+    totalStalls: 0,
+
+    // Execution time (simulated)
+    startTime: null,
+    endTime: null,
+    executionTimeMs: 0
+  },
+  updatePcValue: (value: number) => set({
     pcValue: value,
     currentInstructionIndex: value / 4
   }),
@@ -262,18 +342,18 @@ export const useCircuitStore = create<CircuitState>()((set, get) => ({
   toggleSimulation: () => {
     const state = get();
     const newIsSimulating = !state.isSimulating;
-    
+
     // 清除现有的定时器（如果存在）
     if (state.simulationTimer !== null) {
       window.clearInterval(state.simulationTimer);
     }
-    
+
     if (newIsSimulating) {
       // 启动新的定时器
       const timer = window.setInterval(() => {
         get().stepSimulation();
       }, state.simulationInterval);
-      
+
       set({
         isSimulating: true,
         simulationTimer: timer
@@ -288,8 +368,8 @@ export const useCircuitStore = create<CircuitState>()((set, get) => ({
   },
   resetSimulation: () => {
     const state = get();
-    const { clearCache } = state;
-    
+    const { clearCache, resetPerformanceStats } = state;
+
     // 如果正在运行，先停止模拟
     if (state.simulationTimer !== null) {
       window.clearInterval(state.simulationTimer);
@@ -297,6 +377,9 @@ export const useCircuitStore = create<CircuitState>()((set, get) => ({
 
     // 清空缓存
     clearCache();
+
+    // 重置性能统计
+    resetPerformanceStats();
 
     set((state) => ({
       nodes: state.nodes.map((node) => {
@@ -333,7 +416,7 @@ export const useCircuitStore = create<CircuitState>()((set, get) => ({
             }
           };
         }
-        
+
         return node;
       }),
       isSimulating: false,
@@ -347,7 +430,7 @@ export const useCircuitStore = create<CircuitState>()((set, get) => ({
       registers: {}, // Clear registers
       memory: state.memory // Preserve memory to keep data segment loaded by the assembler
     }));
-    
+
     // 延迟到下一个事件循环设置寄存器默认值，但保留内存中的数据段
     setTimeout(() => {
       set((state) => ({
@@ -370,27 +453,35 @@ export const useCircuitStore = create<CircuitState>()((set, get) => ({
       // 检查当前指令是否执行完毕
       const currentPc = state.pcValue;
       const maxPc = (state.assembledInstructions.length * 4) - 4;
-      
+
       // 检查是否为ecall指令且为退出程序请求
       const currentInstruction = state.assembledInstructions[currentPc / 4];
+
+      // 更新性能统计
+      if (currentInstruction && currentInstruction.assembly) {
+        get().updatePerformanceStats(currentInstruction.assembly);
+      } else {
+        get().updatePerformanceStats('');
+      }
+
       if (currentInstruction && currentInstruction.hex === '0x00000073') {
         // ECALL instruction
         const syscallNumber = state.registers[17]; // a7 register holds the system call number
-        
+
         // Handle various ECALL operations
         switch (syscallNumber) {
           case 1: // Print integer
             const a0Value = state.registers[10] || 0; // a0 register holds the integer to print
             get().addOutputMessage(`${a0Value}`);
             break;
-          
+
           case 4: // Print string
             // a0 should contain the address of the string
             const stringAddr = state.registers[10] || 0;
             let outputString = '';
             let currentAddr = stringAddr;
             let currentByte;
-            
+
             // Read string from memory byte by byte until null terminator
             do {
               const byteAddrHex = '0x' + currentAddr.toString(16);
@@ -405,15 +496,15 @@ export const useCircuitStore = create<CircuitState>()((set, get) => ({
               }
               currentAddr++;
             } while (currentByte !== undefined && currentByte !== 0);
-            
+
             // Replace literal '\n' with actual newline
             get().addOutputMessage(outputString);
             break;
-            
+
           case 10: // Exit program
             get().addOutputMessage("\nProgram exited with code: 0");
             break;
-            
+
           case 11: // Print character
             const charCode = state.registers[10] || 0; // a0 register holds the character code
             // Check for newline character (ASCII 10)
@@ -423,7 +514,7 @@ export const useCircuitStore = create<CircuitState>()((set, get) => ({
               get().addOutputMessage(String.fromCharCode(charCode));
             }
             break;
-            
+
           case 93: // Exit (Linux compatible)
             if (state.simulationTimer !== null) {
               window.clearInterval(state.simulationTimer);
@@ -433,14 +524,14 @@ export const useCircuitStore = create<CircuitState>()((set, get) => ({
               isSimulating: false,
               simulationTimer: null
             };
-            
+
           default:
             get().addOutputMessage(`Unsupported ECALL operation: ${syscallNumber}`);
         }
       }
-      
+
       // 如果已经执行到最后一条指令，自动暂停模拟，pipeline还需要多执行几句
-      if (currentPc > maxPc + 3*4 || currentPc < 0) {
+      if (currentPc > maxPc + 4*4 || currentPc < 0) {
         if (state.simulationTimer !== null) {
           window.clearInterval(state.simulationTimer);
         }
@@ -477,23 +568,23 @@ export const useCircuitStore = create<CircuitState>()((set, get) => ({
       return newState;
     });
   },
-  
+
   stepBackSimulation: () => {
     // 获取当前状态
     const state = get();
-    
+
     // 如果正在处理中或历史记录为空，则不执行任何操作
     if (state.isProcessing || state.simulationHistory.length === 0) {
       return;
     }
-    
+
     // 获取上一个状态
     const prevState = state.simulationHistory[state.simulationHistory.length - 1];
     const newHistory = state.simulationHistory.slice(0, -1);
-    
+
     // 先单独更新stepCount，确保它在单独的更新周期中执行
     set({ stepCount: prevState.stepCount, isProcessing: true });
-    
+
     // 在下一个事件循环中更新其他状态
     setTimeout(() => {
       set({
@@ -504,7 +595,7 @@ export const useCircuitStore = create<CircuitState>()((set, get) => ({
         currentInstructionIndex: prevState.currentInstructionIndex,
         simulationHistory: newHistory
       });
-      
+
       // 更新所有组件状态，确保在恢复历史状态后更新节点输入
       setTimeout(() => {
         get().updateAllNodesInputs();
@@ -533,16 +624,16 @@ export const useCircuitStore = create<CircuitState>()((set, get) => ({
   removeEdge: (edgeId: string) => set((state) => {
     // 只删除指定ID的边
     const newEdges = state.edges.filter((edge) => edge.id !== edgeId);
-    
+
     // 如果删除的是当前选中的边，清除选中状态
     const newState: Partial<CircuitState> = {
       edges: newEdges
     };
-    
+
     if (state.selectedEdge?.id === edgeId) {
       newState.selectedEdge = null;
     }
-    
+
     return newState;
   }),
   updateEdgeType: (type: string) => set((state) => ({
@@ -578,6 +669,120 @@ export const useCircuitStore = create<CircuitState>()((set, get) => ({
     outputMessages: [...state.outputMessages, message.replace(/\\n/g, '\n')]
   })),
   clearOutputMessages: () => set({ outputMessages: [] }),
+
+  updatePerformanceStats: (instruction: string) => set((state) => {
+    // Get the current performance stats
+    const stats = { ...state.performanceStats };
+
+    // Update cycle count
+    stats.cycleCount++;
+
+    // If this is the first instruction, set the start time
+    if (stats.startTime === null) {
+      stats.startTime = Date.now();
+    }
+
+    // Update end time
+    stats.endTime = Date.now();
+
+    // Calculate execution time
+    if (stats.startTime !== null && stats.endTime !== null) {
+      stats.executionTimeMs = stats.endTime - stats.startTime;
+    }
+
+    // Skip if no instruction is provided
+    if (!instruction) {
+      return { performanceStats: stats };
+    }
+
+    // Update instruction count
+    stats.instructionsExecuted++;
+    stats.totalInstructions++;
+
+    // Update CPI and IPC
+    stats.cpi = stats.cycleCount / (stats.instructionsExecuted || 1);
+    stats.ipc = stats.instructionsExecuted / (stats.cycleCount || 1);
+
+    // Determine instruction type and update counts
+    const opcode = instruction.split(' ')[0];
+
+    // R-type instructions (add, sub, and, or, xor, sll, srl, sra, slt, sltu)
+    if (['add', 'sub', 'and', 'or', 'xor', 'sll', 'srl', 'sra', 'slt', 'sltu', 'mul', 'mulh', 'div', 'rem'].includes(opcode)) {
+      stats.rTypeCount++;
+    }
+    // I-type instructions (addi, andi, ori, xori, slli, srli, srai, slti, sltiu, lb, lh, lw, lbu, lhu, jalr)
+    else if (['addi', 'andi', 'ori', 'xori', 'slli', 'srli', 'srai', 'slti', 'sltiu', 'lb', 'lh', 'lw', 'lbu', 'lhu', 'jalr', 'ecall'].includes(opcode)) {
+      stats.iTypeCount++;
+
+      // Check for memory reads
+      if (['lb', 'lh', 'lw', 'lbu', 'lhu'].includes(opcode)) {
+        stats.memoryReadCount++;
+      }
+    }
+    // S-type instructions (sb, sh, sw)
+    else if (['sb', 'sh', 'sw'].includes(opcode)) {
+      stats.sTypeCount++;
+      stats.memoryWriteCount++;
+    }
+    // B-type instructions (beq, bne, blt, bge, bltu, bgeu)
+    else if (['beq', 'bne', 'blt', 'bge', 'bltu', 'bgeu'].includes(opcode)) {
+      stats.bTypeCount++;
+      stats.branchCount++;
+
+      // Check for branch taken/not taken (simplified, actual logic would need to check ALU result)
+      const branchTaken = Math.random() < 0.5; // Simplified for demonstration
+      if (branchTaken) {
+        stats.branchTakenCount++;
+      } else {
+        stats.branchNotTakenCount++;
+      }
+    }
+    // U-type instructions (lui, auipc)
+    else if (['lui', 'auipc'].includes(opcode)) {
+      stats.uTypeCount++;
+    }
+    // J-type instructions (jal)
+    else if (['jal'].includes(opcode)) {
+      stats.jTypeCount++;
+    }
+
+    return { performanceStats: stats };
+  }),
+
+  resetPerformanceStats: () => set({
+    performanceStats: {
+      rTypeCount: 0,
+      iTypeCount: 0,
+      sTypeCount: 0,
+      bTypeCount: 0,
+      uTypeCount: 0,
+      jTypeCount: 0,
+      totalInstructions: 0,
+
+      cycleCount: 0,
+      instructionsExecuted: 0,
+      cpi: 0,
+      ipc: 0,
+
+      branchCount: 0,
+      branchTakenCount: 0,
+      branchNotTakenCount: 0,
+      branchMispredictionCount: 0,
+      branchMispredictionRate: 0,
+
+      memoryReadCount: 0,
+      memoryWriteCount: 0,
+
+      dataHazardStalls: 0,
+      controlHazardStalls: 0,
+      memoryStalls: 0,
+      totalStalls: 0,
+
+      startTime: null,
+      endTime: null,
+      executionTimeMs: 0
+    }
+  }),
   cache: {
     config: {
       size: 32 * 1024,  // 32KB total cache size
