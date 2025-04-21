@@ -1,13 +1,201 @@
-import React from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import { useCircuitStore } from '../store/circuitStore';
-import { BarChart, Clock, Cpu, GitBranch, Database, ToggleLeft, ToggleRight } from 'lucide-react';
+import { BarChart, Clock, Cpu, GitBranch, Database, ToggleLeft, ToggleRight, X, Maximize2, Minimize2 } from 'lucide-react';
 
-export function PerformanceView() {
+interface PerformanceViewProps {
+  onClose: () => void;
+  initialWidth?: number;
+  initialHeight?: number;
+  minWidth?: number;
+  minHeight?: number;
+  maxWidth?: number;
+  maxHeight?: number;
+}
+
+export function PerformanceView({
+  onClose,
+  initialWidth = 800,
+  initialHeight = 600,
+  minWidth = 400,
+  minHeight = 300,
+  maxWidth = 1200,
+  maxHeight = 800
+}: PerformanceViewProps) {
   const performanceStats = useCircuitStore((state) => state.performanceStats);
   const togglePipelineStats = useCircuitStore((state) => state.togglePipelineStats);
 
+  // Draggable and resizable state
+  const [width, setWidth] = useState(initialWidth);
+  const [height, setHeight] = useState(initialHeight);
+  const [position, setPosition] = useState({ x: window.innerWidth / 2 - initialWidth / 2, y: window.innerHeight / 2 - initialHeight / 2 });
+  const [isDragging, setIsDragging] = useState(false);
+  const [isResizing, setIsResizing] = useState(false);
+  const [resizeDirection, setResizeDirection] = useState<string | null>(null);
+  const [isMaximized, setIsMaximized] = useState(false);
+
+  const lastSize = useRef({ width: initialWidth, height: initialHeight });
+  const lastPosition = useRef({ x: window.innerWidth / 2 - initialWidth / 2, y: window.innerHeight / 2 - initialHeight / 2 });
+  const dragStartPos = useRef({ x: 0, y: 0 });
+
+  // Handle dragging
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      if (isDragging) {
+        const deltaX = e.clientX - dragStartPos.current.x;
+        const deltaY = e.clientY - dragStartPos.current.y;
+
+        setPosition({
+          x: Math.max(0, Math.min(window.innerWidth - width, position.x + deltaX)),
+          y: Math.max(0, Math.min(window.innerHeight - height, position.y + deltaY))
+        });
+
+        dragStartPos.current = { x: e.clientX, y: e.clientY };
+      }
+    };
+
+    const handleMouseUp = () => {
+      setIsDragging(false);
+      lastPosition.current = position;
+    };
+
+    if (isDragging) {
+      document.addEventListener('mousemove', handleMouseMove);
+      document.addEventListener('mouseup', handleMouseUp);
+    }
+
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, [isDragging, position, width, height]);
+
+  // Handle resizing
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      if (isResizing && resizeDirection) {
+        let newWidth = width;
+        let newHeight = height;
+        let newX = position.x;
+        let newY = position.y;
+
+        // Handle different resize directions
+        if (resizeDirection.includes('e')) {
+          newWidth = Math.max(minWidth, Math.min(maxWidth, width + (e.clientX - dragStartPos.current.x)));
+        }
+        if (resizeDirection.includes('w')) {
+          const deltaX = e.clientX - dragStartPos.current.x;
+          newWidth = Math.max(minWidth, Math.min(maxWidth, width - deltaX));
+          if (newWidth !== width) {
+            newX = position.x + (width - newWidth);
+          }
+        }
+        if (resizeDirection.includes('s')) {
+          newHeight = Math.max(minHeight, Math.min(maxHeight, height + (e.clientY - dragStartPos.current.y)));
+        }
+        if (resizeDirection.includes('n')) {
+          const deltaY = e.clientY - dragStartPos.current.y;
+          newHeight = Math.max(minHeight, Math.min(maxHeight, height - deltaY));
+          if (newHeight !== height) {
+            newY = position.y + (height - newHeight);
+          }
+        }
+
+        setWidth(newWidth);
+        setHeight(newHeight);
+        setPosition({ x: newX, y: newY });
+
+        dragStartPos.current = { x: e.clientX, y: e.clientY };
+      }
+    };
+
+    const handleMouseUp = () => {
+      setIsResizing(false);
+      setResizeDirection(null);
+      lastSize.current = { width, height };
+      lastPosition.current = position;
+    };
+
+    if (isResizing) {
+      document.addEventListener('mousemove', handleMouseMove);
+      document.addEventListener('mouseup', handleMouseUp);
+    }
+
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, [isResizing, resizeDirection, width, height, position, minWidth, maxWidth, minHeight, maxHeight]);
+
+  const handleDragStart = (e: React.MouseEvent) => {
+    if (!isMaximized) {
+      e.preventDefault();
+      setIsDragging(true);
+      dragStartPos.current = { x: e.clientX, y: e.clientY };
+    }
+  };
+
+  const handleResizeStart = (e: React.MouseEvent, direction: string) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsResizing(true);
+    setResizeDirection(direction);
+    dragStartPos.current = { x: e.clientX, y: e.clientY };
+  };
+
+  const toggleMaximize = () => {
+    if (isMaximized) {
+      setWidth(lastSize.current.width);
+      setHeight(lastSize.current.height);
+      setPosition(lastPosition.current);
+      setIsMaximized(false);
+    } else {
+      lastSize.current = { width, height };
+      lastPosition.current = position;
+      setWidth(window.innerWidth - 40);
+      setHeight(window.innerHeight - 40);
+      setPosition({ x: 20, y: 20 });
+      setIsMaximized(true);
+    }
+  };
+
   return (
-    <div className="h-full overflow-y-auto p-4">
+    <div
+      className="fixed bg-white rounded-lg shadow-xl border border-gray-200 z-50 overflow-hidden"
+      style={{
+        width: `${width}px`,
+        height: `${height}px`,
+        left: `${position.x}px`,
+        top: `${position.y}px`
+      }}
+    >
+      {/* Header/Drag handle */}
+      <div
+        className="flex justify-between items-center p-4 border-b border-gray-200 cursor-move bg-white"
+        onMouseDown={handleDragStart}
+      >
+        <h2 className="text-xl font-bold text-gray-800">Performance Analysis</h2>
+        <div className="flex items-center space-x-2">
+          <button
+            type="button"
+            onClick={toggleMaximize}
+            className="p-1.5 rounded-md hover:bg-gray-100 transition-colors"
+            title={isMaximized ? "Restore" : "Maximize"}
+          >
+            {isMaximized ? <Minimize2 className="h-5 w-5 text-gray-500" /> : <Maximize2 className="h-5 w-5 text-gray-500" />}
+          </button>
+          <button
+            type="button"
+            onClick={onClose}
+            className="p-1.5 rounded-md hover:bg-gray-100 transition-colors"
+            title="Close Performance Analysis"
+          >
+            <X className="h-5 w-5 text-gray-500" />
+          </button>
+        </div>
+      </div>
+
+      {/* Content */}
+      <div className="h-[calc(100%-57px)] overflow-auto p-4">
       {/* Pipeline Statistics Toggle */}
       <div className="bg-white p-4 rounded-lg shadow-sm mb-6 flex justify-between items-center">
         <div className="flex items-center gap-2">
@@ -229,6 +417,18 @@ export function PerformanceView() {
           <span className="font-medium">{(performanceStats.executionTimeMs / 1000).toFixed(3)} seconds</span>
         </div>
       </div>
+      </div>
+
+      {/* Resize handles */}
+      <div className="absolute bottom-0 right-0 w-4 h-4 cursor-se-resize" onMouseDown={(e) => handleResizeStart(e, 'se')} />
+      <div className="absolute bottom-0 left-0 w-4 h-4 cursor-sw-resize" onMouseDown={(e) => handleResizeStart(e, 'sw')} />
+      <div className="absolute top-0 right-0 w-4 h-4 cursor-ne-resize" onMouseDown={(e) => handleResizeStart(e, 'ne')} />
+      <div className="absolute top-0 left-0 w-4 h-4 cursor-nw-resize" onMouseDown={(e) => handleResizeStart(e, 'nw')} />
+
+      <div className="absolute bottom-0 left-4 right-4 h-1 cursor-s-resize" onMouseDown={(e) => handleResizeStart(e, 's')} />
+      <div className="absolute top-0 left-4 right-4 h-1 cursor-n-resize" onMouseDown={(e) => handleResizeStart(e, 'n')} />
+      <div className="absolute left-0 top-4 bottom-4 w-1 cursor-w-resize" onMouseDown={(e) => handleResizeStart(e, 'w')} />
+      <div className="absolute right-0 top-4 bottom-4 w-1 cursor-e-resize" onMouseDown={(e) => handleResizeStart(e, 'e')} />
     </div>
   );
 }
