@@ -54,8 +54,10 @@ export function InstructionMemoryNode({ data, id, selected }: {
   // 监听PC值变化，更新输出指令
   React.useEffect(() => {
     const pcValue = data.pc || 0;
-    const currentInstruction = data.instructions?.[pcValue];
-    
+    let currentInstruction = "0";
+    if (Array.isArray(data.instructions) && pcValue >= 0 && pcValue < data.instructions.length) {
+      currentInstruction = data.instructions[pcValue];
+    }
     if (currentInstruction !== data.value) {
       updateNodeData(id, {
         ...data,
@@ -64,9 +66,7 @@ export function InstructionMemoryNode({ data, id, selected }: {
     }
   }, [data.pc, data.instructions]);
   
-  // 获取当前指令的机器码
-  const currentInstruction = data.instructions && data.instructions[data.pc || 0];
-  
+
   // 计算显示的指令范围（当前指令前后各2条）
   const pcValue = data.pc || 0;
   const startIdx = Math.max(0, pcValue - 2);
@@ -92,7 +92,7 @@ export function InstructionMemoryNode({ data, id, selected }: {
           <div className="text-lg font-bold">Instruction Memory</div>
           <div className="text-sm text-gray-500">
             <div>Size: {data.size || 4096} bytes</div>
-            <div>Output: {data.value || 'No instruction'}</div>
+            <div>Output: {(data.value === "0" || !data.value) ? 'No instruction' : data.value}</div>
             <div className="mt-2 space-y-1 font-mono">
               {displayInstructions.map((inst, idx) => {
                 const actualIdx = startIdx + idx;
