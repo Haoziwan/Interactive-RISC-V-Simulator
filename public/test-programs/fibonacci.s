@@ -1,33 +1,80 @@
-# Fibonacci Sequence Program
-# Calculate the first n numbers in the Fibonacci sequence
-# n is stored in x1, results are stored in memory
+.data
+n:          .word 10              # Number of Fibonacci terms
+fib_array:  .space 400            # Space for 100 integers (4 * 100 bytes)
 
-# Initialization
-addi x1, x0, 10    # n = 10 (calculate first 10 numbers)
-addi x2, x0, 0     # address index
-addi x3, x0, 0     # f(n-2)
-addi x4, x0, 1     # f(n-1)
-addi x5, x0, 0     # current f(n)
+.text
+.globl main
+main:
+    # Load the value of n from memory
+    la x5, n                      # x5 = address of n
+    lw x6, 0(x5)                  # x6 = n
 
-# Store first two numbers
-sw x3, 0(x2)       # store f(0)
-addi x2, x2, 4     # address + 4
-sw x4, 0(x2)       # store f(1)
-addi x2, x2, 4     # address + 4
-addi x6, x0, 2     # i = 2
+    # Initialize Fibonacci values: F(0) = 0, F(1) = 1
+    li x7, 0                      # x7 = F(0)
+    li x8, 1                      # x8 = F(1)
 
-loop:
-beq x6, x1, end    # if i == n, end
+    # x9 holds base address of fib_array
+    la x9, fib_array
 
-# Calculate f(n) = f(n-1) + f(n-2)
-add x5, x3, x4     # f(n) = f(n-2) + f(n-1)
-sw x5, 0(x2)       # store f(n)
+    # Store F(0) to fib_array[0]
+    sw x7, 0(x9)
 
-# Update variables
-add x3, x0, x4     # f(n-2) = f(n-1)
-add x4, x0, x5     # f(n-1) = f(n)
-addi x2, x2, 4     # address + 4
-addi x6, x6, 1     # i++
-jal x0, loop       # continue loop
+    # If n >= 2, store F(1)
+    li x10, 1
+    bge x6, x10, store_f1
+    j print_all
 
-end:
+store_f1:
+    sw x8, 4(x9)                  # fib_array[1] = 1
+
+    li x11, 2                     # x11 = loop index i = 2
+
+fib_loop:
+    bge x11, x6, print_all        # if i >= n, jump to print
+
+    # Compute F(i) = F(i-1) + F(i-2)
+    add x12, x7, x8              # x12 = x7 + x8
+
+    # Store F(i) at fib_array[i]
+    slli x13, x11, 2             # x13 = i * 4
+    add x14, x9, x13             # x14 = fib_array + i * 4
+    sw x12, 0(x14)               # fib_array[i] = x12
+
+    # Update previous values
+    mv x7, x8                    # x7 = F(i-1)
+    mv x8, x12                   # x8 = F(i)
+
+    addi x11, x11, 1             # i++
+
+    j fib_loop
+
+# Print all results
+print_all:
+    li x11, 0                    # x11 = i = 0
+
+print_loop:
+    bge x11, x6, exit            # if i >= n, exit
+
+    slli x13, x11, 2             # x13 = i * 4
+    add x14, x9, x13             # x14 = &fib_array[i]
+    lw x10, 0(x14)               # x10 = fib_array[i]
+
+    # Print integer
+    mv x10, x10                  # move to syscall argument (no alias)
+    mv x17, x0                   # clear x17 (not used here)
+    mv x10, x10                  # x10 = value to print
+    li x17, 1                    # syscall code 1 = print_int
+    ecall
+
+    # Print newline
+    li x10, 10                   # ASCII '\n'
+    li x17, 11                   # syscall code 11 = print_char
+    ecall
+
+    addi x11, x11, 1
+    j print_loop
+
+# Exit program
+exit:
+    li x17, 10                   # syscall code 10 = exit
+    ecall
