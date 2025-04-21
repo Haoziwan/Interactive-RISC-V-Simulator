@@ -108,6 +108,7 @@ interface CircuitState {
   loadCircuit: (jsonData: string) => void;
   toggleSimulation: () => void;
   resetSimulation: () => void;
+  assembleCode: () => void;
   stepSimulation: () => void;
   stepBackSimulation: () => void;
   updateNodes: (changes: Node[]) => void;
@@ -940,5 +941,16 @@ export const useCircuitStore = create<CircuitState>()((set, get) => ({
         }
       }
     });
+  },
+
+  // Function to assemble code - this will be called by the reset button
+  assembleCode: () => {
+    // Find the Assemble button in the DOM and click it
+    const assembleButton = document.querySelector('button[class*="bg-blue-500"]:not([class*="bg-blue-100"])') as HTMLButtonElement;
+    if (assembleButton && assembleButton.textContent?.includes('Assemble')) {
+      assembleButton.click();
+    } else {
+      get().resetSimulation();
+    }
   },
 }));

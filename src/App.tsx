@@ -177,7 +177,7 @@ function App() {
                 </button>
                 <button
                   type="button"
-                  onClick={() => useCircuitStore.getState().resetSimulation()}
+                  onClick={() => useCircuitStore.getState().assembleCode()}
                   className="p-2.5 rounded-lg hover:bg-gray-100 transition-colors text-gray-700 hover:text-blue-600"
                   title="Reset Simulation"
                 >
