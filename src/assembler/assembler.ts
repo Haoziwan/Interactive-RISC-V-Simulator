@@ -658,6 +658,21 @@ export const parseInstruction = (line: string, currentAddress: number, labelMap:
         funct3: '000'
       };
     }
+    case 'ebreak': {
+      if (parts.length !== 1) throw new AssemblerError(`${op} instruction does not require operands`, {
+        errorType: 'Operand Error',
+        instruction: lineWithoutComment,
+        suggestion: 'ebreak instruction format: ebreak'
+      });
+      return {
+        type: 'I',
+        opcode: '1110011',
+        rd: 0,
+        rs1: 0,
+        imm: 1,  // The immediate value is 1 for ebreak (vs 0 for ecall)
+        funct3: '000'
+      };
+    }
     default:
       throw new AssemblerError(`Unsupported instruction: ${op}`, {
     errorType: 'Unknown Instruction',

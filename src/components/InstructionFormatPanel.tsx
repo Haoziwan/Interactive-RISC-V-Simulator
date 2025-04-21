@@ -169,14 +169,15 @@ const instructionFormats: InstructionFormat[] = [
     ]
   },
   {
-    type: 'ECALL Instructions',
+    type: 'System Instructions',
     instructions: [
       'ecall - Environment Call (System Call)',
       'a7=1: Print Integer (a0 = integer to print)',
       'a7=4: Print String (a0 = address of string)',
       'a7=10: Exit Program',
       'a7=11: Print Character (a0 = character code)',
-      'a7=93: Exit Program (Linux compatible)'
+      'a7=93: Exit Program (Linux compatible)',
+      'ebreak - Breakpoint (Debug Instruction)',
     ]
   }
 ];

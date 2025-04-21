@@ -461,10 +461,21 @@ export const useCircuitStore = create<CircuitState>()((set, get) => ({
       const currentPc = state.pcValue;
       const maxPc = (state.assembledInstructions.length * 4) - 4;
 
-      // 检查是否为ecall指令且为退出程序请求
+      // 检查是否为ecall指令或ebreak指令
       const currentInstruction = state.assembledInstructions[currentPc / 4];
 
-
+      // Check for ebreak instruction (0x00100073)
+      if (currentInstruction && currentInstruction.hex === '0x00100073') {
+        // EBREAK instruction - pause execution like a breakpoint
+        if (state.simulationTimer !== null) {
+          window.clearInterval(state.simulationTimer);
+        }
+        return {
+          stepCount: state.stepCount + 1,
+          isSimulating: false,
+          simulationTimer: null
+        };
+      }
 
       if (currentInstruction && currentInstruction.hex === '0x00000073') {
         // ECALL instruction
