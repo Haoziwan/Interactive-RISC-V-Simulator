@@ -1,6 +1,5 @@
-# GCD Program with ECALL
-# Calculate the Greatest Common Divisor of two numbers
-# Parameters are stored in data section, results are output using ecall
+# GCD Program 
+# ecall is not supported in pipeline datapath
 
 .data
 num1: .word 48              # First number for GCD calculation

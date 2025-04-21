@@ -1,3 +1,6 @@
+# Fibonacci Sequence Program
+# Calculate the first n numbers in the Fibonacci sequence
+# ecall is not supported in pipeline datapath
 .data
 n:          .word 10              # Number of Fibonacci terms
 fib_array:  .space 400            # Space for 100 integers (4 * 100 bytes)
