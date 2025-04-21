@@ -24,6 +24,9 @@ interface CacheStats {
 }
 
 interface PerformanceStats {
+  // Configuration
+  enablePipelineStats: boolean;
+
   // Instruction counts by type
   rTypeCount: number;
   iTypeCount: number;
@@ -117,6 +120,7 @@ interface CircuitState {
   clearOutputMessages: () => void;
   updatePerformanceStats: (instruction: string) => void;
   resetPerformanceStats: () => void;
+  togglePipelineStats: () => void;
   cache: {
     config: {
       size: number;      // Total cache size in bytes
@@ -160,6 +164,9 @@ export const useCircuitStore = create<CircuitState>()((set, get) => ({
   simulationHistory: [],
   outputMessages: [],
   performanceStats: {
+    // Configuration
+    enablePipelineStats: false,
+
     // Instruction counts by type
     rTypeCount: 0,
     iTypeCount: 0,
@@ -457,12 +464,7 @@ export const useCircuitStore = create<CircuitState>()((set, get) => ({
       // 检查是否为ecall指令且为退出程序请求
       const currentInstruction = state.assembledInstructions[currentPc / 4];
 
-      // 更新性能统计
-      if (currentInstruction && currentInstruction.assembly) {
-        get().updatePerformanceStats(currentInstruction.assembly);
-      } else {
-        get().updatePerformanceStats('');
-      }
+
 
       if (currentInstruction && currentInstruction.hex === '0x00000073') {
         // ECALL instruction
@@ -540,7 +542,12 @@ export const useCircuitStore = create<CircuitState>()((set, get) => ({
           simulationTimer: null
         };
       }
-
+      // 更新性能统计
+      if (currentInstruction && currentInstruction.assembly) {
+        get().updatePerformanceStats(currentInstruction.assembly);
+      } else {
+        get().updatePerformanceStats('');
+      }
       // 保存当前状态到历史记录
       const currentState = {
         nodes: JSON.parse(JSON.stringify(state.nodes)),
@@ -692,7 +699,15 @@ export const useCircuitStore = create<CircuitState>()((set, get) => ({
 
     // Skip if no instruction is provided
     if (!instruction) {
-      return { performanceStats: stats };
+      // If pipeline statistics are disabled, return early without updating pipeline-specific stats
+      if (stats.enablePipelineStats) {
+            // Update CPI and IPC
+      stats.cpi = stats.cycleCount / (stats.instructionsExecuted || 1);
+      stats.ipc = stats.instructionsExecuted / (stats.cycleCount || 1);
+        return { performanceStats: stats };
+      }
+
+      return { };
     }
 
     // Update instruction count
@@ -702,6 +717,7 @@ export const useCircuitStore = create<CircuitState>()((set, get) => ({
     // Update CPI and IPC
     stats.cpi = stats.cycleCount / (stats.instructionsExecuted || 1);
     stats.ipc = stats.instructionsExecuted / (stats.cycleCount || 1);
+
 
     // Determine instruction type and update counts
     const opcode = instruction.split(' ')[0];
@@ -729,13 +745,13 @@ export const useCircuitStore = create<CircuitState>()((set, get) => ({
       stats.bTypeCount++;
       stats.branchCount++;
 
-      // Check for branch taken/not taken (simplified, actual logic would need to check ALU result)
-      const branchTaken = Math.random() < 0.5; // Simplified for demonstration
-      if (branchTaken) {
-        stats.branchTakenCount++;
-      } else {
-        stats.branchNotTakenCount++;
-      }
+      // // Check for branch taken/not taken (simplified, actual logic would need to check ALU result)
+      // const branchTaken = Math.random() < 0.5; // Simplified for demonstration
+      // if (branchTaken) {
+      //   stats.branchTakenCount++;
+      // } else {
+      //   stats.branchNotTakenCount++;
+      // }
     }
     // U-type instructions (lui, auipc)
     else if (['lui', 'auipc'].includes(opcode)) {
@@ -749,8 +765,11 @@ export const useCircuitStore = create<CircuitState>()((set, get) => ({
     return { performanceStats: stats };
   }),
 
-  resetPerformanceStats: () => set({
+  resetPerformanceStats: () => set((state) => ({
     performanceStats: {
+      // Keep the current enablePipelineStats setting
+      enablePipelineStats: state.performanceStats.enablePipelineStats,
+
       rTypeCount: 0,
       iTypeCount: 0,
       sTypeCount: 0,
@@ -782,7 +801,14 @@ export const useCircuitStore = create<CircuitState>()((set, get) => ({
       endTime: null,
       executionTimeMs: 0
     }
-  }),
+  })),
+
+  togglePipelineStats: () => set((state) => ({
+    performanceStats: {
+      ...state.performanceStats,
+      enablePipelineStats: !state.performanceStats.enablePipelineStats
+    }
+  })),
   cache: {
     config: {
       size: 32 * 1024,  // 32KB total cache size

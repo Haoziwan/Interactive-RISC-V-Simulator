@@ -1,12 +1,38 @@
 import React from 'react';
 import { useCircuitStore } from '../store/circuitStore';
-import { BarChart, Clock, Cpu, GitBranch, Database } from 'lucide-react';
+import { BarChart, Clock, Cpu, GitBranch, Database, ToggleLeft, ToggleRight } from 'lucide-react';
 
 export function PerformanceView() {
   const performanceStats = useCircuitStore((state) => state.performanceStats);
+  const togglePipelineStats = useCircuitStore((state) => state.togglePipelineStats);
 
   return (
     <div className="h-full overflow-y-auto p-4">
+      {/* Pipeline Statistics Toggle */}
+      <div className="bg-white p-4 rounded-lg shadow-sm mb-6 flex justify-between items-center">
+        <div className="flex items-center gap-2">
+          <Cpu className="w-5 h-5 text-blue-600" />
+          <h3 className="text-lg font-semibold text-gray-800">Pipeline Statistics Collection</h3>
+        </div>
+        <button
+          type="button"
+          onClick={togglePipelineStats}
+          className="flex items-center gap-2 px-4 py-2 rounded-md bg-blue-50 hover:bg-blue-100 transition-colors border border-blue-200"
+          title={performanceStats.enablePipelineStats ? "Disable Pipeline Statistics Collection" : "Enable Pipeline Statistics Collection"}
+        >
+          {performanceStats.enablePipelineStats ? (
+            <>
+              <ToggleRight className="w-6 h-6 text-blue-600" />
+              <span className="text-sm font-medium text-blue-700">Enabled</span>
+            </>
+          ) : (
+            <>
+              <ToggleLeft className="w-6 h-6 text-gray-500" />
+              <span className="text-sm font-medium text-gray-600">Disabled</span>
+            </>
+          )}
+        </button>
+      </div>
 
       {/* Summary Cards */}
       <div className="grid grid-cols-4 gap-4 mb-8">
@@ -172,8 +198,10 @@ export function PerformanceView() {
 
       {/* Stall Statistics */}
       <div className="bg-white p-6 rounded-lg shadow-sm mb-8">
-        <h3 className="text-lg font-semibold text-gray-800 mb-4">Pipeline Stall Analysis</h3>
-        <div className="grid grid-cols-4 gap-4">
+        <div className="mb-4">
+          <h3 className="text-lg font-semibold text-gray-800">Pipeline Stall Analysis</h3>
+        </div>
+        <div className={`grid grid-cols-4 gap-4 ${!performanceStats.enablePipelineStats ? 'opacity-50 pointer-events-none' : ''}`}>
           <div className="bg-red-50 p-3 rounded-md">
             <div className="text-sm font-medium text-red-600 mb-1">Data Hazards</div>
             <div className="text-xl font-bold text-red-700">{performanceStats.dataHazardStalls}</div>
