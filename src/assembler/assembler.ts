@@ -224,6 +224,15 @@ export const expandPseudoInstruction = (line: string, lineNumber?: number): stri
       // j offset equivalent to jal x0, offset
       return [`jal x0, ${parts[1]}`];
     }
+    case 'jal': {
+      // Check if this is the pseudo-instruction form (only one operand)
+      if (parts.length === 2) {
+        // jal offset equivalent to jal x1, offset
+        return [`jal x1, ${parts[1]}`];
+      }
+      // Regular jal instruction, don't expand
+      return [lineWithoutComment];
+    }
     case 'call': {
       if (parts.length !== 2) throw new AssemblerError('call instruction requires 1 operand', {
         lineNumber: lineNumber,
@@ -242,6 +251,190 @@ export const expandPseudoInstruction = (line: string, lineNumber?: number): stri
       // nop equivalent to addi x0, x0, 0
       return ['addi x0, x0, 0'];
     }
+    // Global load instructions
+    case 'lb':
+    case 'lh':
+    case 'lw':
+    case 'ld':
+    case 'lbu':
+    case 'lhu':
+    case 'lwu': {
+      // Check if this is a global load (no offset pattern)
+      if (parts.length === 3 && !parts[2].includes('(')) {
+        const rd = parts[1];
+        const symbol = parts[2];
+        // Global load: l{b|h|w|d} rd, symbol
+        // Expands to: auipc rd, symbol[31:12] + l{b|h|w|d} rd, symbol[11:0](rd)
+        // Use special placeholders that will be processed during assembly
+        return [
+          `auipc ${rd}, %LA_HI_${symbol}%`,
+          `${op} ${rd}, %LOAD_OFFSET_${symbol}%, ${rd}`
+        ];
+      }
+      // Regular load instruction, don't expand
+      return [lineWithoutComment];
+    }
+    // Global store instructions
+    case 'sb':
+    case 'sh':
+    case 'sw':
+    case 'sd': {
+      // Check if this is a global store (no offset pattern)
+      if (parts.length === 4 && !parts[2].includes('(')) {
+        const rs2 = parts[1]; // Value to store
+        const symbol = parts[2]; // Symbol address
+        const rt = parts[3]; // Temporary register
+        // Global store: s{b|h|w|d} rs2, symbol, rt
+        // Expands to: auipc rt, symbol[31:12] + s{b|h|w|d} rs2, symbol[11:0](rt)
+        // Use special placeholders that will be processed during assembly
+        return [
+          `auipc ${rt}, %LA_HI_${symbol}%`,
+          `${op} ${rs2}, %STORE_OFFSET_${symbol}%, ${rt}`
+        ];
+      }
+      // Regular store instruction, don't expand
+      return [lineWithoutComment];
+    }
+    // Arithmetic and logical pseudo-instructions
+    case 'not': {
+      if (parts.length !== 3) throw new AssemblerError('not instruction requires 2 operands', {
+        lineNumber: lineNumber
+      });
+      // not rd, rs equivalent to xori rd, rs, -1
+      return [`xori ${parts[1]}, ${parts[2]}, -1`];
+    }
+    case 'neg': {
+      if (parts.length !== 3) throw new AssemblerError('neg instruction requires 2 operands', {
+        lineNumber: lineNumber
+      });
+      // neg rd, rs equivalent to sub rd, x0, rs
+      return [`sub ${parts[1]}, x0, ${parts[2]}`];
+    }
+    // negw and sext.w are not supported
+    case 'seqz': {
+      if (parts.length !== 3) throw new AssemblerError('seqz instruction requires 2 operands', {
+        lineNumber: lineNumber
+      });
+      // seqz rd, rs equivalent to sltiu rd, rs, 1
+      return [`sltiu ${parts[1]}, ${parts[2]}, 1`];
+    }
+    case 'snez': {
+      if (parts.length !== 3) throw new AssemblerError('snez instruction requires 2 operands', {
+        lineNumber: lineNumber
+      });
+      // snez rd, rs equivalent to sltu rd, x0, rs
+      return [`sltu ${parts[1]}, x0, ${parts[2]}`];
+    }
+    case 'sltz': {
+      if (parts.length !== 3) throw new AssemblerError('sltz instruction requires 2 operands', {
+        lineNumber: lineNumber
+      });
+      // sltz rd, rs equivalent to slt rd, rs, x0
+      return [`slt ${parts[1]}, ${parts[2]}, x0`];
+    }
+    case 'sgtz': {
+      if (parts.length !== 3) throw new AssemblerError('sgtz instruction requires 2 operands', {
+        lineNumber: lineNumber
+      });
+      // sgtz rd, rs equivalent to slt rd, x0, rs
+      return [`slt ${parts[1]}, x0, ${parts[2]}`];
+    }
+    // Branch pseudo-instructions
+    case 'beqz': {
+      if (parts.length !== 3) throw new AssemblerError('beqz instruction requires 2 operands', {
+        lineNumber: lineNumber
+      });
+      // beqz rs, offset equivalent to beq rs, x0, offset
+      return [`beq ${parts[1]}, x0, ${parts[2]}`];
+    }
+    case 'bnez': {
+      if (parts.length !== 3) throw new AssemblerError('bnez instruction requires 2 operands', {
+        lineNumber: lineNumber
+      });
+      // bnez rs, offset equivalent to bne rs, x0, offset
+      return [`bne ${parts[1]}, x0, ${parts[2]}`];
+    }
+    case 'blez': {
+      if (parts.length !== 3) throw new AssemblerError('blez instruction requires 2 operands', {
+        lineNumber: lineNumber
+      });
+      // blez rs, offset equivalent to bge x0, rs, offset
+      return [`bge x0, ${parts[1]}, ${parts[2]}`];
+    }
+    case 'bgez': {
+      if (parts.length !== 3) throw new AssemblerError('bgez instruction requires 2 operands', {
+        lineNumber: lineNumber
+      });
+      // bgez rs, offset equivalent to bge rs, x0, offset
+      return [`bge ${parts[1]}, x0, ${parts[2]}`];
+    }
+    case 'bltz': {
+      if (parts.length !== 3) throw new AssemblerError('bltz instruction requires 2 operands', {
+        lineNumber: lineNumber
+      });
+      // bltz rs, offset equivalent to blt rs, x0, offset
+      return [`blt ${parts[1]}, x0, ${parts[2]}`];
+    }
+    case 'bgtz': {
+      if (parts.length !== 3) throw new AssemblerError('bgtz instruction requires 2 operands', {
+        lineNumber: lineNumber
+      });
+      // bgtz rs, offset equivalent to blt x0, rs, offset
+      return [`blt x0, ${parts[1]}, ${parts[2]}`];
+    }
+    case 'bgt': {
+      if (parts.length !== 4) throw new AssemblerError('bgt instruction requires 3 operands', {
+        lineNumber: lineNumber
+      });
+      // bgt rs, rt, offset equivalent to blt rt, rs, offset
+      return [`blt ${parts[2]}, ${parts[1]}, ${parts[3]}`];
+    }
+    case 'ble': {
+      if (parts.length !== 4) throw new AssemblerError('ble instruction requires 3 operands', {
+        lineNumber: lineNumber
+      });
+      // ble rs, rt, offset equivalent to bge rt, rs, offset
+      return [`bge ${parts[2]}, ${parts[1]}, ${parts[3]}`];
+    }
+    case 'bgtu': {
+      if (parts.length !== 4) throw new AssemblerError('bgtu instruction requires 3 operands', {
+        lineNumber: lineNumber
+      });
+      // bgtu rs, rt, offset equivalent to bltu rt, rs, offset
+      return [`bltu ${parts[2]}, ${parts[1]}, ${parts[3]}`];
+    }
+    case 'bleu': {
+      if (parts.length !== 4) throw new AssemblerError('bleu instruction requires 3 operands', {
+        lineNumber: lineNumber
+      });
+      // bleu rs, rt, offset equivalent to bgeu rt, rs, offset
+      return [`bgeu ${parts[2]}, ${parts[1]}, ${parts[3]}`];
+    }
+    // Jump pseudo-instructions
+    case 'jr': {
+      if (parts.length !== 2) throw new AssemblerError('jr instruction requires 1 operand', {
+        lineNumber: lineNumber
+      });
+      // jr rs equivalent to jalr x0, rs, 0
+      return [`jalr x0, ${parts[1]}, 0`];
+    }
+    case 'jalr': {
+      if (parts.length === 2) {
+        // jalr rs equivalent to jalr x1, rs, 0
+        return [`jalr x1, ${parts[1]}, 0`];
+      }
+      // Regular jalr instruction, don't expand
+      return [lineWithoutComment];
+    }
+    case 'tail': {
+      if (parts.length !== 2) throw new AssemblerError('tail instruction requires 1 operand', {
+        lineNumber: lineNumber
+      });
+      // tail offset equivalent to jal x0, offset (same as j offset)
+      // This is a simplification, but it works for most cases
+      return [`jal x0, ${parts[1]}`];
+    }
+    // fence is a regular instruction, not a pseudo-instruction
     default:
       return [lineWithoutComment];
   }
@@ -686,12 +879,21 @@ export class Assembler {
           } else if (entry.instr.startsWith('.half')) {
             const parts = entry.instr.split(/\s+/).slice(1);
             currentAddr += 2 * parts.length;
-          } else if (entry.instr.startsWith('.ascii') || entry.instr.startsWith('.asciz')) {
+          } else if (entry.instr.startsWith('.ascii') || entry.instr.startsWith('.asciz') || entry.instr.startsWith('.string')) {
             const match = entry.instr.match(/"(.*)"/);
             if (match) {
               const str = match[1];
-              const increment = entry.instr.startsWith('.asciz') ? str.length + 1 : str.length;
+              // .string and .asciz both add null terminator
+              const increment = (entry.instr.startsWith('.asciz') || entry.instr.startsWith('.string')) ? str.length + 1 : str.length;
               currentAddr += increment;
+            }
+          } else if (entry.instr.startsWith('.space') || entry.instr.startsWith('.zero')) {
+            const parts = entry.instr.split(/\s+/).slice(1);
+            if (parts.length > 0) {
+              const size = parseInt(parts[0]);
+              if (!isNaN(size)) {
+                currentAddr += size;
+              }
             }
           }
         }
@@ -743,10 +945,14 @@ export class Assembler {
             const expandedInstructions = expandPseudoInstruction(instruction, entry.lineNumber);
             expandedInstructions.forEach((expandedLine, i) => {
               try {
-                // Process placeholders for la instruction
-                if (expandedLine.includes('%LA_HI_') || expandedLine.includes('%LA_LO_')) {
+                // Process placeholders for la instruction and global load/store instructions
+                if (expandedLine.includes('%LA_HI_') || expandedLine.includes('%LA_LO_') ||
+                    expandedLine.includes('%LOAD_OFFSET_') || expandedLine.includes('%STORE_OFFSET_')) {
                   // Extract symbol name from placeholder
-                  const match = expandedLine.match(/%LA_(HI|LO)_([a-zA-Z0-9_]+)%/);
+                  let match = expandedLine.match(/%LA_(HI|LO)_([a-zA-Z0-9_]+)%/);
+                  let loadMatch = expandedLine.match(/%LOAD_OFFSET_([a-zA-Z0-9_]+)%/);
+                  let storeMatch = expandedLine.match(/%STORE_OFFSET_([a-zA-Z0-9_]+)%/);
+
                   if (match) {
                     const type = match[1]; // HI or LO
                     const symbol = match[2];
@@ -763,30 +969,31 @@ export class Assembler {
                     const address = this.labelMap[symbol];
 
                     if (type === 'HI') {
-                      // For lui instruction, calculate upper 20 bits
+                      // For lui/auipc instruction, calculate upper 20 bits
                       const baseImm = address >= this.GP_BASE ?
                         0x10000 : // For data segment
                         (address >>> 12); // For code segment
 
-                      const luiParts = expandedLine.split(/[\s,]+/).filter(Boolean);
-                      const rd = luiParts[1];
+                      const parts = expandedLine.split(/[\s,]+/).filter(Boolean);
+                      const op = parts[0].toLowerCase();
+                      const rd = parts[1];
 
-                      // Generate lui instruction with proper immediate
-                      const luiInst = {
+                      // Generate lui/auipc instruction with proper immediate
+                      const inst = {
                         type: 'U' as const,
-                        opcode: '0110111',
+                        opcode: op === 'lui' ? '0110111' : '0010111', // lui or auipc
                         rd: parseRegister(rd),
                         imm: baseImm
                       };
 
-                      const luiHex = generateMachineCode(luiInst);
-                      const luiBinary = (parseInt(luiHex.slice(2), 16) >>> 0).toString(2).padStart(32, '0');
+                      const hex = generateMachineCode(inst);
+                      const binary = (parseInt(hex.slice(2), 16) >>> 0).toString(2).padStart(32, '0');
 
                       // Add to result
                       result.push({
-                        hex: luiHex,
-                        binary: luiBinary,
-                        assembly: `lui ${rd}, 0x${baseImm.toString(16)}`,
+                        hex,
+                        binary,
+                        assembly: `${op} ${rd}, 0x${baseImm.toString(16)}`,
                         source: entry.text,
                         segment: 'text',
                         address: this.currentAddress,
@@ -832,6 +1039,119 @@ export class Assembler {
                         originalLineNumber: entry.lineNumber
                       });
                     }
+
+                    this.currentAddress += 4;
+                    return; // Placeholder processed, skip normal processing
+                  } else if (loadMatch) {
+                    // Handle global load instructions
+                    const symbol = loadMatch[1];
+
+                    if (!(symbol in this.labelMap)) {
+                      throw new AssemblerError(`Undefined label: ${symbol}`, {
+                        errorType: 'Label Error',
+                        instruction: expandedLine,
+                        suggestion: 'Please ensure the label is defined in the code',
+                        lineNumber: entry.lineNumber
+                      });
+                    }
+
+                    const address = this.labelMap[symbol];
+                    let offset = address >= this.GP_BASE ?
+                      (address - this.GP_BASE) : // For data segment
+                      (address & 0xFFF); // For code segment
+
+                    // Parse the load instruction
+                    const parts = expandedLine.split(/[\s,]+/).filter(Boolean);
+                    const op = parts[0].toLowerCase(); // lb, lh, lw, etc.
+                    const rd = parts[1]; // Destination register
+                    const rs1 = parts[3]; // Base register from the instruction
+
+                    // Create the proper load instruction with offset
+                    const loadInst = {
+                      type: 'I' as const,
+                      opcode: '0000011',
+                      rd: parseRegister(rd),
+                      rs1: parseRegister(rs1), // Base register from the instruction
+                      imm: offset,
+                      funct3: op === 'lb' ? '000' :
+                             op === 'lh' ? '001' :
+                             op === 'lw' ? '010' :
+                             op === 'lbu' ? '100' :
+                             op === 'lhu' ? '101' :
+                             op === 'lwu' ? '110' : '011' // ld uses '011'
+                    };
+
+                    const loadHex = generateMachineCode(loadInst);
+                    const loadBinary = (parseInt(loadHex.slice(2), 16) >>> 0).toString(2).padStart(32, '0');
+
+                    // Add to result
+                    result.push({
+                      hex: loadHex,
+                      binary: loadBinary,
+                      assembly: `${op} ${rd}, ${offset}(${rd})`,
+                      source: entry.text,
+                      segment: 'text',
+                      address: this.currentAddress,
+                      originalLineNumber: entry.lineNumber
+                    });
+
+                    this.currentAddress += 4;
+                    return; // Placeholder processed, skip normal processing
+                  } else if (storeMatch) {
+                    // Handle global store instructions
+                    const symbol = storeMatch[1];
+
+                    if (!(symbol in this.labelMap)) {
+                      throw new AssemblerError(`Undefined label: ${symbol}`, {
+                        errorType: 'Label Error',
+                        instruction: expandedLine,
+                        suggestion: 'Please ensure the label is defined in the code',
+                        lineNumber: entry.lineNumber
+                      });
+                    }
+
+                    const address = this.labelMap[symbol];
+                    let offset = address >= this.GP_BASE ?
+                      (address - this.GP_BASE) : // For data segment
+                      (address & 0xFFF); // For code segment
+
+                    // Parse the store instruction
+                    const parts = expandedLine.split(/[\s,]+/).filter(Boolean);
+                    const op = parts[0].toLowerCase(); // sb, sh, sw, etc.
+                    const rs2 = parts[1]; // Value to store
+
+                    // For store instructions, we need to extract the base register
+                    // The base register is the same as the one used in the auipc instruction
+
+                    // Get the register from the instruction
+                    // The register is the third part of the instruction (after 'sw', value register, and placeholder)
+                    const rs1 = parts[3]; // This is the temporary register used in auipc
+
+                    // Create the proper store instruction with offset
+                    const storeInst = {
+                      type: 'S' as const,
+                      opcode: '0100011',
+                      rs1: parseRegister(rs1),
+                      rs2: parseRegister(rs2),
+                      imm: offset,
+                      funct3: op === 'sb' ? '000' :
+                             op === 'sh' ? '001' :
+                             op === 'sw' ? '010' : '011' // sd uses '011'
+                    };
+
+                    const storeHex = generateMachineCode(storeInst);
+                    const storeBinary = (parseInt(storeHex.slice(2), 16) >>> 0).toString(2).padStart(32, '0');
+
+                    // Add to result
+                    result.push({
+                      hex: storeHex,
+                      binary: storeBinary,
+                      assembly: `${op} ${rs2}, ${offset}(${rs1})`,
+                      source: entry.text,
+                      segment: 'text',
+                      address: this.currentAddress,
+                      originalLineNumber: entry.lineNumber
+                    });
 
                     this.currentAddress += 4;
                     return; // Placeholder processed, skip normal processing
@@ -1000,13 +1320,14 @@ export class Assembler {
               originalLineNumber: entry.lineNumber
             });
 
-          } else if (instruction.startsWith('.ascii') || instruction.startsWith('.asciz')) {
+          } else if (instruction.startsWith('.ascii') || instruction.startsWith('.asciz') || instruction.startsWith('.string')) {
             const match = instruction.match(/"(.*)"/);
             if (match) {
               const str = match[1];
               const data = Array.from(str).map(c => c.charCodeAt(0));
 
-              if (instruction.startsWith('.asciz')) {
+              // Both .asciz and .string add null terminator
+              if (instruction.startsWith('.asciz') || instruction.startsWith('.string')) {
                 data.push(0); // Add null character at the end
               }
 
@@ -1023,6 +1344,29 @@ export class Assembler {
                 data: data,
                 originalLineNumber: entry.lineNumber
               });
+            }
+          } else if (instruction.startsWith('.space') || instruction.startsWith('.zero')) {
+            const parts = instruction.split(/\s+/).slice(1);
+            if (parts.length > 0) {
+              const size = parseInt(parts[0]);
+              if (!isNaN(size)) {
+                // Create an array of zeros with the specified size
+                const data = new Array(size).fill(0);
+
+                dataBytes = data;
+                dataSize = size;
+
+                result.push({
+                  hex: '0x' + data.map(d => d.toString(16).padStart(2, '0')).join(''),
+                  binary: data.map(d => d.toString(2).padStart(8, '0')).join(''),
+                  assembly: instruction,
+                  source: entry.text,
+                  segment: 'data',
+                  address: this.currentAddress,
+                  data: data,
+                  originalLineNumber: entry.lineNumber
+                });
+              }
             }
           }
 

@@ -91,15 +91,66 @@ const instructionFormats: InstructionFormat[] = [
     ]
   },
   {
-    type: 'Pseudo-Instructions',
+    type: 'Basic Pseudo-Instructions',
     instructions: [
       'li rd, imm - Load Immediate (expands to lui+addi or addi)',
       'la rd, symbol - Load Address (expands to lui+addi)',
       'mv rd, rs - Move (expands to addi rd, rs, 0)',
-      'j offset - Jump (expands to jal x0, offset)',
       'call label - Call subroutine (expands to jal ra, label)',
       'ret - Return from subroutine (expands to jalr x0, ra, 0)',
       'nop - No Operation (expands to addi x0, x0, 0)'
+    ]
+  },
+  {
+    type: 'Global Load/Store Pseudo-Instructions',
+    instructions: [
+      'lb rd, symbol - Load byte from global (auipc + lb)',
+      'lh rd, symbol - Load halfword from global (auipc + lh)',
+      'lw rd, symbol - Load word from global (auipc + lw)',
+      'ld rd, symbol - Load doubleword from global (auipc + ld)',
+      'lbu rd, symbol - Load byte unsigned from global (auipc + lbu)',
+      'lhu rd, symbol - Load halfword unsigned from global (auipc + lhu)',
+      'lwu rd, symbol - Load word unsigned from global (auipc + lwu)',
+      'sb rs2, symbol, rt - Store byte to global (auipc + sb)',
+      'sh rs2, symbol, rt - Store halfword to global (auipc + sh)',
+      'sw rs2, symbol, rt - Store word to global (auipc + sw)',
+      'sd rs2, symbol, rt - Store doubleword to global (auipc + sd)'
+    ]
+  },
+  {
+    type: 'Arithmetic Pseudo-Instructions',
+    instructions: [
+      'not rd, rs - One\'s complement (xori rd, rs, -1)',
+      'neg rd, rs - Two\'s complement (sub rd, x0, rs)',
+      'seqz rd, rs - Set if equal to zero (sltiu rd, rs, 1)',
+      'snez rd, rs - Set if not equal to zero (sltu rd, x0, rs)',
+      'sltz rd, rs - Set if less than zero (slt rd, rs, x0)',
+      'sgtz rd, rs - Set if greater than zero (slt rd, x0, rs)'
+    ]
+  },
+  {
+    type: 'Branch Pseudo-Instructions',
+    instructions: [
+      'beqz rs, offset - Branch if equal to zero (beq rs, x0, offset)',
+      'bnez rs, offset - Branch if not equal to zero (bne rs, x0, offset)',
+      'blez rs, offset - Branch if less/equal to zero (bge x0, rs, offset)',
+      'bgez rs, offset - Branch if greater/equal to zero (bge rs, x0, offset)',
+      'bltz rs, offset - Branch if less than zero (blt rs, x0, offset)',
+      'bgtz rs, offset - Branch if greater than zero (blt x0, rs, offset)',
+      'bgt rs, rt, offset - Branch if greater than (blt rt, rs, offset)',
+      'ble rs, rt, offset - Branch if less/equal (bge rt, rs, offset)',
+      'bgtu rs, rt, offset - Branch if greater than unsigned (bltu rt, rs, offset)',
+      'bleu rs, rt, offset - Branch if less/equal unsigned (bgeu rt, rs, offset)'
+    ]
+  },
+  {
+    type: 'Jump Pseudo-Instructions',
+    instructions: [
+      'j offset - Jump (jal x0, offset)',
+      'jal offset - Jump and link (jal x1, offset)',
+      'jr rs - Jump register (jalr x0, rs, 0)',
+      'jalr rs - Jump and link register (jalr x1, rs, 0)',
+      'tail offset - Tail call subroutine (jal x0, offset)'
     ]
   },
   {
@@ -111,7 +162,10 @@ const instructionFormats: InstructionFormat[] = [
       '.half h1, h2, ... - Define half words (2 bytes)',
       '.byte b1, b2, ... - Define bytes',
       '.ascii "string" - Define ASCII string (not null terminated)',
-      '.asciz "string" - Define ASCII string (null terminated)'
+      '.asciz "string" - Define ASCII string (null terminated)',
+      '.string "string" - Define ASCII string (null terminated, same as .asciz)',
+      '.space size - Allocate space of specified size (filled with zeros)',
+      '.zero size - Allocate space of specified size (filled with zeros, same as .space)'
     ]
   },
   {

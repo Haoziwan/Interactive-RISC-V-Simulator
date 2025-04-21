@@ -16,7 +16,7 @@ export function AssemblyEditor() {
   const monaco = useMonaco();
   const [decorations, setDecorations] = useState<string[]>([]);
   const [labelMap, setLabelMap] = useState<Record<string, number>>({});
-  
+
   // 使用store中的状态
   const editorCode = useCircuitStore((state) => state.editorCode);
   const setEditorCode = useCircuitStore((state) => state.setEditorCode);
@@ -38,49 +38,49 @@ export function AssemblyEditor() {
       monaco.languages.setMonarchTokensProvider('riscv', {
         // 设置默认令牌类型
         defaultToken: 'invalid',
-        
+
         // 大小写不敏感
         ignoreCase: true,
-        
+
         // 定义令牌类型
         tokenizer: {
           root: [
             // 注释 - Must be first to have highest priority
             [/#.*$/, 'comment'],
-            
+
             // 寄存器 - Improve pattern to properly match double-digit registers
             [/\b(x[0-9]|x[1-2][0-9]|x3[0-1]|zero|ra|sp|gp|tp|t[0-6]|s[0-9]|s1[0-1]|a[0-7])\b/, 'register'],
-            
+
             // 标签定义 (修改为仅匹配以冒号结尾的标签)
             [/[a-zA-Z0-9_]+:/, 'label'],
-            
+
             // 段定义
-            [/\.(text|data|section|global|align|byte|half|word|dword|float|double|ascii|asciz|zero)/, 'directive'],
-            
+            [/\.(text|data|section|global|align|byte|half|word|dword|float|double|ascii|asciz|string|space|zero)/, 'directive'],
+
             // 基本指令
             [/\b(add|sub|and|or|xor|sll|srl|sra|slt|sltu|addi|andi|ori|xori|slli|srli|srai|slti|sltiu|lb|lh|lw|ld|lbu|lhu|lwu|sb|sh|sw|sd|beq|bne|blt|bge|bltu|bgeu|jal|jalr|lui|auipc|ecall|ebreak)\b/, 'keyword'],
-            
+
             // 伪指令
-            [/\b(li|la|mv|not|neg|seqz|snez|sltz|sgtz|j|jr|call|ret|bgt|ble|bgtu|bleu|nop)\b/, 'keyword.pseudo'],
-            
+            [/\b(li|la|mv|not|neg|seqz|snez|sltz|sgtz|j|jal|jr|jalr|call|ret|tail|beqz|bnez|blez|bgez|bltz|bgtz|bgt|ble|bgtu|bleu|nop)\b/, 'keyword.pseudo'],
+
             // 数字（十六进制）- Move before decimal numbers
             [/0x[0-9a-fA-F]+/, 'number.hex'],
-            
+
             // 数字（十进制）- Updated to include negative numbers
             [/-?[0-9]+\b/, 'number'],
-            
+
             // 变量和标签引用 (新增规则匹配变量引用)
             [/\b[a-zA-Z][a-zA-Z0-9_]*\b/, 'identifier'],
-            
+
             // 字符串
             [/".*?"/, 'string'],
-            
+
             // 分隔符
             [/[,()]/, 'delimiter'],
           ],
         },
       });
-      
+
       // 定义编辑器主题
       monaco.editor.defineTheme('riscv-theme', {
         base: 'vs',
@@ -117,14 +117,14 @@ export function AssemblyEditor() {
     if (!editorCode || index === null || index < 0 || index >= assembledInstructions.length) {
       return -1;
     }
-    
+
     const sourceLines = editorCode.split('\n');
     let currentInstructionCount = 0;
     let inDataSegment = false; // 跟踪是否在数据段中
-    
+
     for (let i = 0; i < sourceLines.length; i++) {
       const line = sourceLines[i].split('#')[0].trim();
-      
+
       // 检查段标识符
       if (line === '.data') {
         inDataSegment = true;
@@ -133,25 +133,25 @@ export function AssemblyEditor() {
         inDataSegment = false;
         continue;
       }
-      
+
       // 如果在数据段中，跳过该行
       if (inDataSegment) {
         continue;
       }
-      
+
       // 跳过空行、注释行和标签行
       if (line && !line.endsWith(':')) {
         // 获取当前行展开后的指令数量
         const expandedInsts = expandPseudoInstruction(line);
         currentInstructionCount += expandedInsts.length;
-        
+
         // 判断当前指令索引是否在这一行的范围内
         if (index < currentInstructionCount) {
           return i;
         }
       }
     }
-    
+
     return -1;
   };
 
@@ -163,7 +163,7 @@ export function AssemblyEditor() {
       const currentPC = currentInstructionIndex * 4;
       const rows = tableBodyRef.current.querySelectorAll('tr');
       let highlightedRow = null;
-      
+
       // 查找包含当前PC地址的行
       for (const row of rows) {
         const firstCell = row.querySelector('td:first-child');
@@ -172,12 +172,12 @@ export function AssemblyEditor() {
           break;
         }
       }
-      
+
       // 如果找不到，则找已高亮的行
       if (!highlightedRow) {
         highlightedRow = tableBodyRef.current.querySelector('.bg-yellow-50')?.parentElement;
       }
-                             
+
       if (highlightedRow) {
         highlightedRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }
@@ -191,14 +191,14 @@ export function AssemblyEditor() {
       if (currentModel) {
         // 清除所有现有的装饰，包括可能由其他来源添加的装饰
         const oldDecorations = editorRef.current.getModel().getAllDecorations()
-          .filter((d: { options: { className?: string; glyphMarginClassName?: string } }) => 
+          .filter((d: { options: { className?: string; glyphMarginClassName?: string } }) =>
             d.options.className === 'monaco-highlight-line' || d.options.glyphMarginClassName === 'monaco-highlight-glyph')
           .map((d: { id: string }) => d.id);
-        
+
         if (oldDecorations.length > 0) {
           editorRef.current.deltaDecorations(oldDecorations, []);
         }
-        
+
         // 清除 ourselves tracking decorations
         if (decorations.length > 0) {
           editorRef.current.deltaDecorations(decorations, []);
@@ -272,7 +272,7 @@ export function AssemblyEditor() {
         }
       `;
       document.head.appendChild(styleElement);
-      
+
       return () => {
         document.head.removeChild(styleElement);
       };
@@ -288,14 +288,14 @@ export function AssemblyEditor() {
         if (currentModel) {
           // 清除所有现有的装饰，包括可能由其他来源添加的装饰
           const oldDecorations = editorRef.current.getModel().getAllDecorations()
-            .filter((d: { options: { className?: string; glyphMarginClassName?: string } }) => 
+            .filter((d: { options: { className?: string; glyphMarginClassName?: string } }) =>
               d.options.className === 'monaco-highlight-line' || d.options.glyphMarginClassName === 'monaco-highlight-glyph')
             .map((d: { id: string }) => d.id);
-          
+
           if (oldDecorations.length > 0) {
             editorRef.current.deltaDecorations(oldDecorations, []);
           }
-          
+
           // 清除 ourselves tracking decorations
           if (decorations.length > 0) {
             editorRef.current.deltaDecorations(decorations, []);
@@ -313,14 +313,14 @@ export function AssemblyEditor() {
       if (currentModel) {
         // Clear any existing decorations first
         const oldDecorations = editorRef.current.getModel().getAllDecorations()
-          .filter((d: { options: { className?: string; } }) => 
+          .filter((d: { options: { className?: string; } }) =>
             d.options.className === 'monaco-error-line')
           .map((d: { id: string }) => d.id);
-        
+
         if (oldDecorations.length > 0) {
           editorRef.current.deltaDecorations(oldDecorations, []);
         }
-        
+
         // Add the error decoration
         const newDecorations = editorRef.current.deltaDecorations([], [
           {
@@ -332,7 +332,7 @@ export function AssemblyEditor() {
             }
           }
         ]);
-        
+
         // Reveal the error line in the editor
         editorRef.current.revealLineInCenter(errorLineNumber);
       }
@@ -341,10 +341,10 @@ export function AssemblyEditor() {
       const currentModel = editorRef.current.getModel();
       if (currentModel) {
         const oldDecorations = editorRef.current.getModel().getAllDecorations()
-          .filter((d: { options: { className?: string; } }) => 
+          .filter((d: { options: { className?: string; } }) =>
             d.options.className === 'monaco-error-line')
           .map((d: { id: string }) => d.id);
-        
+
         if (oldDecorations.length > 0) {
           editorRef.current.deltaDecorations(oldDecorations, []);
         }
@@ -356,20 +356,20 @@ export function AssemblyEditor() {
     setError(null);
     setErrorLineNumber(null);
     useCircuitStore.getState().resetSimulation();
-    
+
     try {
       const assemblerInstance = new Assembler();
       const instructions = assemblerInstance.assemble(editorCode);
-      
+
       // 保存标签映射表，用于标签地址转换
       setLabelMap(assemblerInstance.getLabelMap());
-      
+
       // 处理内存数据（如果存在）
       // @ts-ignore - memoryData是我们特殊添加的属性
       if (instructions.length > 0 && instructions[0].memoryData) {
         // @ts-ignore
         const memoryData = instructions[0].memoryData;
-        
+
         // 在resetSimulation之后确保内存数据被正确设置
         // 增加延迟确保内存数据写入在模拟开始之前完成
         setTimeout(() => {
@@ -380,15 +380,15 @@ export function AssemblyEditor() {
             useCircuitStore.getState().updateMemory(memoryData);
           }, 10);
         }, 50);
-        
+
         // 从结果中删除memoryData属性，防止影响后续处理
         // @ts-ignore
         delete instructions[0].memoryData;
       }
-      
+
       // 过滤掉数据段指令，只保留文本段指令
       const textInstructions = instructions.filter(inst => inst.segment !== 'data');
-      
+
       // 将汇编指令与机器码对应
       // 此处我们将使用展开后的伪指令作为assembly
       const instructionsWithAssembly = textInstructions.map((inst) => {
@@ -399,7 +399,7 @@ export function AssemblyEditor() {
           originalLineNumber: inst.originalLineNumber || -1
         };
       });
-      
+
       setAssembledInstructions(instructionsWithAssembly);
 
       // 找到指令内存节点并更新其数据
@@ -438,33 +438,36 @@ export function AssemblyEditor() {
   // 转换标签到真实地址的函数
   const translateLabels = (assembly: string | undefined): string => {
     if (!assembly) return '';
-    
+
     // 解析组装后的指令
     const parts = assembly.split(/[\s,]+/).filter(Boolean);
     if (parts.length < 2) return assembly;  // 至少需要有指令和一个操作数
-    
+
     const op = parts[0].toLowerCase();
-    
+
     // 跳转和分支指令列表
-    const branchInstructions = ['beq', 'bne', 'blt', 'bge', 'bltu', 'bgeu'];
-    const jumpInstructions = ['jal', 'j', 'call'];
+    const branchInstructions = ['beq', 'bne', 'blt', 'bge', 'bltu', 'bgeu', 'beqz', 'bnez', 'blez', 'bgez', 'bltz', 'bgtz', 'bgt', 'ble', 'bgtu', 'bleu'];
+    const jumpInstructions = ['jal', 'j', 'call', 'tail'];
     const loadAddressInstr = ['la'];
-    
+
     let result = assembly;
-    
+
     // 格式化地址为8位十六进制
     const formatAddress = (address: number): string => {
       return `0x${address.toString(16).padStart(8, '0')}`;
     };
-    
+
     // 处理分支指令（最后一个操作数是标签）
-    if (branchInstructions.includes(op) && parts.length >= 4) {
+    if (branchInstructions.includes(op)) {
+      // 处理不同类型的分支指令
+      // beqz, bnez, blez, bgez, bltz, bgtz 只有两个操作数
+      // beq, bne, blt, bge, bltu, bgeu, bgt, ble, bgtu, bleu 有三个操作数
       const label = parts[parts.length - 1];
       if (labelMap[label] !== undefined) {
         const address = labelMap[label];
         result = result.replace(label, formatAddress(address));
       }
-    } 
+    }
     // 处理跳转指令
     else if (jumpInstructions.includes(op)) {
       const label = parts[parts.length - 1];
@@ -486,7 +489,7 @@ export function AssemblyEditor() {
       // jalr指令格式: jalr rd, offset(rs1)
       // 或简化形式: jalr rs1
       const lastPart = parts[parts.length - 1];
-      
+
       // 查找格式：offset(rs1)中的标签
       const offsetMatch = lastPart.match(/([^(]+)\(([^)]+)\)/);
       if (offsetMatch) {
@@ -497,7 +500,7 @@ export function AssemblyEditor() {
         }
       }
     }
-    
+
     return result;
   };
 
@@ -555,12 +558,12 @@ export function AssemblyEditor() {
                 <option value="" disabled>Load Example Program</option>
                 <option value="fibonacci">Fibonacci Program</option>
                 <option value="gcd">GCD Program</option>
-                <option value="r_type_test">R-Type Test</option>
+                {/* <option value="r_type_test">R-Type Test</option>
                 <option value="i_type_test">I-Type Test</option>
                 <option value="s_type_test">S-Type Test</option>
                 <option value="b_type_test">B-Type Test</option>
                 <option value="u_type_test">U-Type Test</option>
-                <option value="j_type_test">J-Type Test</option>
+                <option value="j_type_test">J-Type Test</option> */}
                 <option value="data_segment_test">Data Segment Test</option>
                 <option value="pseudo_instructions_test">Pseudo-Instructions Test</option>
                 <option value="ecall_test">ECALL Test</option>
@@ -573,7 +576,7 @@ export function AssemblyEditor() {
               </button>
             </div>
           </div>
-          
+
           <Editor
             height="calc(100vh - 140px)"
             defaultLanguage="riscv"
@@ -593,7 +596,7 @@ export function AssemblyEditor() {
             }}
             onMount={handleEditorDidMount}
             beforeMount={(monaco) => {
-          
+
               // Define the theme directly without checking if it exists
               monaco.editor.defineTheme('riscv-theme', {
                 base: 'vs',
@@ -617,7 +620,7 @@ export function AssemblyEditor() {
                   'editor.lineHighlightBackground': '#F0F0F0',
                 }
               });
-      
+
             }}
           />
         </div>
@@ -668,8 +671,8 @@ export function AssemblyEditor() {
                     assembledInstructions
                       .filter(inst => inst.segment !== 'data') // 过滤掉数据段指令
                       .map((inst, i) => (
-                      <tr 
-                        key={i} 
+                      <tr
+                        key={i}
                         className={`${currentInstructionIndex * 4 === inst.address ? 'bg-yellow-50 hover:bg-yellow-100' : 'hover:bg-gray-50'} transition-colors duration-150`}
                         id={`instruction-row-${i}`}
                       >
