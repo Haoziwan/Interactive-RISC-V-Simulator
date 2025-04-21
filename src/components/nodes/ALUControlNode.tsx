@@ -129,9 +129,12 @@ export function ALUControlNode({ data, id, selected }: { data: ALUControlNodeDat
           // I-type特殊指令
           switch (funct3) {
             case '000': return '0010'; // ADDI (2)
+            case '001': return '1011'; // SLLI (11)
             case '010': return '0111'; // SLTI (7)
             case '011': return '1010'; // SLTIU (10)
             case '100': return '0011'; // XORI (3)
+            case '101':
+              return funct7 === '0000000' ? '1000' : '1001'; // SRLI (8) / SRAI (9)
             case '110': return '0001'; // ORI (1)
             case '111': return '0000'; // ANDI (0)
             default: return '0010';
