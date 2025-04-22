@@ -8,6 +8,7 @@ interface DataMemoryNodeData {
   writeData?: number;
   memRead?: number;
   memWrite?: number;
+  memWidth?: number; // 0=byte, 1=half-word, 2=word
   size?: number;
   readData?: number;
 }
@@ -212,17 +213,20 @@ export function DataMemoryNode({ data, id, selected }: { data: DataMemoryNodeDat
     const memReadEdge = edges.find(edge => edge.target === id && edge.targetHandle === 'memRead');
     const writeDataEdge = edges.find(edge => edge.target === id && edge.targetHandle === 'writeData');
     const memWriteEdge = edges.find(edge => edge.target === id && edge.targetHandle === 'memWrite');
+    const memWidthEdge = edges.find(edge => edge.target === id && edge.targetHandle === 'memWidth');
 
     const newAddress = Number(getInputValue(addressEdge) ?? data.address ?? 0);
     const newMemRead = Number(getInputValue(memReadEdge) ?? data.memRead ?? 0);
     const newWriteData = Number(getInputValue(writeDataEdge) ?? data.writeData ?? 0);
     const newMemWrite = Number(getInputValue(memWriteEdge) ?? data.memWrite ?? 0);
+    const newMemWidth = Number(getInputValue(memWidthEdge) ?? data.memWidth ?? 2); // Default to word (2)
 
     // 只有当输入值发生实际变化时才更新
     const hasChanges = newAddress !== (data.address || 0) ||
                       newMemRead !== (data.memRead || 0) ||
                       newWriteData !== (data.writeData || 0) ||
-                      newMemWrite !== (data.memWrite || 0);
+                      newMemWrite !== (data.memWrite || 0) ||
+                      newMemWidth !== (data.memWidth ?? 2);
 
     if (hasChanges) {
       // 更新节点数据（更新所有输入端口状态）
@@ -230,8 +234,34 @@ export function DataMemoryNode({ data, id, selected }: { data: DataMemoryNodeDat
       let readData = 0;
 
       if (newMemRead > 0) {
-          readData = memory[addressHex] || 0;
+        // 根据内存宽度读取不同大小的数据
+        switch (newMemWidth) {
+          case 0: // 字节 (lb/lbu)
+            readData = memory[addressHex] || 0;
+            // 符号扩展 (lb) - 如果最高位为1，则扩展为负数
+            if (readData & 0x80) {
+              readData = readData | 0xFFFFFF00; // 符号扩展
+            }
+            break;
+          case 1: // 半字 (lh/lhu)
+            const byte0 = memory[addressHex] || 0;
+            const byte1 = memory[`0x${(newAddress + 1).toString(16).padStart(8, '0')}`] || 0;
+            readData = (byte1 << 8) | byte0;
+            // 符号扩展 (lh) - 如果最高位为1，则扩展为负数
+            if (readData & 0x8000) {
+              readData = readData | 0xFFFF0000; // 符号扩展
+            }
+            break;
+          case 2: // 字 (lw)
+          default:
+            const b0 = memory[addressHex] || 0;
+            const b1 = memory[`0x${(newAddress + 1).toString(16).padStart(8, '0')}`] || 0;
+            const b2 = memory[`0x${(newAddress + 2).toString(16).padStart(8, '0')}`] || 0;
+            const b3 = memory[`0x${(newAddress + 3).toString(16).padStart(8, '0')}`] || 0;
+            readData = (b3 << 24) | (b2 << 16) | (b1 << 8) | b0;
+            break;
         }
+      }
       // 记录读取位置和状态，用于cache
       setReadAddress(newAddress);
       setShouldRead(newMemRead > 0);
@@ -242,6 +272,7 @@ export function DataMemoryNode({ data, id, selected }: { data: DataMemoryNodeDat
         memRead: newMemRead,
         writeData: newWriteData,
         memWrite: newMemWrite,
+        memWidth: newMemWidth,
         readData: readData
       });
     }
@@ -263,19 +294,40 @@ export function DataMemoryNode({ data, id, selected }: { data: DataMemoryNodeDat
     const address = data.address || 0;
     const writeData = data.writeData || 0;
     const memWrite = data.memWrite || 0;
+    const memWidth = data.memWidth ?? 2; // Default to word (2)
 
     if (memWrite > 0) {
-      const addressHex = `0x${address.toString(16).padStart(8, '0')}`;
-
-      // // 只有当要写入的数据与当前内存中的数据不同时才执行写入
-      // if (writeData !== memory[addressHex]) {
       // 首先写入缓存
       writeToCache(address, writeData);
-      // 然后更新内存
-      updateMemory({
-        [addressHex]: writeData
-      });
-      // }
+
+      // 根据内存宽度写入不同大小的数据
+      const addressHex = `0x${address.toString(16).padStart(8, '0')}`;
+
+      switch (memWidth) {
+        case 0: // 字节 (sb)
+          // 只写入最低字节
+          updateMemory({
+            [addressHex]: writeData & 0xFF
+          });
+          break;
+        case 1: // 半字 (sh)
+          // 写入两个字节
+          updateMemory({
+            [addressHex]: writeData & 0xFF,
+            [`0x${(address + 1).toString(16).padStart(8, '0')}`]: (writeData >> 8) & 0xFF
+          });
+          break;
+        case 2: // 字 (sw)
+        default:
+          // 写入四个字节
+          updateMemory({
+            [addressHex]: writeData & 0xFF,
+            [`0x${(address + 1).toString(16).padStart(8, '0')}`]: (writeData >> 8) & 0xFF,
+            [`0x${(address + 2).toString(16).padStart(8, '0')}`]: (writeData >> 16) & 0xFF,
+            [`0x${(address + 3).toString(16).padStart(8, '0')}`]: (writeData >> 24) & 0xFF
+          });
+          break;
+      }
     }
   }, [stepCount]);
 
@@ -289,7 +341,7 @@ export function DataMemoryNode({ data, id, selected }: { data: DataMemoryNodeDat
         position={Position.Top}
         id="memWrite"
         className="w-3 h-3 bg-yellow-400"
-        style={{ left: '30%' }}
+        style={{ left: '20%' }}
         title="Write Enable Signal"
       />
       <Handle
@@ -297,8 +349,16 @@ export function DataMemoryNode({ data, id, selected }: { data: DataMemoryNodeDat
         position={Position.Top}
         id="memRead"
         className="w-3 h-3 bg-yellow-400"
-        style={{ left: '70%' }}
+        style={{ left: '50%' }}
         title="Read Enable Signal"
+      />
+      <Handle
+        type="target"
+        position={Position.Top}
+        id="memWidth"
+        className="w-3 h-3 bg-yellow-400"
+        style={{ left: '80%' }}
+        title="Memory Width (0=byte, 1=half, 2=word)"
       />
       <Handle
         type="target"
@@ -334,6 +394,7 @@ export function DataMemoryNode({ data, id, selected }: { data: DataMemoryNodeDat
         <div className="text-gray-500">Read Data: {data.readData || 0}</div>
         <div className="text-gray-500">MemRead: {data.memRead || 0}</div>
         <div className="text-gray-500">MemWrite: {data.memWrite || 0}</div>
+        <div className="text-gray-500">MemWidth: {data.memWidth ?? 2} ({data.memWidth === 0 ? 'byte' : data.memWidth === 1 ? 'half' : 'word'})</div>
         <div className="text-xs text-gray-400 mt-2">
           Size: {size} bytes
         </div>
