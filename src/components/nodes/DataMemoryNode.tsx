@@ -21,6 +21,7 @@ export function DataMemoryNode({ data, id, selected }: { data: DataMemoryNodeDat
   const edges = useEdges();
   const cache = useCircuitStore((state) => state.cache);
   const updateCacheStats = useCircuitStore((state) => state.updateCacheStats);
+  const initializeCache = useCircuitStore((state) => state.initializeCache);
 
   const size = data.size || 1024; // 默认1KB
 
@@ -51,6 +52,12 @@ export function DataMemoryNode({ data, id, selected }: { data: DataMemoryNodeDat
   // 从缓存中读取数据
   const readFromCache = (address: number): number | null => {
     const { config, sets } = cache;
+
+    // If cache is not initialized, return null
+    if (sets.length === 0) {
+      return null;
+    }
+
     const blockOffset = address % config.blockSize;
     const setIndex = Math.floor((address / config.blockSize) % config.sets);
     const tag = Math.floor(address / (config.blockSize * config.sets));
@@ -124,6 +131,12 @@ export function DataMemoryNode({ data, id, selected }: { data: DataMemoryNodeDat
   // 写入缓存
   const writeToCache = (address: number, data: number) => {
     const { config, sets } = cache;
+
+    // If cache is not initialized, return
+    if (sets.length === 0) {
+      return;
+    }
+
     const blockOffset = address % config.blockSize;
     const setIndex = Math.floor((address / config.blockSize) % config.sets);
     const tag = Math.floor(address / (config.blockSize * config.sets));
@@ -186,6 +199,13 @@ export function DataMemoryNode({ data, id, selected }: { data: DataMemoryNodeDat
   const [readAddress, setReadAddress] = React.useState<number>(0);
   const [shouldRead, setShouldRead] = React.useState<boolean>(false);
 
+  // Initialize cache if it's empty
+  React.useEffect(() => {
+    if (cache.sets.length === 0) {
+      initializeCache();
+    }
+  }, [cache.sets.length, initializeCache]);
+
   const updateInputConnections = () => {
     // 找到连接到此节点的边
     const addressEdge = edges.find(edge => edge.target === id && edge.targetHandle === 'address');
@@ -236,7 +256,7 @@ export function DataMemoryNode({ data, id, selected }: { data: DataMemoryNodeDat
   React.useEffect(() => {
     // 读取操作 - 模拟缓存读取（仅用于统计）
     if (shouldRead) {
-      const cachedData = readFromCache(readAddress);
+      readFromCache(readAddress); // Just for cache stats tracking
     }
 
     // 写入操作 - 实际更新内存状态

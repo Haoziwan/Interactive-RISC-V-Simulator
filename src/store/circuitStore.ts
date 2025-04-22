@@ -136,6 +136,11 @@ interface CircuitState {
   initializeCache: () => void;
   clearCache: () => void;
   updateCacheStats: (hit: boolean, writeback: boolean) => void;
+  updateCacheConfig: (config: {
+    size?: number;
+    blockSize?: number;
+    ways?: number;
+  }) => void;
   reset: () => void;
 }
 
@@ -840,10 +845,10 @@ export const useCircuitStore = create<CircuitState>()((set, get) => ({
   })),
   cache: {
     config: {
-      size: 32 * 1024,  // 32KB total cache size
+      size: 1 * 1024,  // 1KB total cache size
       blockSize: 16,    // 16 bytes per block (4 words)
       ways: 4,          // 4-way set associative
-      sets: 512         // 32KB / (16 bytes * 4 ways) = 512 sets
+      sets: 16          // 1KB / (16 bytes * 4 ways) = 16 sets
     },
     sets: [],
     stats: {
@@ -853,6 +858,36 @@ export const useCircuitStore = create<CircuitState>()((set, get) => ({
       missRate: 0,
       writebacks: 0
     }
+  },
+  updateCacheConfig: (config) => {
+    // Get current config
+    const currentConfig = get().cache.config;
+
+    // Update with new values
+    const newSize = config.size !== undefined ? config.size : currentConfig.size;
+    const newBlockSize = config.blockSize !== undefined ? config.blockSize : currentConfig.blockSize;
+    const newWays = config.ways !== undefined ? config.ways : currentConfig.ways;
+
+    // Calculate new number of sets based on the formula: sets = size / (blockSize * ways)
+    const newSets = Math.floor(newSize / (newBlockSize * newWays));
+
+    // Update the config
+    set(state => ({
+      cache: {
+        ...state.cache,
+        config: {
+          size: newSize,
+          blockSize: newBlockSize,
+          ways: newWays,
+          sets: newSets
+        },
+        // Clear sets when config changes
+        sets: []
+      }
+    }));
+
+    // Reinitialize the cache with the new configuration
+    get().initializeCache();
   },
   initializeCache: () => {
     const { config } = get().cache;

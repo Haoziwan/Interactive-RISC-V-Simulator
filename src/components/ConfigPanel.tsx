@@ -399,14 +399,15 @@ export function ConfigPanel() {
                   <li><span className="font-medium">Read Data:</span> 32-bit data output from the specified address when MemRead is active</li>
                 </ul>
                 <h4 className="text-sm font-medium text-blue-800 mt-2 mb-1">Cache Configuration</h4>
+                <p className="text-sm text-blue-700 mb-1">The cache is fully configurable through the Cache View panel. You can adjust:</p>
                 <ul className="text-sm text-blue-700 list-disc pl-5">
-                  <li><span className="font-medium">Cache Size:</span> 32 KB total cache size</li>
-                  <li><span className="font-medium">Block Size:</span> 64 bytes per cache block</li>
-                  <li><span className="font-medium">Associativity:</span> 4-way set associative</li>
-                  <li><span className="font-medium">Sets:</span> 128 cache sets</li>
+                  <li><span className="font-medium">Cache Size:</span> Total cache size in KB</li>
+                  <li><span className="font-medium">Block Size:</span> Size of each cache block in bytes</li>
+                  <li><span className="font-medium">Associativity:</span> Number of ways (direct-mapped to fully associative)</li>
                   <li><span className="font-medium">Replacement Policy:</span> LRU (Least Recently Used)</li>
                   <li><span className="font-medium">Write Policy:</span> Write-back with dirty bit</li>
                 </ul>
+                <p className="text-sm text-blue-700 mt-1">The number of sets is automatically calculated based on the formula: sets = cache size / (block size * ways).</p>
                 <h4 className="text-sm font-medium text-blue-800 mt-2 mb-1">Execution Logic</h4>
                 <p className="text-sm text-blue-700">
                 - Read operations: When MemRead is high, the memory first checks the cache. If there's a cache hit, data is returned from cache. On a cache miss, data is fetched from memory and stored in cache.<br/>
