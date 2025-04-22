@@ -563,16 +563,17 @@ export function AssemblyEditor() {
 
                 {/* Algorithm Examples */}
                 <option value="bubble_sort">Bubble Sort</option>
+                <option value="quicksort">Quicksort</option>
                 <option value="binary_search">Binary Search</option>
                 <option value="fibonacci">Fibonacci Program</option>
                 <option value="gcd">GCD Program</option>
-                 <option value="prime_check">Prime Number Checker</option>
+                <option value="prime_check">Prime Number Checker</option>
 
                 {/* Data Structure Examples */}
-              
+
                 <option value="matrix_multiply">Matrix Multiplication</option>
                 <option value="string_operations">String Operations</option>
-                
+
 
               </select>
               <button
