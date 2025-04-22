@@ -886,13 +886,13 @@ export class Assembler {
         } else {
           // Process data segment
           if (entry.instr.startsWith('.word')) {
-            const parts = entry.instr.split(/\s+/).slice(1);
+            const parts = entry.instr.split(/[\s,]+/).slice(1);
             currentAddr += 4 * parts.length;
           } else if (entry.instr.startsWith('.byte')) {
-            const parts = entry.instr.split(/\s+/).slice(1);
+            const parts = entry.instr.split(/[\s,]+/).slice(1);
             currentAddr += parts.length;
           } else if (entry.instr.startsWith('.half')) {
-            const parts = entry.instr.split(/\s+/).slice(1);
+            const parts = entry.instr.split(/[\s,]+/).slice(1);
             currentAddr += 2 * parts.length;
           } else if (entry.instr.startsWith('.ascii') || entry.instr.startsWith('.asciz') || entry.instr.startsWith('.string')) {
             const match = entry.instr.match(/"(.*)"/);
@@ -903,7 +903,7 @@ export class Assembler {
               currentAddr += increment;
             }
           } else if (entry.instr.startsWith('.space') || entry.instr.startsWith('.zero')) {
-            const parts = entry.instr.split(/\s+/).slice(1);
+            const parts = entry.instr.split(/[\s,]+/).slice(1);
             if (parts.length > 0) {
               const size = parseInt(parts[0]);
               if (!isNaN(size)) {
