@@ -945,11 +945,12 @@ export const useCircuitStore = create<CircuitState>()((set, get) => ({
       const stats = { ...state.cache.stats };
       if (hit) {
         stats.hits++;
-      } else {
-        stats.misses++;
-      }
+      } 
       if (writeback) {
         stats.writebacks++;
+      }
+      if(!hit && !writeback) {
+        stats.misses++;
       }
       const total = stats.hits + stats.misses;
       stats.hitRate = total > 0 ? stats.hits / total : 0;
