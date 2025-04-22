@@ -41,6 +41,7 @@ interface PerformanceStats {
   instructionsExecuted: number;
   cpi: number; // Cycles per instruction
   ipc: number; // Instructions per cycle
+  clockRate: number; // Clock rate in Hz (cycles per second)
 
   // Branch statistics
   branchCount: number;
@@ -182,6 +183,7 @@ export const useCircuitStore = create<CircuitState>()((set, get) => ({
     instructionsExecuted: 0,
     cpi: 0,
     ipc: 0,
+    clockRate: 0,
 
     // Branch statistics
     branchCount: 0,
@@ -441,12 +443,12 @@ export const useCircuitStore = create<CircuitState>()((set, get) => ({
 
     // 延迟到下一个事件循环设置寄存器默认值，但保留内存中的数据段
     setTimeout(() => {
-      set((state) => ({
+      set({
         registers: {
           2: 0x7ffffff0,  // sp
           3: 0x10000000   // gp
         }
-      }));
+      });
 
       get().updateAllNodesInputs();
     }, 0);
@@ -715,6 +717,12 @@ export const useCircuitStore = create<CircuitState>()((set, get) => ({
     // Calculate execution time
     if (stats.startTime !== null && stats.endTime !== null) {
       stats.executionTimeMs = stats.endTime - stats.startTime;
+
+      // Calculate clock rate (cycles per second)
+      if (stats.executionTimeMs > 0) {
+        // Convert ms to seconds and calculate cycles/second
+        stats.clockRate = (stats.cycleCount * 1000) / stats.executionTimeMs;
+      }
     }
 
     // Skip if no instruction is provided
@@ -802,6 +810,7 @@ export const useCircuitStore = create<CircuitState>()((set, get) => ({
       instructionsExecuted: 0,
       cpi: 0,
       ipc: 0,
+      clockRate: 0, // Clock rate in Hz (cycles per second)
 
       branchCount: 0,
       branchTakenCount: 0,

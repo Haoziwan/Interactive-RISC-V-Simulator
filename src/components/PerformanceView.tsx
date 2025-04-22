@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { useCircuitStore } from '../store/circuitStore';
-import { BarChart, Clock, Cpu, GitBranch, Database, ToggleLeft, ToggleRight, X, Maximize2, Minimize2 } from 'lucide-react';
+import { BarChart, Clock, Cpu, GitBranch, Database, ToggleLeft, ToggleRight, X, Maximize2, Minimize2, Zap } from 'lucide-react';
 
 interface PerformanceViewProps {
   onClose: () => void;
@@ -223,7 +223,7 @@ export function PerformanceView({
       </div>
 
       {/* Summary Cards */}
-      <div className="grid grid-cols-4 gap-4 mb-8">
+      <div className="grid grid-cols-5 gap-4 mb-8">
         <div className="bg-blue-50 p-4 rounded-lg shadow-sm">
           <div className="flex items-center gap-2 mb-2">
             <Clock className="w-5 h-5 text-blue-600" />
@@ -251,6 +251,19 @@ export function PerformanceView({
             <div className="text-sm font-medium text-amber-600">IPC</div>
           </div>
           <div className="text-2xl font-bold text-amber-700">{performanceStats.ipc.toFixed(2)}</div>
+        </div>
+        <div className="bg-teal-50 p-4 rounded-lg shadow-sm">
+          <div className="flex items-center gap-2 mb-2">
+            <Clock className="w-5 h-5 text-teal-600" />
+            <div className="text-sm font-medium text-teal-600">Clock Rate</div>
+          </div>
+          <div className="text-2xl font-bold text-teal-700">
+            {performanceStats.clockRate > 0
+              ? performanceStats.clockRate >= 1000
+                ? `${(performanceStats.clockRate / 1000).toFixed(2)} kHz`
+                : `${performanceStats.clockRate.toFixed(2)} Hz`
+              : '0 Hz'}
+          </div>
         </div>
       </div>
 
@@ -412,9 +425,21 @@ export function PerformanceView({
       {/* Execution Time */}
       <div className="bg-white p-6 rounded-lg shadow-sm">
         <h3 className="text-lg font-semibold text-gray-800 mb-4">Execution Time</h3>
-        <div className="flex justify-between items-center">
-          <span className="text-sm text-gray-600">Total Execution Time</span>
-          <span className="font-medium">{(performanceStats.executionTimeMs / 1000).toFixed(3)} seconds</span>
+        <div className="space-y-3">
+          <div className="flex justify-between items-center">
+            <span className="text-sm text-gray-600">Total Execution Time</span>
+            <span className="font-medium">{(performanceStats.executionTimeMs / 1000).toFixed(3)} seconds</span>
+          </div>
+          <div className="flex justify-between items-center">
+            <span className="text-sm text-gray-600">Clock Rate (Actual)</span>
+            <span className="font-medium">
+              {performanceStats.clockRate > 0
+                ? performanceStats.clockRate >= 1000
+                  ? `${(performanceStats.clockRate / 1000).toFixed(2)} kHz`
+                  : `${performanceStats.clockRate.toFixed(2)} Hz`
+                : '0 Hz'}
+            </span>
+          </div>
         </div>
       </div>
       </div>
