@@ -1,5 +1,5 @@
 {
-  "name": "circuit-2025-04-13T11-45-51-583Z",
+  "name": "circuit-2025-04-22T14-24-01-198Z",
   "nodes": [
     {
       "id": "register-1740456812349",
@@ -21,7 +21,7 @@
       },
       "width": 186,
       "height": 191,
-      "selected": true,
+      "selected": false,
       "positionAbsolute": {
         "x": 105.38097436837268,
         "y": 635.897983496489
@@ -37,9 +37,9 @@
       },
       "data": {
         "label": "IMM-GEN",
-        "instruction": "00000000000000000000000000110011",
-        "immediate": 0,
-        "format": "R"
+        "instruction": "00000000010000000000100010010011",
+        "immediate": 4,
+        "format": "I"
       },
       "width": 182,
       "height": 95,
@@ -54,8 +54,8 @@
       "id": "instr-distributer-1740456827777",
       "type": "instr-distributer",
       "position": {
-        "x": -75.16784971912512,
-        "y": 418.94925371494145
+        "x": -153.5897622730406,
+        "y": 431.1215323488199
       },
       "data": {
         "label": "INSTR-DISTRIBUTER",
@@ -71,8 +71,8 @@
       "height": 171,
       "selected": false,
       "positionAbsolute": {
-        "x": -75.16784971912512,
-        "y": 418.94925371494145
+        "x": -153.5897622730406,
+        "y": 431.1215323488199
       },
       "dragging": false
     },
@@ -108,7 +108,8 @@
       "data": {
         "label": "INSTRUCTION-MEMORY",
         "instructions": [],
-        "pc": 0
+        "pc": 0,
+        "value": "0"
       },
       "width": 273,
       "height": 95,
@@ -123,8 +124,8 @@
       "id": "control-1740456985517",
       "type": "control",
       "position": {
-        "x": -20.458558693431428,
-        "y": -84.58237480341933
+        "x": 132.4241577955753,
+        "y": -158.19987488432903
       },
       "data": {
         "label": "CONTROL",
@@ -139,14 +140,16 @@
         "opcode": "0000000",
         "aluSrc1": 0,
         "aluSrc2": 0,
-        "controlMux": 0
+        "controlMux": 0,
+        "memWidth": 2,
+        "funct3": "000"
       },
       "width": 160,
-      "height": 319,
+      "height": 435,
       "selected": false,
       "positionAbsolute": {
-        "x": -20.458558693431428,
-        "y": -84.58237480341933
+        "x": 132.4241577955753,
+        "y": -158.19987488432903
       },
       "dragging": false
     },
@@ -182,11 +185,12 @@
         "address": 0,
         "memRead": 0,
         "readData": 0,
-        "writeData": -1,
-        "memWrite": 0
+        "writeData": 0,
+        "memWrite": 0,
+        "memWidth": 0
       },
       "width": 206,
-      "height": 191,
+      "height": 215,
       "selected": false,
       "dragging": false,
       "positionAbsolute": {
@@ -656,7 +660,8 @@
         "outputValue": 0,
         "output-1": 0,
         "output-2": 0,
-        "output-3": 0
+        "output-3": 0,
+        "flush": 0
       },
       "width": 120,
       "height": 240,
@@ -671,8 +676,8 @@
       "id": "pipeline-register-1743929763213",
       "type": "pipeline-register",
       "position": {
-        "x": 416.42019643038736,
-        "y": -161.50552444628727
+        "x": 445.9452372493788,
+        "y": -194.88165754601673
       },
       "data": {
         "label": "",
@@ -694,11 +699,12 @@
           0,
           0,
           0,
+          0,
           0
         ],
         "output-0": 0,
         "name": "ID/EX",
-        "portCount": 17,
+        "portCount": 18,
         "value": 0,
         "reset": false,
         "outputValue": 0,
@@ -720,14 +726,15 @@
         "output-16": 0,
         "output-17": 0,
         "output-18": 0,
-        "output-19": 0
+        "output-19": 0,
+        "flush": 0
       },
       "width": 120,
-      "height": 1020,
+      "height": 1080,
       "selected": false,
       "positionAbsolute": {
-        "x": 416.42019643038736,
-        "y": -161.50552444628727
+        "x": 445.9452372493788,
+        "y": -194.88165754601673
       },
       "dragging": false
     },
@@ -749,11 +756,12 @@
           0,
           0,
           0,
+          0,
           0
         ],
         "output-0": 0,
         "name": "EX/MEM",
-        "portCount": 8,
+        "portCount": 9,
         "value": 0,
         "reset": false,
         "outputValue": 0,
@@ -763,11 +771,12 @@
         "output-4": 0,
         "output-5": 0,
         "output-6": 0,
-        "output-7": 0
+        "output-7": 0,
+        "output-8": 0
       },
       "width": 120,
-      "height": 480,
-      "selected": false,
+      "height": 540,
+      "selected": true,
       "positionAbsolute": {
         "x": 1341.8704587908535,
         "y": 33.34760621951199
@@ -810,6 +819,26 @@
       "positionAbsolute": {
         "x": 1899.3080929039638,
         "y": 132.98447420346776
+      },
+      "dragging": false
+    },
+    {
+      "id": "fork-1745331685532",
+      "type": "fork",
+      "position": {
+        "x": 43.30719695626004,
+        "y": 485.682687547097
+      },
+      "data": {
+        "label": "FORK",
+        "value": 0
+      },
+      "width": 32,
+      "height": 32,
+      "selected": false,
+      "positionAbsolute": {
+        "x": 43.30719695626004,
+        "y": 485.682687547097
       },
       "dragging": false
     }
@@ -1928,26 +1957,6 @@
         "height": 20,
         "color": "#999"
       },
-      "source": "instr-distributer-1740456827777",
-      "sourceHandle": "funct3",
-      "target": "pipeline-register-1743929763213",
-      "targetHandle": "input-11",
-      "id": "einstr-distributer-1740456827777-pipeline-register-1743929763213-2",
-      "selected": false
-    },
-    {
-      "type": "smoothstep",
-      "animated": false,
-      "style": {
-        "stroke": "#999",
-        "strokeWidth": 1
-      },
-      "markerEnd": {
-        "type": "arrow",
-        "width": 20,
-        "height": 20,
-        "color": "#999"
-      },
       "source": "pipeline-register-1743929763213",
       "sourceHandle": "output-11",
       "target": "fork-1740457222103",
@@ -2540,7 +2549,7 @@
       "animated": false,
       "style": {
         "stroke": "#999",
-        "strokeWidth": 3
+        "strokeWidth": 1
       },
       "markerEnd": {
         "type": "arrow",
@@ -2560,7 +2569,7 @@
       "animated": false,
       "style": {
         "stroke": "#999",
-        "strokeWidth": 3
+        "strokeWidth": 1
       },
       "markerEnd": {
         "type": "arrow",
@@ -2580,7 +2589,7 @@
       "animated": false,
       "style": {
         "stroke": "#999",
-        "strokeWidth": 3
+        "strokeWidth": 1
       },
       "markerEnd": {
         "type": "arrow",
@@ -2594,10 +2603,148 @@
       "targetHandle": "writeReg",
       "id": "epipeline-register-1743931720212-register-1740456812349-2",
       "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "instr-distributer-1740456827777",
+      "sourceHandle": "funct3",
+      "target": "fork-1745331685532",
+      "targetHandle": "input",
+      "selectable": true,
+      "focusable": true,
+      "updatable": true,
+      "id": "einstr-distributer-1740456827777-fork-1745331685532-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "fork-1745331685532",
+      "sourceHandle": "output-2",
+      "target": "pipeline-register-1743929763213",
+      "targetHandle": "input-11",
+      "selectable": true,
+      "focusable": true,
+      "updatable": true,
+      "id": "efork-1745331685532-pipeline-register-1743929763213-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "fork-1745331685532",
+      "sourceHandle": "output-1",
+      "target": "control-1740456985517",
+      "targetHandle": "funct3",
+      "selectable": true,
+      "focusable": true,
+      "updatable": true,
+      "id": "efork-1745331685532-control-1740456985517-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 3
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "control-1740456985517",
+      "sourceHandle": "memWidth",
+      "target": "pipeline-register-1743929763213",
+      "targetHandle": "input-17",
+      "selectable": true,
+      "focusable": true,
+      "updatable": true,
+      "id": "econtrol-1740456985517-pipeline-register-1743929763213-8",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 3
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "pipeline-register-1743929763213",
+      "sourceHandle": "output-17",
+      "target": "pipeline-register-1743931581067",
+      "targetHandle": "input-8",
+      "selectable": true,
+      "focusable": true,
+      "updatable": true,
+      "id": "epipeline-register-1743929763213-pipeline-register-1743931581067-7",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 3
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "pipeline-register-1743931581067",
+      "sourceHandle": "output-8",
+      "target": "memory-1740457029513",
+      "targetHandle": "memWidth",
+      "selectable": true,
+      "focusable": true,
+      "updatable": true,
+      "id": "epipeline-register-1743931581067-memory-1740457029513-4",
+      "selected": false
     }
   ],
   "isSimulating": false,
   "editorCode": "",
   "assembledInstructions": [],
-  "savedAt": "2025-04-13T11:45:51.583Z"
+  "savedAt": "2025-04-22T14:24:01.199Z"
 }

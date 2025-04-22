@@ -1,5 +1,5 @@
 {
-  "name": "circuit-2025-04-19T04-47-52-695Z",
+  "name": "circuit-2025-04-22T14-25-42-284Z",
   "nodes": [
     {
       "id": "register-1740456812349",
@@ -108,7 +108,8 @@
       "data": {
         "label": "INSTRUCTION-MEMORY",
         "instructions": [],
-        "pc": 0
+        "pc": 0,
+        "value": null
       },
       "width": 274,
       "height": 96,
@@ -123,8 +124,8 @@
       "id": "control-1740456985517",
       "type": "control",
       "position": {
-        "x": 35.8921056356462,
-        "y": -28.231710474341668
+        "x": 85.47178281063293,
+        "y": -133.66879573863548
       },
       "data": {
         "label": "CONTROL",
@@ -145,8 +146,8 @@
       "height": 320,
       "selected": false,
       "positionAbsolute": {
-        "x": 35.8921056356462,
-        "y": -28.231710474341668
+        "x": 85.47178281063293,
+        "y": -133.66879573863548
       },
       "dragging": false
     },
@@ -183,7 +184,8 @@
         "memRead": 0,
         "readData": 0,
         "writeData": 0,
-        "memWrite": 0
+        "memWrite": 0,
+        "memWidth": 0
       },
       "width": 206,
       "height": 192,
@@ -698,11 +700,12 @@
           0,
           0,
           0,
+          0,
           0
         ],
         "output-0": 0,
         "name": "ID/EX",
-        "portCount": 19,
+        "portCount": 20,
         "value": 0,
         "reset": false,
         "outputValue": 0,
@@ -728,7 +731,7 @@
         "flush": 0
       },
       "width": 120,
-      "height": 1140,
+      "height": 1200,
       "selected": false,
       "positionAbsolute": {
         "x": 474.18393266162605,
@@ -740,8 +743,8 @@
       "id": "pipeline-register-1743931581067",
       "type": "pipeline-register",
       "position": {
-        "x": 1341.8704587908535,
-        "y": 33.34760621951199
+        "x": 1358.9156666228112,
+        "y": 98.11939598095103
       },
       "data": {
         "label": "",
@@ -754,11 +757,12 @@
           0,
           0,
           0,
+          0,
           0
         ],
         "output-0": 0,
         "name": "EX/MEM",
-        "portCount": 8,
+        "portCount": 9,
         "value": 0,
         "reset": false,
         "outputValue": 0,
@@ -771,11 +775,11 @@
         "output-7": 0
       },
       "width": 120,
-      "height": 480,
+      "height": 540,
       "selected": false,
       "positionAbsolute": {
-        "x": 1341.8704587908535,
-        "y": 33.34760621951199
+        "x": 1358.9156666228112,
+        "y": 98.11939598095103
       },
       "dragging": false
     },
@@ -885,8 +889,8 @@
         "select": "0",
         "portCount": 3
       },
-      "width": 109,
-      "height": 148,
+      "width": 108,
+      "height": 147,
       "selected": false,
       "positionAbsolute": {
         "x": 1325.592418349941,
@@ -907,8 +911,8 @@
         "select": "0",
         "portCount": 3
       },
-      "width": 109,
-      "height": 148,
+      "width": 108,
+      "height": 147,
       "selected": false,
       "positionAbsolute": {
         "x": 1111.5729587585074,
@@ -952,6 +956,25 @@
       "positionAbsolute": {
         "x": 269.621408291561,
         "y": -648.3928151823305
+      },
+      "dragging": false
+    },
+    {
+      "id": "fork-1745331881227",
+      "type": "fork",
+      "position": {
+        "x": 209.737795103522,
+        "y": 486.39355979419895
+      },
+      "data": {
+        "label": "FORK"
+      },
+      "width": 32,
+      "height": 32,
+      "selected": false,
+      "positionAbsolute": {
+        "x": 209.737795103522,
+        "y": 486.39355979419895
       },
       "dragging": false
     }
@@ -2055,26 +2078,6 @@
       "target": "alu-control-1740457192016",
       "targetHandle": "funct7",
       "id": "epipeline-register-1743929763213-alu-control-1740457192016-2",
-      "selected": false
-    },
-    {
-      "type": "smoothstep",
-      "animated": false,
-      "style": {
-        "stroke": "#999",
-        "strokeWidth": 1
-      },
-      "markerEnd": {
-        "type": "arrow",
-        "width": 20,
-        "height": 20,
-        "color": "#999"
-      },
-      "source": "instr-distributer-1740456827777",
-      "sourceHandle": "funct3",
-      "target": "pipeline-register-1743929763213",
-      "targetHandle": "input-11",
-      "id": "einstr-distributer-1740456827777-pipeline-register-1743929763213-2",
       "selected": false
     },
     {
@@ -3268,7 +3271,7 @@
       "animated": false,
       "style": {
         "stroke": "#999",
-        "strokeWidth": 3
+        "strokeWidth": 1
       },
       "markerEnd": {
         "type": "arrow",
@@ -3285,10 +3288,148 @@
       "updatable": true,
       "id": "ebranch-hazard-unit-1745038000279-pipeline-register-1743929763213-1",
       "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "instr-distributer-1740456827777",
+      "sourceHandle": "funct3",
+      "target": "fork-1745331881227",
+      "targetHandle": "input",
+      "selectable": true,
+      "focusable": true,
+      "updatable": true,
+      "id": "einstr-distributer-1740456827777-fork-1745331881227-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "fork-1745331881227",
+      "sourceHandle": "output-2",
+      "target": "pipeline-register-1743929763213",
+      "targetHandle": "input-11",
+      "selectable": true,
+      "focusable": true,
+      "updatable": true,
+      "id": "efork-1745331881227-pipeline-register-1743929763213-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "fork-1745331881227",
+      "sourceHandle": "output-1",
+      "target": "control-1740456985517",
+      "targetHandle": "funct3",
+      "selectable": true,
+      "focusable": true,
+      "updatable": true,
+      "id": "efork-1745331881227-control-1740456985517-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 3
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "control-1740456985517",
+      "sourceHandle": "memWidth",
+      "target": "pipeline-register-1743929763213",
+      "targetHandle": "input-19",
+      "selectable": true,
+      "focusable": true,
+      "updatable": true,
+      "id": "econtrol-1740456985517-pipeline-register-1743929763213-8",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 3
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "pipeline-register-1743929763213",
+      "sourceHandle": "output-19",
+      "target": "pipeline-register-1743931581067",
+      "targetHandle": "input-8",
+      "selectable": true,
+      "focusable": true,
+      "updatable": true,
+      "id": "epipeline-register-1743929763213-pipeline-register-1743931581067-7",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 3
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "pipeline-register-1743931581067",
+      "sourceHandle": "output-8",
+      "target": "memory-1740457029513",
+      "targetHandle": "memWidth",
+      "selectable": true,
+      "focusable": true,
+      "updatable": true,
+      "id": "epipeline-register-1743931581067-memory-1740457029513-4",
+      "selected": false
     }
   ],
   "isSimulating": false,
   "editorCode": "",
   "assembledInstructions": [],
-  "savedAt": "2025-04-19T04:47:52.696Z"
+  "savedAt": "2025-04-22T14:25:42.284Z"
 }

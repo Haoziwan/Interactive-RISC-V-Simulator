@@ -309,49 +309,50 @@ export function ControlNode({ data, id, selected }: { data: ControlNodeData; id:
           <div className="mt-1 text-xs">MUX: {data.controlMux ?? 0}</div>
           <div className="mt-1 text-xs">Funct3: {data.funct3 ?? '000'}</div>
           <div className="flex flex-col gap-y-4">
-            <div className="flex justify-between items-center relative">
+            <div id="regWrite-row" className="flex justify-between items-center relative h-6">
               <span>RegWrite:</span>
               <span>{data.regWrite ?? 0}</span>
+              <Handle type="source" position={Position.Right} id="regWrite" className="w-3 h-3 bg-green-400 absolute" style={{ right: '-10px', top: '50%', transform: 'translateY(-50%)' }} title="RegWrite" />
             </div>
-            <div className="flex justify-between items-center relative">
+            <div id="aluSrc1-row" className="flex justify-between items-center relative h-6">
               <span>ALUSrc1:</span>
               <span>{data.aluSrc1 ?? 0}</span>
+              <Handle type="source" position={Position.Right} id="aluSrc1" className="w-3 h-3 bg-green-400 absolute" style={{ right: '-10px', top: '50%', transform: 'translateY(-50%)' }} title="ALUSrc1" />
             </div>
-            <div className="flex justify-between items-center relative">
+            <div id="aluSrc2-row" className="flex justify-between items-center relative h-6">
               <span>ALUSrc2:</span>
               <span>{data.aluSrc2 ?? 0}</span>
+              <Handle type="source" position={Position.Right} id="aluSrc2" className="w-3 h-3 bg-green-400 absolute" style={{ right: '-10px', top: '50%', transform: 'translateY(-50%)' }} title="ALUSrc2" />
             </div>
-            <div className="flex justify-between items-center relative">
+            <div id="memRead-row" className="flex justify-between items-center relative h-6">
               <span>MemRead:</span>
               <span>{data.memRead ?? 0}</span>
+              <Handle type="source" position={Position.Right} id="memRead" className="w-3 h-3 bg-green-400 absolute" style={{ right: '-10px', top: '50%', transform: 'translateY(-50%)' }} title="MemRead" />
             </div>
-            <div className="flex justify-between items-center relative">
+            <div id="memWrite-row" className="flex justify-between items-center relative h-6">
               <span>MemWrite:</span>
               <span>{data.memWrite ?? 0}</span>
+              <Handle type="source" position={Position.Right} id="memWrite" className="w-3 h-3 bg-green-400 absolute" style={{ right: '-10px', top: '50%', transform: 'translateY(-50%)' }} title="MemWrite" />
             </div>
-            <div className="flex justify-between items-center relative">
+            <div id="memWidth-row" className="flex justify-between items-center relative h-6">
               <span>MemWidth:</span>
               <span>{data.memWidth ?? 2}</span>
+              <Handle type="source" position={Position.Right} id="memWidth" className="w-3 h-3 bg-green-400 absolute" style={{ right: '-10px', top: '50%', transform: 'translateY(-50%)' }} title="MemWidth" />
             </div>
-            <div className="flex justify-between items-center relative">
+            <div id="aluOp-row" className="flex justify-between items-center relative h-6">
               <span>ALUOp:</span>
               <span>{data.aluOp ?? 0}</span>
+              <Handle type="source" position={Position.Right} id="aluOp" className="w-3 h-3 bg-green-400 absolute" style={{ right: '-10px', top: '50%', transform: 'translateY(-50%)' }} title="ALUOp" />
             </div>
-            <div className="flex justify-between items-center relative">
+            <div id="memToReg-row" className="flex justify-between items-center relative h-6">
               <span>MemToReg:</span>
               <span>{data.memToReg ?? 0}</span>
+              <Handle type="source" position={Position.Right} id="memToReg" className="w-3 h-3 bg-green-400 absolute" style={{ right: '-10px', top: '50%', transform: 'translateY(-50%)' }} title="MemToReg" />
             </div>
           </div>
         </div>
       </div>
-      <Handle type="source" position={Position.Right} id="regWrite" className="w-3 h-3 bg-green-400" style={{ top: '32%' }} title="RegWrite" />
-      <Handle type="source" position={Position.Right} id="aluSrc1" className="w-3 h-3 bg-green-400" style={{ top: '41%' }} title="ALUSrc1" />
-      <Handle type="source" position={Position.Right} id="aluSrc2" className="w-3 h-3 bg-green-400" style={{ top: '50%' }} title="ALUSrc2" />
-      <Handle type="source" position={Position.Right} id="memRead" className="w-3 h-3 bg-green-400" style={{ top: '55%' }} title="MemRead" />
-      <Handle type="source" position={Position.Right} id="memWrite" className="w-3 h-3 bg-green-400" style={{ top: '62%' }} title="MemWrite" />
-      <Handle type="source" position={Position.Right} id="memWidth" className="w-3 h-3 bg-green-400" style={{ top: '69%' }} title="MemWidth" />
-      <Handle type="source" position={Position.Right} id="aluOp" className="w-3 h-3 bg-green-400" style={{ top: '76%' }} title="ALUOp" />
-      <Handle type="source" position={Position.Right} id="memToReg" className="w-3 h-3 bg-green-400" style={{ top: '83%' }} title="MemToReg" />
+      {/* Output ports are now embedded within each row */}
     </div>
   );
 }
