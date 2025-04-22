@@ -107,9 +107,9 @@ export function DataMemoryNode({ data, id, selected }: { data: DataMemoryNodeDat
         for (let i = 0; i < config.blockSize / 4; i++) {
           const memAddress = oldAddress + i * 4;
           const memKey = `0x${memAddress.toString(16).padStart(8, '0')}`;
-          updateMemory({
-            [memKey]: lruEntry.data[i]
-          });
+          // updateMemory({
+          //   [memKey]: lruEntry.data[i]
+          // });
         }
         updateCacheStats(false, true);
       }
@@ -178,9 +178,9 @@ export function DataMemoryNode({ data, id, selected }: { data: DataMemoryNodeDat
       for (let i = 0; i < config.blockSize / 4; i++) {
         const memAddress = oldAddress + i * 4;
         const memKey = `0x${memAddress.toString(16).padStart(8, '0')}`;
-        updateMemory({
-          [memKey]: lruEntry.data[i]
-        });
+        // updateMemory({
+        //   [memKey]: lruEntry.data[i]
+        // });
       }
       updateCacheStats(false, true);
     }
