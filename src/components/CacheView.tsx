@@ -129,8 +129,8 @@ export function CacheView() {
                   setConfigError("Block size must be greater than 0 and a multiple of 4");
                   return;
                 }
-                if (associativity <= 0) {
-                  setConfigError("Associativity must be greater than 0");
+                if (associativity <= 0 || !Number.isInteger(associativity)) {
+                  setConfigError("Associativity must be a positive integer");
                   return;
                 }
 
