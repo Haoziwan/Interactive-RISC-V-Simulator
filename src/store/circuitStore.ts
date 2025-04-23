@@ -441,7 +441,6 @@ export const useCircuitStore = create<CircuitState>()((set, get) => ({
       pcValue: 0,
       currentInstructionIndex: 0,
       simulationHistory: [],
-      outputMessages: [], // Clear output messages when simulation is reset
       registers: {}, // Clear registers
       memory: state.memory // Preserve memory to keep data segment loaded by the assembler
     }));
@@ -574,7 +573,7 @@ export const useCircuitStore = create<CircuitState>()((set, get) => ({
               updatedMemory['0x' + (bufferAddr + len).toString(16)] = 0; // Null terminate
               get().updateMemory(updatedMemory); // Trigger memory update
               // Echo the input to the output panel
-              get().addOutputMessage(`Input: ${strInput}\n`);
+              get().addOutputMessage(`${strInput}`);
             } else {
               get().addOutputMessage("Input cancelled.\n");
               // Optionally halt or set an error flag
@@ -586,7 +585,7 @@ export const useCircuitStore = create<CircuitState>()((set, get) => ({
             if (charInput !== null && charInput.length > 0) {
               state.registers[10] = charInput.charCodeAt(0); // Store ASCII code in a0
               // Echo the input to the output panel
-              get().addOutputMessage(`Input: ${charInput} (ASCII: ${charInput.charCodeAt(0)})\n`);
+              get().addOutputMessage(`${charInput}`);
             } else {
               get().addOutputMessage("Invalid character input or cancelled.\n");
               // Optionally halt or set an error flag
@@ -598,7 +597,7 @@ export const useCircuitStore = create<CircuitState>()((set, get) => ({
             if (state.simulationTimer !== null) {
               window.clearInterval(state.simulationTimer);
             }
-            get().addOutputMessage("\nProgram exited with code: 0");
+            get().addOutputMessage("\nProgram exited with code: 0\n");
             return {
               isSimulating: false,
               simulationTimer: null,
@@ -606,7 +605,7 @@ export const useCircuitStore = create<CircuitState>()((set, get) => ({
             };
 
           default:
-            get().addOutputMessage(`Unsupported ECALL operation: ${syscallNumber}`);
+            get().addOutputMessage(`Unsupported ECALL operation: ${syscallNumber}\n`);
             // Consider halting simulation for unsupported calls
             // get().toggleSimulation();
         }
