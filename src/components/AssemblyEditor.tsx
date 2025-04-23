@@ -683,7 +683,7 @@ export function AssemblyEditor() {
                       .map((inst, i) => (
                       <tr
                         key={i}
-                        className={`${currentInstructionIndex * 4 === inst.address ? 'bg-yellow-50 hover:bg-yellow-100' : 'hover:bg-gray-50'} transition-colors duration-150`}
+                        className={`${currentInstructionIndex * 4 === inst.address ? 'bg-yellow-50 border border-yellow-200' : 'hover:bg-gray-50'} transition-all duration-500`}
                         id={`instruction-row-${i}`}
                       >
                         <td className="py-2 px-3 font-mono text-gray-600 text-xs whitespace-nowrap overflow-hidden text-ellipsis">{`0x${(inst.address !== undefined ? inst.address : i * 4).toString(16).padStart(8, '0')}`}</td>
