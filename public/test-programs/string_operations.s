@@ -6,7 +6,7 @@
 source_str:  .space 100                      # Buffer for user input string
 dest_str:    .space 100                      # Destination buffer for string operations
 prompt_msg:  .asciz "Enter a string: "
-length_msg:  .asciz "String length: "
+length_msg:  .asciz "\nString length: "
 copy_msg:    .asciz "\nCopied string: "
 reverse_msg: .asciz "\nReversed string: "
 

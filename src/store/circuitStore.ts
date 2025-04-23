@@ -548,15 +548,17 @@ export const useCircuitStore = create<CircuitState>()((set, get) => ({
               const intValue = parseInt(intInput, 10);
               if (!isNaN(intValue)) {
                 state.registers[10] = intValue; // Store in a0
+                // Echo the input to the output panel
+                get().addOutputMessage(`${intValue}`);
               } else {
-                get().addOutputMessage("Invalid integer input.");
+                get().addOutputMessage("Invalid integer input.\n");
                 // Optionally halt or set an error flag
-                // get().toggleSimulation(); 
+                // get().toggleSimulation();
               }
             } else {
-               get().addOutputMessage("Input cancelled.");
+               get().addOutputMessage("Input cancelled.\n");
                // Optionally halt or set an error flag
-               // get().toggleSimulation(); 
+               // get().toggleSimulation();
             }
             break;
           case 8: // Read String
@@ -571,20 +573,24 @@ export const useCircuitStore = create<CircuitState>()((set, get) => ({
               }
               updatedMemory['0x' + (bufferAddr + len).toString(16)] = 0; // Null terminate
               get().updateMemory(updatedMemory); // Trigger memory update
+              // Echo the input to the output panel
+              get().addOutputMessage(`Input: ${strInput}\n`);
             } else {
-              get().addOutputMessage("Input cancelled.");
+              get().addOutputMessage("Input cancelled.\n");
               // Optionally halt or set an error flag
-              // get().toggleSimulation(); 
+              // get().toggleSimulation();
             }
             break;
           case 12: // Read Character
             const charInput = prompt("Enter a character:");
             if (charInput !== null && charInput.length > 0) {
               state.registers[10] = charInput.charCodeAt(0); // Store ASCII code in a0
+              // Echo the input to the output panel
+              get().addOutputMessage(`Input: ${charInput} (ASCII: ${charInput.charCodeAt(0)})\n`);
             } else {
-              get().addOutputMessage("Invalid character input or cancelled.");
+              get().addOutputMessage("Invalid character input or cancelled.\n");
               // Optionally halt or set an error flag
-              // get().toggleSimulation(); 
+              // get().toggleSimulation();
             }
             break;
 
@@ -602,7 +608,7 @@ export const useCircuitStore = create<CircuitState>()((set, get) => ({
           default:
             get().addOutputMessage(`Unsupported ECALL operation: ${syscallNumber}`);
             // Consider halting simulation for unsupported calls
-            // get().toggleSimulation(); 
+            // get().toggleSimulation();
         }
       }
 
@@ -992,7 +998,7 @@ export const useCircuitStore = create<CircuitState>()((set, get) => ({
       const stats = { ...state.cache.stats };
       if (hit) {
         stats.hits++;
-      } 
+      }
       if (writeback) {
         stats.writebacks++;
       }
