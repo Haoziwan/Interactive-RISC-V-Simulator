@@ -542,6 +542,51 @@ export const useCircuitStore = create<CircuitState>()((set, get) => ({
               get().addOutputMessage(String.fromCharCode(charCode));
             }
             break;
+          case 5: // Read Integer
+            const intInput = prompt("Enter an integer:");
+            if (intInput !== null) {
+              const intValue = parseInt(intInput, 10);
+              if (!isNaN(intValue)) {
+                state.registers[10] = intValue; // Store in a0
+              } else {
+                get().addOutputMessage("Invalid integer input.");
+                // Optionally halt or set an error flag
+                // get().toggleSimulation(); 
+              }
+            } else {
+               get().addOutputMessage("Input cancelled.");
+               // Optionally halt or set an error flag
+               // get().toggleSimulation(); 
+            }
+            break;
+          case 8: // Read String
+            const bufferAddr = state.registers[10]; // a0 = buffer address
+            const maxLength = state.registers[11]; // a1 = max length
+            const strInput = prompt(`Enter a string (max ${maxLength} chars):`);
+            if (strInput !== null) {
+              const len = Math.min(strInput.length, maxLength - 1); // Reserve space for null terminator
+              const updatedMemory = { ...state.memory };
+              for (let i = 0; i < len; i++) {
+                updatedMemory['0x' + (bufferAddr + i).toString(16)] = strInput.charCodeAt(i);
+              }
+              updatedMemory['0x' + (bufferAddr + len).toString(16)] = 0; // Null terminate
+              get().updateMemory(updatedMemory); // Trigger memory update
+            } else {
+              get().addOutputMessage("Input cancelled.");
+              // Optionally halt or set an error flag
+              // get().toggleSimulation(); 
+            }
+            break;
+          case 12: // Read Character
+            const charInput = prompt("Enter a character:");
+            if (charInput !== null && charInput.length > 0) {
+              state.registers[10] = charInput.charCodeAt(0); // Store ASCII code in a0
+            } else {
+              get().addOutputMessage("Invalid character input or cancelled.");
+              // Optionally halt or set an error flag
+              // get().toggleSimulation(); 
+            }
+            break;
 
           case 93: // Exit (Linux compatible)
             if (state.simulationTimer !== null) {
@@ -556,6 +601,8 @@ export const useCircuitStore = create<CircuitState>()((set, get) => ({
 
           default:
             get().addOutputMessage(`Unsupported ECALL operation: ${syscallNumber}`);
+            // Consider halting simulation for unsupported calls
+            // get().toggleSimulation(); 
         }
       }
 

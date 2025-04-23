@@ -157,6 +157,9 @@ The simulator supports the following system calls via the `ecall` instruction:
 
 - **a7=1**: Print Integer (a0 = integer to print)
 - **a7=4**: Print String (a0 = address of string)
+- **a7=5**: Read Integer (result stored in a0)
+- **a7=8**: Read String (a0 = buffer address, a1 = max length)
+- **a7=12**: Read Character (result stored in a0)
 - **a7=10**: Exit Program
 - **a7=11**: Print Character (a0 = character code)
 - **a7=93**: Exit Program (Linux compatible)
