@@ -9,7 +9,7 @@ export function MemoryView() {
   const registers = useCircuitStore((state) => state.registers);
   const [displayFormat, setDisplayFormat] = useState<'hex' | 'dec'>('dec');
   const [startAddress, setStartAddress] = useState(0);
-  const [segment, setSegment] = useState<'data' | 'text' | 'gp' | 'sp'>('data');
+  const [segment, setSegment] = useState<'data' | 'text' | 'gp' | 'sp'>('gp');
   const [dataLabels, setDataLabels] = useState<Record<number, string>>({});
 
   const colCount = 16;
@@ -42,6 +42,14 @@ export function MemoryView() {
 
     setDataLabels(labels);
   }, [assembledInstructions]);
+
+  // 初始化时设置GP段的起始地址
+  useEffect(() => {
+    // 当组件首次加载时，如果默认段是gp，则设置正确的起始地址
+    if (segment === 'gp') {
+      setStartAddress(gpValue & ~0xF); // 对齐到16字节边界
+    }
+  }, [gpValue, segment]);
 
   const formatValue = (value: number) => {
     if (displayFormat === 'hex') {
