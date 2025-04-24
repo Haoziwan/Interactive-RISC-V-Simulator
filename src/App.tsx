@@ -115,7 +115,15 @@ function App() {
         <div className="container mx-auto px-4">
           <div className="flex items-center h-14">
             <div className="flex items-center mr-8 min-w-[160px]">
-              <h1 className="text-lg font-bold bg-gradient-to-r from-blue-600 to-blue-400 bg-clip-text text-transparent whitespace-nowrap">RISC-V Simulator</h1>
+              <a
+                href="https://github.com/Haoziwan/Interactive-RISC-V-Simulator"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center hover:opacity-80 transition-opacity"
+                title="View on GitHub"
+              >
+                <h1 className="text-lg font-bold bg-gradient-to-r from-blue-600 to-blue-400 bg-clip-text text-transparent whitespace-nowrap">RISC-V Simulator</h1>
+              </a>
             </div>
             <div className="flex-1 flex justify-center items-center space-x-2">
               <div className="flex bg-gray-50 rounded-lg p-1 space-x-1">
