@@ -106,9 +106,9 @@ export const parseRegister = (reg: string): number => {
 export const parseImmediate = (imm: string, bits: number, labelMap?: Record<string, number>): number => {
   let value: number;
 
-  // Handle %hi and %lo relocation operators
-  const hiMatch = imm.match(/^%hi\(([a-zA-Z0-9_]+)\)$/);
-  const loMatch = imm.match(/^%lo\(([a-zA-Z0-9_]+)\)$/);
+  // Handle %hi and %lo relocation operators (allow dots in label names)
+  const hiMatch = imm.match(/^%hi\(([a-zA-Z0-9_\.]+)\)$/);
+  const loMatch = imm.match(/^%lo\(([a-zA-Z0-9_\.]+)\)$/);
 
   if (hiMatch || loMatch) {
     if (!labelMap) {
@@ -568,7 +568,7 @@ export const parseInstruction = (line: string, currentAddress: number, labelMap:
       if (parts.length !== 3) throw new AssemblerError(`${op} instruction requires 2 operands with offset`);
       const [rd, memStr] = parts.slice(1);
       // Support both regular offsets and %lo expressions
-      const match = memStr.match(/(%lo\([a-zA-Z0-9_]+\)|\-?[0-9]+)\(([a-zA-Z0-9]+)\)/);
+      const match = memStr.match(/(%lo\([a-zA-Z0-9_\.]+\)|\-?[0-9]+)\(([a-zA-Z0-9]+)\)/);
       if (!match) throw new AssemblerError(`Invalid memory access format: ${memStr}`, {
     errorType: 'Memory Access Format Error',
     instruction: lineWithoutComment,
@@ -592,7 +592,7 @@ export const parseInstruction = (line: string, currentAddress: number, labelMap:
       if (parts.length !== 3) throw new AssemblerError(`${op} instruction requires 2 operands with offset`);
       const [rs2, memStr] = parts.slice(1);
       // Support both regular offsets and %lo expressions
-      const match = memStr.match(/(%lo\([a-zA-Z0-9_]+\)|\-?[0-9]+)\(([a-zA-Z0-9]+)\)/);
+      const match = memStr.match(/(%lo\([a-zA-Z0-9_\.]+\)|\-?[0-9]+)\(([a-zA-Z0-9]+)\)/);
       if (!match) throw new AssemblerError(`Invalid memory access format: ${memStr}`, {
     errorType: 'Memory Access Format Error',
     instruction: lineWithoutComment,
@@ -857,8 +857,8 @@ export class Assembler {
         lineNumber: lineNumber
       };
 
-      // Check for label
-      const labelMatch = trimmedLine.match(/^([a-zA-Z0-9_]+):/);
+      // Check for label - allow dots in label names
+      const labelMatch = trimmedLine.match(/^([a-zA-Z0-9_\.]+):/);
       if (labelMatch) {
         entry.hasLabel = true;
         entry.label = labelMatch[1];
@@ -1005,9 +1005,9 @@ export class Assembler {
                 if (expandedLine.includes('%LA_HI_') || expandedLine.includes('%LA_LO_') ||
                     expandedLine.includes('%LOAD_OFFSET_') || expandedLine.includes('%STORE_OFFSET_')) {
                   // Extract symbol name from placeholder
-                  let match = expandedLine.match(/%LA_(HI|LO)_([a-zA-Z0-9_]+)%/);
-                  let loadMatch = expandedLine.match(/%LOAD_OFFSET_([a-zA-Z0-9_]+)%/);
-                  let storeMatch = expandedLine.match(/%STORE_OFFSET_([a-zA-Z0-9_]+)%/);
+                  let match = expandedLine.match(/%LA_(HI|LO)_([a-zA-Z0-9_\.]+)%/);
+                  let loadMatch = expandedLine.match(/%LOAD_OFFSET_([a-zA-Z0-9_\.]+)%/);
+                  let storeMatch = expandedLine.match(/%STORE_OFFSET_([a-zA-Z0-9_\.]+)%/);
 
                   if (match) {
                     const type = match[1]; // HI or LO

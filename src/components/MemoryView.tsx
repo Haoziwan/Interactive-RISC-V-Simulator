@@ -34,7 +34,7 @@ export function MemoryView() {
       .forEach(inst => {
         // 从源代码中提取标签名称
         const sourceLine = inst.source || '';
-        const labelMatch = sourceLine.match(/^([a-zA-Z0-9_]+):/);
+        const labelMatch = sourceLine.match(/^([a-zA-Z0-9_\.]+):/);
         if (labelMatch && inst.address !== undefined) {
           labels[inst.address] = labelMatch[1];
         }

@@ -51,8 +51,8 @@ export function AssemblyEditor() {
             // 寄存器 - Improve pattern to properly match double-digit registers
             [/\b(x[0-9]|x[1-2][0-9]|x3[0-1]|zero|ra|sp|gp|tp|t[0-6]|s[0-9]|s1[0-1]|a[0-7])\b/, 'register'],
 
-            // 标签定义 (修改为仅匹配以冒号结尾的标签)
-            [/[a-zA-Z0-9_]+:/, 'label'],
+            // 标签定义 (修改为仅匹配以冒号结尾的标签，允许点号)
+            [/[a-zA-Z0-9_\.]+:/, 'label'],
 
             // 段定义
             [/\.(text|data|section|global|align|byte|half|word|dword|float|double|ascii|asciz|string|space|zero)/, 'directive'],
@@ -69,12 +69,12 @@ export function AssemblyEditor() {
             // 数字（十进制）- Updated to include negative numbers
             [/-?[0-9]+\b/, 'number'],
 
-            // %hi and %lo relocation operators
-            [/%hi\([a-zA-Z0-9_]+\)/, 'relocation'],
-            [/%lo\([a-zA-Z0-9_]+\)/, 'relocation'],
+            // %hi and %lo relocation operators (allow dots in label names)
+            [/%hi\([a-zA-Z0-9_\.]+\)/, 'relocation'],
+            [/%lo\([a-zA-Z0-9_\.]+\)/, 'relocation'],
 
-            // 变量和标签引用 (新增规则匹配变量引用)
-            [/\b[a-zA-Z][a-zA-Z0-9_]*\b/, 'identifier'],
+            // 变量和标签引用 (新增规则匹配变量引用，允许点号)
+            [/\b[a-zA-Z][a-zA-Z0-9_\.]*\b/, 'identifier'],
 
             // 字符串
             [/".*?"/, 'string'],
