@@ -169,6 +169,17 @@ const instructionFormats: InstructionFormat[] = [
       '.zero size - Allocate space of specified size (filled with zeros, same as .space)'
     ]
   },
+  // {
+  //   type: 'Relocation Operators',
+  //   instructions: [
+  //     '%hi(symbol) - Extract upper 20 bits of symbol address (bits 31:12)',
+  //     '%lo(symbol) - Extract lower 12 bits of symbol address (bits 11:0)',
+  //     'lui rd, %hi(symbol) - Load upper bits of address',
+  //     'addi rd, rd, %lo(symbol) - Add lower bits to complete address',
+  //     'lw rd, %lo(symbol)(rs1) - Load from address using %lo offset',
+  //     'sw rs2, %lo(symbol)(rs1) - Store to address using %lo offset'
+  //   ]
+  // },
   {
     type: 'System Instructions',
     instructions: [

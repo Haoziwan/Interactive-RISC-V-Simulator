@@ -103,9 +103,44 @@ export const parseRegister = (reg: string): number => {
   return num;
 };
 
-export const parseImmediate = (imm: string, bits: number): number => {
+export const parseImmediate = (imm: string, bits: number, labelMap?: Record<string, number>): number => {
   let value: number;
-  if (imm.startsWith('0x')) {
+
+  // Handle %hi and %lo relocation operators
+  const hiMatch = imm.match(/^%hi\(([a-zA-Z0-9_]+)\)$/);
+  const loMatch = imm.match(/^%lo\(([a-zA-Z0-9_]+)\)$/);
+
+  if (hiMatch || loMatch) {
+    if (!labelMap) {
+      throw new AssemblerError(`Cannot use %hi or %lo without a label map`, {
+        errorType: 'Relocation Error',
+        suggestion: 'Relocation operators %hi and %lo can only be used with defined labels'
+      });
+    }
+
+    const symbol = hiMatch ? hiMatch[1] : loMatch![1];
+
+    if (!(symbol in labelMap)) {
+      throw new AssemblerError(`Undefined label in %hi/%lo: ${symbol}`, {
+        errorType: 'Label Error',
+        suggestion: 'Please ensure the label is defined in the code'
+      });
+    }
+
+    const address = labelMap[symbol];
+
+    if (hiMatch) {
+      // For %hi, extract the upper 20 bits (bits 31:12)
+      value = (address >> 12) & 0xFFFFF;
+    } else {
+      // For %lo, extract the lower 12 bits (bits 11:0)
+      value = address & 0xFFF;
+      // Sign-extend if the value is negative (bit 11 is set)
+      if (value & 0x800) {
+        value = value | 0xFFFFF000; // Sign-extend to 32 bits
+      }
+    }
+  } else if (imm.startsWith('0x')) {
     value = parseInt(imm.slice(2), 16);
     // Handle hexadecimal negative numbers
     if (value >= (1 << (bits - 1))) {
@@ -114,30 +149,34 @@ export const parseImmediate = (imm: string, bits: number): number => {
   } else {
     value = parseInt(imm);
   }
+
   const max = (1 << (bits - 1)) - 1;
   const min = -(1 << (bits - 1));
   if (isNaN(value)) {
     throw new AssemblerError(`Invalid immediate format: ${imm}`, {
-    errorType: 'Immediate Error',
-    suggestion: 'Immediate values can be in decimal (e.g., 42) or hexadecimal (e.g., 0xff) format'
-  });
+      errorType: 'Immediate Error',
+      suggestion: 'Immediate values can be in decimal (e.g., 42), hexadecimal (e.g., 0xff), or relocation operators (%hi(label), %lo(label))'
+    });
   }
+
   // Special handling for branch offset
   if (bits === 13 || bits === 21) {
     if (value % 2 !== 0) {
       throw new AssemblerError(`Branch/jump target must be 2-byte aligned: ${imm}`, {
-    errorType: 'Alignment Error',
-    suggestion: 'Branch and jump instruction targets must be multiples of 2'
-  });
+        errorType: 'Alignment Error',
+        suggestion: 'Branch and jump instruction targets must be multiples of 2'
+      });
     }
     value = value >> 1; // Convert byte offset to word offset
   }
+
   if (value < min || value > max) {
     throw new AssemblerError(`Immediate must be between ${min} and ${max}: ${imm}`, {
-    errorType: 'Immediate Range Error',
-    suggestion: `Please ensure the immediate is within valid range (${min} to ${max})`
-  });
+      errorType: 'Immediate Range Error',
+      suggestion: `Please ensure the immediate is within valid range (${min} to ${max})`
+    });
   }
+
   return value;
 };
 
@@ -510,7 +549,7 @@ export const parseInstruction = (line: string, currentAddress: number, labelMap:
         opcode: '0010011',
         rd: parseRegister(parts[1]),
         rs1: parseRegister(parts[2]),
-        imm: parseImmediate(parts[3], 12),
+        imm: parseImmediate(parts[3], 12, labelMap),
         funct3: op === 'addi' ? '000' :
                op === 'slli' ? '001' :
                op === 'slti' ? '010' :
@@ -528,18 +567,19 @@ export const parseInstruction = (line: string, currentAddress: number, labelMap:
     case 'lhu': {
       if (parts.length !== 3) throw new AssemblerError(`${op} instruction requires 2 operands with offset`);
       const [rd, memStr] = parts.slice(1);
-      const match = memStr.match(/(-?\d+)\(([a-zA-Z0-9]+)\)/);
+      // Support both regular offsets and %lo expressions
+      const match = memStr.match(/(%lo\([a-zA-Z0-9_]+\)|\-?[0-9]+)\(([a-zA-Z0-9]+)\)/);
       if (!match) throw new AssemblerError(`Invalid memory access format: ${memStr}`, {
     errorType: 'Memory Access Format Error',
     instruction: lineWithoutComment,
-    suggestion: 'Memory access format should be: offset(register), e.g., 4(x2) or 4(sp)'
+    suggestion: 'Memory access format should be: offset(register) or %lo(symbol)(register), e.g., 4(x2) or %lo(data_var)(x2)'
   });
       return {
         type: 'I',
         opcode: '0000011',
         rd: parseRegister(rd),
         rs1: parseRegister(match[2]),
-        imm: parseImmediate(match[1], 12),
+        imm: parseImmediate(match[1], 12, labelMap),
         funct3: op === 'lb' ? '000' :
                op === 'lh' ? '001' :
                op === 'lw' ? '010' :
@@ -551,18 +591,19 @@ export const parseInstruction = (line: string, currentAddress: number, labelMap:
     case 'sw': {
       if (parts.length !== 3) throw new AssemblerError(`${op} instruction requires 2 operands with offset`);
       const [rs2, memStr] = parts.slice(1);
-      const match = memStr.match(/(-?\d+)\(([a-zA-Z0-9]+)\)/);
+      // Support both regular offsets and %lo expressions
+      const match = memStr.match(/(%lo\([a-zA-Z0-9_]+\)|\-?[0-9]+)\(([a-zA-Z0-9]+)\)/);
       if (!match) throw new AssemblerError(`Invalid memory access format: ${memStr}`, {
     errorType: 'Memory Access Format Error',
     instruction: lineWithoutComment,
-    suggestion: 'Memory access format should be: offset(register), e.g., 4(x2) or 4(sp)'
+    suggestion: 'Memory access format should be: offset(register) or %lo(symbol)(register), e.g., 4(x2) or %lo(data_var)(x2)'
   });
       return {
         type: 'S',
         opcode: '0100011',
         rs1: parseRegister(match[2]),
         rs2: parseRegister(rs2),
-        imm: parseImmediate(match[1], 12),
+        imm: parseImmediate(match[1], 12, labelMap),
         funct3: op === 'sb' ? '000' :
                op === 'sh' ? '001' : '010'
       };
@@ -607,7 +648,7 @@ export const parseInstruction = (line: string, currentAddress: number, labelMap:
         type: 'U',
         opcode: op === 'lui' ? '0110111' : '0010111',
         rd: parseRegister(parts[1]),
-        imm: parseImmediate(parts[2], 20)
+        imm: parseImmediate(parts[2], 20, labelMap)
       };
     }
     case 'jal': {
@@ -639,7 +680,7 @@ export const parseInstruction = (line: string, currentAddress: number, labelMap:
         opcode: '1100111',
         rd: parseRegister(parts[1]),
         rs1: parseRegister(parts[2]),
-        imm: parseImmediate(parts[3], 12),
+        imm: parseImmediate(parts[3], 12, labelMap),
         funct3: '000'
       };
     }

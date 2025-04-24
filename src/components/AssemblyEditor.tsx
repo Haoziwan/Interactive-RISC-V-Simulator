@@ -69,6 +69,10 @@ export function AssemblyEditor() {
             // 数字（十进制）- Updated to include negative numbers
             [/-?[0-9]+\b/, 'number'],
 
+            // %hi and %lo relocation operators
+            [/%hi\([a-zA-Z0-9_]+\)/, 'relocation'],
+            [/%lo\([a-zA-Z0-9_]+\)/, 'relocation'],
+
             // 变量和标签引用 (新增规则匹配变量引用)
             [/\b[a-zA-Z][a-zA-Z0-9_]*\b/, 'identifier'],
 
@@ -93,6 +97,7 @@ export function AssemblyEditor() {
           { token: 'keyword', foreground: 'A52A2A', fontStyle: 'bold' },
           { token: 'keyword.pseudo', foreground: 'B8860B' },
           { token: 'identifier', foreground: '0000ff' }, // 变量名与标签颜色一致
+          { token: 'relocation', foreground: 'D2691E', fontStyle: 'bold' }, // %hi and %lo operators
           { token: 'number.hex', foreground: '008000' },
           { token: 'number', foreground: '008000' },
           { token: 'string', foreground: 'ff0000' },
@@ -618,6 +623,7 @@ export function AssemblyEditor() {
                     { token: 'keyword', foreground: 'A52A2A', fontStyle: 'bold' },
                     { token: 'keyword.pseudo', foreground: 'B8860B' },
                     { token: 'identifier', foreground: '0000ff' }, // 变量名与标签颜色一致
+                    { token: 'relocation', foreground: 'D2691E', fontStyle: 'bold' }, // %hi and %lo operators
                     { token: 'number.hex', foreground: '008000' },
                     { token: 'number', foreground: '008000' },
                     { token: 'string', foreground: 'ff0000' },

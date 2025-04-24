@@ -38,6 +38,31 @@ describe('RISC-V Assembler', () => {
       expect(parseImmediate('2', 13)).toBe(1); // 2字节对齐，除以2
       expect(() => parseImmediate('3', 13)).toThrow('Branch/jump target must be 2-byte aligned');
     });
+
+    it('should correctly handle %hi and %lo relocation operators', () => {
+      const labelMap = { 'data_label': 0x12345678 };
+
+      // Test %hi operator - should extract upper 20 bits
+      expect(parseImmediate('%hi(data_label)', 20, labelMap)).toBe(0x12345);
+
+      // Test %lo operator - should extract lower 12 bits
+      expect(parseImmediate('%lo(data_label)', 12, labelMap)).toBe(0x678);
+
+      // Test %lo with sign extension (when bit 11 is set)
+      const labelMapWithNegative = { 'neg_label': 0x12345FFF };
+      expect(parseImmediate('%lo(neg_label)', 12, labelMapWithNegative)).toBe(-1); // 0xFFF sign-extended to 12 bits is -1
+    });
+
+    it('should throw error for %hi and %lo with missing label map', () => {
+      expect(() => parseImmediate('%hi(data_label)', 20)).toThrow('Cannot use %hi or %lo without a label map');
+      expect(() => parseImmediate('%lo(data_label)', 12)).toThrow('Cannot use %hi or %lo without a label map');
+    });
+
+    it('should throw error for %hi and %lo with undefined label', () => {
+      const labelMap = { 'existing_label': 0x1000 };
+      expect(() => parseImmediate('%hi(nonexistent_label)', 20, labelMap)).toThrow('Undefined label in %hi/%lo');
+      expect(() => parseImmediate('%lo(nonexistent_label)', 12, labelMap)).toThrow('Undefined label in %hi/%lo');
+    });
   });
 
   describe('parseInstruction', () => {
@@ -160,6 +185,19 @@ describe('RISC-V Assembler', () => {
       });
     });
 
+    it('should correctly parse I-type instruction with %lo operator', () => {
+      const labelMap = { 'data_var': 0x12345678 };
+      const inst = parseInstruction('addi x1, x2, %lo(data_var)', 0, labelMap);
+      expect(inst).toEqual({
+        type: 'I',
+        opcode: '0010011',
+        rd: 1,
+        rs1: 2,
+        imm: 0x678,
+        funct3: '000'
+      });
+    });
+
     it('should correctly parse S-type instruction', () => {
       const inst = parseInstruction('sw x1, 4(x2)', 0, {});
       expect(inst).toEqual({
@@ -168,6 +206,32 @@ describe('RISC-V Assembler', () => {
         rs1: 2,
         rs2: 1,
         imm: 4,
+        funct3: '010'
+      });
+    });
+
+    it('should correctly parse load instruction with %lo operator', () => {
+      const labelMap = { 'data_var': 0x12345678 };
+      const inst = parseInstruction('lw x1, %lo(data_var)(x2)', 0, labelMap);
+      expect(inst).toEqual({
+        type: 'I',
+        opcode: '0000011',
+        rd: 1,
+        rs1: 2,
+        imm: 0x678,
+        funct3: '010'
+      });
+    });
+
+    it('should correctly parse store instruction with %lo operator', () => {
+      const labelMap = { 'data_var': 0x12345678 };
+      const inst = parseInstruction('sw x1, %lo(data_var)(x2)', 0, labelMap);
+      expect(inst).toEqual({
+        type: 'S',
+        opcode: '0100011',
+        rs1: 2,
+        rs2: 1,
+        imm: 0x678,
         funct3: '010'
       });
     });
@@ -186,6 +250,17 @@ describe('RISC-V Assembler', () => {
 
     it('should correctly parse U-type instruction', () => {
       const inst = parseInstruction('lui x1, 0x12345', 0, {});
+      expect(inst).toEqual({
+        type: 'U',
+        opcode: '0110111',
+        rd: 1,
+        imm: 0x12345
+      });
+    });
+
+    it('should correctly parse U-type instruction with %hi operator', () => {
+      const labelMap = { 'data_var': 0x12345678 };
+      const inst = parseInstruction('lui x1, %hi(data_var)', 0, labelMap);
       expect(inst).toEqual({
         type: 'U',
         opcode: '0110111',
@@ -528,6 +603,48 @@ describe('RISC-V Assembler', () => {
       expect(addiInst?.assembly).toContain('addi x2, x2');
       expect(mvInst?.assembly).toContain('addi x3, x1, 0');
       expect(nopInst?.assembly).toContain('addi x0, x0, 0');
+    });
+
+    it('should correctly handle %hi and %lo operators in a program', () => {
+      const code = `
+        .data
+        var1: .word 0x12345678
+
+        .text
+        # Load address using %hi and %lo
+        lui x1, %hi(var1)
+        addi x1, x1, %lo(var1)
+
+        # Load value using %hi and %lo
+        lui x2, %hi(var1)
+        lw x2, %lo(var1)(x2)
+
+        # Store value using %hi and %lo
+        lui x3, %hi(var1)
+        sw x2, %lo(var1)(x3)
+      `;
+
+      const result = assembler.assemble(code);
+
+      // Check that we have the correct number of instructions (6 text instructions + 1 data word)
+      expect(result).toHaveLength(7);
+
+      // Find the instructions that use %hi and %lo
+      const luiInsts = result.filter(inst => inst.assembly?.includes('lui'));
+      const addiInst = result.find(inst => inst.assembly?.includes('addi'));
+      const lwInst = result.find(inst => inst.assembly?.includes('lw'));
+      const swInst = result.find(inst => inst.assembly?.includes('sw'));
+
+      // Verify that the instructions were generated correctly
+      expect(luiInsts).toHaveLength(3);
+      expect(addiInst).toBeTruthy();
+      expect(lwInst).toBeTruthy();
+      expect(swInst).toBeTruthy();
+
+      // Check that the data word was stored correctly
+      const dataInst = result.find(inst => inst.segment === 'data');
+      expect(dataInst).toBeTruthy();
+      expect(dataInst?.data).toEqual([0x12345678]);
     });
 
     it('should correctly handle branch pseudo-instructions', () => {
