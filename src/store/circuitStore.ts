@@ -525,7 +525,7 @@ export const useCircuitStore = create<CircuitState>()((set, get) => ({
             if (state.simulationTimer !== null) {
               window.clearInterval(state.simulationTimer);
             }
-            get().addOutputMessage("\nProgram exited with code: 0");
+            get().addOutputMessage("\nProgram exited with code: 0\n");
             return {
               isSimulating: false,
               simulationTimer: null,
