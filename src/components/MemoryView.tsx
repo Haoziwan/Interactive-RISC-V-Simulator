@@ -51,6 +51,14 @@ export function MemoryView() {
     }
   }, [gpValue, segment]);
 
+  // 监听SP寄存器值的变化，自动更新SP段的显示范围
+  useEffect(() => {
+    // 当SP寄存器值变化且当前显示的是SP段时，自动更新显示范围
+    if (segment === 'sp') {
+      setStartAddress(spValue & ~0xF); // 对齐到16字节边界
+    }
+  }, [spValue, segment]);
+
   const formatValue = (value: number) => {
     if (displayFormat === 'hex') {
       return (value & 0xFF).toString(16).padStart(2, '0').toUpperCase();
@@ -182,7 +190,7 @@ export function MemoryView() {
               type="button"
               onClick={() => handleSegmentChange('gp')}
               className={`px-3 py-1.5 rounded-md transition-colors ${segment === 'gp' ? 'bg-white shadow-sm text-blue-600' : 'text-gray-600 hover:bg-gray-100'}`}
-              title={`GP (x3): ${gpValue.toString(16).padStart(8, '0')}`}
+              title={`GP (x3): 0x${gpValue.toString(16).padStart(8, '0')}`}
             >
               GP
             </button>
@@ -190,7 +198,7 @@ export function MemoryView() {
               type="button"
               onClick={() => handleSegmentChange('sp')}
               className={`px-3 py-1.5 rounded-md transition-colors ${segment === 'sp' ? 'bg-white shadow-sm text-blue-600' : 'text-gray-600 hover:bg-gray-100'}`}
-              title={`SP (x2): ${spValue.toString(16).padStart(8, '0')}`}
+              title={`SP (x2): 0x${spValue.toString(16).padStart(8, '0')}`}
             >
               SP
             </button>
