@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { useCircuitStore } from '../store/circuitStore';
-import { ChevronDown, ChevronRight } from 'lucide-react';
+import { ChevronDown, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react';
 
 export function ConfigPanel() {
   const [isExpanded, setIsExpanded] = useState(true);
+  const [isWide, setIsWide] = useState(false);
   const selectedNode = useCircuitStore((state) => state.selectedNode);
   const updateNodeData = useCircuitStore((state) => state.updateNodeData);
 
@@ -637,25 +638,39 @@ export function ConfigPanel() {
     <div
       className="absolute bottom-0 bg-white border-l border-t border-gray-200 shadow-lg transition-all duration-300 rounded-t-lg overflow-hidden"
       style={{
-        width: '20rem',
+        width: isWide ? '40rem' : '20rem',
         right: '0rem',
         maxHeight: 'calc(100vh - 5rem)',
         transform: isExpanded ? 'translateY(0)' : 'translateY(calc(100% - 2.5rem))',
         opacity: isExpanded ? 1 : 0.95
       }}
     >
-      <div className="p-2 border-b border-gray-200 bg-white hover:bg-gray-50 transition-colors">
+      <div className="p-2 border-b border-gray-200 bg-white hover:bg-gray-50 transition-colors flex justify-between items-center">
         <button
-          className="w-full flex items-center justify-between text-left focus:outline-none group"
+          className="flex items-center text-left focus:outline-none group flex-grow"
           onClick={() => setIsExpanded(!isExpanded)}
         >
           <span className="font-medium text-gray-800 group-hover:text-blue-600 transition-colors">Component Description</span>
           {isExpanded ? (
-            <ChevronDown className="w-4 h-4" />
+            <ChevronDown className="w-4 h-4 ml-2" />
           ) : (
-            <ChevronRight className="w-4 h-4" />
+            <ChevronRight className="w-4 h-4 ml-2" />
           )}
         </button>
+        
+        {isExpanded && (
+          <button
+            className="flex items-center justify-center p-1 rounded hover:bg-gray-100 focus:outline-none"
+            onClick={() => setIsWide(!isWide)}
+            title={isWide ? "Narrow panel" : "Widen panel"}
+          >
+            {isWide ? (
+              <ChevronsLeft className="w-4 h-4 text-gray-600" />
+            ) : (
+              <ChevronsRight className="w-4 h-4 text-gray-600" />
+            )}
+          </button>
+        )}
       </div>
       <div
         className="overflow-y-auto bg-white"
