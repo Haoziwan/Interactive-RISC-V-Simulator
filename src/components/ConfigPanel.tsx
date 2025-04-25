@@ -19,16 +19,16 @@ export function ConfigPanel() {
             <h3 className="font-medium">Constant</h3>
             <div className="space-y-2">
               <div className="bg-blue-50 p-3 rounded-md mb-3">
-                <h4 className="text-sm font-medium text-blue-800 mb-1">Component Description</h4>
-                <p className="text-sm text-blue-700">A constant value source that outputs a fixed, predetermined value to other components. These values are hardcoded and don't change during execution.</p>
-                <h4 className="text-sm font-medium text-blue-800 mt-2 mb-1">Ports</h4>
-                <ul className="text-sm text-blue-700 list-disc pl-5">
+                <h4 className="text-xs font-medium text-blue-800 mb-1">Component Description</h4>
+                <p className="text-xs text-blue-700">A constant value source that outputs a fixed, predetermined value to other components. These values are hardcoded and don't change during execution.</p>
+                <h4 className="text-xs font-medium text-blue-800 mt-2 mb-1">Ports</h4>
+                <ul className="text-xs text-blue-700 list-disc pl-4">
                   <li><span className="font-medium">Output:</span> Provides the constant value (usually 32-bit) to connected components without requiring any inputs</li>
                 </ul>
-                <h4 className="text-sm font-medium text-blue-800 mt-2 mb-1">Execution Logic</h4>
-                <p className="text-sm text-blue-700">The constant component simply outputs its predetermined value at all times. It's commonly used for providing fixed values like '4' for PC incrementation, immediate values, or memory offsets. The output never changes regardless of clock cycles or other signals.</p>
+                <h4 className="text-xs font-medium text-blue-800 mt-2 mb-1">Execution Logic</h4>
+                <p className="text-xs text-blue-700">The constant component simply outputs its predetermined value at all times. It's commonly used for providing fixed values like '4' for PC incrementation, immediate values, or memory offsets. The output never changes regardless of clock cycles or other signals.</p>
               </div>
-              <p className="text-sm text-gray-500">No configuration needed</p>
+              <p className="text-xs text-gray-500">No configuration needed</p>
             </div>
           </div>
         );
@@ -38,18 +38,43 @@ export function ConfigPanel() {
             <h3 className="font-medium">Program Counter</h3>
             <div className="space-y-2">
               <div className="bg-blue-50 p-3 rounded-md mb-3">
-                <h4 className="text-sm font-medium text-blue-800 mb-1">Component Description</h4>
-                <p className="text-sm text-blue-700">The Program Counter (PC) is a special register that holds the memory address of the current instruction being executed. It's a critical component for instruction sequencing in the processor.</p>
-                <h4 className="text-sm font-medium text-blue-800 mt-2 mb-1">Ports</h4>
-                <ul className="text-sm text-blue-700 list-disc pl-5">
+                <h4 className="text-xs font-medium text-blue-800 mb-1">Component Description</h4>
+                <p className="text-xs text-blue-700">The Program Counter (PC) is a special register that holds the memory address of the current instruction being executed. It's a critical component for instruction sequencing in the processor.</p>
+                <h4 className="text-xs font-medium text-blue-800 mt-2 mb-1">Ports</h4>
+                <ul className="text-xs text-blue-700 list-disc pl-4">
                   <li><span className="font-medium">Input:</span> Next instruction address (32-bit value) to be loaded on the next clock edge</li>
                   <li><span className="font-medium">Output:</span> Current instruction address (32-bit value) used to fetch the current instruction</li>
                   <li><span className="font-medium">Clock:</span> System clock signal that triggers the update of the PC value</li>
                 </ul>
-                <h4 className="text-sm font-medium text-blue-800 mt-2 mb-1">Execution Logic</h4>
-                <p className="text-sm text-blue-700">On each positive clock edge, the PC updates its value to the address provided at its input. In normal sequential execution, this is PC+4 (next instruction), but for branches and jumps, it could be a calculated target address. The PC always starts at address 0x00000000 on system reset and is word-aligned (divisible by 4 in RISC-V).</p>
+                <h4 className="text-xs font-medium text-blue-800 mt-2 mb-1">Execution Logic</h4>
+                <div className="text-xs text-blue-700">
+                  <p className="mb-1">The Program Counter operates synchronously on the clock edge:</p>
+                  <table className="w-full border-collapse text-xs mb-2">
+                    <thead>
+                      <tr className="bg-blue-100">
+                        <th className="border border-blue-200 px-1 py-0.5 text-left">Event</th>
+                        <th className="border border-blue-200 px-1 py-0.5 text-left">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td className="border border-blue-200 px-1 py-0.5">System Reset</td>
+                        <td className="border border-blue-200 px-1 py-0.5">PC = 0x00000000</td>
+                      </tr>
+                      <tr>
+                        <td className="border border-blue-200 px-1 py-0.5">Rising Clock Edge</td>
+                        <td className="border border-blue-200 px-1 py-0.5">PC = Input value (typically PC+4 or branch/jump target)</td>
+                      </tr>
+                      <tr>
+                        <td className="border border-blue-200 px-1 py-0.5">Between Clock Edges</td>
+                        <td className="border border-blue-200 px-1 py-0.5">PC maintains its current value (stable output)</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  <p className="mt-1">The PC is always word-aligned (divisible by 4 in RISC-V) to ensure proper instruction alignment.</p>
+                </div>
               </div>
-              <p className="text-sm text-gray-500">No configuration needed</p>
+              <p className="text-xs text-gray-500">No configuration needed</p>
             </div>
           </div>
         );
@@ -133,13 +158,46 @@ export function ConfigPanel() {
                   <li><span className="font-medium">Instruction:</span> Complete 32-bit instruction input containing immediate fields</li>
                   <li><span className="font-medium">Output:</span> Properly formatted and sign-extended 32-bit immediate value</li>
                 </ul>
-                <h4 className="text-sm font-medium text-blue-800 mt-2 mb-1">Execution Logic</h4>
-                <p className="text-sm text-blue-700">The Immediate Generator operates combinationally by examining the instruction opcode to determine the format type, then extracting and processing the immediate bits accordingly:<br/>
-                - I-type: imm[11:0] = inst[31:20], sign-extended to 32 bits<br/>
-                - S-type: imm[11:0] = inst[31:25] + inst[11:7], sign-extended to 32 bits<br/>
-                - B-type: imm[12:0] = inst[31] + inst[7] + inst[30:25] + inst[11:8] + 0, sign-extended to 32 bits<br/>
-                - U-type: imm[31:12] = inst[31:12], lower 12 bits set to zero<br/>
-                - J-type: imm[20:0] = inst[31] + inst[19:12] + inst[20] + inst[30:21] + 0, sign-extended to 32 bits</p>
+                <h4 className="text-xs font-medium text-blue-800 mt-2 mb-1">Execution Logic</h4>
+                <div className="text-xs text-blue-700">
+                  <p className="mb-1">The Immediate Generator operates combinationally by examining the instruction opcode to determine the format type, then extracting and processing the immediate bits accordingly:</p>
+                  <table className="w-full border-collapse text-xs mb-2">
+                    <thead>
+                      <tr className="bg-blue-100">
+                        <th className="border border-blue-200 px-1 py-0.5 text-left">Format</th>
+                        <th className="border border-blue-200 px-1 py-0.5 text-left">Immediate Extraction</th>
+                        <th className="border border-blue-200 px-1 py-0.5 text-left">Extension</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td className="border border-blue-200 px-1 py-0.5">I-type</td>
+                        <td className="border border-blue-200 px-1 py-0.5">imm[11:0] = inst[31:20]</td>
+                        <td className="border border-blue-200 px-1 py-0.5">Sign-extended to 32 bits</td>
+                      </tr>
+                      <tr>
+                        <td className="border border-blue-200 px-1 py-0.5">S-type</td>
+                        <td className="border border-blue-200 px-1 py-0.5">imm[11:0] = inst[31:25] + inst[11:7]</td>
+                        <td className="border border-blue-200 px-1 py-0.5">Sign-extended to 32 bits</td>
+                      </tr>
+                      <tr>
+                        <td className="border border-blue-200 px-1 py-0.5">B-type</td>
+                        <td className="border border-blue-200 px-1 py-0.5">imm[12:0] = inst[31] + inst[7] + inst[30:25] + inst[11:8] + 0</td>
+                        <td className="border border-blue-200 px-1 py-0.5">Sign-extended to 32 bits</td>
+                      </tr>
+                      <tr>
+                        <td className="border border-blue-200 px-1 py-0.5">U-type</td>
+                        <td className="border border-blue-200 px-1 py-0.5">imm[31:12] = inst[31:12], lower 12 bits set to zero</td>
+                        <td className="border border-blue-200 px-1 py-0.5">Zero-extended</td>
+                      </tr>
+                      <tr>
+                        <td className="border border-blue-200 px-1 py-0.5">J-type</td>
+                        <td className="border border-blue-200 px-1 py-0.5">imm[20:0] = inst[31] + inst[19:12] + inst[20] + inst[30:21] + 0</td>
+                        <td className="border border-blue-200 px-1 py-0.5">Sign-extended to 32 bits</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
               </div>
               <p className="text-sm text-gray-500">No configuration needed</p>
             </div>
@@ -160,11 +218,32 @@ export function ConfigPanel() {
                   <li><span className="font-medium">Select:</span> Control signal (typically from Branch-AND-Zero or Jump logic) that determines which address to use next</li>
                   <li><span className="font-medium">Output:</span> Selected next PC value that will be loaded into the PC register</li>
                 </ul>
-                <h4 className="text-sm font-medium text-blue-800 mt-2 mb-1">Execution Logic</h4>
-                <p className="text-sm text-blue-700">The PC Multiplexer operates combinationally:<br/>
-                - When Select = 0: Output = Input 0 (PC+4), continuing sequential execution<br/>
-                - When Select = 1: Output = Input 1 (branch/jump target), changing program flow<br/>
-                The select signal is typically generated by branch/jump control logic based on instruction type and condition evaluation.</p>
+                <h4 className="text-xs font-medium text-blue-800 mt-2 mb-1">Execution Logic</h4>
+                <div className="text-xs text-blue-700">
+                  <p className="mb-1">The PC Multiplexer operates combinationally based on the select signal:</p>
+                  <table className="w-full border-collapse text-xs mb-2">
+                    <thead>
+                      <tr className="bg-blue-100">
+                        <th className="border border-blue-200 px-1 py-0.5 text-left">Select Value</th>
+                        <th className="border border-blue-200 px-1 py-0.5 text-left">Output</th>
+                        <th className="border border-blue-200 px-1 py-0.5 text-left">Program Flow</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td className="border border-blue-200 px-1 py-0.5">0</td>
+                        <td className="border border-blue-200 px-1 py-0.5">Input 0 (PC+4)</td>
+                        <td className="border border-blue-200 px-1 py-0.5">Sequential execution</td>
+                      </tr>
+                      <tr>
+                        <td className="border border-blue-200 px-1 py-0.5">1</td>
+                        <td className="border border-blue-200 px-1 py-0.5">Input 1 (Branch/Jump target)</td>
+                        <td className="border border-blue-200 px-1 py-0.5">Control flow change</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  <p className="mt-1">The select signal is typically generated by branch/jump control logic based on instruction type and condition evaluation.</p>
+                </div>
               </div>
               <p className="text-sm text-gray-500">No configuration needed</p>
             </div>
@@ -176,31 +255,76 @@ export function ConfigPanel() {
             <h3 className="font-medium">ALU </h3>
             <div className="space-y-2">
               <div className="bg-blue-50 p-3 rounded-md mb-3">
-                <h4 className="text-sm font-medium text-blue-800 mb-1">Component Description</h4>
-                <p className="text-sm text-blue-700">The Arithmetic Logic Unit (ALU) performs all computational operations in the processor including arithmetic (add, subtract), logical (AND, OR, XOR), comparison, and shifting operations on 32-bit operands based on the control signal.</p>
-                <h4 className="text-sm font-medium text-blue-800 mt-2 mb-1">Ports</h4>
-                <ul className="text-sm text-blue-700 list-disc pl-5">
+                <h4 className="text-xs font-medium text-blue-800 mb-1">Component Description</h4>
+                <p className="text-xs text-blue-700">The Arithmetic Logic Unit (ALU) performs all computational operations in the processor including arithmetic (add, subtract), logical (AND, OR, XOR), comparison, and shifting operations on 32-bit operands based on the control signal.</p>
+                <h4 className="text-xs font-medium text-blue-800 mt-2 mb-1">Ports</h4>
+                <ul className="text-xs text-blue-700 list-disc pl-4">
                   <li><span className="font-medium">Input A:</span> First 32-bit operand from register file or PC</li>
                   <li><span className="font-medium">Input B:</span> Second 32-bit operand from register file or immediate generator</li>
                   <li><span className="font-medium">ALU Control:</span> 4-bit operation selection signal from ALU Control unit</li>
                   <li><span className="font-medium">Output:</span> 32-bit result of the selected operation</li>
                   <li><span className="font-medium">Zero Flag:</span> 1-bit flag set when result equals zero, used for branch decisions</li>
                 </ul>
-                <h4 className="text-sm font-medium text-blue-800 mt-2 mb-1">Execution Logic</h4>
-                <p className="text-sm text-blue-700">The ALU operates combinationally, performing one of these operations based on the ALU Control input:<br/>
-                - Add (0000): Addition operation (A + B)<br/>
-                - Subtract (0001): Subtraction operation (A - B)<br/>
-                - AND (0010): Bitwise AND operation (A & B)<br/>
-                - OR (0011): Bitwise OR operation (A | B)<br/>
-                - XOR (0100): Bitwise XOR operation (A ^ B)<br/>
-                - SLL (0101): Logical left shift operation<br/>
-                - SRL (0110): Logical right shift operation<br/>
-                - SRA (0111): Arithmetic right shift operation<br/>
-                - SLT (1000): Set if less than, signed comparison<br/>
-                - SLTU (1001): Set if less than, unsigned comparison<br/>
-                The Zero flag is set when the output is exactly zero, primarily used for branch instructions.</p>
+                <h4 className="text-xs font-medium text-blue-800 mt-2 mb-1">Execution Logic</h4>
+                <div className="text-xs text-blue-700">
+                  <p className="mb-1">The ALU operates combinationally based on the ALU Control input:</p>
+
+                  <div className="mb-2">
+                    <div className="font-medium mb-1">Basic Operations:</div>
+                    <div className="overflow-x-auto">
+                      <table className="w-full border-collapse">
+                        <thead>
+                          <tr className="bg-blue-100">
+                            <th className="border border-blue-200 px-1 py-0.5 text-left">Control</th>
+                            <th className="border border-blue-200 px-1 py-0.5 text-left">Operation</th>
+                            <th className="border border-blue-200 px-1 py-0.5 text-left">Description</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr><td className="border border-blue-200 px-1 py-0.5">0000</td><td className="border border-blue-200 px-1 py-0.5">AND</td><td className="border border-blue-200 px-1 py-0.5">Bitwise AND (A & B)</td></tr>
+                          <tr><td className="border border-blue-200 px-1 py-0.5">0001</td><td className="border border-blue-200 px-1 py-0.5">OR</td><td className="border border-blue-200 px-1 py-0.5">Bitwise OR (A | B)</td></tr>
+                          <tr><td className="border border-blue-200 px-1 py-0.5">0010</td><td className="border border-blue-200 px-1 py-0.5">ADD</td><td className="border border-blue-200 px-1 py-0.5">Addition (A + B)</td></tr>
+                          <tr><td className="border border-blue-200 px-1 py-0.5">0011</td><td className="border border-blue-200 px-1 py-0.5">XOR</td><td className="border border-blue-200 px-1 py-0.5">Bitwise XOR (A ^ B)</td></tr>
+                          <tr><td className="border border-blue-200 px-1 py-0.5">0110</td><td className="border border-blue-200 px-1 py-0.5">SUB</td><td className="border border-blue-200 px-1 py-0.5">Subtraction (A - B)</td></tr>
+                          <tr><td className="border border-blue-200 px-1 py-0.5">0111</td><td className="border border-blue-200 px-1 py-0.5">SLT</td><td className="border border-blue-200 px-1 py-0.5">Set if less than (signed)</td></tr>
+                          <tr><td className="border border-blue-200 px-1 py-0.5">1000</td><td className="border border-blue-200 px-1 py-0.5">SRL</td><td className="border border-blue-200 px-1 py-0.5">Logical right shift</td></tr>
+                          <tr><td className="border border-blue-200 px-1 py-0.5">1001</td><td className="border border-blue-200 px-1 py-0.5">SRA</td><td className="border border-blue-200 px-1 py-0.5">Arithmetic right shift</td></tr>
+                          <tr><td className="border border-blue-200 px-1 py-0.5">1010</td><td className="border border-blue-200 px-1 py-0.5">SLTU</td><td className="border border-blue-200 px-1 py-0.5">Set if less than (unsigned)</td></tr>
+                          <tr><td className="border border-blue-200 px-1 py-0.5">1011</td><td className="border border-blue-200 px-1 py-0.5">SLL</td><td className="border border-blue-200 px-1 py-0.5">Logical left shift</td></tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+
+                  <div className="mb-2">
+                    <div className="font-medium mb-1">M-Extension Operations:</div>
+                    <div className="overflow-x-auto">
+                      <table className="w-full border-collapse">
+                        <thead>
+                          <tr className="bg-blue-100">
+                            <th className="border border-blue-200 px-1 py-0.5 text-left">Control</th>
+                            <th className="border border-blue-200 px-1 py-0.5 text-left">Operation</th>
+                            <th className="border border-blue-200 px-1 py-0.5 text-left">Description</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr><td className="border border-blue-200 px-1 py-0.5">1100</td><td className="border border-blue-200 px-1 py-0.5">MUL</td><td className="border border-blue-200 px-1 py-0.5">Multiplication (lower 32 bits)</td></tr>
+                          <tr><td className="border border-blue-200 px-1 py-0.5">1101</td><td className="border border-blue-200 px-1 py-0.5">MULH</td><td className="border border-blue-200 px-1 py-0.5">Multiplication high (signed×signed)</td></tr>
+                          <tr><td className="border border-blue-200 px-1 py-0.5">1110</td><td className="border border-blue-200 px-1 py-0.5">MULHU</td><td className="border border-blue-200 px-1 py-0.5">Multiplication high (unsigned×unsigned)</td></tr>
+                          <tr><td className="border border-blue-200 px-1 py-0.5">1111</td><td className="border border-blue-200 px-1 py-0.5">MULHSU</td><td className="border border-blue-200 px-1 py-0.5">Multiplication high (signed×unsigned)</td></tr>
+                          <tr><td className="border border-blue-200 px-1 py-0.5">10000</td><td className="border border-blue-200 px-1 py-0.5">DIV</td><td className="border border-blue-200 px-1 py-0.5">Division (signed)</td></tr>
+                          <tr><td className="border border-blue-200 px-1 py-0.5">10001</td><td className="border border-blue-200 px-1 py-0.5">DIVU</td><td className="border border-blue-200 px-1 py-0.5">Division (unsigned)</td></tr>
+                          <tr><td className="border border-blue-200 px-1 py-0.5">10010</td><td className="border border-blue-200 px-1 py-0.5">REM</td><td className="border border-blue-200 px-1 py-0.5">Remainder (signed)</td></tr>
+                          <tr><td className="border border-blue-200 px-1 py-0.5">10011</td><td className="border border-blue-200 px-1 py-0.5">REMU</td><td className="border border-blue-200 px-1 py-0.5">Remainder (unsigned)</td></tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+
+                  <p>The Zero flag is set when the output is exactly zero, primarily used for branch instructions.</p>
+                </div>
               </div>
-              <p className="text-sm text-gray-500">No configuration needed</p>
+              <p className="text-xs text-gray-500">No configuration needed</p>
             </div>
           </div>
         );
@@ -210,26 +334,89 @@ export function ConfigPanel() {
             <h3 className="font-medium">ALU Control</h3>
             <div className="space-y-2">
               <div className="bg-blue-50 p-3 rounded-md mb-3">
-                <h4 className="text-sm font-medium text-blue-800 mb-1">Component Description</h4>
-                <p className="text-sm text-blue-700">The ALU Control unit translates the high-level ALUOp signals from the main control unit and instruction function fields (funct3, funct7) into specific 4-bit control signals that determine the exact operation the ALU will perform.</p>
-                <h4 className="text-sm font-medium text-blue-800 mt-2 mb-1">Ports</h4>
-                <ul className="text-sm text-blue-700 list-disc pl-5">
+                <h4 className="text-xs font-medium text-blue-800 mb-1">Component Description</h4>
+                <p className="text-xs text-blue-700">The ALU Control unit translates the high-level ALUOp signals from the main control unit and instruction function fields (funct3, funct7) into specific 4-bit control signals that determine the exact operation the ALU will perform.</p>
+                <h4 className="text-xs font-medium text-blue-800 mt-2 mb-1">Ports</h4>
+                <ul className="text-xs text-blue-700 list-disc pl-4">
                   <li><span className="font-medium">ALUOp:</span> 2-bit control signal from main Control Unit indicating operation class</li>
                   <li><span className="font-medium">Funct7:</span> 7-bit function code from instruction bits 31-25, used for R-type operation differentiation</li>
                   <li><span className="font-medium">Funct3:</span> 3-bit function code from instruction bits 14-12, specifies operation within type</li>
                   <li><span className="font-medium">Operation:</span> 4-bit output control signal specifying the exact ALU operation to perform</li>
                 </ul>
-                <h4 className="text-sm font-medium text-blue-800 mt-2 mb-1">Execution Logic</h4>
-                <p className="text-sm text-blue-700">The ALU Control uses combinational logic to decode the instruction:<br/>
-                - When ALUOp = 00 (load/store): Always generates add operation (0000)<br/>
-                - When ALUOp = 01 (branch): Generates subtract operation (0001) for comparison<br/>
-                - When ALUOp = 10 (R-type): Decodes funct3 and funct7 for specific R-type operations<br/>
-                &nbsp;&nbsp;• For example, ADD (funct3=000, funct7=0000000) → 0000<br/>
-                &nbsp;&nbsp;• For example, SUB (funct3=000, funct7=0100000) → 0001<br/>
-                - When ALUOp = 11 (I-type ALU): Decodes funct3 for specific I-type operations<br/>
-                The mapping ensures that the ALU performs the correct operation for each instruction type.</p>
+                <h4 className="text-xs font-medium text-blue-800 mt-2 mb-1">Execution Logic</h4>
+                <div className="text-xs text-blue-700">
+                  <p className="mb-1">The ALU Control uses combinational logic to decode the instruction:</p>
+                  <table className="w-full border-collapse text-xs mb-2">
+                    <thead>
+                      <tr className="bg-blue-100">
+                        <th className="border border-blue-200 px-1 py-0.5 text-left">ALUOp</th>
+                        <th className="border border-blue-200 px-1 py-0.5 text-left">Instruction Type</th>
+                        <th className="border border-blue-200 px-1 py-0.5 text-left">Operation</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr><td className="border border-blue-200 px-1 py-0.5">00</td><td className="border border-blue-200 px-1 py-0.5">Load/Store</td><td className="border border-blue-200 px-1 py-0.5">ADD (0010)</td></tr>
+                      <tr><td className="border border-blue-200 px-1 py-0.5" rowSpan={3}>01</td><td className="border border-blue-200 px-1 py-0.5" rowSpan={3}>Branch</td><td className="border border-blue-200 px-1 py-0.5">BEQ/BNE: funct3=000/001 → SUB (0110)</td></tr>
+                      <tr><td className="border border-blue-200 px-1 py-0.5">BLT/BGE: funct3=100/101 → SLT (0111)</td></tr>
+                      <tr><td className="border border-blue-200 px-1 py-0.5">BLTU/BGEU: funct3=110/111 → SLTU (1010)</td></tr>
+                    </tbody>
+                  </table>
+
+                  <p className="mb-1">R-type instructions (ALUOp=10):</p>
+                  <table className="w-full border-collapse text-xs mb-2">
+                    <thead>
+                      <tr className="bg-blue-100">
+                        <th className="border border-blue-200 px-1 py-0.5 text-left">funct7</th>
+                        <th className="border border-blue-200 px-1 py-0.5 text-left">funct3</th>
+                        <th className="border border-blue-200 px-1 py-0.5 text-left">Operation</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr><td className="border border-blue-200 px-1 py-0.5" rowSpan={8}>0000000</td><td className="border border-blue-200 px-1 py-0.5">000</td><td className="border border-blue-200 px-1 py-0.5">ADD (0010)</td></tr>
+                      <tr><td className="border border-blue-200 px-1 py-0.5">001</td><td className="border border-blue-200 px-1 py-0.5">SLL (1011)</td></tr>
+                      <tr><td className="border border-blue-200 px-1 py-0.5">010</td><td className="border border-blue-200 px-1 py-0.5">SLT (0111)</td></tr>
+                      <tr><td className="border border-blue-200 px-1 py-0.5">011</td><td className="border border-blue-200 px-1 py-0.5">SLTU (1010)</td></tr>
+                      <tr><td className="border border-blue-200 px-1 py-0.5">100</td><td className="border border-blue-200 px-1 py-0.5">XOR (0011)</td></tr>
+                      <tr><td className="border border-blue-200 px-1 py-0.5">101</td><td className="border border-blue-200 px-1 py-0.5">SRL (1000)</td></tr>
+                      <tr><td className="border border-blue-200 px-1 py-0.5">110</td><td className="border border-blue-200 px-1 py-0.5">OR (0001)</td></tr>
+                      <tr><td className="border border-blue-200 px-1 py-0.5">111</td><td className="border border-blue-200 px-1 py-0.5">AND (0000)</td></tr>
+                      <tr><td className="border border-blue-200 px-1 py-0.5" rowSpan={2}>0100000</td><td className="border border-blue-200 px-1 py-0.5">000</td><td className="border border-blue-200 px-1 py-0.5">SUB (0110)</td></tr>
+                      <tr><td className="border border-blue-200 px-1 py-0.5">101</td><td className="border border-blue-200 px-1 py-0.5">SRA (1001)</td></tr>
+                      <tr><td className="border border-blue-200 px-1 py-0.5" rowSpan={8}>0000001<br/>(M-extension)</td><td className="border border-blue-200 px-1 py-0.5">000</td><td className="border border-blue-200 px-1 py-0.5">MUL (1100)</td></tr>
+                      <tr><td className="border border-blue-200 px-1 py-0.5">001</td><td className="border border-blue-200 px-1 py-0.5">MULH (1101)</td></tr>
+                      <tr><td className="border border-blue-200 px-1 py-0.5">010</td><td className="border border-blue-200 px-1 py-0.5">MULHSU (1111)</td></tr>
+                      <tr><td className="border border-blue-200 px-1 py-0.5">011</td><td className="border border-blue-200 px-1 py-0.5">MULHU (1110)</td></tr>
+                      <tr><td className="border border-blue-200 px-1 py-0.5">100</td><td className="border border-blue-200 px-1 py-0.5">DIV (10000)</td></tr>
+                      <tr><td className="border border-blue-200 px-1 py-0.5">101</td><td className="border border-blue-200 px-1 py-0.5">DIVU (10001)</td></tr>
+                      <tr><td className="border border-blue-200 px-1 py-0.5">110</td><td className="border border-blue-200 px-1 py-0.5">REM (10010)</td></tr>
+                      <tr><td className="border border-blue-200 px-1 py-0.5">111</td><td className="border border-blue-200 px-1 py-0.5">REMU (10011)</td></tr>
+                    </tbody>
+                  </table>
+
+                  <p className="mb-1">I-type ALU instructions (ALUOp=11):</p>
+                  <table className="w-full border-collapse text-xs mb-2">
+                    <thead>
+                      <tr className="bg-blue-100">
+                        <th className="border border-blue-200 px-1 py-0.5 text-left">funct3</th>
+                        <th className="border border-blue-200 px-1 py-0.5 text-left">Operation</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr><td className="border border-blue-200 px-1 py-0.5">000</td><td className="border border-blue-200 px-1 py-0.5">ADDI (0010)</td></tr>
+                      <tr><td className="border border-blue-200 px-1 py-0.5">001</td><td className="border border-blue-200 px-1 py-0.5">SLLI (1011)</td></tr>
+                      <tr><td className="border border-blue-200 px-1 py-0.5">010</td><td className="border border-blue-200 px-1 py-0.5">SLTI (0111)</td></tr>
+                      <tr><td className="border border-blue-200 px-1 py-0.5">011</td><td className="border border-blue-200 px-1 py-0.5">SLTIU (1010)</td></tr>
+                      <tr><td className="border border-blue-200 px-1 py-0.5">100</td><td className="border border-blue-200 px-1 py-0.5">XORI (0011)</td></tr>
+                      <tr><td className="border border-blue-200 px-1 py-0.5">101</td><td className="border border-blue-200 px-1 py-0.5">SRLI/SRAI (1000/1001) based on funct7</td></tr>
+                      <tr><td className="border border-blue-200 px-1 py-0.5">110</td><td className="border border-blue-200 px-1 py-0.5">ORI (0001)</td></tr>
+                      <tr><td className="border border-blue-200 px-1 py-0.5">111</td><td className="border border-blue-200 px-1 py-0.5">ANDI (0000)</td></tr>
+                    </tbody>
+                  </table>
+
+                  <p className="mt-1">The mapping ensures that the ALU performs the correct operation for each instruction type, with full support for RV32I and RV32M instruction sets.</p>
+                </div>
               </div>
-              <p className="text-sm text-gray-500">No configuration needed</p>
+              <p className="text-xs text-gray-500">No configuration needed</p>
             </div>
           </div>
         );
@@ -239,10 +426,10 @@ export function ConfigPanel() {
             <h3 className="font-medium">Forwarding Unit</h3>
             <div className="space-y-2">
               <div className="bg-blue-50 p-3 rounded-md mb-3">
-                <h4 className="text-sm font-medium text-blue-800 mb-1">Component Description</h4>
-                <p className="text-sm text-blue-700">The Forwarding Unit detects data hazards in pipelined execution by comparing register numbers between instructions. It generates forwarding control signals to bypass values from later pipeline stages when needed, eliminating pipeline stalls for data dependencies.</p>
-                <h4 className="text-sm font-medium text-blue-800 mt-2 mb-1">Ports</h4>
-                <ul className="text-sm text-blue-700 list-disc pl-5">
+                <h4 className="text-xs font-medium text-blue-800 mb-1">Component Description</h4>
+                <p className="text-xs text-blue-700">The Forwarding Unit detects data hazards in pipelined execution by comparing register numbers between instructions. It generates forwarding control signals to bypass values from later pipeline stages when needed, eliminating pipeline stalls for data dependencies.</p>
+                <h4 className="text-xs font-medium text-blue-800 mt-2 mb-1">Ports</h4>
+                <ul className="text-xs text-blue-700 list-disc pl-4">
                   <li><span className="font-medium">ID/EX.Rs1:</span> Current instruction's first source register number</li>
                   <li><span className="font-medium">ID/EX.Rs2:</span> Current instruction's second source register number</li>
                   <li><span className="font-medium">EX/MEM.Rd:</span> Previous instruction's destination register number</li>
@@ -252,17 +439,50 @@ export function ConfigPanel() {
                   <li><span className="font-medium">ForwardA:</span> 2-bit control signal for ALU operand A forwarding (0=no forward, 1=MEM/WB, 2=EX/MEM)</li>
                   <li><span className="font-medium">ForwardB:</span> 2-bit control signal for ALU operand B forwarding (0=no forward, 1=MEM/WB, 2=EX/MEM)</li>
                 </ul>
-                <h4 className="text-sm font-medium text-blue-800 mt-2 mb-1">Execution Logic</h4>
-                <p className="text-sm text-blue-700">The Forwarding Unit operates combinationally:<br/>
-                - For ForwardA (Rs1):<br/>
-                &nbsp;&nbsp;• If EX/MEM.RegWrite=1 and EX/MEM.Rd=Rs1 and EX/MEM.Rd≠0 → Forward from EX/MEM (priority)<br/>
-                &nbsp;&nbsp;• Else if MEM/WB.RegWrite=1 and MEM/WB.Rd=Rs1 and MEM/WB.Rd≠0 → Forward from MEM/WB<br/>
-                - For ForwardB (Rs2):<br/>
-                &nbsp;&nbsp;• If EX/MEM.RegWrite=1 and EX/MEM.Rd=Rs2 and EX/MEM.Rd≠0 → Forward from EX/MEM (priority)<br/>
-                &nbsp;&nbsp;• Else if MEM/WB.RegWrite=1 and MEM/WB.Rd=Rs2 and MEM/WB.Rd≠0 → Forward from MEM/WB<br/>
-                This logic ensures correct values are forwarded to ALU inputs when data dependencies exist between instructions.</p>
+                <h4 className="text-xs font-medium text-blue-800 mt-2 mb-1">Execution Logic</h4>
+                <div className="text-xs text-blue-700">
+                  <p className="mb-1">The Forwarding Unit operates combinationally to detect and resolve data hazards:</p>
+                  <table className="w-full border-collapse text-xs mb-2">
+                    <thead>
+                      <tr className="bg-blue-100">
+                        <th className="border border-blue-200 px-1 py-0.5 text-left">Port</th>
+                        <th className="border border-blue-200 px-1 py-0.5 text-left">Condition</th>
+                        <th className="border border-blue-200 px-1 py-0.5 text-left">Value</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td className="border border-blue-200 px-1 py-0.5" rowSpan={3}>ForwardA (Rs1)</td>
+                        <td className="border border-blue-200 px-1 py-0.5">EX/MEM.RegWrite=1 and EX/MEM.Rd=Rs1 and EX/MEM.Rd≠0</td>
+                        <td className="border border-blue-200 px-1 py-0.5">2 (Forward from EX/MEM)</td>
+                      </tr>
+                      <tr>
+                        <td className="border border-blue-200 px-1 py-0.5">MEM/WB.RegWrite=1 and MEM/WB.Rd=Rs1 and MEM/WB.Rd≠0</td>
+                        <td className="border border-blue-200 px-1 py-0.5">1 (Forward from MEM/WB)</td>
+                      </tr>
+                      <tr>
+                        <td className="border border-blue-200 px-1 py-0.5">Otherwise</td>
+                        <td className="border border-blue-200 px-1 py-0.5">0 (No forwarding)</td>
+                      </tr>
+                      <tr>
+                        <td className="border border-blue-200 px-1 py-0.5" rowSpan={3}>ForwardB (Rs2)</td>
+                        <td className="border border-blue-200 px-1 py-0.5">EX/MEM.RegWrite=1 and EX/MEM.Rd=Rs2 and EX/MEM.Rd≠0</td>
+                        <td className="border border-blue-200 px-1 py-0.5">2 (Forward from EX/MEM)</td>
+                      </tr>
+                      <tr>
+                        <td className="border border-blue-200 px-1 py-0.5">MEM/WB.RegWrite=1 and MEM/WB.Rd=Rs2 and MEM/WB.Rd≠0</td>
+                        <td className="border border-blue-200 px-1 py-0.5">1 (Forward from MEM/WB)</td>
+                      </tr>
+                      <tr>
+                        <td className="border border-blue-200 px-1 py-0.5">Otherwise</td>
+                        <td className="border border-blue-200 px-1 py-0.5">0 (No forwarding)</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  <p className="mt-1">This logic ensures correct values are forwarded to ALU inputs when data dependencies exist between instructions.</p>
+                </div>
               </div>
-              <p className="text-sm text-gray-500">No configuration needed</p>
+              <p className="text-xs text-gray-500">No configuration needed</p>
             </div>
           </div>
         );
@@ -272,10 +492,10 @@ export function ConfigPanel() {
             <h3 className="font-medium">Hazard Detection Unit</h3>
             <div className="space-y-2">
               <div className="bg-blue-50 p-3 rounded-md mb-3">
-                <h4 className="text-sm font-medium text-blue-800 mb-1">Component Description</h4>
-                <p className="text-sm text-blue-700">The Hazard Detection Unit identifies load-use data hazards where a load instruction is followed by an instruction that uses the loaded data. It generates stall signals to pause the pipeline for one cycle when such hazards are detected.</p>
-                <h4 className="text-sm font-medium text-blue-800 mt-2 mb-1">Ports</h4>
-                <ul className="text-sm text-blue-700 list-disc pl-5">
+                <h4 className="text-xs font-medium text-blue-800 mb-1">Component Description</h4>
+                <p className="text-xs text-blue-700">The Hazard Detection Unit identifies load-use data hazards where a load instruction is followed by an instruction that uses the loaded data. It generates stall signals to pause the pipeline for one cycle when such hazards are detected.</p>
+                <h4 className="text-xs font-medium text-blue-800 mt-2 mb-1">Ports</h4>
+                <ul className="text-xs text-blue-700 list-disc pl-4">
                   <li><span className="font-medium">ID/EX.MemRead:</span> Previous instruction's memory read enable signal</li>
                   <li><span className="font-medium">ID/EX.Rt:</span> Previous instruction's target register number</li>
                   <li><span className="font-medium">IF/ID.Rs:</span> Current instruction's first source register number</li>
@@ -284,15 +504,37 @@ export function ConfigPanel() {
                   <li><span className="font-medium">IF/ID Write:</span> Output signal to freeze IF/ID pipeline register (0=stall, 1=normal)</li>
                   <li><span className="font-medium">Control Mux:</span> Output signal to zero out control signals (1=insert NOP, 0=normal)</li>
                 </ul>
-                <h4 className="text-sm font-medium text-blue-800 mt-2 mb-1">Execution Logic</h4>
-                <p className="text-sm text-blue-700">The Hazard Detection Unit operates combinationally:<br/>
-                - When ID/EX.MemRead=1 and (ID/EX.Rt=IF/ID.Rs or ID/EX.Rt=IF/ID.Rt) and ID/EX.Rt≠0:<br/>
-                &nbsp;&nbsp;• PC Write=0 (freeze PC)<br/>
-                &nbsp;&nbsp;• IF/ID Write=0 (freeze IF/ID register)<br/>
-                &nbsp;&nbsp;• Control Mux=1 (insert NOP in ID/EX stage)<br/>
-                This creates a one-cycle bubble in the pipeline to allow the load instruction to complete before the dependent instruction proceeds.</p>
+                <h4 className="text-xs font-medium text-blue-800 mt-2 mb-1">Execution Logic</h4>
+                <div className="text-xs text-blue-700">
+                  <p className="mb-1">The Hazard Detection Unit operates combinationally:</p>
+                  <table className="w-full border-collapse text-xs mb-2">
+                    <thead>
+                      <tr className="bg-blue-100">
+                        <th className="border border-blue-200 px-1 py-0.5 text-left">Condition</th>
+                        <th className="border border-blue-200 px-1 py-0.5 text-left">PC Write</th>
+                        <th className="border border-blue-200 px-1 py-0.5 text-left">IF/ID Write</th>
+                        <th className="border border-blue-200 px-1 py-0.5 text-left">Control Mux</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td className="border border-blue-200 px-1 py-0.5">ID/EX.MemRead=1 and (ID/EX.Rt=IF/ID.Rs or ID/EX.Rt=IF/ID.Rt) and ID/EX.Rt≠0</td>
+                        <td className="border border-blue-200 px-1 py-0.5">0 (freeze)</td>
+                        <td className="border border-blue-200 px-1 py-0.5">0 (freeze)</td>
+                        <td className="border border-blue-200 px-1 py-0.5">1 (insert NOP)</td>
+                      </tr>
+                      <tr>
+                        <td className="border border-blue-200 px-1 py-0.5">Otherwise</td>
+                        <td className="border border-blue-200 px-1 py-0.5">1 (normal)</td>
+                        <td className="border border-blue-200 px-1 py-0.5">1 (normal)</td>
+                        <td className="border border-blue-200 px-1 py-0.5">0 (normal)</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  <p className="mt-1">This creates a one-cycle bubble in the pipeline to allow the load instruction to complete before the dependent instruction proceeds.</p>
+                </div>
               </div>
-              <p className="text-sm text-gray-500">No configuration needed</p>
+              <p className="text-xs text-gray-500">No configuration needed</p>
             </div>
           </div>
         );
@@ -302,23 +544,42 @@ export function ConfigPanel() {
             <h3 className="font-medium">Branch Hazard Unit</h3>
             <div className="space-y-2">
               <div className="bg-blue-50 p-3 rounded-md mb-3">
-                <h4 className="text-sm font-medium text-blue-800 mb-1">Component Description</h4>
-                <p className="text-sm text-blue-700">The Branch Hazard Unit resolves control hazards that occur when branch instructions are taken. It flushes the pipeline stages containing incorrectly fetched instructions, effectively implementing the flush method of control hazard resolution.</p>
-                <h4 className="text-sm font-medium text-blue-800 mt-2 mb-1">Ports</h4>
-                <ul className="text-sm text-blue-700 list-disc pl-5">
+                <h4 className="text-xs font-medium text-blue-800 mb-1">Component Description</h4>
+                <p className="text-xs text-blue-700">The Branch Hazard Unit resolves control hazards that occur when branch instructions are taken. It flushes the pipeline stages containing incorrectly fetched instructions, effectively implementing the flush method of control hazard resolution.</p>
+                <h4 className="text-xs font-medium text-blue-800 mt-2 mb-1">Ports</h4>
+                <ul className="text-xs text-blue-700 list-disc pl-4">
                   <li><span className="font-medium">branchTaken:</span> Input signal indicating that a branch is taken (connect to Jump Control's jump output)</li>
                   <li><span className="font-medium">ifIdFlush:</span> Output signal to flush the IF/ID pipeline register (1=flush, 0=normal)</li>
                   <li><span className="font-medium">idExFlush:</span> Output signal to flush the ID/EX pipeline register (1=flush, 0=normal)</li>
                 </ul>
-                <h4 className="text-sm font-medium text-blue-800 mt-2 mb-1">Execution Logic</h4>
-                <p className="text-sm text-blue-700">The Branch Hazard Unit operates combinationally:<br/>
-                - When branchTaken=1 (a branch or jump instruction is taken):<br/>
-                &nbsp;&nbsp;• ifIdFlush=1 (flush the IF/ID register)<br/>
-                &nbsp;&nbsp;• idExFlush=1 (flush the ID/EX register)<br/>
-                <br/>
-                This flushes the pipeline stages containing instructions that were incorrectly fetched after the branch, effectively inserting NOPs and preventing the execution of instructions that should be skipped due to the branch. This is a critical component for correct program flow in pipelined processors.</p>
+                <h4 className="text-xs font-medium text-blue-800 mt-2 mb-1">Execution Logic</h4>
+                <div className="text-xs text-blue-700">
+                  <p className="mb-1">The Branch Hazard Unit operates combinationally:</p>
+                  <table className="w-full border-collapse text-xs mb-2">
+                    <thead>
+                      <tr className="bg-blue-100">
+                        <th className="border border-blue-200 px-1 py-0.5 text-left">branchTaken</th>
+                        <th className="border border-blue-200 px-1 py-0.5 text-left">ifIdFlush</th>
+                        <th className="border border-blue-200 px-1 py-0.5 text-left">idExFlush</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td className="border border-blue-200 px-1 py-0.5">1 (branch taken)</td>
+                        <td className="border border-blue-200 px-1 py-0.5">1 (flush)</td>
+                        <td className="border border-blue-200 px-1 py-0.5">1 (flush)</td>
+                      </tr>
+                      <tr>
+                        <td className="border border-blue-200 px-1 py-0.5">0 (branch not taken)</td>
+                        <td className="border border-blue-200 px-1 py-0.5">0 (normal)</td>
+                        <td className="border border-blue-200 px-1 py-0.5">0 (normal)</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  <p className="mt-1">This flushes the pipeline stages containing instructions that were incorrectly fetched after the branch, effectively inserting NOPs and preventing the execution of instructions that should be skipped due to the branch. This is a critical component for correct program flow in pipelined processors.</p>
+                </div>
               </div>
-              <p className="text-sm text-gray-500">No configuration needed</p>
+              <p className="text-xs text-gray-500">No configuration needed</p>
             </div>
           </div>
         );
@@ -341,18 +602,44 @@ export function ConfigPanel() {
                   <li><span className="font-medium">Read Data 1:</span> 32-bit data output from the first selected register</li>
                   <li><span className="font-medium">Read Data 2:</span> 32-bit data output from the second selected register</li>
                 </ul>
-                <h4 className="text-sm font-medium text-blue-800 mt-2 mb-1">Execution Logic</h4>
-                <p className="text-sm text-blue-700">The Register File operates as follows:<br/>
-                - Read operations occur combinationally (no clock required):<br/>
-                &nbsp;&nbsp;• Read Data 1 = Registers[Read Register 1] (unless address is 0, then 0 is returned)<br/>
-                &nbsp;&nbsp;• Read Data 2 = Registers[Read Register 2] (unless address is 0, then 0 is returned)<br/>
-                - Write operations occur synchronously at the rising edge of the clock:<br/>
-                &nbsp;&nbsp;• If RegWrite=1, then Registers[Write Register] = Write Data<br/>
-                &nbsp;&nbsp;• If Write Register=0, the write is ignored (x0 cannot be modified)<br/>
-                - The Register File supports simultaneous reads and writes<br/>
-                - If a read address matches the write address during the same cycle, some implementations forward the new value being written</p>
+                <h4 className="text-xs font-medium text-blue-800 mt-2 mb-1">Execution Logic</h4>
+                <div className="text-xs text-blue-700">
+                  <p className="mb-1">The Register File operates with different timing for reads and writes:</p>
+                  <table className="w-full border-collapse text-xs mb-2">
+                    <thead>
+                      <tr className="bg-blue-100">
+                        <th className="border border-blue-200 px-1 py-0.5 text-left">Operation</th>
+                        <th className="border border-blue-200 px-1 py-0.5 text-left">Timing</th>
+                        <th className="border border-blue-200 px-1 py-0.5 text-left">Behavior</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td className="border border-blue-200 px-1 py-0.5">Read Data 1</td>
+                        <td className="border border-blue-200 px-1 py-0.5">Combinational (no clock)</td>
+                        <td className="border border-blue-200 px-1 py-0.5">Registers[Read Register 1] (0 if address is 0)</td>
+                      </tr>
+                      <tr>
+                        <td className="border border-blue-200 px-1 py-0.5">Read Data 2</td>
+                        <td className="border border-blue-200 px-1 py-0.5">Combinational (no clock)</td>
+                        <td className="border border-blue-200 px-1 py-0.5">Registers[Read Register 2] (0 if address is 0)</td>
+                      </tr>
+                      <tr>
+                        <td className="border border-blue-200 px-1 py-0.5">Write</td>
+                        <td className="border border-blue-200 px-1 py-0.5">Synchronous (rising clock edge)</td>
+                        <td className="border border-blue-200 px-1 py-0.5">If RegWrite=1 and Write Register≠0, then Registers[Write Register] = Write Data</td>
+                      </tr>
+                      <tr>
+                        <td className="border border-blue-200 px-1 py-0.5">Read-after-Write</td>
+                        <td className="border border-blue-200 px-1 py-0.5">Same cycle</td>
+                        <td className="border border-blue-200 px-1 py-0.5">Some implementations forward the new value if read address matches write address</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  <p className="mt-1">The Register File supports simultaneous reads and writes, with register x0 hardwired to zero (writes to x0 are ignored).</p>
+                </div>
               </div>
-              <p className="text-sm text-gray-500">No configuration needed</p>
+              <p className="text-xs text-gray-500">No configuration needed</p>
             </div>
           </div>
         );
@@ -369,16 +656,9 @@ export function ConfigPanel() {
                   <li><span className="font-medium">Address:</span> 32-bit input address from which to fetch an instruction. Only the lower bits are typically used depending on memory size</li>
                   <li><span className="font-medium">Instruction:</span> 32-bit output containing the instruction at the specified address</li>
                 </ul>
-                <h4 className="text-sm font-medium text-blue-800 mt-2 mb-1">Execution Logic</h4>
-                <p className="text-sm text-blue-700">The Instruction Memory operates as a read-only lookup table:<br/>
-                - It receives an address (typically from the Program Counter) and outputs the 32-bit instruction stored at that address.<br/>
-                - The memory is addressed by byte, but instructions are aligned on word boundaries (multiples of 4 bytes).<br/>
-                - Address bits [1:0] are ignored since instructions are word-aligned in memory.<br/>
-                - The operation is combinational with no clock required - the instruction appears at the output as soon as a valid address is provided.<br/>
-                - In a real processor, instruction memory would be initialized with the compiled program code before execution begins.<br/>
-                - This component is read-only during normal execution; instructions are not modified by the running program.</p>
+
               </div>
-              <p className="text-sm text-gray-500">No configuration needed</p>
+              <p className="text-xs text-gray-500">No configuration needed</p>
             </div>
           </div>
         );
@@ -409,16 +689,61 @@ export function ConfigPanel() {
                   <li><span className="font-medium">Write Policy:</span> Write-back with dirty bit</li>
                 </ul>
                 <p className="text-sm text-blue-700 mt-1">The number of sets is automatically calculated based on the formula: sets = cache size / (block size * ways).</p>
-                <h4 className="text-sm font-medium text-blue-800 mt-2 mb-1">Execution Logic</h4>
-                <p className="text-sm text-blue-700">
-                - Read operations: When MemRead is high, the memory first checks the cache. If there's a cache hit, data is returned from cache. On a cache miss, data is fetched from memory and stored in cache.<br/>
-                - Write operations: When MemWrite is high, on the rising edge of the clock, the 32-bit data at Write Data input is written to both cache and memory.<br/>
-                - Cache replacement: When a cache miss occurs and there's no free way, the LRU policy selects a victim block for replacement. If the victim block is dirty, it is written back to memory first.<br/>
-                - Byte addressing: Memory is byte-addressable, but most operations work with word (4-byte) alignments. The RISC-V architecture supports different load/store sizes (byte, half-word, word) with proper alignment.<br/>
-                - Address alignment: For word operations, addresses should be multiples of 4. Some implementations handle unaligned accesses, but with performance penalties.<br/>
-                - Data memory is completely separate from instruction memory in the Harvard architecture used by most RISC processors.</p>
+                <h4 className="text-xs font-medium text-blue-800 mt-2 mb-1">Execution Logic</h4>
+                <div className="text-xs text-blue-700">
+                  <p className="mb-1">The Data Memory operates with different timing for reads and writes:</p>
+                  <table className="w-full border-collapse text-xs mb-2">
+                    <thead>
+                      <tr className="bg-blue-100">
+                        <th className="border border-blue-200 px-1 py-0.5 text-left">Operation</th>
+                        <th className="border border-blue-200 px-1 py-0.5 text-left">Control Signal</th>
+                        <th className="border border-blue-200 px-1 py-0.5 text-left">Behavior</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td className="border border-blue-200 px-1 py-0.5">Read</td>
+                        <td className="border border-blue-200 px-1 py-0.5">MemRead = 1</td>
+                        <td className="border border-blue-200 px-1 py-0.5">First checks cache. If hit, returns data from cache. If miss, fetches from memory and stores in cache.</td>
+                      </tr>
+                      <tr>
+                        <td className="border border-blue-200 px-1 py-0.5">Write</td>
+                        <td className="border border-blue-200 px-1 py-0.5">MemWrite = 1</td>
+                        <td className="border border-blue-200 px-1 py-0.5">On rising clock edge, writes 32-bit data to both cache and memory.</td>
+                      </tr>
+                    </tbody>
+                  </table>
+
+                  <p className="mb-1">Cache operation details:</p>
+                  <table className="w-full border-collapse text-xs mb-2">
+                    <thead>
+                      <tr className="bg-blue-100">
+                        <th className="border border-blue-200 px-1 py-0.5 text-left">Aspect</th>
+                        <th className="border border-blue-200 px-1 py-0.5 text-left">Behavior</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td className="border border-blue-200 px-1 py-0.5">Cache Replacement</td>
+                        <td className="border border-blue-200 px-1 py-0.5">On cache miss with no free way, LRU policy selects victim block. If dirty, writes back to memory first.</td>
+                      </tr>
+                      <tr>
+                        <td className="border border-blue-200 px-1 py-0.5">Addressing</td>
+                        <td className="border border-blue-200 px-1 py-0.5">Byte-addressable, but most operations work with word (4-byte) alignments.</td>
+                      </tr>
+                      <tr>
+                        <td className="border border-blue-200 px-1 py-0.5">Alignment</td>
+                        <td className="border border-blue-200 px-1 py-0.5">For word operations, addresses should be multiples of 4. Some implementations handle unaligned accesses with penalties.</td>
+                      </tr>
+                      <tr>
+                        <td className="border border-blue-200 px-1 py-0.5">Architecture</td>
+                        <td className="border border-blue-200 px-1 py-0.5">Data memory is completely separate from instruction memory.</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
               </div>
-              <p className="text-sm text-gray-500">No configuration needed</p>
+              <p className="text-xs text-gray-500">No configuration needed</p>
             </div>
           </div>
         );
@@ -428,10 +753,10 @@ export function ConfigPanel() {
             <h3 className="font-medium">Control Unit</h3>
             <div className="space-y-2">
               <div className="bg-blue-50 p-3 rounded-md mb-3">
-                <h4 className="text-sm font-medium text-blue-800 mb-1">Component Description</h4>
-                <p className="text-sm text-blue-700">The Control Unit decodes RISC-V instructions and generates control signals that coordinate the operation of various datapath components. It examines the opcode field of the instruction to determine the instruction type and required operations.</p>
-                <h4 className="text-sm font-medium text-blue-800 mt-2 mb-1">Ports</h4>
-                <ul className="text-sm text-blue-700 list-disc pl-5">
+                <h4 className="text-xs font-medium text-blue-800 mb-1">Component Description</h4>
+                <p className="text-xs text-blue-700">The Control Unit decodes RISC-V instructions and generates control signals that coordinate the operation of various datapath components. It examines the opcode field of the instruction to determine the instruction type and required operations.</p>
+                <h4 className="text-xs font-medium text-blue-800 mt-2 mb-1">Ports</h4>
+                <ul className="text-xs text-blue-700 list-disc pl-4">
                   <li><span className="font-medium">Instruction[6:0]:</span> Opcode field of the instruction</li>
                   <li><span className="font-medium">ALUSrc1[1:0]:</span> 2-bit control signal selecting ALU's first input (0: Register, 1: PC for AUIPC, 2: Zero for LUI)</li>
                   <li><span className="font-medium">ALUSrc2:</span> Control signal selecting ALU's second input (0: Register, 1: Immediate)</li>
@@ -442,17 +767,106 @@ export function ConfigPanel() {
                   <li><span className="font-medium">Branch:</span> Control signal indicating branch instruction</li>
                   <li><span className="font-medium">ALUOp[1:0]:</span> Control signal for ALU operation type</li>
                 </ul>
-                <h4 className="text-sm font-medium text-blue-800 mt-2 mb-1">Execution Logic</h4>
-                <p className="text-sm text-blue-700">The Control Unit operates combinationally based on the instruction opcode:<br/>
-                - R-type: RegWrite=1, ALUSrc1=0, ALUSrc2=0, MemtoReg=0, ALUOp=10<br/>
-                - I-type (ALU): RegWrite=1, ALUSrc1=0, ALUSrc2=1, MemtoReg=0, ALUOp=11<br/>
-                - I-type (Load): RegWrite=1, ALUSrc1=0, ALUSrc2=1, MemtoReg=1, MemRead=1, ALUOp=00<br/>
-                - S-type: ALUSrc1=0, ALUSrc2=1, MemWrite=1, ALUOp=00<br/>
-                - B-type: ALUSrc1=0, ALUSrc2=0, Branch=1, ALUOp=01<br/>
-                - AUIPC: RegWrite=1, ALUSrc1=1, ALUSrc2=1, MemtoReg=0, ALUOp=00<br/>
-                - LUI: RegWrite=1, ALUSrc1=2, ALUSrc2=1, MemtoReg=0, ALUOp=00</p>
+                <h4 className="text-xs font-medium text-blue-800 mt-2 mb-1">Execution Logic</h4>
+                <div className="text-xs text-blue-700">
+                  <p className="mb-1">The Control Unit operates combinationally based on the instruction opcode:</p>
+                  <table className="w-full border-collapse text-xs">
+                    <thead>
+                      <tr className="bg-blue-100">
+                        <th className="border border-blue-200 px-1 py-0.5 text-left">Type</th>
+                        <th className="border border-blue-200 px-1 py-0.5 text-left">RegWrite</th>
+                        <th className="border border-blue-200 px-1 py-0.5 text-left">ALUSrc1</th>
+                        <th className="border border-blue-200 px-1 py-0.5 text-left">ALUSrc2</th>
+                        <th className="border border-blue-200 px-1 py-0.5 text-left">MemtoReg</th>
+                        <th className="border border-blue-200 px-1 py-0.5 text-left">MemRead</th>
+                        <th className="border border-blue-200 px-1 py-0.5 text-left">MemWrite</th>
+                        <th className="border border-blue-200 px-1 py-0.5 text-left">Branch</th>
+                        <th className="border border-blue-200 px-1 py-0.5 text-left">ALUOp</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td className="border border-blue-200 px-1 py-0.5">R-type</td>
+                        <td className="border border-blue-200 px-1 py-0.5">1</td>
+                        <td className="border border-blue-200 px-1 py-0.5">0</td>
+                        <td className="border border-blue-200 px-1 py-0.5">0</td>
+                        <td className="border border-blue-200 px-1 py-0.5">0</td>
+                        <td className="border border-blue-200 px-1 py-0.5">0</td>
+                        <td className="border border-blue-200 px-1 py-0.5">0</td>
+                        <td className="border border-blue-200 px-1 py-0.5">0</td>
+                        <td className="border border-blue-200 px-1 py-0.5">10</td>
+                      </tr>
+                      <tr>
+                        <td className="border border-blue-200 px-1 py-0.5">I-type (ALU)</td>
+                        <td className="border border-blue-200 px-1 py-0.5">1</td>
+                        <td className="border border-blue-200 px-1 py-0.5">0</td>
+                        <td className="border border-blue-200 px-1 py-0.5">1</td>
+                        <td className="border border-blue-200 px-1 py-0.5">0</td>
+                        <td className="border border-blue-200 px-1 py-0.5">0</td>
+                        <td className="border border-blue-200 px-1 py-0.5">0</td>
+                        <td className="border border-blue-200 px-1 py-0.5">0</td>
+                        <td className="border border-blue-200 px-1 py-0.5">11</td>
+                      </tr>
+                      <tr>
+                        <td className="border border-blue-200 px-1 py-0.5">I-type (Load)</td>
+                        <td className="border border-blue-200 px-1 py-0.5">1</td>
+                        <td className="border border-blue-200 px-1 py-0.5">0</td>
+                        <td className="border border-blue-200 px-1 py-0.5">1</td>
+                        <td className="border border-blue-200 px-1 py-0.5">1</td>
+                        <td className="border border-blue-200 px-1 py-0.5">1</td>
+                        <td className="border border-blue-200 px-1 py-0.5">0</td>
+                        <td className="border border-blue-200 px-1 py-0.5">0</td>
+                        <td className="border border-blue-200 px-1 py-0.5">00</td>
+                      </tr>
+                      <tr>
+                        <td className="border border-blue-200 px-1 py-0.5">S-type</td>
+                        <td className="border border-blue-200 px-1 py-0.5">0</td>
+                        <td className="border border-blue-200 px-1 py-0.5">0</td>
+                        <td className="border border-blue-200 px-1 py-0.5">1</td>
+                        <td className="border border-blue-200 px-1 py-0.5">-</td>
+                        <td className="border border-blue-200 px-1 py-0.5">0</td>
+                        <td className="border border-blue-200 px-1 py-0.5">1</td>
+                        <td className="border border-blue-200 px-1 py-0.5">0</td>
+                        <td className="border border-blue-200 px-1 py-0.5">00</td>
+                      </tr>
+                      <tr>
+                        <td className="border border-blue-200 px-1 py-0.5">B-type</td>
+                        <td className="border border-blue-200 px-1 py-0.5">0</td>
+                        <td className="border border-blue-200 px-1 py-0.5">0</td>
+                        <td className="border border-blue-200 px-1 py-0.5">0</td>
+                        <td className="border border-blue-200 px-1 py-0.5">-</td>
+                        <td className="border border-blue-200 px-1 py-0.5">0</td>
+                        <td className="border border-blue-200 px-1 py-0.5">0</td>
+                        <td className="border border-blue-200 px-1 py-0.5">1</td>
+                        <td className="border border-blue-200 px-1 py-0.5">01</td>
+                      </tr>
+                      <tr>
+                        <td className="border border-blue-200 px-1 py-0.5">AUIPC</td>
+                        <td className="border border-blue-200 px-1 py-0.5">1</td>
+                        <td className="border border-blue-200 px-1 py-0.5">1</td>
+                        <td className="border border-blue-200 px-1 py-0.5">1</td>
+                        <td className="border border-blue-200 px-1 py-0.5">0</td>
+                        <td className="border border-blue-200 px-1 py-0.5">0</td>
+                        <td className="border border-blue-200 px-1 py-0.5">0</td>
+                        <td className="border border-blue-200 px-1 py-0.5">0</td>
+                        <td className="border border-blue-200 px-1 py-0.5">00</td>
+                      </tr>
+                      <tr>
+                        <td className="border border-blue-200 px-1 py-0.5">LUI</td>
+                        <td className="border border-blue-200 px-1 py-0.5">1</td>
+                        <td className="border border-blue-200 px-1 py-0.5">2</td>
+                        <td className="border border-blue-200 px-1 py-0.5">1</td>
+                        <td className="border border-blue-200 px-1 py-0.5">0</td>
+                        <td className="border border-blue-200 px-1 py-0.5">0</td>
+                        <td className="border border-blue-200 px-1 py-0.5">0</td>
+                        <td className="border border-blue-200 px-1 py-0.5">0</td>
+                        <td className="border border-blue-200 px-1 py-0.5">00</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
               </div>
-              <p className="text-sm text-gray-500">No configuration needed</p>
+              <p className="text-xs text-gray-500">No configuration needed</p>
             </div>
           </div>
         );
@@ -462,27 +876,58 @@ export function ConfigPanel() {
             <h3 className="font-medium">Jump Control </h3>
             <div className="space-y-2">
               <div className="bg-blue-50 p-3 rounded-md mb-3">
-                <h4 className="text-sm font-medium text-blue-800 mb-1">Component Description</h4>
-                <p className="text-sm text-blue-700">The Jump Control unit determines whether to take a branch or jump by evaluating control signals and comparison results. It generates the final PC selection signal that controls instruction flow.</p>
-                <h4 className="text-sm font-medium text-blue-800 mt-2 mb-1">Ports</h4>
-                <ul className="text-sm text-blue-700 list-disc pl-5">
+                <h4 className="text-xs font-medium text-blue-800 mb-1">Component Description</h4>
+                <p className="text-xs text-blue-700">The Jump Control unit determines whether to take a branch or jump by evaluating control signals and comparison results. It generates the final PC selection signal that controls instruction flow.</p>
+                <h4 className="text-xs font-medium text-blue-800 mt-2 mb-1">Ports</h4>
+                <ul className="text-xs text-blue-700 list-disc pl-4">
                   <li><span className="font-medium">Branch:</span> 1-bit control signal from main control unit indicating a branch instruction</li>
                   <li><span className="font-medium">Zero:</span> 1-bit flag from ALU indicating if the comparison result is zero</li>
                   <li><span className="font-medium">Jump:</span> 1-bit control signal from main control unit indicating an unconditional jump instruction</li>
                   <li><span className="font-medium">PCSrc:</span> 1-bit output control signal for the PC multiplexer (0=PC+4, 1=branch/jump target)</li>
                 </ul>
-                <h4 className="text-sm font-medium text-blue-800 mt-2 mb-1">Execution Logic</h4>
-                <p className="text-sm text-blue-700">The Jump Control uses simple combinational logic to determine the next PC value:<br/>
-                - For branch instructions (Branch=1): PCSrc = Branch AND Zero<br/>
-                &nbsp;&nbsp;• This means a branch is taken only when both Branch is active AND the comparison result is zero (equal)<br/>
-                &nbsp;&nbsp;• For BEQ (branch if equal), this works directly<br/>
-                &nbsp;&nbsp;• For BNE (branch if not equal), the ALU or this unit must invert the Zero flag<br/>
-                - For jump instructions (Jump=1): PCSrc = Jump (always 1)<br/>
-                &nbsp;&nbsp;• This means jumps are always taken unconditionally<br/>
-                - For all other instructions: PCSrc = 0 (continue to next sequential instruction)<br/>
-                This component is critical for implementing all control flow changes in the processor, determining when to deviate from sequential execution.</p>
+                <h4 className="text-xs font-medium text-blue-800 mt-2 mb-1">Execution Logic</h4>
+                <div className="text-xs text-blue-700">
+                  <p className="mb-1">The Jump Control uses simple combinational logic to determine the next PC value:</p>
+                  <table className="w-full border-collapse text-xs mb-2">
+                    <thead>
+                      <tr className="bg-blue-100">
+                        <th className="border border-blue-200 px-1 py-0.5 text-left">Instruction Type</th>
+                        <th className="border border-blue-200 px-1 py-0.5 text-left">Condition</th>
+                        <th className="border border-blue-200 px-1 py-0.5 text-left">PCSrc</th>
+                        <th className="border border-blue-200 px-1 py-0.5 text-left">Result</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td className="border border-blue-200 px-1 py-0.5">Branch (BEQ)</td>
+                        <td className="border border-blue-200 px-1 py-0.5">Branch=1 AND Zero=1</td>
+                        <td className="border border-blue-200 px-1 py-0.5">1</td>
+                        <td className="border border-blue-200 px-1 py-0.5">Take branch</td>
+                      </tr>
+                      <tr>
+                        <td className="border border-blue-200 px-1 py-0.5">Branch (BEQ)</td>
+                        <td className="border border-blue-200 px-1 py-0.5">Branch=1 AND Zero=0</td>
+                        <td className="border border-blue-200 px-1 py-0.5">0</td>
+                        <td className="border border-blue-200 px-1 py-0.5">Continue to PC+4</td>
+                      </tr>
+                      <tr>
+                        <td className="border border-blue-200 px-1 py-0.5">Jump</td>
+                        <td className="border border-blue-200 px-1 py-0.5">Jump=1</td>
+                        <td className="border border-blue-200 px-1 py-0.5">1</td>
+                        <td className="border border-blue-200 px-1 py-0.5">Always take jump</td>
+                      </tr>
+                      <tr>
+                        <td className="border border-blue-200 px-1 py-0.5">Other</td>
+                        <td className="border border-blue-200 px-1 py-0.5">Branch=0 AND Jump=0</td>
+                        <td className="border border-blue-200 px-1 py-0.5">0</td>
+                        <td className="border border-blue-200 px-1 py-0.5">Continue to PC+4</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  <p className="mt-1">This component is critical for implementing all control flow changes in the processor, determining when to deviate from sequential execution.</p>
+                </div>
               </div>
-              <p className="text-sm text-gray-500">No configuration needed</p>
+              <p className="text-xs text-gray-500">No configuration needed</p>
             </div>
           </div>
         );
@@ -505,15 +950,9 @@ export function ConfigPanel() {
                   <li><span className="font-medium">funct7:</span> 7-bit function code output (bits 31-25), routed to ALU Control</li>
                   <li><span className="font-medium">imm:</span> 32-bit immediate field sent to the Immediate Generator for formatting</li>
                 </ul>
-                <h4 className="text-sm font-medium text-blue-800 mt-2 mb-1">Execution Logic</h4>
-                <p className="text-sm text-blue-700">The Instruction Distributer operates purely combinationally:<br/>
-                - The component performs bit-slicing operations that extract specific fields from the 32-bit instruction<br/>
-                - Each instruction field is immediately available at the corresponding output port<br/>
-                - No transformation or interpretation of the fields occurs - only extraction and routing<br/>
-                - For the immediate field, the entire instruction is usually passed to the Immediate Generator, which then extracts the proper fields based on instruction type<br/>
-                - This central decoding approach avoids redundant instruction parsing across multiple components</p>
+
               </div>
-              <p className="text-sm text-gray-500">No configuration needed</p>
+              <p className="text-xs text-gray-500">No configuration needed</p>
             </div>
           </div>
         );
@@ -533,25 +972,67 @@ export function ConfigPanel() {
                   <li><span className="font-medium">Flush:</span> Control signal that clears register contents when high, effectively canceling instructions in that stage</li>
                   <li><span className="font-medium">Outputs:</span> Registered copies of all input signals, passed to the next pipeline stage</li>
                 </ul>
-                <h4 className="text-sm font-medium text-blue-800 mt-2 mb-1">Execution Logic</h4>
-                <p className="text-sm text-blue-700">Pipeline registers operate synchronously on the rising edge of the clock:<br/>
-                - Normal operation: On each clock edge, all input values are captured and appear at the outputs, allowing them to be used by the next stage.<br/>
-                - Stall behavior: When the Stall signal is high, the register retains its current value regardless of input changes, effectively pausing that stage of the pipeline. This is used for handling hazards and stalls.<br/>
-                - Flush behavior: When the Flush signal is high, all outputs are set to zero or NOP values, effectively canceling the instruction in that stage. This is used after branch mispredictions or exceptions.<br/>
-                <br/>
-                The four standard pipeline registers in a classic RISC-V pipeline are:<br/>
-                - IF/ID: Between Instruction Fetch and Instruction Decode stages<br/>
-                - ID/EX: Between Instruction Decode and Execute stages<br/>
-                - EX/MEM: Between Execute and Memory Access stages<br/>
-                - MEM/WB: Between Memory Access and Write Back stages<br/>
-                <br/>
-                Each register contains stage-specific signals. For example:<br/>
-                - IF/ID stores the instruction and PC value<br/>
-                - ID/EX stores register values, control signals, and immediate values<br/>
-                - EX/MEM stores ALU results, memory data, and control signals<br/>
-                - MEM/WB stores data for writeback and control signals</p>
+                <h4 className="text-xs font-medium text-blue-800 mt-2 mb-1">Execution Logic</h4>
+                <div className="text-xs text-blue-700">
+                  <p className="mb-1">Pipeline registers operate synchronously on the rising edge of the clock:</p>
+                  <table className="w-full border-collapse text-xs mb-2">
+                    <thead>
+                      <tr className="bg-blue-100">
+                        <th className="border border-blue-200 px-1 py-0.5 text-left">Mode</th>
+                        <th className="border border-blue-200 px-1 py-0.5 text-left">Behavior</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td className="border border-blue-200 px-1 py-0.5">Normal</td>
+                        <td className="border border-blue-200 px-1 py-0.5">On each clock edge, all input values are captured and appear at the outputs, allowing them to be used by the next stage.</td>
+                      </tr>
+                      <tr>
+                        <td className="border border-blue-200 px-1 py-0.5">Stall</td>
+                        <td className="border border-blue-200 px-1 py-0.5">When the Stall signal is high, the register retains its current value regardless of input changes, effectively pausing that stage of the pipeline.</td>
+                      </tr>
+                      <tr>
+                        <td className="border border-blue-200 px-1 py-0.5">Flush</td>
+                        <td className="border border-blue-200 px-1 py-0.5">When the Flush signal is high, all outputs are set to zero or NOP values, effectively canceling the instruction in that stage.</td>
+                      </tr>
+                    </tbody>
+                  </table>
+
+                  <p className="mb-1">The four standard pipeline registers in a classic RISC-V pipeline are:</p>
+                  <table className="w-full border-collapse text-xs">
+                    <thead>
+                      <tr className="bg-blue-100">
+                        <th className="border border-blue-200 px-1 py-0.5 text-left">Register</th>
+                        <th className="border border-blue-200 px-1 py-0.5 text-left">Location</th>
+                        <th className="border border-blue-200 px-1 py-0.5 text-left">Stored Signals</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td className="border border-blue-200 px-1 py-0.5">IF/ID</td>
+                        <td className="border border-blue-200 px-1 py-0.5">Between Instruction Fetch and Instruction Decode stages</td>
+                        <td className="border border-blue-200 px-1 py-0.5">Instruction and PC value</td>
+                      </tr>
+                      <tr>
+                        <td className="border border-blue-200 px-1 py-0.5">ID/EX</td>
+                        <td className="border border-blue-200 px-1 py-0.5">Between Instruction Decode and Execute stages</td>
+                        <td className="border border-blue-200 px-1 py-0.5">Register values, control signals, and immediate values</td>
+                      </tr>
+                      <tr>
+                        <td className="border border-blue-200 px-1 py-0.5">EX/MEM</td>
+                        <td className="border border-blue-200 px-1 py-0.5">Between Execute and Memory Access stages</td>
+                        <td className="border border-blue-200 px-1 py-0.5">ALU results, memory data, and control signals</td>
+                      </tr>
+                      <tr>
+                        <td className="border border-blue-200 px-1 py-0.5">MEM/WB</td>
+                        <td className="border border-blue-200 px-1 py-0.5">Between Memory Access and Write Back stages</td>
+                        <td className="border border-blue-200 px-1 py-0.5">Data for writeback and control signals</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
               </div>
-              <p className="text-sm text-gray-500">No configuration needed</p>
+              <p className="text-xs text-gray-500">No configuration needed</p>
             </div>
           </div>
         );
@@ -570,17 +1051,35 @@ export function ConfigPanel() {
                   <li><span className="font-medium">Write Enable:</span> 1-bit control signal that permits register update when high (1)</li>
                   <li><span className="font-medium">Output:</span> 32-bit stored data value that persists until a new value is written</li>
                 </ul>
-                <h4 className="text-sm font-medium text-blue-800 mt-2 mb-1">Execution Logic</h4>
-                <p className="text-sm text-blue-700">The Single Register operates synchronously:<br/>
-                - At the rising edge of the clock signal, if Write Enable is high (1):<br/>
-                &nbsp;&nbsp;• The value at the input port is captured and stored internally<br/>
-                &nbsp;&nbsp;• This value immediately appears at the output port<br/>
-                - If Write Enable is low (0) at the clock edge:<br/>
-                &nbsp;&nbsp;• The register maintains its current value regardless of input changes<br/>
-                - The output continuously provides the last stored value with no additional delay<br/>
-                - Used for inserting controlled delays, storing state between operations, and buffering values between pipeline stages</p>
+                <h4 className="text-xs font-medium text-blue-800 mt-2 mb-1">Execution Logic</h4>
+                <div className="text-xs text-blue-700">
+                  <p className="mb-1">The Single Register operates synchronously:</p>
+                  <table className="w-full border-collapse text-xs mb-2">
+                    <thead>
+                      <tr className="bg-blue-100">
+                        <th className="border border-blue-200 px-1 py-0.5 text-left">Condition</th>
+                        <th className="border border-blue-200 px-1 py-0.5 text-left">Behavior</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td className="border border-blue-200 px-1 py-0.5">Rising clock edge AND Write Enable = 1</td>
+                        <td className="border border-blue-200 px-1 py-0.5">The value at the input port is captured and stored internally, immediately appearing at the output port</td>
+                      </tr>
+                      <tr>
+                        <td className="border border-blue-200 px-1 py-0.5">Rising clock edge AND Write Enable = 0</td>
+                        <td className="border border-blue-200 px-1 py-0.5">The register maintains its current value regardless of input changes</td>
+                      </tr>
+                      <tr>
+                        <td className="border border-blue-200 px-1 py-0.5">Between clock edges</td>
+                        <td className="border border-blue-200 px-1 py-0.5">The output continuously provides the last stored value with no additional delay</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  <p className="mt-1">Used for inserting controlled delays, storing state between operations, and buffering values between pipeline stages.</p>
+                </div>
               </div>
-              <p className="text-sm text-gray-500">No configuration needed</p>
+              <p className="text-xs text-gray-500">No configuration needed</p>
             </div>
           </div>
         );
@@ -596,16 +1095,60 @@ export function ConfigPanel() {
                 <ul className="text-sm text-blue-700 list-disc pl-5">
                   <li><span className="font-medium">Input:</span> Optional data input (32-bit value) that can be displayed alongside the label text</li>
                 </ul>
-                <h4 className="text-sm font-medium text-blue-800 mt-2 mb-1">Execution Logic</h4>
-                <p className="text-sm text-blue-700">The Label operates with minimal logic:<br/>
-                - It displays the configured text string at all times.<br/>
-                - If connected to an input signal, it can display the value of that signal (such as in decimal, hex, or binary format).<br/>
-                - The component is passive and doesn't modify any signals passing through the circuit.<br/>
-                - Labels are particularly useful for:<br/>
-                &nbsp;&nbsp;• Indicating datapath sections (e.g., "Fetch Stage", "Execute Stage")<br/>
-                &nbsp;&nbsp;• Annotating signal types (e.g., "Control Signals", "Address Bus")<br/>
-                &nbsp;&nbsp;• Monitoring signal values during simulation (e.g., "Current PC", "ALU Result")<br/>
-                &nbsp;&nbsp;• Adding explanatory notes to the circuit diagram</p>
+                <h4 className="text-xs font-medium text-blue-800 mt-2 mb-1">Execution Logic</h4>
+                <div className="text-xs text-blue-700">
+                  <p className="mb-1">The Label operates with minimal logic:</p>
+                  <table className="w-full border-collapse text-xs mb-2">
+                    <thead>
+                      <tr className="bg-blue-100">
+                        <th className="border border-blue-200 px-1 py-0.5 text-left">Aspect</th>
+                        <th className="border border-blue-200 px-1 py-0.5 text-left">Behavior</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td className="border border-blue-200 px-1 py-0.5">Display</td>
+                        <td className="border border-blue-200 px-1 py-0.5">Shows the configured text string at all times</td>
+                      </tr>
+                      <tr>
+                        <td className="border border-blue-200 px-1 py-0.5">Signal Monitoring</td>
+                        <td className="border border-blue-200 px-1 py-0.5">If connected to an input signal, can display the value in decimal, hex, or binary format</td>
+                      </tr>
+                      <tr>
+                        <td className="border border-blue-200 px-1 py-0.5">Signal Interaction</td>
+                        <td className="border border-blue-200 px-1 py-0.5">Passive component that doesn't modify any signals passing through the circuit</td>
+                      </tr>
+                    </tbody>
+                  </table>
+
+                  <p className="mb-1">Common uses for labels:</p>
+                  <table className="w-full border-collapse text-xs">
+                    <thead>
+                      <tr className="bg-blue-100">
+                        <th className="border border-blue-200 px-1 py-0.5 text-left">Purpose</th>
+                        <th className="border border-blue-200 px-1 py-0.5 text-left">Examples</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td className="border border-blue-200 px-1 py-0.5">Datapath Sections</td>
+                        <td className="border border-blue-200 px-1 py-0.5">"Fetch Stage", "Execute Stage"</td>
+                      </tr>
+                      <tr>
+                        <td className="border border-blue-200 px-1 py-0.5">Signal Types</td>
+                        <td className="border border-blue-200 px-1 py-0.5">"Control Signals", "Address Bus"</td>
+                      </tr>
+                      <tr>
+                        <td className="border border-blue-200 px-1 py-0.5">Value Monitoring</td>
+                        <td className="border border-blue-200 px-1 py-0.5">"Current PC", "ALU Result"</td>
+                      </tr>
+                      <tr>
+                        <td className="border border-blue-200 px-1 py-0.5">Documentation</td>
+                        <td className="border border-blue-200 px-1 py-0.5">Explanatory notes in the circuit diagram</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -628,7 +1171,7 @@ export function ConfigPanel() {
         return (
           <div className="space-y-4">
             <h3 className="font-medium">{selectedNode.type} Configuration</h3>
-            <p className="text-sm text-gray-500">No configuration options available</p>
+            <p className="text-xs text-gray-500">No configuration options available</p>
           </div>
         );
     }
@@ -657,7 +1200,7 @@ export function ConfigPanel() {
             <ChevronRight className="w-4 h-4 ml-2" />
           )}
         </button>
-        
+
         {isExpanded && (
           <button
             className="flex items-center justify-center p-1 rounded hover:bg-gray-100 focus:outline-none"
