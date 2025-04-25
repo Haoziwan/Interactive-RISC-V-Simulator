@@ -272,6 +272,26 @@ export const expandPseudoInstruction = (line: string, lineNumber?: number): stri
       // Regular jal instruction, don't expand
       return [lineWithoutComment];
     }
+    case 'jalr': {
+      // Check for pseudo-instruction format: jalr rd, imm(rs1)
+      if (parts.length === 3 && parts[2].includes('(')) {
+        // Parse the offset(register) format
+        const match = parts[2].match(/(\-?[0-9]+|\%lo\([a-zA-Z0-9_\.]+\))\(([a-zA-Z0-9]+)\)/);
+        if (match) {
+          const offset = match[1];
+          const rs1 = match[2];
+          // Convert to standard 3-operand format: jalr rd, rs1, offset
+          return [`jalr ${parts[1]}, ${rs1}, ${offset}`];
+        }
+      }
+      // Check for the short form: jalr rs
+      else if (parts.length === 2) {
+        // jalr rs equivalent to jalr x1, rs, 0
+        return [`jalr x1, ${parts[1]}, 0`];
+      }
+      // Regular jalr instruction, don't expand
+      return [lineWithoutComment];
+    }
     case 'call': {
       if (parts.length !== 2) throw new AssemblerError('call instruction requires 1 operand', {
         lineNumber: lineNumber,
@@ -456,14 +476,6 @@ export const expandPseudoInstruction = (line: string, lineNumber?: number): stri
       });
       // jr rs equivalent to jalr x0, rs, 0
       return [`jalr x0, ${parts[1]}, 0`];
-    }
-    case 'jalr': {
-      if (parts.length === 2) {
-        // jalr rs equivalent to jalr x1, rs, 0
-        return [`jalr x1, ${parts[1]}, 0`];
-      }
-      // Regular jalr instruction, don't expand
-      return [lineWithoutComment];
     }
     case 'tail': {
       if (parts.length !== 2) throw new AssemblerError('tail instruction requires 1 operand', {

@@ -151,6 +151,7 @@ const instructionFormats: InstructionFormat[] = [
       'jal offset - Jump and link (jal x1, offset)',
       'jr rs - Jump register (jalr x0, rs, 0)',
       'jalr rs - Jump and link register (jalr x1, rs, 0)',
+      'jalr rd, imm(rs1) - Jump and link register with offset (jalr rd, rs1, imm)',
       'tail offset - Tail call subroutine (jal x0, offset)'
     ]
   },
