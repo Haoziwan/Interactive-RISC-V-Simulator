@@ -11,12 +11,13 @@ interface MuxNodeData {
   onDelete?: () => void;
 }
 
-export function MuxNode({ data, id, selected }: { 
-  data: MuxNodeData; 
+export function MuxNode({ data, id, selected }: {
+  data: MuxNodeData;
   id: string;
-  selected?: boolean 
+  selected?: boolean
 }) {
   const updateNodeData = useCircuitStore((state) => state.updateNodeData);
+  const disableUIUpdates = useCircuitStore((state) => state.disableUIUpdates);
   const [inputs, setInputs] = React.useState<number[]>([]);
   const [showConfig, setShowConfig] = useState(false);
   const [tempPortCount, setTempPortCount] = useState(data.portCount || 2);
@@ -101,6 +102,7 @@ export function MuxNode({ data, id, selected }: {
       <div className="flex items-center justify-between mb-2">
         <div className="text-lg font-bold">MUX</div>
         <button
+          type="button"
           onClick={() => setShowConfig(!showConfig)}
           className="p-1 rounded-md hover:bg-gray-100"
           title="Configure"
@@ -117,6 +119,7 @@ export function MuxNode({ data, id, selected }: {
             <label className="block text-sm font-medium text-gray-700 mb-1">Number of Input Ports</label>
             <div className="flex items-center space-x-2">
               <button
+                type="button"
                 onClick={() => setTempPortCount(Math.max(2, tempPortCount - 1))}
                 className="px-2 py-1 border rounded-md hover:bg-gray-100"
                 title="Decrease port count"
@@ -125,6 +128,7 @@ export function MuxNode({ data, id, selected }: {
               </button>
               <span className="flex-1 text-center">{tempPortCount}</span>
               <button
+                type="button"
                 onClick={() => setTempPortCount(Math.min(8, tempPortCount + 1))}
                 className="px-2 py-1 border rounded-md hover:bg-gray-100"
                 title="Increase port count"
@@ -135,6 +139,7 @@ export function MuxNode({ data, id, selected }: {
           </div>
           <div className="flex justify-end space-x-2">
             <button
+              type="button"
               onClick={() => {
                 setShowConfig(false);
                 setTempPortCount(data.portCount || 2);
@@ -144,6 +149,7 @@ export function MuxNode({ data, id, selected }: {
               Cancel
             </button>
             <button
+              type="button"
               onClick={() => {
                 updateNodeData(id, {
                   ...data,
@@ -159,18 +165,25 @@ export function MuxNode({ data, id, selected }: {
         </div>
       )}
 
-      <div className="text-sm text-gray-500 space-y-1">
-        {Array.from({ length: portCount }).map((_, i) => (
-          <div key={i} className="flex justify-between">
-            <span>Input {i}: </span>
-            <span>{inputs[i] || 0}</span>
+      {!disableUIUpdates && (
+        <div className="text-sm text-gray-500 space-y-1">
+          {Array.from({ length: portCount }).map((_, i) => (
+            <div key={i} className="flex justify-between">
+              <span>Input {i}: </span>
+              <span>{inputs[i] || 0}</span>
+            </div>
+          ))}
+          <div className="flex justify-between">
+            <span>Select: </span>
+            <span>{data.select || '0'}</span>
           </div>
-        ))}
-        <div className="flex justify-between">
-          <span>Select: </span>
-          <span>{data.select || '0'}</span>
         </div>
-      </div>
+      )}
+
+      {/* Add placeholder div when UI updates are disabled to maintain height */}
+      {disableUIUpdates && (
+        <div style={{ height: `${Math.max(60, portCount * 20)}px` }}></div>
+      )}
 
       {/* Input ports */}
       {Array.from({ length: portCount }).map((_, i) => (

@@ -10,19 +10,20 @@ interface ImmGenNodeData {
   onDelete?: () => void;
 }
 
-export function ImmGenNode({ data, id, selected }: { 
-  data: ImmGenNodeData; 
+export function ImmGenNode({ data, id, selected }: {
+  data: ImmGenNodeData;
   id: string;
-  selected?: boolean 
+  selected?: boolean
 }) {
   const updateNodeData = useCircuitStore((state) => state.updateNodeData);
+  const disableUIUpdates = useCircuitStore((state) => state.disableUIUpdates);
   const nodes = useNodes();
   const edges = useEdges();
 
   // 从32位指令中提取立即数
   const generateImmediate = (instruction: string, format: string): number => {
     if (!instruction || instruction.length !== 32) return 0;
-    
+
     // 注意：instruction[0]是最高位(31)，instruction[31]是最低位(0)
     let imm = 0;
 
@@ -60,10 +61,10 @@ export function ImmGenNode({ data, id, selected }: {
         const bits10to5 = parseInt(instruction.substring(1, 7), 2);
         const bits4to1 = parseInt(instruction.substring(20, 24), 2);
         const bit11 = parseInt(instruction.substring(24, 25), 2);
-        
+
         // 合成立即数（注意B类型立即数的最低位总是0，因为是2字节对齐的）
         imm = (bit12 << 12) | (bit11 << 11) | (bits10to5 << 5) | (bits4to1 << 1);
-        
+
         // 符号扩展
         if ((imm & 0x1000) !== 0) {
           imm = (imm | 0xFFFFE000);
@@ -81,10 +82,10 @@ export function ImmGenNode({ data, id, selected }: {
         const bits10to1 = parseInt(instruction.substring(1, 11), 2);
         const bit11J = parseInt(instruction.substring(11, 12), 2);
         const bits19to12 = parseInt(instruction.substring(12, 20), 2);
-        
+
         // 合成立即数（也是2字节对齐的）
         imm = (bit20 << 20) | (bits19to12 << 12) | (bit11J << 11) | (bits10to1 << 1);
-        
+
         // 符号扩展
         if ((imm & 0x100000) !== 0) {
           imm = (imm | 0xFFE00000);
@@ -132,15 +133,15 @@ export function ImmGenNode({ data, id, selected }: {
           const binaryInstruction = parseInt(instruction, 16)
             .toString(2)
             .padStart(32, '0');
-          
+
           // 从指令中提取opcode（最后7位）
           const opcode = binaryInstruction.slice(-7);
           // 根据opcode识别指令类型
           const format = getInstructionFormat(opcode);
-          
+
           // 生成立即数
           const immediate = generateImmediate(binaryInstruction, format);
-          
+
           // 更新节点数据
           if (immediate !== data.immediate || format !== data.format || binaryInstruction !== data.instruction) {
             updateNodeData(id, {
@@ -165,13 +166,13 @@ export function ImmGenNode({ data, id, selected }: {
     <div className={`relative px-4 py-2 shadow-md rounded-md bg-white border-2 ${
       selected ? 'border-blue-500' : 'border-gray-200'
     }`}>
-      
+
       {/* Input port on left */}
-      <Handle 
-        type="target" 
-        position={Position.Left} 
-        id="instruction" 
-        className="w-3 h-3 bg-blue-400" 
+      <Handle
+        type="target"
+        position={Position.Left}
+        id="instruction"
+        className="w-3 h-3 bg-blue-400"
         style={{ top: '50%' }}
         title="Instruction Data"
       />
@@ -179,17 +180,25 @@ export function ImmGenNode({ data, id, selected }: {
       <div className="flex items-center">
         <div className="ml-2">
           <div className="text-lg font-bold">Immediate Gen</div>
-          <div className="text-gray-500">Format: {data.format || 'R'}</div>
-          <div className="text-gray-500">Immediate: {data.immediate !== undefined ? data.immediate : 0}</div>
+          {!disableUIUpdates && (
+            <>
+              <div className="text-gray-500">Format: {data.format || 'R'}</div>
+              <div className="text-gray-500">Immediate: {data.immediate !== undefined ? data.immediate : 0}</div>
+            </>
+          )}
+          {/* Add placeholder div when UI updates are disabled to maintain height */}
+          {disableUIUpdates && (
+            <div style={{ height: '50px' }}></div>
+          )}
         </div>
       </div>
 
       {/* Output port on right */}
-      <Handle 
-        type="source" 
-        position={Position.Right} 
-        id="immediate" 
-        className="w-3 h-3 bg-green-400" 
+      <Handle
+        type="source"
+        position={Position.Right}
+        id="immediate"
+        className="w-3 h-3 bg-green-400"
         style={{ top: '50%' }}
         title="Immediate Value"
       />

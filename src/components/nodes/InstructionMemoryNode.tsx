@@ -2,19 +2,20 @@ import { Handle, Position, useNodes, useEdges } from 'reactflow';
 import React from 'react';
 import { useCircuitStore } from '../../store/circuitStore';
 
-export function InstructionMemoryNode({ data, id, selected }: { 
-  data: { 
+export function InstructionMemoryNode({ data, id, selected }: {
+  data: {
     label: string;
     instructions?: string[];  // 机器码指令数组
     pc?: number;             // 程序计数器值
     value?: string;          // 当前输出的指令
     size?: number;          // 指令存储器容量（字节）
     onDelete?: () => void;
-  }; 
+  };
   id: string;
-  selected?: boolean 
+  selected?: boolean
 }) {
   const updateNodeData = useCircuitStore((state) => state.updateNodeData);
+  const disableUIUpdates = useCircuitStore((state) => state.disableUIUpdates);
   const assembledInstructions = useCircuitStore((state) => state.assembledInstructions);
   const nodes = useNodes();
   const edges = useEdges();
@@ -46,7 +47,7 @@ export function InstructionMemoryNode({ data, id, selected }: {
       }
     }
   };
-  
+
   // 监听PC输入连接的变化
   React.useEffect(() => {
     updateInputConnections();
@@ -65,7 +66,7 @@ export function InstructionMemoryNode({ data, id, selected }: {
       });
     }
   }, [data.pc, data.instructions]);
-  
+
 
   // 计算显示的指令范围（当前指令前后各2条）
   const pcValue = data.pc || 0;
@@ -76,13 +77,13 @@ export function InstructionMemoryNode({ data, id, selected }: {
     <div className={`relative px-4 py-2 shadow-md rounded-md bg-white border-2 ${
       selected ? 'border-blue-500' : 'border-gray-200'
     }`}>
-      
+
       {/* Input port on left */}
-      <Handle 
-        type="target" 
-        position={Position.Left} 
-        id="pc" 
-        className="w-3 h-3 bg-blue-400" 
+      <Handle
+        type="target"
+        position={Position.Left}
+        id="pc"
+        className="w-3 h-3 bg-blue-400"
         style={{ top: '50%' }}
         title="Program Counter Address"
       />
@@ -90,37 +91,44 @@ export function InstructionMemoryNode({ data, id, selected }: {
       <div className="flex items-center justify-between">
         <div>
           <div className="text-lg font-bold">Instruction Memory</div>
-          <div className="text-sm text-gray-500">
-            <div>Size: {data.size || 4096} bytes</div>
-            <div>Output: {(data.value === "0" || !data.value) ? 'No instruction' : data.value}</div>
-            <div className="mt-2 space-y-1 font-mono">
-              {displayInstructions.map((inst, idx) => {
-                const actualIdx = startIdx + idx;
-                const isCurrentInst = actualIdx === pcValue;
-                return (
-                  <div 
-                    key={actualIdx}
-                    className={`flex items-center ${isCurrentInst ? 'text-blue-600 font-bold' : 'text-gray-600'}`}
-                  >
-                    <span className="w-24 inline-block">
-                      {`0x${(actualIdx * 4).toString(16).padStart(8, '0')}`}
-                    </span>
-                    <span>
-                      {isCurrentInst ? '→ ' : '  '}
-                      {inst || 'No instruction'}
-                    </span>
-                  </div>
-                );
-              })}
-            </div>
-            {data.instructions && data.instructions.length > 0 && (
-              <div className="mt-2 text-xs text-gray-400">
-                Total Instructions: {data.instructions.length}
+          {!disableUIUpdates && (
+            <div className="text-sm text-gray-500">
+              <div>Size: {data.size || 4096} bytes</div>
+              <div>Output: {(data.value === "0" || !data.value) ? 'No instruction' : data.value}</div>
+              <div className="mt-2 space-y-1 font-mono">
+                {displayInstructions.map((inst, idx) => {
+                  const actualIdx = startIdx + idx;
+                  const isCurrentInst = actualIdx === pcValue;
+                  return (
+                    <div
+                      key={actualIdx}
+                      className={`flex items-center ${isCurrentInst ? 'text-blue-600 font-bold' : 'text-gray-600'}`}
+                    >
+                      <span className="w-24 inline-block">
+                        {`0x${(actualIdx * 4).toString(16).padStart(8, '0')}`}
+                      </span>
+                      <span>
+                        {isCurrentInst ? '→ ' : '  '}
+                        {inst || 'No instruction'}
+                      </span>
+                    </div>
+                  );
+                })}
               </div>
-            )}
-          </div>
+              {data.instructions && data.instructions.length > 0 && (
+                <div className="mt-2 text-xs text-gray-400">
+                  Total Instructions: {data.instructions.length}
+                </div>
+              )}
+            </div>
+          )}
+          {/* Add placeholder div when UI updates are disabled to maintain height */}
+          {disableUIUpdates && (
+            <div style={{ height: '160px' }}></div>
+          )}
         </div>
         <button
+          type="button"
           onClick={handleLoadInstructions}
           disabled={assembledInstructions.length === 0}
           className={`px-3 py-1.5 text-sm rounded ${
@@ -135,11 +143,11 @@ export function InstructionMemoryNode({ data, id, selected }: {
       </div>
 
       {/* Output port on right */}
-      <Handle 
-        type="source" 
-        position={Position.Right} 
-        id="instruction" 
-        className="w-3 h-3 bg-green-400" 
+      <Handle
+        type="source"
+        position={Position.Right}
+        id="instruction"
+        className="w-3 h-3 bg-green-400"
         style={{ top: '50%' }}
         title="Current Instruction"
       />

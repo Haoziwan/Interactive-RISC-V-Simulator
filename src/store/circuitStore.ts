@@ -93,6 +93,7 @@ interface CircuitState {
   }>;
   outputMessages: string[];
   performanceStats: PerformanceStats;
+  disableUIUpdates: boolean;
   updatePcValue: (value: number) => void;
   updateMemory: (memory: { [key: string]: number }) => void;
   clearMemory: () => void;
@@ -123,6 +124,7 @@ interface CircuitState {
   updatePerformanceStats: (instruction: string) => void;
   resetPerformanceStats: () => void;
   togglePipelineStats: () => void;
+  toggleUIUpdates: () => void;
   cache: {
     config: {
       size: number;      // Total cache size in bytes
@@ -170,6 +172,7 @@ export const useCircuitStore = create<CircuitState>()((set, get) => ({
   currentInstructionIndex: 0,
   simulationHistory: [],
   outputMessages: [],
+  disableUIUpdates: false,
   performanceStats: {
     // Configuration
     enablePipelineStats: false,
@@ -894,6 +897,10 @@ export const useCircuitStore = create<CircuitState>()((set, get) => ({
       ...state.performanceStats,
       enablePipelineStats: !state.performanceStats.enablePipelineStats
     }
+  })),
+
+  toggleUIUpdates: () => set((state) => ({
+    disableUIUpdates: !state.disableUIUpdates
   })),
   cache: {
     config: {

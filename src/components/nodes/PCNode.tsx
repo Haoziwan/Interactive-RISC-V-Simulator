@@ -11,6 +11,7 @@ interface PCNodeData {
 
 export function PCNode({ data, id, selected }: { data: PCNodeData; id: string; selected?: boolean }) {
   const updateNodeData = useCircuitStore((state) => state.updateNodeData);
+  const disableUIUpdates = useCircuitStore((state) => state.disableUIUpdates);
   const stepCount = useCircuitStore((state) => state.stepCount);
   const updatePcValue = useCircuitStore((state) => state.updatePcValue);
   const pcValue = useCircuitStore((state) => state.pcValue);
@@ -49,7 +50,7 @@ export function PCNode({ data, id, selected }: { data: PCNodeData; id: string; s
     // 检查pcWrite信号
     const pcWriteEdge = edges.find(edge => edge.target === id && edge.targetHandle === 'pcWrite');
     let pcWriteValue = 1; // 默认可写入
-    
+
     if (pcWriteEdge) {
       const sourceNode = nodes.find(node => node.id === pcWriteEdge.source);
       if (sourceNode?.data && typeof sourceNode.data === 'object') {
@@ -57,7 +58,7 @@ export function PCNode({ data, id, selected }: { data: PCNodeData; id: string; s
         pcWriteValue = typeof sourceValue === 'number' ? sourceValue : 1;
       }
     }
-    
+
     // 更新pcWrite状态
     if (pcWriteValue !== data.pcWrite) {
       updateNodeData(id, {
@@ -89,7 +90,7 @@ export function PCNode({ data, id, selected }: { data: PCNodeData; id: string; s
       if (pcWrite === 1) {
         // 首先将当前保存的输入值更新为寄存器的值
         handleValueChange(inputValue);
-        
+
       }
     }
   }, [stepCount]);
@@ -98,38 +99,46 @@ export function PCNode({ data, id, selected }: { data: PCNodeData; id: string; s
     <div className={`px-4 py-2 shadow-md rounded-md bg-white border-2 ${
       selected ? 'border-blue-500' : 'border-gray-200'
     }`}>
-      <Handle 
-        type="target" 
-        position={Position.Left} 
-        id="next" 
-        className="w-3 h-3 bg-blue-400" 
+      <Handle
+        type="target"
+        position={Position.Left}
+        id="next"
+        className="w-3 h-3 bg-blue-400"
         style={{ top: '35%' }}
         title="Next Instruction Address"
       />
-      
-      <Handle 
-        type="target" 
-        position={Position.Left} 
-        id="pcWrite" 
-        className="w-3 h-3 bg-yellow-400" 
+
+      <Handle
+        type="target"
+        position={Position.Left}
+        id="pcWrite"
+        className="w-3 h-3 bg-yellow-400"
         style={{ top: '65%' }}
         title="PC Write Enable"
       />
-      
+
       <div className="flex items-center">
         <div className="ml-2">
           <div className="text-lg font-bold">PC</div>
-          <div className="text-gray-500">Current: 0x{value.toString(16).padStart(8, '0')}</div>
-          <div className="text-gray-500">Next: 0x{inputValue.toString(16).padStart(8, '0')}</div>
-          <div className="text-gray-500">PCWrite: {pcWrite}</div>
+          {!disableUIUpdates && (
+            <>
+              <div className="text-gray-500">Current: 0x{value.toString(16).padStart(8, '0')}</div>
+              <div className="text-gray-500">Next: 0x{inputValue.toString(16).padStart(8, '0')}</div>
+              <div className="text-gray-500">PCWrite: {pcWrite}</div>
+            </>
+          )}
+          {/* Add placeholder div when UI updates are disabled to maintain height */}
+          {disableUIUpdates && (
+            <div style={{ height: '70px' }}></div>
+          )}
         </div>
       </div>
 
-      <Handle 
-        type="source" 
-        position={Position.Right} 
-        id="address" 
-        className="w-3 h-3 bg-green-400" 
+      <Handle
+        type="source"
+        position={Position.Right}
+        id="address"
+        className="w-3 h-3 bg-green-400"
         style={{ top: '50%' }}
         title="Current Instruction Address"
       />

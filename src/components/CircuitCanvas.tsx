@@ -95,7 +95,9 @@ export function CircuitCanvas() {
     toggleSimulation,
     resetSimulation,
     stepSimulation,
-    updateNodes
+    updateNodes,
+    disableUIUpdates,
+    toggleUIUpdates
   } = useCircuitStore();
   const [edgeType, setEdgeType] = useState('smoothstep');
   const [connectionMode, setConnectionMode] = useState<ConnectionMode>(ConnectionMode.Loose);
@@ -574,8 +576,23 @@ export function CircuitCanvas() {
                       useCircuitStore.getState().updateEdgeAnimated(e.target.checked);
                     }}
                     className="rounded border-gray-300"
+                    id="edge-animation"
+                    title="Toggle edge animation"
                   />
-                  <label className="text-xs text-gray-600">Animation</label>
+                  <label htmlFor="edge-animation" className="text-xs text-gray-600">Animation</label>
+                </div>
+
+                {/* UI Updates Toggle */}
+                <div className="flex items-center space-x-2">
+                  <input
+                    type="checkbox"
+                    checked={disableUIUpdates}
+                    onChange={() => toggleUIUpdates()}
+                    className="rounded border-gray-300"
+                    id="disable-ui-updates"
+                    title="Disable UI updates for better performance"
+                  />
+                  <label htmlFor="disable-ui-updates" className="text-xs text-gray-600">Disable UI Updates</label>
                 </div>
               </div>
             )}

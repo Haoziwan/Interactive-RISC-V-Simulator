@@ -17,6 +17,7 @@ export function DataMemoryNode({ data, id, selected }: { data: DataMemoryNodeDat
   const memory = useCircuitStore((state) => state.memory);
   const updateMemory = useCircuitStore((state) => state.updateMemory);
   const updateNodeData = useCircuitStore((state) => state.updateNodeData);
+  const disableUIUpdates = useCircuitStore((state) => state.disableUIUpdates);
   const stepCount = useCircuitStore((state) => state.stepCount);
   const nodes = useNodes();
   const edges = useEdges();
@@ -389,15 +390,23 @@ export function DataMemoryNode({ data, id, selected }: { data: DataMemoryNodeDat
 
       <div className="ml-2">
         <div className="text-lg font-bold">Data Memory</div>
-        <div className="text-gray-500">Address: 0x{(data.address || 0).toString(16).padStart(8, '0')}</div>
-        <div className="text-gray-500">Write Data: {data.writeData || 0}</div>
-        <div className="text-gray-500">Read Data: {data.readData || 0}</div>
-        <div className="text-gray-500">MemRead: {data.memRead || 0}</div>
-        <div className="text-gray-500">MemWrite: {data.memWrite || 0}</div>
-        <div className="text-gray-500">MemWidth: {data.memWidth ?? 2} ({data.memWidth === 0 ? 'byte' : data.memWidth === 1 ? 'half' : 'word'})</div>
-        <div className="text-xs text-gray-400 mt-2">
-          Size: {size} bytes
-        </div>
+        {!disableUIUpdates && (
+          <>
+            <div className="text-gray-500">Address: 0x{(data.address || 0).toString(16).padStart(8, '0')}</div>
+            <div className="text-gray-500">Write Data: {data.writeData || 0}</div>
+            <div className="text-gray-500">Read Data: {data.readData || 0}</div>
+            <div className="text-gray-500">MemRead: {data.memRead || 0}</div>
+            <div className="text-gray-500">MemWrite: {data.memWrite || 0}</div>
+            <div className="text-gray-500">MemWidth: {data.memWidth ?? 2} ({data.memWidth === 0 ? 'byte' : data.memWidth === 1 ? 'half' : 'word'})</div>
+            <div className="text-xs text-gray-400 mt-2">
+              Size: {size} bytes
+            </div>
+          </>
+        )}
+        {/* Add placeholder div when UI updates are disabled to maintain height */}
+        {disableUIUpdates && (
+          <div style={{ height: '140px' }}></div>
+        )}
       </div>
     </div>
   );

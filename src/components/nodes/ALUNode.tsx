@@ -39,6 +39,7 @@ interface ALUNodeData {
 
 export function ALUNode({ data, id, selected }: { data: ALUNodeData; id: string; selected?: boolean }) {
   const updateNodeData = useCircuitStore((state) => state.updateNodeData);
+  const disableUIUpdates = useCircuitStore((state) => state.disableUIUpdates);
   const nodes = useNodes();
   const edges = useEdges();
   const inputsRef = useRef({
@@ -303,11 +304,19 @@ export function ALUNode({ data, id, selected }: { data: ALUNodeData; id: string;
       <div className="flex items-center">
         <div className="ml-2">
           <div className="text-lg font-bold">ALU</div>
-          <div className="text-gray-500">Control: {getOperationName(data.operation ?? ALUOperation.ADD)} </div>
-          <div className="text-gray-500">A: {data.a ?? 0}</div>
-          <div className="text-gray-500">B: {data.b ?? 0}</div>
-          <div className="text-gray-500">Result: {data.result ?? 0}</div>
-          <div className="text-gray-500">Zero: {data.zero ?? 0}</div>
+          {!disableUIUpdates && (
+            <>
+              <div className="text-gray-500">Control: {getOperationName(data.operation ?? ALUOperation.ADD)} </div>
+              <div className="text-gray-500">A: {data.a ?? 0}</div>
+              <div className="text-gray-500">B: {data.b ?? 0}</div>
+              <div className="text-gray-500">Result: {data.result ?? 0}</div>
+              <div className="text-gray-500">Zero: {data.zero ?? 0}</div>
+            </>
+          )}
+          {/* Add placeholder div when UI updates are disabled to maintain height */}
+          {disableUIUpdates && (
+            <div style={{ height: '100px' }}></div>
+          )}
         </div>
       </div>
       <Handle

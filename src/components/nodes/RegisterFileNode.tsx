@@ -17,17 +17,18 @@ interface RegisterFileNodeData {
 
 export function RegisterFileNode({ data, id, selected }: { data: RegisterFileNodeData; id: string; selected?: boolean }) {
   const updateNodeData = useCircuitStore((state) => state.updateNodeData);
+  const disableUIUpdates = useCircuitStore((state) => state.disableUIUpdates);
   const stepCount = useCircuitStore((state) => state.stepCount);
   const registers = useCircuitStore((state) => state.registers);
   const updateRegisters = useCircuitStore((state) => state.updateRegisters);
-  
+
   const readReg1 = data.readReg1 || 0;
   const readReg2 = data.readReg2 || 0;
   const writeReg = data.writeReg || 0;
   const writeData = data.writeData || 0;
   const regWrite = data.regWrite || false;
   const reset = data.reset || false;
-  
+
   const nodes = useNodes();
   const edges = useEdges();
   // Get input port value (combinational logic)
@@ -70,9 +71,9 @@ export function RegisterFileNode({ data, id, selected }: { data: RegisterFileNod
 
     // Calculate read data regardless of input changes
     const writeFirst = data.writeFirst || false;
-    const readData1 = newReadReg1 === 0 ? 0 : 
+    const readData1 = newReadReg1 === 0 ? 0 :
       (writeFirst && newRegWrite && newReadReg1 === newWriteReg) ? newWriteData : (registers[newReadReg1] || 0);
-    const readData2 = newReadReg2 === 0 ? 0 : 
+    const readData2 = newReadReg2 === 0 ? 0 :
       (writeFirst && newRegWrite && newReadReg2 === newWriteReg) ? newWriteData : (registers[newReadReg2] || 0);
 
     // Update node data if inputs changed or register values changed
@@ -116,7 +117,7 @@ export function RegisterFileNode({ data, id, selected }: { data: RegisterFileNod
 
   const [showConfig, setShowConfig] = React.useState(false);
   const [tempWriteFirst, setTempWriteFirst] = React.useState(data.writeFirst ?? false);
-  
+
   // 确保在showConfig变化时同步tempWriteFirst状态
   React.useEffect(() => {
     if (showConfig) {
@@ -129,68 +130,69 @@ export function RegisterFileNode({ data, id, selected }: { data: RegisterFileNod
       selected ? 'border-blue-500' : 'border-gray-200'
     }`}>
       {/* Control port at top */}
-      <Handle 
-        type="target" 
-        position={Position.Top} 
-        id="regWrite" 
-        className="w-3 h-3 bg-yellow-400" 
+      <Handle
+        type="target"
+        position={Position.Top}
+        id="regWrite"
+        className="w-3 h-3 bg-yellow-400"
         style={{ left: '50%' }}
         title="Register Write Enable"
       />
 
       {/* Input ports on left */}
-      <Handle 
-        type="target" 
-        position={Position.Left} 
-        id="readReg1" 
-        className="w-3 h-3 bg-blue-400" 
+      <Handle
+        type="target"
+        position={Position.Left}
+        id="readReg1"
+        className="w-3 h-3 bg-blue-400"
         style={{ top: '20%' }}
         title="Read Register 1 Address"
       />
-      <Handle 
-        type="target" 
-        position={Position.Left} 
-        id="readReg2" 
-        className="w-3 h-3 bg-blue-400" 
+      <Handle
+        type="target"
+        position={Position.Left}
+        id="readReg2"
+        className="w-3 h-3 bg-blue-400"
         style={{ top: '40%' }}
         title="Read Register 2 Address"
       />
-      <Handle 
-        type="target" 
-        position={Position.Left} 
-        id="writeReg" 
-        className="w-3 h-3 bg-blue-400" 
+      <Handle
+        type="target"
+        position={Position.Left}
+        id="writeReg"
+        className="w-3 h-3 bg-blue-400"
         style={{ top: '60%' }}
         title="Write Register Address"
       />
-      <Handle 
-        type="target" 
-        position={Position.Left} 
-        id="writeData" 
-        className="w-3 h-3 bg-blue-400" 
+      <Handle
+        type="target"
+        position={Position.Left}
+        id="writeData"
+        className="w-3 h-3 bg-blue-400"
         style={{ top: '80%' }}
         title="Write Data"
       />
-      
+
       {/* Output ports on right */}
-      <Handle 
-        type="source" 
-        position={Position.Right} 
-        id="readData1" 
-        className="w-3 h-3 bg-green-400" 
+      <Handle
+        type="source"
+        position={Position.Right}
+        id="readData1"
+        className="w-3 h-3 bg-green-400"
         style={{ top: '30%' }}
         title="Read Data 1"
       />
-      <Handle 
-        type="source" 
-        position={Position.Right} 
-        id="readData2" 
-        className="w-3 h-3 bg-green-400" 
+      <Handle
+        type="source"
+        position={Position.Right}
+        id="readData2"
+        className="w-3 h-3 bg-green-400"
         style={{ top: '70%' }}
         title="Read Data 2"
       />
-      
+
       <button
+        type="button"
         onClick={() => setShowConfig(!showConfig)}
         className="absolute top-2 right-2 p-1 rounded-md hover:bg-gray-100"
         title="Configure"
@@ -203,19 +205,22 @@ export function RegisterFileNode({ data, id, selected }: { data: RegisterFileNod
       {showConfig && (
         <div className="absolute z-10 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 p-2 right-0">
           <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700 mb-1">Write First</label>
+            <label htmlFor="write-first-checkbox" className="block text-sm font-medium text-gray-700 mb-1">Write First</label>
             <div className="flex items-center">
               <input
                 type="checkbox"
                 checked={tempWriteFirst}
                 onChange={(e) => setTempWriteFirst(e.target.checked)}
                 className="h-4 w-4 text-blue-600 rounded"
+                title="Enable write-first mode"
+                id="write-first-checkbox"
               />
               <span className="ml-2 text-sm text-gray-700">Enable write-first</span>
             </div>
           </div>
           <div className="flex justify-end space-x-2">
             <button
+              type="button"
               onClick={() => {
                 setShowConfig(false);
                 setTempWriteFirst(data.writeFirst || false);
@@ -225,6 +230,7 @@ export function RegisterFileNode({ data, id, selected }: { data: RegisterFileNod
               Cancel
             </button>
             <button
+              type="button"
               onClick={() => {
                 updateNodeData(id, {
                   ...data,
@@ -243,12 +249,20 @@ export function RegisterFileNode({ data, id, selected }: { data: RegisterFileNod
       <div className="flex items-center">
         <div className="ml-2">
           <div className="text-lg font-bold">Register File</div>
-          <div className="text-gray-500">Read Reg 1: x{readReg1} = {data.readData1 || 0}</div>
-          <div className="text-gray-500">Read Reg 2: x{readReg2} = {data.readData2 || 0}</div>
-          <div className="text-gray-500">Write Reg: x{writeReg}</div>
-          <div className="text-gray-500">Write Data: {writeData}</div>
-          <div className="text-gray-500">RegWrite: {regWrite ? '1' : '0'}</div>
-          <div className="text-gray-500">WriteFirst: {data.writeFirst ? 'true' : 'false'}</div>
+          {!disableUIUpdates && (
+            <>
+              <div className="text-gray-500">Read Reg 1: x{readReg1} = {data.readData1 || 0}</div>
+              <div className="text-gray-500">Read Reg 2: x{readReg2} = {data.readData2 || 0}</div>
+              <div className="text-gray-500">Write Reg: x{writeReg}</div>
+              <div className="text-gray-500">Write Data: {writeData}</div>
+              <div className="text-gray-500">RegWrite: {regWrite ? '1' : '0'}</div>
+              <div className="text-gray-500">WriteFirst: {data.writeFirst ? 'true' : 'false'}</div>
+            </>
+          )}
+          {/* Add placeholder div when UI updates are disabled to maintain height */}
+          {disableUIUpdates && (
+            <div style={{ height: '120px' }}></div>
+          )}
         </div>
       </div>
     </div>
