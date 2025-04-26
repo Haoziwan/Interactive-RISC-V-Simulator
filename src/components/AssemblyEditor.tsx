@@ -169,25 +169,54 @@ export function AssemblyEditor() {
     if (tableBodyRef.current && currentInstructionIndex !== null && currentInstructionIndex >= 0) {
       // 找到当前PC对应的行
       const currentPC = currentInstructionIndex * 4;
-      const rows = tableBodyRef.current.querySelectorAll('tr');
-      let highlightedRow = null;
 
-      // 查找包含当前PC地址的行
-      for (const row of rows) {
-        const firstCell = row.querySelector('td:first-child');
-        if (firstCell && firstCell.textContent?.includes(`0x${currentPC.toString(16).padStart(8, '0')}`)) {
-          highlightedRow = row;
-          break;
+      // 首先尝试通过ID直接找到对应的行（更可靠的方法）
+      const rowId = `instruction-row-${currentInstructionIndex}`;
+      let highlightedRow = document.getElementById(rowId);
+
+      // 如果通过ID找不到，则尝试通过地址查找
+      if (!highlightedRow && tableBodyRef.current) {
+        const rows = tableBodyRef.current.querySelectorAll('tr');
+
+        // 查找包含当前PC地址的行
+        for (const row of rows) {
+          const firstCell = row.querySelector('td:first-child');
+          if (firstCell && firstCell.textContent?.includes(`0x${currentPC.toString(16).padStart(8, '0')}`)) {
+            highlightedRow = row;
+            break;
+          }
         }
       }
 
-      // 如果找不到，则找已高亮的行
-      if (!highlightedRow) {
-        highlightedRow = tableBodyRef.current.querySelector('.bg-yellow-50')?.parentElement;
+      // 如果仍然找不到，则找已高亮的行
+      if (!highlightedRow && tableBodyRef.current) {
+        const highlightedElement = tableBodyRef.current.querySelector('.bg-yellow-50');
+        if (highlightedElement) {
+          highlightedRow = highlightedElement.closest('tr');
+        }
       }
 
+      // 如果找到了行，检查是否在视图中，如果不在才滚动
       if (highlightedRow) {
-        highlightedRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        // 检查元素是否在视图中
+        const container = tableBodyRef.current;
+        const containerRect = container.getBoundingClientRect();
+        const rowRect = highlightedRow.getBoundingClientRect();
+
+        // 检查元素是否完全在视图中
+        const isInView = (
+          rowRect.top >= containerRect.top &&
+          rowRect.bottom <= containerRect.bottom
+        );
+
+        // 只有当元素不在视图中时才滚动
+        if (!isInView) {
+          // 使用更快的滚动方式，在高速模式下更可靠
+          highlightedRow.scrollIntoView({
+            behavior: isSimulating && useCircuitStore.getState().simulationInterval < 200 ? 'auto' : 'smooth',
+            block: 'center'
+          });
+        }
       }
     }
 
@@ -707,18 +736,52 @@ export function AssemblyEditor() {
                   {assembledInstructions.length > 0 ? (
                     assembledInstructions
                       .filter(inst => inst.segment !== 'data') // 过滤掉数据段指令
-                      .map((inst, i) => (
-                      <tr
-                        key={i}
-                        className={`${currentInstructionIndex * 4 === inst.address ? 'bg-yellow-50 border border-yellow-200' : 'hover:bg-gray-50'} transition-all duration-500`}
-                        id={`instruction-row-${i}`}
-                      >
-                        <td className="py-2 px-3 font-mono text-gray-600 text-xs whitespace-nowrap overflow-hidden text-ellipsis">{`0x${(inst.address !== undefined ? inst.address : i * 4).toString(16).padStart(8, '0')}`}</td>
-                        <td className="py-2 px-3 font-mono text-blue-600 text-xs whitespace-nowrap overflow-hidden text-ellipsis">{inst.hex}</td>
-                        <td className="py-2 px-3 font-mono text-xs whitespace-nowrap">{translateLabels(inst.assembly)}</td>
-                        <td className="py-2 px-3 font-mono text-gray-600 text-xs whitespace-nowrap overflow-hidden text-ellipsis">{inst.source}</td>
-                      </tr>
-                    ))
+                      .flatMap((inst, i) => {
+                        // Get the address of the current instruction
+                        const address = inst.address !== undefined ? inst.address : i * 4;
+
+                        // Find any labels that point to this address
+                        const labelsAtAddress = Object.entries(labelMap)
+                          .filter(([_, labelAddress]) => labelAddress === address)
+                          .map(([label]) => label);
+
+                        // Determine if we need to show a label
+                        const hasLabel = labelsAtAddress.length > 0;
+
+                        const result = [];
+
+                        // Add label row if needed
+                        if (hasLabel) {
+                          labelsAtAddress.forEach(label => {
+                            result.push(
+                              <tr key={`${i}-label-${label}`} className="border-b-0 bg-red-100">
+                                <td className="py-0.5 px-3 font-mono text-blue-600 text-xs font-bold whitespace-nowrap">
+                                  {`<${label}>:`}
+                                </td>
+                                <td colSpan={3}></td>
+                              </tr>
+                            );
+                          });
+                        }
+
+                        // Add instruction row
+                        result.push(
+                          <tr
+                            key={i}
+                            className={`${currentInstructionIndex * 4 === address ? 'bg-yellow-50 border border-yellow-200' : ''} transition-all duration-100`}
+                            id={`instruction-row-${i}`}
+                          >
+                            <td className="py-2 px-3 font-mono text-gray-600 text-xs whitespace-nowrap overflow-hidden text-ellipsis">
+                              {`0x${address.toString(16).padStart(8, '0')}`}
+                            </td>
+                            <td className="py-2 px-3 font-mono text-blue-600 text-xs whitespace-nowrap overflow-hidden text-ellipsis">{inst.hex}</td>
+                            <td className="py-2 px-3 font-mono text-xs whitespace-nowrap">{translateLabels(inst.assembly)}</td>
+                            <td className="py-2 px-3 font-mono text-gray-600 text-xs whitespace-nowrap overflow-hidden text-ellipsis">{inst.source}</td>
+                          </tr>
+                        );
+
+                        return result;
+                      })
                   ) : (
                     <tr>
                       <td colSpan={4} className="py-8 text-center text-gray-500">

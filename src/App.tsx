@@ -195,7 +195,7 @@ function App() {
                   <input
                     type="range"
                     min="0"
-                    max="4000"
+                    max="2000"
                     step="100"
                     value={useCircuitStore((state) => state.simulationInterval)}
                     onChange={(e) => useCircuitStore.setState({ simulationInterval: parseInt(e.target.value) })}
