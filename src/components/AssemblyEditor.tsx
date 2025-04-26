@@ -2,6 +2,8 @@ import { useState, useEffect, useRef } from 'react';
 import { useCircuitStore } from '../store/circuitStore';
 import { Assembler, expandPseudoInstruction, AssemblerError, AssembledInstruction } from '../assembler/assembler';
 import Editor, { useMonaco } from '@monaco-editor/react';
+import { Table } from 'lucide-react';
+import { SymbolTable } from './SymbolTable';
 
 // 扩展AssembledInstruction类型，确保包含originalLineNumber
 type ExtendedAssembledInstruction = AssembledInstruction & {
@@ -16,6 +18,7 @@ export function AssemblyEditor() {
   const monaco = useMonaco();
   const [decorations, setDecorations] = useState<string[]>([]);
   const [labelMap, setLabelMap] = useState<Record<string, number>>({});
+  const [showSymbolTable, setShowSymbolTable] = useState<boolean>(false);
 
   // 使用store中的状态
   const editorCode = useCircuitStore((state) => state.editorCode);
@@ -591,6 +594,13 @@ export function AssemblyEditor() {
             </div>
           </div>
 
+          {/* Symbol Table */}
+          <SymbolTable
+            labelMap={labelMap}
+            isOpen={showSymbolTable}
+            onClose={() => setShowSymbolTable(false)}
+          />
+
           <Editor
             height="calc(100vh - 140px)"
             defaultLanguage="riscv"
@@ -653,22 +663,33 @@ export function AssemblyEditor() {
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-lg font-semibold">Result</h3>
               {assembledInstructions.length > 0 && (
-                <button
-                  type="button"
-                  onClick={() => {
-                    const machineCode = assembledInstructions.map(inst => inst.hex).join('\n');
-                    const blob = new Blob([machineCode], { type: 'text/plain' });
-                    const url = URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = 'machine_code.txt';
-                    a.click();
-                    URL.revokeObjectURL(url);
-                  }}
-                  className="px-4 py-1.5 text-sm font-medium text-white bg-blue-500 border border-blue-600 rounded-md shadow-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200"
-                >
-                  Export Code
-                </button>
+                <div className="flex space-x-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const machineCode = assembledInstructions.map(inst => inst.hex).join('\n');
+                      const blob = new Blob([machineCode], { type: 'text/plain' });
+                      const url = URL.createObjectURL(blob);
+                      const a = document.createElement('a');
+                      a.href = url;
+                      a.download = 'machine_code.txt';
+                      a.click();
+                      URL.revokeObjectURL(url);
+                    }}
+                    className="px-4 py-1.5 text-sm font-medium text-white bg-blue-500 border border-blue-600 rounded-md shadow-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200"
+                  >
+                    Export Code
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setShowSymbolTable(true)}
+                    className="px-4 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200 flex items-center"
+                    title="Show symbol table"
+                  >
+                    <Table className="w-4 h-4 mr-1" />
+                    Symbols
+                  </button>
+                </div>
               )}
             </div>
 
