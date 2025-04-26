@@ -164,14 +164,29 @@ export function CircuitCanvas() {
     setSelectedNode(null);
     setSelectedEdge(null);
 
-    // Clear the selected state from all edges
+    // Clear the selected state and highlighting from all edges
     useCircuitStore.setState((state) => ({
       edges: state.edges.map(e => ({
         ...e,
         selected: false,
+        data: {
+          ...e.data,
+          isHighlighted: false
+        },
+        style: {
+          ...e.style,
+          stroke: edgeColor,
+          strokeWidth: edgeWidth,
+        },
+        markerEnd: {
+          type: 'arrow' as MarkerType,
+          width: 20,
+          height: 20,
+          color: edgeColor,
+        },
       }))
     }));
-  }, [setSelectedNode, setSelectedEdge]);
+  }, [setSelectedNode, setSelectedEdge, edgeColor, edgeWidth]);
 
   const onNodesChange: OnNodesChange = useCallback(
     (changes) => {
@@ -196,15 +211,32 @@ export function CircuitCanvas() {
       // Select the edge
       setSelectedEdge(edge);
 
-      // Update the edges to mark this one as selected
+      // Update the edges to mark this one as selected and reset any highlighting
       useCircuitStore.setState((state) => ({
         edges: state.edges.map(e => ({
           ...e,
           selected: e.id === edge.id,
+          data: {
+            ...e.data,
+            isHighlighted: false // Reset highlighting when selecting an edge
+          },
+          style: {
+            ...e.style,
+            stroke: e.id === edge.id ? '#3b82f6' : edgeColor,
+            strokeWidth: e.id === edge.id ? edgeWidth + 1 : edgeWidth,
+            // Add dashed style if it's an editable edge and selected to indicate edit mode
+            strokeDasharray: (e.type === 'editableEdge' && e.id === edge.id) ? '5,5' : undefined,
+          },
+          markerEnd: {
+            type: 'arrow' as MarkerType,
+            width: 20,
+            height: 20,
+            color: e.id === edge.id ? '#3b82f6' : edgeColor,
+          },
         }))
       }));
     },
-    [setSelectedEdge]
+    [setSelectedEdge, edgeColor, edgeWidth]
   );
   const onConnect = useCallback(
     (params: Connection) => {
@@ -282,8 +314,41 @@ export function CircuitCanvas() {
   const onNodeClick = useCallback(
     (_: React.MouseEvent, node: Node) => {
       setSelectedNode(node);
+
+      // Find all edges connected to this node (both input and output)
+      const connectedEdges = edges.filter(
+        edge => edge.source === node.id || edge.target === node.id
+      );
+
+      // Update all edges to highlight those connected to the selected node
+      useCircuitStore.setState((state) => ({
+        edges: state.edges.map(e => ({
+          ...e,
+          // Store the highlighted state in the data object
+          data: {
+            ...e.data,
+            isHighlighted: connectedEdges.some(ce => ce.id === e.id)
+          },
+          style: {
+            ...e.style,
+            // Keep the selected edge blue, highlight connected edges, others remain default
+            stroke: e.selected ? '#3b82f6' :
+                   connectedEdges.some(ce => ce.id === e.id) ? '#ff6b00' : edgeColor,
+            // Increase width for highlighted edges
+            strokeWidth: e.selected ? edgeWidth + 1 :
+                        connectedEdges.some(ce => ce.id === e.id) ? edgeWidth + 1 : edgeWidth,
+          },
+          markerEnd: {
+            type: 'arrow' as MarkerType,
+            width: 20,
+            height: 20,
+            color: e.selected ? '#3b82f6' :
+                   connectedEdges.some(ce => ce.id === e.id) ? '#ff6b00' : edgeColor,
+          },
+        }))
+      }));
     },
-    [setSelectedNode]
+    [setSelectedNode, edges, edgeColor, edgeWidth]
   );
   const edgeOptions = [
     { value: 'default', label: 'default' },
@@ -317,8 +382,11 @@ export function CircuitCanvas() {
           ...edge,
           style: {
             ...defaultEdgeOptions.style,
-            stroke: edge.selected ? '#3b82f6' : edgeColor,
-            strokeWidth: edge.selected ? edgeWidth + 1 : edgeWidth,
+            // Priority: selected > highlighted > default
+            stroke: edge.selected ? '#3b82f6' :
+                   edge.data?.isHighlighted ? '#ff6b00' :
+                   edgeColor,
+            strokeWidth: edge.selected || edge.data?.isHighlighted ? edgeWidth + 1 : edgeWidth,
             // Add dashed style if it's an editable edge and selected to indicate edit mode
             strokeDasharray: (edge.type === 'editableEdge' && edge.selected) ? '5,5' : undefined,
           },
@@ -326,7 +394,10 @@ export function CircuitCanvas() {
             type: 'arrow' as MarkerType,
             width: 20,
             height: 20,
-            color: edge.selected ? '#3b82f6' : edgeColor,
+            // Match the stroke color
+            color: edge.selected ? '#3b82f6' :
+                  edge.data?.isHighlighted ? '#ff6b00' :
+                  edgeColor,
           },
           // Preserve any existing data, including intermediatePoints and lineType
           data: {
