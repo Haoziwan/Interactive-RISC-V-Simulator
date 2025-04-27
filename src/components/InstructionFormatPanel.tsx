@@ -167,7 +167,9 @@ const instructionFormats: InstructionFormat[] = [
       '.asciz "string" - Define ASCII string (null terminated)',
       '.string "string" - Define ASCII string (null terminated, same as .asciz)',
       '.space size - Allocate space of specified size (filled with zeros)',
-      '.zero size - Allocate space of specified size (filled with zeros, same as .space)'
+      '.zero size - Allocate space of specified size (filled with zeros, same as .space)',
+      '.equ symbol, value - Define a constant symbol with the specified value',
+
     ]
   },
   // {

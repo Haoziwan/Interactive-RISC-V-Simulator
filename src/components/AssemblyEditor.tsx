@@ -58,7 +58,7 @@ export function AssemblyEditor() {
             [/[a-zA-Z0-9_\.]+:/, 'label'],
 
             // 段定义
-            [/\.(text|data|section|global|align|byte|half|word|dword|float|double|ascii|asciz|string|space|zero)/, 'directive'],
+            [/\.(text|data|section|global|align|byte|half|word|dword|float|double|ascii|asciz|string|space|zero|equ)/, 'directive'],
 
             // 基本指令
             [/\b(add|sub|and|or|xor|sll|srl|sra|slt|sltu|addi|andi|ori|xori|slli|srli|srai|slti|sltiu|lb|lh|lw|ld|lbu|lhu|lwu|sb|sh|sw|sd|beq|bne|blt|bge|bltu|bgeu|jal|jalr|lui|auipc|ecall|ebreak)\b/, 'keyword'],

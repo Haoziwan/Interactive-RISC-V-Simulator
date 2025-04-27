@@ -103,7 +103,7 @@ export const parseRegister = (reg: string): number => {
   return num;
 };
 
-export const parseImmediate = (imm: string, bits: number, labelMap?: Record<string, number>): number => {
+export const parseImmediate = (imm: string, bits: number, labelMap?: Record<string, number>, equMap?: Record<string, number>): number => {
   let value: number;
 
   // Handle %hi and %lo relocation operators (allow dots in label names)
@@ -140,6 +140,9 @@ export const parseImmediate = (imm: string, bits: number, labelMap?: Record<stri
         value = value | 0xFFFFF000; // Sign-extend to 32 bits
       }
     }
+  } else if (equMap && imm in equMap) {
+    // Check if the immediate is a constant defined with .equ
+    value = equMap[imm];
   } else if (imm.startsWith('0x')) {
     value = parseInt(imm.slice(2), 16);
     // Handle hexadecimal negative numbers
@@ -180,7 +183,7 @@ export const parseImmediate = (imm: string, bits: number, labelMap?: Record<stri
   return value;
 };
 
-export const expandPseudoInstruction = (line: string, lineNumber?: number): string[] => {
+export const expandPseudoInstruction = (line: string, lineNumber?: number, equMap?: Record<string, number>): string[] => {
   // Remove comments
   const lineWithoutComment = line.split('#')[0].trim();
   const parts = lineWithoutComment.split(/[\s,]+/).filter(Boolean);
@@ -195,13 +198,19 @@ export const expandPseudoInstruction = (line: string, lineNumber?: number): stri
       }
       const rd = parts[1];
       let imm;
-      try {
-        imm = parts[2].startsWith('0x') ? parseInt(parts[2].slice(2), 16) : parseInt(parts[2]);
-        if (isNaN(imm)) throw new Error();
-      } catch {
-        throw new AssemblerError(`Invalid immediate format in li instruction: ${parts[2]}\nSupported formats:\n  - Decimal number (e.g., 42)\n  - Hexadecimal number (e.g., 0xff)`, {
-          lineNumber: lineNumber
-        });
+
+      // Check if the immediate is a constant defined with .equ
+      if (equMap && parts[2] in equMap) {
+        imm = equMap[parts[2]];
+      } else {
+        try {
+          imm = parts[2].startsWith('0x') ? parseInt(parts[2].slice(2), 16) : parseInt(parts[2]);
+          if (isNaN(imm)) throw new Error();
+        } catch {
+          throw new AssemblerError(`Invalid immediate format in li instruction: ${parts[2]}\nSupported formats:\n  - Decimal number (e.g., 42)\n  - Hexadecimal number (e.g., 0xff)`, {
+            lineNumber: lineNumber
+          });
+        }
       }
 
       // 12位以内直接用addi
@@ -491,7 +500,7 @@ export const expandPseudoInstruction = (line: string, lineNumber?: number): stri
   }
 };
 
-export const parseInstruction = (line: string, currentAddress: number, labelMap: Record<string, number>, lineNumber?: number): Instruction => {
+export const parseInstruction = (line: string, currentAddress: number, labelMap: Record<string, number>, lineNumber?: number, equMap?: Record<string, number>): Instruction => {
   // Remove comments
   const lineWithoutComment = line.split('#')[0].trim();
   // Split instruction parts
@@ -561,7 +570,7 @@ export const parseInstruction = (line: string, currentAddress: number, labelMap:
         opcode: '0010011',
         rd: parseRegister(parts[1]),
         rs1: parseRegister(parts[2]),
-        imm: parseImmediate(parts[3], 12, labelMap),
+        imm: parseImmediate(parts[3], 12, labelMap, equMap),
         funct3: op === 'addi' ? '000' :
                op === 'slli' ? '001' :
                op === 'slti' ? '010' :
@@ -579,19 +588,19 @@ export const parseInstruction = (line: string, currentAddress: number, labelMap:
     case 'lhu': {
       if (parts.length !== 3) throw new AssemblerError(`${op} instruction requires 2 operands with offset`);
       const [rd, memStr] = parts.slice(1);
-      // Support both regular offsets and %lo expressions
-      const match = memStr.match(/(%lo\([a-zA-Z0-9_\.]+\)|\-?[0-9]+)\(([a-zA-Z0-9]+)\)/);
+      // Support regular offsets, %lo expressions, and symbol names (for equ constants)
+      const match = memStr.match(/(%lo\([a-zA-Z0-9_\.]+\)|\-?[0-9]+|[a-zA-Z][a-zA-Z0-9_]*)\(([a-zA-Z0-9]+)\)/);
       if (!match) throw new AssemblerError(`Invalid memory access format: ${memStr}`, {
     errorType: 'Memory Access Format Error',
     instruction: lineWithoutComment,
-    suggestion: 'Memory access format should be: offset(register) or %lo(symbol)(register), e.g., 4(x2) or %lo(data_var)(x2)'
+    suggestion: 'Memory access format should be: offset(register), %lo(symbol)(register), or CONSTANT(register), e.g., 4(x2), %lo(data_var)(x2), or OFFSET(x2)'
   });
       return {
         type: 'I',
         opcode: '0000011',
         rd: parseRegister(rd),
         rs1: parseRegister(match[2]),
-        imm: parseImmediate(match[1], 12, labelMap),
+        imm: parseImmediate(match[1], 12, labelMap, equMap),
         funct3: op === 'lb' ? '000' :
                op === 'lh' ? '001' :
                op === 'lw' ? '010' :
@@ -603,19 +612,19 @@ export const parseInstruction = (line: string, currentAddress: number, labelMap:
     case 'sw': {
       if (parts.length !== 3) throw new AssemblerError(`${op} instruction requires 2 operands with offset`);
       const [rs2, memStr] = parts.slice(1);
-      // Support both regular offsets and %lo expressions
-      const match = memStr.match(/(%lo\([a-zA-Z0-9_\.]+\)|\-?[0-9]+)\(([a-zA-Z0-9]+)\)/);
+      // Support regular offsets, %lo expressions, and symbol names (for equ constants)
+      const match = memStr.match(/(%lo\([a-zA-Z0-9_\.]+\)|\-?[0-9]+|[a-zA-Z][a-zA-Z0-9_]*)\(([a-zA-Z0-9]+)\)/);
       if (!match) throw new AssemblerError(`Invalid memory access format: ${memStr}`, {
     errorType: 'Memory Access Format Error',
     instruction: lineWithoutComment,
-    suggestion: 'Memory access format should be: offset(register) or %lo(symbol)(register), e.g., 4(x2) or %lo(data_var)(x2)'
+    suggestion: 'Memory access format should be: offset(register), %lo(symbol)(register), or CONSTANT(register), e.g., 4(x2), %lo(data_var)(x2), or OFFSET(x2)'
   });
       return {
         type: 'S',
         opcode: '0100011',
         rs1: parseRegister(match[2]),
         rs2: parseRegister(rs2),
-        imm: parseImmediate(match[1], 12, labelMap),
+        imm: parseImmediate(match[1], 12, labelMap, equMap),
         funct3: op === 'sb' ? '000' :
                op === 'sh' ? '001' : '010'
       };
@@ -637,7 +646,7 @@ export const parseInstruction = (line: string, currentAddress: number, labelMap:
       if (targetLabel in labelMap) {
         offset = labelMap[targetLabel] - currentAddress;
       } else {
-        offset = parseImmediate(targetLabel, 13);
+        offset = parseImmediate(targetLabel, 13, undefined, equMap);
       }
 
       return {
@@ -660,7 +669,7 @@ export const parseInstruction = (line: string, currentAddress: number, labelMap:
         type: 'U',
         opcode: op === 'lui' ? '0110111' : '0010111',
         rd: parseRegister(parts[1]),
-        imm: parseImmediate(parts[2], 20, labelMap)
+        imm: parseImmediate(parts[2], 20, labelMap, equMap)
       };
     }
     case 'jal': {
@@ -671,7 +680,7 @@ export const parseInstruction = (line: string, currentAddress: number, labelMap:
       if (targetLabel in labelMap) {
         offset = labelMap[targetLabel] - currentAddress;
       } else {
-        offset = parseImmediate(targetLabel, 21);
+        offset = parseImmediate(targetLabel, 21, undefined, equMap);
       }
 
       return {
@@ -692,7 +701,7 @@ export const parseInstruction = (line: string, currentAddress: number, labelMap:
         opcode: '1100111',
         rd: parseRegister(parts[1]),
         rs1: parseRegister(parts[2]),
-        imm: parseImmediate(parts[3], 12, labelMap),
+        imm: parseImmediate(parts[3], 12, labelMap, equMap),
         funct3: '000'
       };
     }
@@ -833,6 +842,7 @@ export const generateMachineCode = (inst: Instruction): string => {
 
 export class Assembler {
   private labelMap: Record<string, number> = {};
+  private equMap: Record<string, number> = {};  // Map to store constants defined with equ
   private currentAddress = 0;
   private currentSegment: 'text' | 'data' = 'text';
   private textAddress = 0;
@@ -843,8 +853,38 @@ export class Assembler {
     return this.labelMap;
   }
 
+  public getEquMap(): Record<string, number> {
+    return this.equMap;
+  }
+
+  // Parse a value for the .equ directive
+  private parseEquValue(valueStr: string): number {
+    // Check if the value is a reference to another constant
+    if (valueStr in this.equMap) {
+      return this.equMap[valueStr];
+    }
+
+    // Check if it's a hexadecimal value
+    if (valueStr.startsWith('0x')) {
+      const value = parseInt(valueStr.slice(2), 16);
+      if (isNaN(value)) {
+        throw new Error(`Invalid hexadecimal value: ${valueStr}`);
+      }
+      return value;
+    }
+
+    // Try parsing as decimal
+    const value = parseInt(valueStr, 10);
+    if (isNaN(value)) {
+      throw new Error(`Invalid numeric value: ${valueStr}`);
+    }
+
+    return value;
+  }
+
   public assemble(code: string): AssembledInstruction[] {
     this.labelMap = {};
+    this.equMap = {};  // Reset the equ map
     this.currentAddress = 0;
     this.currentSegment = 'text';
     this.textAddress = 0;
@@ -912,6 +952,58 @@ export class Assembler {
 
       // Update address based on instruction or data type
       if (entry.instr) {
+        // Handle equ directive - format: symbol .equ value
+        if (entry.instr.startsWith('.equ')) {
+          const parts = entry.instr.split(/[\s,]+/).filter(Boolean);
+          if (parts.length === 2) {
+            // Format: .equ value
+            // In this case, use the label as the symbol name
+            if (entry.hasLabel && entry.label) {
+              try {
+                // Parse the value - support decimal, hex, and expressions with existing constants
+                let value = this.parseEquValue(parts[1]);
+                this.equMap[entry.label] = value;
+              } catch (error) {
+                throw new AssemblerError(`Invalid value in .equ directive: ${parts[1]}`, {
+                  errorType: 'Directive Error',
+                  instruction: entry.instr,
+                  lineNumber: entry.lineNumber,
+                  suggestion: 'Value must be a valid number (decimal or hex) or a previously defined constant'
+                });
+              }
+            } else {
+              throw new AssemblerError('Missing label for .equ directive', {
+                errorType: 'Directive Error',
+                instruction: entry.instr,
+                lineNumber: entry.lineNumber,
+                suggestion: 'Format should be: symbol: .equ value'
+              });
+            }
+          } else if (parts.length === 3) {
+            // Format: .equ symbol, value
+            try {
+              // Parse the value - support decimal, hex, and expressions with existing constants
+              let value = this.parseEquValue(parts[2]);
+              this.equMap[parts[1]] = value;
+            } catch (error) {
+              throw new AssemblerError(`Invalid value in .equ directive: ${parts[2]}`, {
+                errorType: 'Directive Error',
+                instruction: entry.instr,
+                lineNumber: entry.lineNumber,
+                suggestion: 'Value must be a valid number (decimal or hex) or a previously defined constant'
+              });
+            }
+          } else {
+            throw new AssemblerError('Invalid .equ directive format', {
+              errorType: 'Directive Error',
+              instruction: entry.instr,
+              lineNumber: entry.lineNumber,
+              suggestion: 'Format should be: symbol: .equ value or .equ symbol, value'
+            });
+          }
+          continue;
+        }
+
         // Skip directive instructions like .globl that don't generate code
         if (entry.instr.startsWith('.globl')) {
           continue;
@@ -920,7 +1012,7 @@ export class Assembler {
         if (!inDataSegment) {
           // Process code segment
           try {
-            const expandedInstrs = expandPseudoInstruction(entry.instr, entry.lineNumber);
+            const expandedInstrs = expandPseudoInstruction(entry.instr, entry.lineNumber, this.equMap);
             currentAddr += 4 * expandedInstrs.length;
           } catch (error: unknown) {
             if (error instanceof AssemblerError) {
@@ -1010,7 +1102,7 @@ export class Assembler {
         if (!instruction.startsWith('.')) {
           // Expand pseudo instructions
           try {
-            const expandedInstructions = expandPseudoInstruction(instruction, entry.lineNumber);
+            const expandedInstructions = expandPseudoInstruction(instruction, entry.lineNumber, this.equMap);
             expandedInstructions.forEach((expandedLine, i) => {
               try {
                 // Process placeholders for la instruction and global load/store instructions
@@ -1251,7 +1343,7 @@ export class Assembler {
                 }
 
                 // Process other instructions
-                const parsedInst = parseInstruction(expandedLine, this.currentAddress, this.labelMap, entry.lineNumber);
+                const parsedInst = parseInstruction(expandedLine, this.currentAddress, this.labelMap, entry.lineNumber, this.equMap);
                 const hex = generateMachineCode(parsedInst);
                 const binary = (parseInt(hex.slice(2), 16) >>> 0).toString(2).padStart(32, '0');
                 result.push({
