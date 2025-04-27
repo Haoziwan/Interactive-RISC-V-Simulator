@@ -25,8 +25,6 @@ export function DataMemoryNode({ data, id, selected }: { data: DataMemoryNodeDat
   const updateCacheStats = useCircuitStore((state) => state.updateCacheStats);
   const initializeCache = useCircuitStore((state) => state.initializeCache);
 
-  const size = data.size || 1024; // 默认1KB
-
   // 获取输入端口的值
   const getInputValue = (edge: any) => {
     if (!edge) return null;
@@ -102,16 +100,20 @@ export function DataMemoryNode({ data, id, selected }: { data: DataMemoryNodeDat
     } else {
       // 使用LRU策略选择替换行
       const lruEntry = set.entries[set.lru];
-      if (lruEntry.dirty) {
+      if (lruEntry.valid && lruEntry.dirty) {
         // 写回
-        const oldAddress = (lruEntry.tag * config.sets + setIndex) * config.blockSize;
-        for (let i = 0; i < config.blockSize / 4; i++) {
-          const memAddress = oldAddress + i * 4;
-          const memKey = `0x${memAddress.toString(16).padStart(8, '0')}`;
-          // updateMemory({
-          //   [memKey]: lruEntry.data[i]
-          // });
-        }
+        // 这里只是模拟写回过程，实际上不需要执行写回操作
+        // 因为我们使用的是write-back策略，只有在替换时才需要写回
+        // const oldAddress = (lruEntry.tag * config.sets + setIndex) * config.blockSize;
+        // for (let i = 0; i < config.blockSize / 4; i++) {
+        //   const memAddress = oldAddress + i * 4;
+        //   const memKey = `0x${memAddress.toString(16).padStart(8, '0')}`;
+        //   updateMemory({
+        //     [memKey]: lruEntry.data[i]
+        //   });
+        // }
+
+        // 更新写回计数器
         updateCacheStats(false, true);
       }
 
@@ -169,20 +171,26 @@ export function DataMemoryNode({ data, id, selected }: { data: DataMemoryNodeDat
       entry.dirty = true;
       entry.data[Math.floor(blockOffset / 4)] = data;
       entry.lastAccess = stepCount;
+      return; // 找到空闲行，直接返回
     }
 
-    // 使用LRU策略选择替换行
+    // 没有空闲行，使用LRU策略选择替换行
     const lruEntry = set.entries[set.lru];
-    if (lruEntry.dirty) {
+
+    // 如果要替换的行是脏的，需要写回
+    if (lruEntry.valid && lruEntry.dirty) {
       // 写回
       const oldAddress = (lruEntry.tag * config.sets + setIndex) * config.blockSize;
-      for (let i = 0; i < config.blockSize / 4; i++) {
-        const memAddress = oldAddress + i * 4;
-        const memKey = `0x${memAddress.toString(16).padStart(8, '0')}`;
-        // updateMemory({
-        //   [memKey]: lruEntry.data[i]
-        // });
-      }
+      // 这里只是模拟写回过程，实际上不需要执行写回操作
+      // 因为我们使用的是write-back策略，只有在替换时才需要写回
+      // for (let i = 0; i < config.blockSize / 4; i++) {
+      //   const memAddress = oldAddress + i * 4;
+      //   const memKey = `0x${memAddress.toString(16).padStart(8, '0')}`;
+      //   updateMemory({
+      //     [memKey]: lruEntry.data[i]
+      //   });
+      // }
+      // 更新写回计数器
       updateCacheStats(false, true);
     }
 
@@ -398,14 +406,11 @@ export function DataMemoryNode({ data, id, selected }: { data: DataMemoryNodeDat
             <div className="text-gray-500">MemRead: {data.memRead || 0}</div>
             <div className="text-gray-500">MemWrite: {data.memWrite || 0}</div>
             <div className="text-gray-500">MemWidth: {data.memWidth ?? 2} ({data.memWidth === 0 ? 'byte' : data.memWidth === 1 ? 'half' : 'word'})</div>
-            <div className="text-xs text-gray-400 mt-2">
-              Size: {size} bytes
-            </div>
           </>
         )}
         {/* Add placeholder div when UI updates are disabled to maintain height */}
         {disableUIUpdates && (
-          <div style={{ height: '140px' }}></div>
+          <div style={{ height: '120px' }}></div>
         )}
       </div>
     </div>

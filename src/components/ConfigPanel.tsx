@@ -682,13 +682,13 @@ export function ConfigPanel() {
                 <h4 className="text-sm font-medium text-blue-800 mt-2 mb-1">Cache Configuration</h4>
                 <p className="text-sm text-blue-700 mb-1">The cache is fully configurable through the Cache View panel. You can adjust:</p>
                 <ul className="text-sm text-blue-700 list-disc pl-5">
-                  <li><span className="font-medium">Cache Size:</span> Total cache size in KB</li>
-                  <li><span className="font-medium">Block Size:</span> Size of each cache block in bytes</li>
-                  <li><span className="font-medium">Associativity:</span> Number of ways (direct-mapped to fully associative)</li>
+                  <li><span className="font-medium">Cache Lines:</span> Number of cache lines as 2^n (default n=4)</li>
+                  <li><span className="font-medium">Block Size:</span> Size of each cache block in words (1 word = 4 bytes)</li>
+                  <li><span className="font-medium">Associativity:</span> Number of ways as 2^n (default n=0, direct-mapped)</li>
                   <li><span className="font-medium">Replacement Policy:</span> LRU (Least Recently Used)</li>
                   <li><span className="font-medium">Write Policy:</span> Write-back with dirty bit</li>
                 </ul>
-                <p className="text-sm text-blue-700 mt-1">The number of sets is automatically calculated based on the formula: sets = cache size / (block size * ways).</p>
+                <p className="text-sm text-blue-700 mt-1">The number of sets is automatically calculated based on the formula: sets = lines / ways.</p>
                 <h4 className="text-xs font-medium text-blue-800 mt-2 mb-1">Execution Logic</h4>
                 <div className="text-xs text-blue-700">
                   <p className="mb-1">The Data Memory operates with different timing for reads and writes:</p>
