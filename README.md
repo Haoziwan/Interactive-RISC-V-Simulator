@@ -1,9 +1,10 @@
 # RISC-V Simulator
 
 A web-based application for visualizing RISC-V processor register states and datapath. Users can write and execute RISC-V assembly code, observe register state changes during instruction execution, and track instruction flow through a visual datapath. The simulator supports the RV32I base instruction set and the RV32M extension.
-![image](https://github.com/user-attachments/assets/5b9bb32b-d216-4999-952f-53846fba6322)
-![image](https://github.com/user-attachments/assets/43f4a577-501d-4b9b-97f1-aa7a9e85d1d4)
-![image](https://github.com/user-attachments/assets/a44ae54d-fea0-4010-9928-715e99577d76)
+![image](https://github.com/user-attachments/assets/2c6ed390-1d85-468f-aaf0-db3ac82667a2)
+
+![image](https://github.com/user-attachments/assets/b0cdf5fd-1072-403c-a16a-2a970749e274)
+
 
 ## Features
 
