@@ -21,7 +21,6 @@ export function ResizablePanels({
   defaultLeftSize = 20,
   defaultRightSize = 20,
 }: ResizablePanelsProps) {
-  const [isLeftCollapsed, setIsLeftCollapsed] = React.useState(false);
   const [isRightCollapsed, setIsRightCollapsed] = React.useState(false);
 
   return (
@@ -32,20 +31,10 @@ export function ResizablePanels({
         collapsedSize={0}
         minSize={0}
         maxSize={30}
-        className={`bg-white border-r border-gray-200 transition-all duration-300 h-full ${isLeftCollapsed ? 'w-0' : ''}`}
+        className="bg-white border-r border-gray-200 transition-all duration-300 h-full"
       >
         <div className="relative h-full overflow-hidden">
           {leftPanel}
-          <button
-            onClick={() => setIsLeftCollapsed(!isLeftCollapsed)}
-            className="absolute -right-3 top-1/2 transform -translate-y-1/2 z-10 w-6 h-12 bg-white border border-gray-200 rounded-r flex items-center justify-center hover:bg-gray-50"
-          >
-            {isLeftCollapsed ? (
-              <ChevronRight className="w-4 h-4 text-gray-600" />
-            ) : (
-              <ChevronLeft className="w-4 h-4 text-gray-600" />
-            )}
-          </button>
         </div>
       </Panel>
 
@@ -69,6 +58,7 @@ export function ResizablePanels({
             <div className="relative h-full">
               {rightPanel}
               <button
+                type="button"
                 onClick={() => setIsRightCollapsed(!isRightCollapsed)}
                 className="absolute -left-3 top-1/2 transform -translate-y-1/2 z-10 w-6 h-12 bg-white border border-gray-200 rounded-l flex items-center justify-center hover:bg-gray-50"
               >
