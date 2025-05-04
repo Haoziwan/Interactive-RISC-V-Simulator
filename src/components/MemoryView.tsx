@@ -79,6 +79,9 @@ export function MemoryView() {
     }
 
     if (!isNaN(numValue)) {
+      // Limit the value to 0-255 (one byte)
+      numValue = numValue & 0xFF;
+
       updateMemory({
         [formatAddress(address)]: numValue
       });
