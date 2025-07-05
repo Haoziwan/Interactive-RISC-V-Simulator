@@ -108,14 +108,11 @@ const instructionFormats: InstructionFormat[] = [
       'lb rd, symbol - Load byte from global (auipc + lb)',
       'lh rd, symbol - Load halfword from global (auipc + lh)',
       'lw rd, symbol - Load word from global (auipc + lw)',
-      'ld rd, symbol - Load doubleword from global (auipc + ld)',
       'lbu rd, symbol - Load byte unsigned from global (auipc + lbu)',
       'lhu rd, symbol - Load halfword unsigned from global (auipc + lhu)',
-      'lwu rd, symbol - Load word unsigned from global (auipc + lwu)',
       'sb rs2, symbol, rt - Store byte to global (auipc + sb)',
       'sh rs2, symbol, rt - Store halfword to global (auipc + sh)',
       'sw rs2, symbol, rt - Store word to global (auipc + sw)',
-      'sd rs2, symbol, rt - Store doubleword to global (auipc + sd)'
     ]
   },
   {

@@ -3,7 +3,7 @@ import { useCircuitStore } from '../store/circuitStore';
 import { ChevronDown, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react';
 
 export function ConfigPanel() {
-  const [isExpanded, setIsExpanded] = useState(true);
+  const [isExpanded, setIsExpanded] = useState(false);
   const [isWide, setIsWide] = useState(false);
   const selectedNode = useCircuitStore((state) => state.selectedNode);
   const updateNodeData = useCircuitStore((state) => state.updateNodeData);
