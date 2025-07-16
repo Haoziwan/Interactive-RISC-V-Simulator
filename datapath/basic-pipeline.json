@@ -1,0 +1,2750 @@
+{
+  "name": "circuit-2025-04-22T14-24-01-198Z",
+  "nodes": [
+    {
+      "id": "register-1740456812349",
+      "type": "register",
+      "position": {
+        "x": 105.38097436837268,
+        "y": 635.897983496489
+      },
+      "data": {
+        "label": "REGISTER",
+        "readReg1": 0,
+        "readReg2": 0,
+        "writeReg": 0,
+        "writeData": 0,
+        "regWrite": false,
+        "readData1": 0,
+        "readData2": 0,
+        "writeFirst": true
+      },
+      "width": 186,
+      "height": 191,
+      "selected": false,
+      "positionAbsolute": {
+        "x": 105.38097436837268,
+        "y": 635.897983496489
+      },
+      "dragging": false
+    },
+    {
+      "id": "imm-gen-1740456815567",
+      "type": "imm-gen",
+      "position": {
+        "x": -35.64079256032062,
+        "y": 851.2555962341532
+      },
+      "data": {
+        "label": "IMM-GEN",
+        "instruction": "00000000010000000000100010010011",
+        "immediate": 4,
+        "format": "I"
+      },
+      "width": 182,
+      "height": 95,
+      "selected": false,
+      "positionAbsolute": {
+        "x": -35.64079256032062,
+        "y": 851.2555962341532
+      },
+      "dragging": false
+    },
+    {
+      "id": "instr-distributer-1740456827777",
+      "type": "instr-distributer",
+      "position": {
+        "x": -153.5897622730406,
+        "y": 431.1215323488199
+      },
+      "data": {
+        "label": "INSTR-DISTRIBUTER",
+        "value": 0,
+        "opcode": 0,
+        "rd": 0,
+        "funct3": 0,
+        "rs1": 0,
+        "rs2": 0,
+        "funct7": 0
+      },
+      "width": 160,
+      "height": 171,
+      "selected": false,
+      "positionAbsolute": {
+        "x": -153.5897622730406,
+        "y": 431.1215323488199
+      },
+      "dragging": false
+    },
+    {
+      "id": "pc-1740456929935",
+      "type": "pc",
+      "position": {
+        "x": -678.1696072758366,
+        "y": 277.68527415485926
+      },
+      "data": {
+        "label": "PC",
+        "value": 0,
+        "reset": false,
+        "pcWrite": 1
+      },
+      "width": 202,
+      "height": 119,
+      "selected": false,
+      "positionAbsolute": {
+        "x": -678.1696072758366,
+        "y": 277.68527415485926
+      },
+      "dragging": false
+    },
+    {
+      "id": "instruction-memory-1740456942935",
+      "type": "instruction-memory",
+      "position": {
+        "x": -755.4302421625299,
+        "y": 483.54230665662215
+      },
+      "data": {
+        "label": "INSTRUCTION-MEMORY",
+        "instructions": [],
+        "pc": 0,
+        "value": "0"
+      },
+      "width": 273,
+      "height": 95,
+      "selected": false,
+      "positionAbsolute": {
+        "x": -755.4302421625299,
+        "y": 483.54230665662215
+      },
+      "dragging": false
+    },
+    {
+      "id": "control-1740456985517",
+      "type": "control",
+      "position": {
+        "x": 132.4241577955753,
+        "y": -158.19987488432903
+      },
+      "data": {
+        "label": "CONTROL",
+        "regWrite": 0,
+        "memRead": 0,
+        "memWrite": 0,
+        "aluOp": 0,
+        "branch": 0,
+        "jump": 0,
+        "aluSrc": 0,
+        "memToReg": 0,
+        "opcode": "0000000",
+        "aluSrc1": 0,
+        "aluSrc2": 0,
+        "controlMux": 0,
+        "memWidth": 2,
+        "funct3": "000"
+      },
+      "width": 160,
+      "height": 435,
+      "selected": false,
+      "positionAbsolute": {
+        "x": 132.4241577955753,
+        "y": -158.19987488432903
+      },
+      "dragging": false
+    },
+    {
+      "id": "fork-1740456999685",
+      "type": "fork",
+      "position": {
+        "x": 79.51741796970771,
+        "y": 399.30181977233303
+      },
+      "data": {
+        "label": "FORK",
+        "value": 0
+      },
+      "width": 32,
+      "height": 32,
+      "selected": false,
+      "positionAbsolute": {
+        "x": 79.51741796970771,
+        "y": 399.30181977233303
+      },
+      "dragging": false
+    },
+    {
+      "id": "memory-1740457029513",
+      "type": "memory",
+      "position": {
+        "x": 1621.205679193706,
+        "y": 314.52148107501523
+      },
+      "data": {
+        "label": "MEMORY",
+        "address": 0,
+        "memRead": 0,
+        "readData": 0,
+        "writeData": 0,
+        "memWrite": 0,
+        "memWidth": 0
+      },
+      "width": 206,
+      "height": 215,
+      "selected": false,
+      "dragging": false,
+      "positionAbsolute": {
+        "x": 1621.205679193706,
+        "y": 314.52148107501523
+      }
+    },
+    {
+      "id": "alu-control-1740457192016",
+      "type": "alu-control",
+      "position": {
+        "x": 793.0121606015736,
+        "y": 812.4333761330362
+      },
+      "data": {
+        "label": "ALU-CONTROL",
+        "aluOp": 0,
+        "funct3": 0,
+        "funct7": 0,
+        "aluControl": 2
+      },
+      "width": 182,
+      "height": 143,
+      "selected": false,
+      "positionAbsolute": {
+        "x": 793.0121606015736,
+        "y": 812.4333761330362
+      },
+      "dragging": false
+    },
+    {
+      "id": "fork-1740457222103",
+      "type": "fork",
+      "position": {
+        "x": 741.4767100729827,
+        "y": 620.4509933900317
+      },
+      "data": {
+        "label": "FORK",
+        "value": 0
+      },
+      "width": 32,
+      "height": 32,
+      "selected": false,
+      "positionAbsolute": {
+        "x": 741.4767100729827,
+        "y": 620.4509933900317
+      },
+      "dragging": false
+    },
+    {
+      "id": "mux-1740457249603",
+      "type": "mux",
+      "position": {
+        "x": 2186.1123954095356,
+        "y": 153.16932900219078
+      },
+      "data": {
+        "label": "MUX",
+        "value": 0,
+        "select": "0",
+        "portCount": 3
+      },
+      "width": 108,
+      "height": 147,
+      "selected": false,
+      "positionAbsolute": {
+        "x": 2186.1123954095356,
+        "y": 153.16932900219078
+      },
+      "dragging": false
+    },
+    {
+      "id": "alu-1740457259779",
+      "type": "alu",
+      "position": {
+        "x": 966.4989996926615,
+        "y": 400.6746891985416
+      },
+      "data": {
+        "label": "ALU",
+        "a": 0,
+        "b": 0,
+        "operation": 2,
+        "result": 0,
+        "zero": 1
+      },
+      "width": 144,
+      "height": 167,
+      "selected": false,
+      "positionAbsolute": {
+        "x": 966.4989996926615,
+        "y": 400.6746891985416
+      },
+      "dragging": false
+    },
+    {
+      "id": "fork-1740457285226",
+      "type": "fork",
+      "position": {
+        "x": 782.605810650038,
+        "y": 557.8394390503918
+      },
+      "data": {
+        "label": "FORK",
+        "value": 0
+      },
+      "width": 32,
+      "height": 32,
+      "selected": false,
+      "positionAbsolute": {
+        "x": 782.605810650038,
+        "y": 557.8394390503918
+      },
+      "dragging": false
+    },
+    {
+      "id": "fork-1740457413673",
+      "type": "fork",
+      "position": {
+        "x": 1600.6972246958246,
+        "y": 341.0586943729149
+      },
+      "data": {
+        "label": "FORK",
+        "value": 0
+      },
+      "width": 32,
+      "height": 32,
+      "selected": false,
+      "positionAbsolute": {
+        "x": 1600.6972246958246,
+        "y": 341.0586943729149
+      },
+      "dragging": false
+    },
+    {
+      "id": "fork-1740457481300",
+      "type": "fork",
+      "position": {
+        "x": -392.46840753963863,
+        "y": 318.0107734283633
+      },
+      "data": {
+        "label": "FORK",
+        "value": 0,
+        "portCount": 3
+      },
+      "width": 32,
+      "height": 48,
+      "selected": false,
+      "positionAbsolute": {
+        "x": -392.46840753963863,
+        "y": 318.0107734283633
+      },
+      "dragging": false
+    },
+    {
+      "id": "constant-1740457494777",
+      "type": "constant",
+      "position": {
+        "x": -522.6369617158804,
+        "y": -99.48937947320937
+      },
+      "data": {
+        "label": "CONSTANT",
+        "value": 4
+      },
+      "width": 96,
+      "height": 39,
+      "selected": false,
+      "positionAbsolute": {
+        "x": -522.6369617158804,
+        "y": -99.48937947320937
+      },
+      "dragging": false
+    },
+    {
+      "id": "add-1740457499578",
+      "type": "add",
+      "position": {
+        "x": -431.2445153720147,
+        "y": -43.381472887071865
+      },
+      "data": {
+        "label": "ADD",
+        "value": 4
+      },
+      "width": 80,
+      "height": 80,
+      "selected": false,
+      "positionAbsolute": {
+        "x": -431.2445153720147,
+        "y": -43.381472887071865
+      },
+      "dragging": false
+    },
+    {
+      "id": "fork-1740457531304",
+      "type": "fork",
+      "position": {
+        "x": -510.96996465466253,
+        "y": 105.58626152909952
+      },
+      "data": {
+        "label": "FORK",
+        "value": 0
+      },
+      "width": 32,
+      "height": 32,
+      "selected": false,
+      "positionAbsolute": {
+        "x": -510.96996465466253,
+        "y": 105.58626152909952
+      },
+      "dragging": false
+    },
+    {
+      "id": "jump-control-1740457549626",
+      "type": "jump-control",
+      "position": {
+        "x": 934.8536512237379,
+        "y": -267.50680665338405
+      },
+      "data": {
+        "label": "JUMP-CONTROL",
+        "funct3": 0,
+        "opcode": 0,
+        "zero": 1,
+        "jump": 0,
+        "jalr": 0
+      },
+      "width": 178,
+      "height": 167,
+      "selected": false,
+      "positionAbsolute": {
+        "x": 934.8536512237379,
+        "y": -267.50680665338405
+      },
+      "dragging": false
+    },
+    {
+      "id": "add-1740457601453",
+      "type": "add",
+      "position": {
+        "x": 1307.0101553840216,
+        "y": -147.5379434181608
+      },
+      "data": {
+        "label": "ADD",
+        "value": 0
+      },
+      "width": 80,
+      "height": 80,
+      "selected": false,
+      "positionAbsolute": {
+        "x": 1307.0101553840216,
+        "y": -147.5379434181608
+      },
+      "dragging": false
+    },
+    {
+      "id": "fork-1740457651094",
+      "type": "fork",
+      "position": {
+        "x": 772.843550010726,
+        "y": 684.128097903355
+      },
+      "data": {
+        "label": "FORK",
+        "value": 0
+      },
+      "width": 32,
+      "height": 32,
+      "selected": false,
+      "positionAbsolute": {
+        "x": 772.843550010726,
+        "y": 684.128097903355
+      },
+      "dragging": false
+    },
+    {
+      "id": "mux-1740457672408",
+      "type": "mux",
+      "position": {
+        "x": -553.1350089853556,
+        "y": -567.7039323747534
+      },
+      "data": {
+        "label": "MUX",
+        "value": 4,
+        "select": "0"
+      },
+      "width": 108,
+      "height": 123,
+      "selected": false,
+      "positionAbsolute": {
+        "x": -553.1350089853556,
+        "y": -567.7039323747534
+      },
+      "dragging": false
+    },
+    {
+      "id": "fork-1740458306711",
+      "type": "fork",
+      "position": {
+        "x": -146.07423181669492,
+        "y": 692.7669486715766
+      },
+      "data": {
+        "label": "FORK",
+        "value": 0
+      },
+      "width": 32,
+      "height": 32,
+      "selected": false,
+      "positionAbsolute": {
+        "x": -146.07423181669492,
+        "y": 692.7669486715766
+      },
+      "dragging": false
+    },
+    {
+      "id": "mux-1740464449901",
+      "type": "mux",
+      "position": {
+        "x": 947.5862271968979,
+        "y": -54.78273678585627
+      },
+      "data": {
+        "label": "MUX",
+        "value": 0,
+        "select": "0"
+      },
+      "width": 108,
+      "height": 123,
+      "selected": false,
+      "positionAbsolute": {
+        "x": 947.5862271968979,
+        "y": -54.78273678585627
+      },
+      "dragging": false
+    },
+    {
+      "id": "fork-1740464547221",
+      "type": "fork",
+      "position": {
+        "x": 848.7066716902857,
+        "y": 274.7510010287308
+      },
+      "data": {
+        "label": "FORK",
+        "value": 0
+      },
+      "width": 32,
+      "height": 32,
+      "selected": false,
+      "positionAbsolute": {
+        "x": 848.7066716902857,
+        "y": 274.7510010287308
+      },
+      "dragging": false
+    },
+    {
+      "id": "fork-1740914252490",
+      "type": "fork",
+      "position": {
+        "x": -315.016910377385,
+        "y": 94.09422475985306
+      },
+      "data": {
+        "label": "FORK",
+        "value": 4
+      },
+      "width": 32,
+      "height": 32,
+      "selected": false,
+      "positionAbsolute": {
+        "x": -315.016910377385,
+        "y": 94.09422475985306
+      },
+      "dragging": false
+    },
+    {
+      "id": "mux-1743841921971",
+      "type": "mux",
+      "position": {
+        "x": 877.1072596991245,
+        "y": 614.55949373646
+      },
+      "data": {
+        "label": "MUX",
+        "value": 0,
+        "select": "0"
+      },
+      "width": 108,
+      "height": 123,
+      "selected": false,
+      "positionAbsolute": {
+        "x": 877.1072596991245,
+        "y": 614.55949373646
+      },
+      "dragging": false
+    },
+    {
+      "id": "mux-1743842151951",
+      "type": "mux",
+      "position": {
+        "x": 920.5546291668821,
+        "y": 312.4635312687485
+      },
+      "data": {
+        "label": "MUX",
+        "value": 0,
+        "select": "0",
+        "portCount": 3
+      },
+      "width": 108,
+      "height": 147,
+      "selected": false,
+      "positionAbsolute": {
+        "x": 920.5546291668821,
+        "y": 312.4635312687485
+      },
+      "dragging": false
+    },
+    {
+      "id": "constant-1743842223462",
+      "type": "constant",
+      "position": {
+        "x": 692.4159464314246,
+        "y": 422.3349074580823
+      },
+      "data": {
+        "label": "CONSTANT"
+      },
+      "width": 96,
+      "height": 39,
+      "selected": false,
+      "positionAbsolute": {
+        "x": 692.4159464314246,
+        "y": 422.3349074580823
+      },
+      "dragging": false
+    },
+    {
+      "id": "pipeline-register-1743928603546",
+      "type": "pipeline-register",
+      "position": {
+        "x": -202.7975177718522,
+        "y": 114.45880664997571
+      },
+      "data": {
+        "label": "",
+        "writeEnable": 1,
+        "values": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "output-0": 0,
+        "name": "IF/ID",
+        "portCount": 4,
+        "value": 0,
+        "reset": false,
+        "outputValue": 0,
+        "output-1": 0,
+        "output-2": 0,
+        "output-3": 0,
+        "flush": 0
+      },
+      "width": 120,
+      "height": 240,
+      "selected": false,
+      "positionAbsolute": {
+        "x": -202.7975177718522,
+        "y": 114.45880664997571
+      },
+      "dragging": false
+    },
+    {
+      "id": "pipeline-register-1743929763213",
+      "type": "pipeline-register",
+      "position": {
+        "x": 445.9452372493788,
+        "y": -194.88165754601673
+      },
+      "data": {
+        "label": "",
+        "writeEnable": 1,
+        "values": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "output-0": 0,
+        "name": "ID/EX",
+        "portCount": 18,
+        "value": 0,
+        "reset": false,
+        "outputValue": 0,
+        "output-1": 0,
+        "output-2": 0,
+        "output-3": 0,
+        "output-4": 0,
+        "output-5": 0,
+        "output-6": 0,
+        "output-7": 0,
+        "output-8": 0,
+        "output-9": 0,
+        "output-10": 0,
+        "output-11": 0,
+        "output-12": 0,
+        "output-13": 0,
+        "output-14": 0,
+        "output-15": 0,
+        "output-16": 0,
+        "output-17": 0,
+        "output-18": 0,
+        "output-19": 0,
+        "flush": 0
+      },
+      "width": 120,
+      "height": 1080,
+      "selected": false,
+      "positionAbsolute": {
+        "x": 445.9452372493788,
+        "y": -194.88165754601673
+      },
+      "dragging": false
+    },
+    {
+      "id": "pipeline-register-1743931581067",
+      "type": "pipeline-register",
+      "position": {
+        "x": 1341.8704587908535,
+        "y": 33.34760621951199
+      },
+      "data": {
+        "label": "",
+        "writeEnable": 1,
+        "values": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "output-0": 0,
+        "name": "EX/MEM",
+        "portCount": 9,
+        "value": 0,
+        "reset": false,
+        "outputValue": 0,
+        "output-1": 0,
+        "output-2": 0,
+        "output-3": 0,
+        "output-4": 0,
+        "output-5": 0,
+        "output-6": 0,
+        "output-7": 0,
+        "output-8": 0
+      },
+      "width": 120,
+      "height": 540,
+      "selected": true,
+      "positionAbsolute": {
+        "x": 1341.8704587908535,
+        "y": 33.34760621951199
+      },
+      "dragging": false
+    },
+    {
+      "id": "pipeline-register-1743931720212",
+      "type": "pipeline-register",
+      "position": {
+        "x": 1899.3080929039638,
+        "y": 132.98447420346776
+      },
+      "data": {
+        "label": "",
+        "writeEnable": 1,
+        "values": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "output-0": 0,
+        "name": "MEM/WB",
+        "portCount": 6,
+        "value": 0,
+        "reset": false,
+        "outputValue": 0,
+        "output-1": 0,
+        "output-2": 0,
+        "output-3": 0,
+        "output-4": 0,
+        "output-5": 0
+      },
+      "width": 120,
+      "height": 360,
+      "selected": false,
+      "positionAbsolute": {
+        "x": 1899.3080929039638,
+        "y": 132.98447420346776
+      },
+      "dragging": false
+    },
+    {
+      "id": "fork-1745331685532",
+      "type": "fork",
+      "position": {
+        "x": 43.30719695626004,
+        "y": 485.682687547097
+      },
+      "data": {
+        "label": "FORK",
+        "value": 0
+      },
+      "width": 32,
+      "height": 32,
+      "selected": false,
+      "positionAbsolute": {
+        "x": 43.30719695626004,
+        "y": 485.682687547097
+      },
+      "dragging": false
+    }
+  ],
+  "edges": [
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "instr-distributer-1740456827777",
+      "sourceHandle": "rs1",
+      "target": "register-1740456812349",
+      "targetHandle": "readReg1",
+      "id": "einstr-distributer-1740456827777-register-1740456812349-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "instr-distributer-1740456827777",
+      "sourceHandle": "rs2",
+      "target": "register-1740456812349",
+      "targetHandle": "readReg2",
+      "id": "einstr-distributer-1740456827777-register-1740456812349-2",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "instr-distributer-1740456827777",
+      "sourceHandle": "opcode",
+      "target": "fork-1740456999685",
+      "targetHandle": "input",
+      "id": "einstr-distributer-1740456827777-fork-1740456999685-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "fork-1740456999685",
+      "sourceHandle": "output-2",
+      "target": "control-1740456985517",
+      "targetHandle": "opcode",
+      "id": "efork-1740456999685-control-1740456985517-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "fork-1740457222103",
+      "sourceHandle": "output-2",
+      "target": "alu-control-1740457192016",
+      "targetHandle": "funct3",
+      "id": "efork-1740457222103-alu-control-1740457192016-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "alu-control-1740457192016",
+      "sourceHandle": "aluControl",
+      "target": "alu-1740457259779",
+      "targetHandle": "control",
+      "id": "ealu-control-1740457192016-alu-1740457259779-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "fork-1740457413673",
+      "sourceHandle": "output-2",
+      "target": "memory-1740457029513",
+      "targetHandle": "address",
+      "id": "efork-1740457413673-memory-1740457029513-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "mux-1740457249603",
+      "sourceHandle": "out",
+      "target": "register-1740456812349",
+      "targetHandle": "writeData",
+      "id": "emux-1740457249603-register-1740456812349-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "pc-1740456929935",
+      "sourceHandle": "address",
+      "target": "fork-1740457481300",
+      "targetHandle": "input",
+      "id": "epc-1740456929935-fork-1740457481300-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "fork-1740457481300",
+      "sourceHandle": "output-2",
+      "target": "instruction-memory-1740456942935",
+      "targetHandle": "pc",
+      "id": "efork-1740457481300-instruction-memory-1740456942935-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "constant-1740457494777",
+      "sourceHandle": "value",
+      "target": "add-1740457499578",
+      "targetHandle": "input-a",
+      "id": "econstant-1740457494777-add-1740457499578-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "fork-1740457481300",
+      "sourceHandle": "output-1",
+      "target": "fork-1740457531304",
+      "targetHandle": "input",
+      "id": "efork-1740457481300-fork-1740457531304-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "fork-1740457531304",
+      "sourceHandle": "output-1",
+      "target": "add-1740457499578",
+      "targetHandle": "input-b",
+      "id": "efork-1740457531304-add-1740457499578-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "fork-1740457222103",
+      "sourceHandle": "output-1",
+      "target": "jump-control-1740457549626",
+      "targetHandle": "funct3",
+      "id": "efork-1740457222103-jump-control-1740457549626-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "alu-1740457259779",
+      "sourceHandle": "zero",
+      "target": "jump-control-1740457549626",
+      "targetHandle": "zero",
+      "id": "ealu-1740457259779-jump-control-1740457549626-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "fork-1740457651094",
+      "sourceHandle": "output-1",
+      "target": "add-1740457601453",
+      "targetHandle": "input-b",
+      "id": "efork-1740457651094-add-1740457601453-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "add-1740457601453",
+      "sourceHandle": "output",
+      "target": "mux-1740457672408",
+      "targetHandle": "in1",
+      "id": "eadd-1740457601453-mux-1740457672408-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "jump-control-1740457549626",
+      "sourceHandle": "jump",
+      "target": "mux-1740457672408",
+      "targetHandle": "select",
+      "id": "ejump-control-1740457549626-mux-1740457672408-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "mux-1740457672408",
+      "sourceHandle": "out",
+      "target": "pc-1740456929935",
+      "targetHandle": "next",
+      "id": "emux-1740457672408-pc-1740456929935-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "fork-1740458306711",
+      "sourceHandle": "output-1",
+      "target": "instr-distributer-1740456827777",
+      "targetHandle": null,
+      "id": "efork-1740458306711-instr-distributer-1740456827777-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "fork-1740458306711",
+      "sourceHandle": "output-2",
+      "target": "imm-gen-1740456815567",
+      "targetHandle": "instruction",
+      "id": "efork-1740458306711-imm-gen-1740456815567-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "jump-control-1740457549626",
+      "sourceHandle": "jalr",
+      "target": "mux-1740464449901",
+      "targetHandle": "select",
+      "id": "ejump-control-1740457549626-mux-1740464449901-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "mux-1740464449901",
+      "sourceHandle": "out",
+      "target": "add-1740457601453",
+      "targetHandle": "input-a",
+      "id": "emux-1740464449901-add-1740457601453-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "fork-1740464547221",
+      "sourceHandle": "output-1",
+      "target": "mux-1740464449901",
+      "targetHandle": "in1",
+      "id": "efork-1740464547221-mux-1740464449901-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "fork-1740914252490",
+      "sourceHandle": "output-1",
+      "target": "mux-1740457672408",
+      "targetHandle": "in0",
+      "id": "efork-1740914252490-mux-1740457672408-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "fork-1740457651094",
+      "sourceHandle": "output-2",
+      "target": "mux-1743841921971",
+      "targetHandle": "in1",
+      "id": "efork-1740457651094-mux-1743841921971-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "fork-1740457285226",
+      "sourceHandle": "output-2",
+      "target": "mux-1743841921971",
+      "targetHandle": "in0",
+      "id": "efork-1740457285226-mux-1743841921971-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "mux-1743841921971",
+      "sourceHandle": "out",
+      "target": "alu-1740457259779",
+      "targetHandle": "b",
+      "id": "emux-1743841921971-alu-1740457259779-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "fork-1740464547221",
+      "sourceHandle": "output-2",
+      "target": "mux-1743842151951",
+      "targetHandle": "in0",
+      "id": "efork-1740464547221-mux-1743842151951-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "mux-1743842151951",
+      "sourceHandle": "out",
+      "target": "alu-1740457259779",
+      "targetHandle": "a",
+      "id": "emux-1743842151951-alu-1740457259779-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "constant-1743842223462",
+      "sourceHandle": "value",
+      "target": "mux-1743842151951",
+      "targetHandle": "in2",
+      "id": "econstant-1743842223462-mux-1743842151951-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "instruction-memory-1740456942935",
+      "sourceHandle": "instruction",
+      "target": "pipeline-register-1743928603546",
+      "targetHandle": "input-3",
+      "id": "einstruction-memory-1740456942935-pipeline-register-1743928603546-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "pipeline-register-1743928603546",
+      "sourceHandle": "output-3",
+      "target": "fork-1740458306711",
+      "targetHandle": "input",
+      "id": "epipeline-register-1743928603546-fork-1740458306711-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "fork-1740457481300",
+      "sourceHandle": "output-3",
+      "target": "pipeline-register-1743928603546",
+      "targetHandle": "input-2",
+      "id": "efork-1740457481300-pipeline-register-1743928603546-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "fork-1740457531304",
+      "sourceHandle": "output-2",
+      "target": "pipeline-register-1743928603546",
+      "targetHandle": "input-1",
+      "id": "efork-1740457531304-pipeline-register-1743928603546-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "add-1740457499578",
+      "sourceHandle": "output",
+      "target": "fork-1740914252490",
+      "targetHandle": "input",
+      "id": "eadd-1740457499578-fork-1740914252490-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "fork-1740914252490",
+      "sourceHandle": "output-2",
+      "target": "pipeline-register-1743928603546",
+      "targetHandle": "input-0",
+      "id": "efork-1740914252490-pipeline-register-1743928603546-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "control-1740456985517",
+      "sourceHandle": "aluSrc2",
+      "target": "pipeline-register-1743929763213",
+      "targetHandle": "input-0",
+      "id": "econtrol-1740456985517-pipeline-register-1743929763213-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "pipeline-register-1743929763213",
+      "sourceHandle": "output-0",
+      "target": "mux-1743841921971",
+      "targetHandle": "select",
+      "id": "epipeline-register-1743929763213-mux-1743841921971-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "control-1740456985517",
+      "sourceHandle": "memRead",
+      "target": "pipeline-register-1743929763213",
+      "targetHandle": "input-1",
+      "id": "econtrol-1740456985517-pipeline-register-1743929763213-2",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "control-1740456985517",
+      "sourceHandle": "memWrite",
+      "target": "pipeline-register-1743929763213",
+      "targetHandle": "input-2",
+      "id": "econtrol-1740456985517-pipeline-register-1743929763213-3",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "control-1740456985517",
+      "sourceHandle": "aluOp",
+      "target": "pipeline-register-1743929763213",
+      "targetHandle": "input-3",
+      "id": "econtrol-1740456985517-pipeline-register-1743929763213-4",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "pipeline-register-1743929763213",
+      "sourceHandle": "output-3",
+      "target": "alu-control-1740457192016",
+      "targetHandle": "aluOp",
+      "id": "epipeline-register-1743929763213-alu-control-1740457192016-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "control-1740456985517",
+      "sourceHandle": "memToReg",
+      "target": "pipeline-register-1743929763213",
+      "targetHandle": "input-4",
+      "id": "econtrol-1740456985517-pipeline-register-1743929763213-5",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "pipeline-register-1743928603546",
+      "sourceHandle": "output-0",
+      "target": "pipeline-register-1743929763213",
+      "targetHandle": "input-5",
+      "id": "epipeline-register-1743928603546-pipeline-register-1743929763213-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "pipeline-register-1743928603546",
+      "sourceHandle": "output-1",
+      "target": "pipeline-register-1743929763213",
+      "targetHandle": "input-6",
+      "id": "epipeline-register-1743928603546-pipeline-register-1743929763213-2",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "pipeline-register-1743929763213",
+      "sourceHandle": "output-6",
+      "target": "mux-1740464449901",
+      "targetHandle": "in0",
+      "id": "epipeline-register-1743929763213-mux-1740464449901-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "pipeline-register-1743928603546",
+      "sourceHandle": "output-2",
+      "target": "pipeline-register-1743929763213",
+      "targetHandle": "input-7",
+      "id": "epipeline-register-1743928603546-pipeline-register-1743929763213-3",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "pipeline-register-1743929763213",
+      "sourceHandle": "output-7",
+      "target": "mux-1743842151951",
+      "targetHandle": "in1",
+      "id": "epipeline-register-1743929763213-mux-1743842151951-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "fork-1740456999685",
+      "sourceHandle": "output-1",
+      "target": "pipeline-register-1743929763213",
+      "targetHandle": "input-8",
+      "id": "efork-1740456999685-pipeline-register-1743929763213-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "pipeline-register-1743929763213",
+      "sourceHandle": "output-8",
+      "target": "jump-control-1740457549626",
+      "targetHandle": "opcode",
+      "id": "epipeline-register-1743929763213-jump-control-1740457549626-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "control-1740456985517",
+      "sourceHandle": "aluSrc1",
+      "target": "pipeline-register-1743929763213",
+      "targetHandle": "input-9",
+      "id": "econtrol-1740456985517-pipeline-register-1743929763213-6",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "pipeline-register-1743929763213",
+      "sourceHandle": "output-9",
+      "target": "mux-1743842151951",
+      "targetHandle": "select",
+      "id": "epipeline-register-1743929763213-mux-1743842151951-2",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "instr-distributer-1740456827777",
+      "sourceHandle": "funct7",
+      "target": "pipeline-register-1743929763213",
+      "targetHandle": "input-10",
+      "id": "einstr-distributer-1740456827777-pipeline-register-1743929763213-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "pipeline-register-1743929763213",
+      "sourceHandle": "output-10",
+      "target": "alu-control-1740457192016",
+      "targetHandle": "funct7",
+      "id": "epipeline-register-1743929763213-alu-control-1740457192016-2",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "pipeline-register-1743929763213",
+      "sourceHandle": "output-11",
+      "target": "fork-1740457222103",
+      "targetHandle": "input",
+      "id": "epipeline-register-1743929763213-fork-1740457222103-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "register-1740456812349",
+      "sourceHandle": "readData1",
+      "target": "pipeline-register-1743929763213",
+      "targetHandle": "input-12",
+      "id": "eregister-1740456812349-pipeline-register-1743929763213-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "pipeline-register-1743929763213",
+      "sourceHandle": "output-12",
+      "target": "fork-1740464547221",
+      "targetHandle": "input",
+      "id": "epipeline-register-1743929763213-fork-1740464547221-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "register-1740456812349",
+      "sourceHandle": "readData2",
+      "target": "pipeline-register-1743929763213",
+      "targetHandle": "input-13",
+      "id": "eregister-1740456812349-pipeline-register-1743929763213-2",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "pipeline-register-1743929763213",
+      "sourceHandle": "output-13",
+      "target": "fork-1740457285226",
+      "targetHandle": "input",
+      "id": "epipeline-register-1743929763213-fork-1740457285226-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "imm-gen-1740456815567",
+      "sourceHandle": "immediate",
+      "target": "pipeline-register-1743929763213",
+      "targetHandle": "input-14",
+      "id": "eimm-gen-1740456815567-pipeline-register-1743929763213-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "pipeline-register-1743929763213",
+      "sourceHandle": "output-14",
+      "target": "fork-1740457651094",
+      "targetHandle": "input",
+      "id": "epipeline-register-1743929763213-fork-1740457651094-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "pipeline-register-1743929763213",
+      "sourceHandle": "output-1",
+      "target": "pipeline-register-1743931581067",
+      "targetHandle": "input-0",
+      "id": "epipeline-register-1743929763213-pipeline-register-1743931581067-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "pipeline-register-1743931581067",
+      "sourceHandle": "output-0",
+      "target": "memory-1740457029513",
+      "targetHandle": "memRead",
+      "id": "epipeline-register-1743931581067-memory-1740457029513-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "pipeline-register-1743929763213",
+      "sourceHandle": "output-2",
+      "target": "pipeline-register-1743931581067",
+      "targetHandle": "input-1",
+      "id": "epipeline-register-1743929763213-pipeline-register-1743931581067-2",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "pipeline-register-1743931581067",
+      "sourceHandle": "output-1",
+      "target": "memory-1740457029513",
+      "targetHandle": "memWrite",
+      "id": "epipeline-register-1743931581067-memory-1740457029513-2",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "pipeline-register-1743929763213",
+      "sourceHandle": "output-5",
+      "target": "pipeline-register-1743931581067",
+      "targetHandle": "input-2",
+      "id": "epipeline-register-1743929763213-pipeline-register-1743931581067-3",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "pipeline-register-1743929763213",
+      "sourceHandle": "output-4",
+      "target": "pipeline-register-1743931581067",
+      "targetHandle": "input-3",
+      "id": "epipeline-register-1743929763213-pipeline-register-1743931581067-4",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "alu-1740457259779",
+      "sourceHandle": "result",
+      "target": "pipeline-register-1743931581067",
+      "targetHandle": "input-4",
+      "id": "ealu-1740457259779-pipeline-register-1743931581067-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "pipeline-register-1743931581067",
+      "sourceHandle": "output-4",
+      "target": "fork-1740457413673",
+      "targetHandle": "input",
+      "id": "epipeline-register-1743931581067-fork-1740457413673-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "fork-1740457285226",
+      "sourceHandle": "output-1",
+      "target": "pipeline-register-1743931581067",
+      "targetHandle": "input-5",
+      "id": "efork-1740457285226-pipeline-register-1743931581067-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "pipeline-register-1743931581067",
+      "sourceHandle": "output-5",
+      "target": "memory-1740457029513",
+      "targetHandle": "writeData",
+      "id": "epipeline-register-1743931581067-memory-1740457029513-3",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "fork-1740457413673",
+      "sourceHandle": "output-1",
+      "target": "pipeline-register-1743931720212",
+      "targetHandle": "input-0",
+      "id": "efork-1740457413673-pipeline-register-1743931720212-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "pipeline-register-1743931720212",
+      "sourceHandle": "output-0",
+      "target": "mux-1740457249603",
+      "targetHandle": "in0",
+      "id": "epipeline-register-1743931720212-mux-1740457249603-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "pipeline-register-1743931581067",
+      "sourceHandle": "output-2",
+      "target": "pipeline-register-1743931720212",
+      "targetHandle": "input-1",
+      "id": "epipeline-register-1743931581067-pipeline-register-1743931720212-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "pipeline-register-1743931720212",
+      "sourceHandle": "output-1",
+      "target": "mux-1740457249603",
+      "targetHandle": "in2",
+      "id": "epipeline-register-1743931720212-mux-1740457249603-2",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "pipeline-register-1743931581067",
+      "sourceHandle": "output-3",
+      "target": "pipeline-register-1743931720212",
+      "targetHandle": "input-2",
+      "id": "epipeline-register-1743931581067-pipeline-register-1743931720212-2",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "pipeline-register-1743931720212",
+      "sourceHandle": "output-2",
+      "target": "mux-1740457249603",
+      "targetHandle": "select",
+      "id": "epipeline-register-1743931720212-mux-1740457249603-3",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "memory-1740457029513",
+      "sourceHandle": "readData",
+      "target": "pipeline-register-1743931720212",
+      "targetHandle": "input-3",
+      "id": "ememory-1740457029513-pipeline-register-1743931720212-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "pipeline-register-1743931720212",
+      "sourceHandle": "output-3",
+      "target": "mux-1740457249603",
+      "targetHandle": "in1",
+      "id": "epipeline-register-1743931720212-mux-1740457249603-4",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "control-1740456985517",
+      "sourceHandle": "regWrite",
+      "target": "pipeline-register-1743929763213",
+      "targetHandle": "input-15",
+      "id": "econtrol-1740456985517-pipeline-register-1743929763213-7",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "pipeline-register-1743929763213",
+      "sourceHandle": "output-15",
+      "target": "pipeline-register-1743931581067",
+      "targetHandle": "input-6",
+      "id": "epipeline-register-1743929763213-pipeline-register-1743931581067-5",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "pipeline-register-1743931581067",
+      "sourceHandle": "output-6",
+      "target": "pipeline-register-1743931720212",
+      "targetHandle": "input-4",
+      "id": "epipeline-register-1743931581067-pipeline-register-1743931720212-3",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "pipeline-register-1743931720212",
+      "sourceHandle": "output-4",
+      "target": "register-1740456812349",
+      "targetHandle": "regWrite",
+      "id": "epipeline-register-1743931720212-register-1740456812349-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "instr-distributer-1740456827777",
+      "sourceHandle": "rd",
+      "target": "pipeline-register-1743929763213",
+      "targetHandle": "input-16",
+      "id": "einstr-distributer-1740456827777-pipeline-register-1743929763213-3",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "pipeline-register-1743929763213",
+      "sourceHandle": "output-16",
+      "target": "pipeline-register-1743931581067",
+      "targetHandle": "input-7",
+      "id": "epipeline-register-1743929763213-pipeline-register-1743931581067-6",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "pipeline-register-1743931581067",
+      "sourceHandle": "output-7",
+      "target": "pipeline-register-1743931720212",
+      "targetHandle": "input-5",
+      "id": "epipeline-register-1743931581067-pipeline-register-1743931720212-4",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "pipeline-register-1743931720212",
+      "sourceHandle": "output-5",
+      "target": "register-1740456812349",
+      "targetHandle": "writeReg",
+      "id": "epipeline-register-1743931720212-register-1740456812349-2",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "instr-distributer-1740456827777",
+      "sourceHandle": "funct3",
+      "target": "fork-1745331685532",
+      "targetHandle": "input",
+      "selectable": true,
+      "focusable": true,
+      "updatable": true,
+      "id": "einstr-distributer-1740456827777-fork-1745331685532-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "fork-1745331685532",
+      "sourceHandle": "output-2",
+      "target": "pipeline-register-1743929763213",
+      "targetHandle": "input-11",
+      "selectable": true,
+      "focusable": true,
+      "updatable": true,
+      "id": "efork-1745331685532-pipeline-register-1743929763213-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "fork-1745331685532",
+      "sourceHandle": "output-1",
+      "target": "control-1740456985517",
+      "targetHandle": "funct3",
+      "selectable": true,
+      "focusable": true,
+      "updatable": true,
+      "id": "efork-1745331685532-control-1740456985517-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 3
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "control-1740456985517",
+      "sourceHandle": "memWidth",
+      "target": "pipeline-register-1743929763213",
+      "targetHandle": "input-17",
+      "selectable": true,
+      "focusable": true,
+      "updatable": true,
+      "id": "econtrol-1740456985517-pipeline-register-1743929763213-8",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 3
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "pipeline-register-1743929763213",
+      "sourceHandle": "output-17",
+      "target": "pipeline-register-1743931581067",
+      "targetHandle": "input-8",
+      "selectable": true,
+      "focusable": true,
+      "updatable": true,
+      "id": "epipeline-register-1743929763213-pipeline-register-1743931581067-7",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 3
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "pipeline-register-1743931581067",
+      "sourceHandle": "output-8",
+      "target": "memory-1740457029513",
+      "targetHandle": "memWidth",
+      "selectable": true,
+      "focusable": true,
+      "updatable": true,
+      "id": "epipeline-register-1743931581067-memory-1740457029513-4",
+      "selected": false
+    }
+  ],
+  "isSimulating": false,
+  "editorCode": "",
+  "assembledInstructions": [],
+  "savedAt": "2025-04-22T14:24:01.199Z"
+}

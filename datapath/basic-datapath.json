@@ -1,0 +1,1775 @@
+{
+  "name": "circuit-2025-04-22T14-16-21-852Z",
+  "nodes": [
+    {
+      "id": "register-1740456812349",
+      "type": "register",
+      "position": {
+        "x": 301.6582999874488,
+        "y": 393.9101325653596
+      },
+      "data": {
+        "label": "REGISTER",
+        "readReg1": 0,
+        "readReg2": 0,
+        "writeReg": 0,
+        "writeData": 0,
+        "regWrite": false,
+        "readData1": 0,
+        "readData2": 0
+      },
+      "width": 186,
+      "height": 191,
+      "selected": false,
+      "positionAbsolute": {
+        "x": 301.6582999874488,
+        "y": 393.9101325653596
+      },
+      "dragging": false
+    },
+    {
+      "id": "imm-gen-1740456815567",
+      "type": "imm-gen",
+      "position": {
+        "x": 18.43567824660738,
+        "y": 698.0389289478572
+      },
+      "data": {
+        "label": "IMM-GEN",
+        "instruction": "00000000000000000000000000000000",
+        "immediate": 0,
+        "format": "R"
+      },
+      "width": 182,
+      "height": 95,
+      "selected": false,
+      "positionAbsolute": {
+        "x": 18.43567824660738,
+        "y": 698.0389289478572
+      },
+      "dragging": false
+    },
+    {
+      "id": "instr-distributer-1740456827777",
+      "type": "instr-distributer",
+      "position": {
+        "x": -117.70783628865843,
+        "y": 387.1349960225726
+      },
+      "data": {
+        "label": "INSTR-DISTRIBUTER",
+        "value": "0",
+        "opcode": 0,
+        "rd": 0,
+        "funct3": 0,
+        "rs1": 0,
+        "rs2": 0,
+        "funct7": 0
+      },
+      "width": 160,
+      "height": 171,
+      "selected": false,
+      "positionAbsolute": {
+        "x": -117.70783628865843,
+        "y": 387.1349960225726
+      },
+      "dragging": false
+    },
+    {
+      "id": "pc-1740456929935",
+      "type": "pc",
+      "position": {
+        "x": -468.6232828989902,
+        "y": 241.6342936169072
+      },
+      "data": {
+        "label": "PC",
+        "value": 0,
+        "reset": false,
+        "pcWrite": 1
+      },
+      "width": 202,
+      "height": 119,
+      "selected": false,
+      "positionAbsolute": {
+        "x": -468.6232828989902,
+        "y": 241.6342936169072
+      },
+      "dragging": false
+    },
+    {
+      "id": "instruction-memory-1740456942935",
+      "type": "instruction-memory",
+      "position": {
+        "x": -574.2540457376367,
+        "y": 486.1305380341206
+      },
+      "data": {
+        "label": "INSTRUCTION-MEMORY",
+        "instructions": [],
+        "pc": 0,
+        "value": "0"
+      },
+      "width": 273,
+      "height": 95,
+      "selected": false,
+      "positionAbsolute": {
+        "x": -574.2540457376367,
+        "y": 486.1305380341206
+      },
+      "dragging": false
+    },
+    {
+      "id": "control-1740456985517",
+      "type": "control",
+      "position": {
+        "x": 383.6185504674355,
+        "y": -52.361377055771584
+      },
+      "data": {
+        "label": "CONTROL",
+        "regWrite": 0,
+        "memRead": 0,
+        "memWrite": 0,
+        "aluOp": 0,
+        "branch": 0,
+        "jump": 0,
+        "aluSrc": 0,
+        "memToReg": 0,
+        "opcode": "0000000",
+        "aluSrc1": 0,
+        "aluSrc2": 0,
+        "controlMux": 0,
+        "memWidth": 2,
+        "funct3": "000"
+      },
+      "width": 160,
+      "height": 371,
+      "selected": false,
+      "positionAbsolute": {
+        "x": 383.6185504674355,
+        "y": -52.361377055771584
+      },
+      "dragging": false
+    },
+    {
+      "id": "fork-1740456999685",
+      "type": "fork",
+      "position": {
+        "x": 139.89968917534105,
+        "y": 373.71669166805236
+      },
+      "data": {
+        "label": "FORK",
+        "value": 0
+      },
+      "width": 32,
+      "height": 32,
+      "selected": false,
+      "positionAbsolute": {
+        "x": 139.89968917534105,
+        "y": 373.71669166805236
+      },
+      "dragging": false
+    },
+    {
+      "id": "memory-1740457029513",
+      "type": "memory",
+      "position": {
+        "x": 1116.967946784238,
+        "y": 603.4336168592275
+      },
+      "data": {
+        "label": "MEMORY",
+        "address": 0,
+        "memRead": 0,
+        "readData": 0,
+        "writeData": 0,
+        "memWrite": 0,
+        "memWidth": 2
+      },
+      "width": 206,
+      "height": 215,
+      "selected": false,
+      "dragging": false,
+      "positionAbsolute": {
+        "x": 1116.967946784238,
+        "y": 603.4336168592275
+      }
+    },
+    {
+      "id": "alu-control-1740457192016",
+      "type": "alu-control",
+      "position": {
+        "x": 407.3656853543008,
+        "y": 791.7275251130484
+      },
+      "data": {
+        "label": "ALU-CONTROL",
+        "aluOp": 0,
+        "funct3": 0,
+        "funct7": 0,
+        "aluControl": 2
+      },
+      "width": 182,
+      "height": 143,
+      "selected": false,
+      "positionAbsolute": {
+        "x": 407.3656853543008,
+        "y": 791.7275251130484
+      },
+      "dragging": false
+    },
+    {
+      "id": "fork-1740457222103",
+      "type": "fork",
+      "position": {
+        "x": 127.48344778598755,
+        "y": 587.7797922775127
+      },
+      "data": {
+        "label": "FORK",
+        "value": 0,
+        "portCount": 3
+      },
+      "width": 32,
+      "height": 48,
+      "selected": false,
+      "positionAbsolute": {
+        "x": 127.48344778598755,
+        "y": 587.7797922775127
+      },
+      "dragging": false
+    },
+    {
+      "id": "mux-1740457249603",
+      "type": "mux",
+      "position": {
+        "x": 1314.0971211914587,
+        "y": 200.62642159440605
+      },
+      "data": {
+        "label": "MUX",
+        "value": 0,
+        "select": "0",
+        "portCount": 3
+      },
+      "width": 108,
+      "height": 147,
+      "selected": false,
+      "positionAbsolute": {
+        "x": 1314.0971211914587,
+        "y": 200.62642159440605
+      },
+      "dragging": false
+    },
+    {
+      "id": "alu-1740457259779",
+      "type": "alu",
+      "position": {
+        "x": 904.9941230539848,
+        "y": 438.83939518192597
+      },
+      "data": {
+        "label": "ALU",
+        "a": 0,
+        "b": 0,
+        "operation": 2,
+        "result": 0,
+        "zero": 1
+      },
+      "width": 144,
+      "height": 167,
+      "selected": false,
+      "positionAbsolute": {
+        "x": 904.9941230539848,
+        "y": 438.83939518192597
+      },
+      "dragging": false
+    },
+    {
+      "id": "fork-1740457285226",
+      "type": "fork",
+      "position": {
+        "x": 568.9838653423502,
+        "y": 582.1838622905925
+      },
+      "data": {
+        "label": "FORK",
+        "value": 0
+      },
+      "width": 32,
+      "height": 32,
+      "selected": false,
+      "positionAbsolute": {
+        "x": 568.9838653423502,
+        "y": 582.1838622905925
+      },
+      "dragging": false
+    },
+    {
+      "id": "fork-1740457413673",
+      "type": "fork",
+      "position": {
+        "x": 1145.3712644038133,
+        "y": 382.62233570290965
+      },
+      "data": {
+        "label": "FORK",
+        "value": 0
+      },
+      "width": 32,
+      "height": 32,
+      "selected": false,
+      "positionAbsolute": {
+        "x": 1145.3712644038133,
+        "y": 382.62233570290965
+      },
+      "dragging": false
+    },
+    {
+      "id": "fork-1740457481300",
+      "type": "fork",
+      "position": {
+        "x": -128.84561235586426,
+        "y": 290.9725380248992
+      },
+      "data": {
+        "label": "FORK",
+        "value": 0,
+        "portCount": 3
+      },
+      "width": 32,
+      "height": 48,
+      "selected": false,
+      "positionAbsolute": {
+        "x": -128.84561235586426,
+        "y": 290.9725380248992
+      },
+      "dragging": false
+    },
+    {
+      "id": "constant-1740457494777",
+      "type": "constant",
+      "position": {
+        "x": -522.6369617158804,
+        "y": -99.48937947320937
+      },
+      "data": {
+        "label": "CONSTANT",
+        "value": 4
+      },
+      "width": 96,
+      "height": 39,
+      "selected": false,
+      "positionAbsolute": {
+        "x": -522.6369617158804,
+        "y": -99.48937947320937
+      },
+      "dragging": false
+    },
+    {
+      "id": "add-1740457499578",
+      "type": "add",
+      "position": {
+        "x": -129.9993757823354,
+        "y": -242.45147607158395
+      },
+      "data": {
+        "label": "ADD",
+        "value": 4
+      },
+      "width": 80,
+      "height": 80,
+      "selected": false,
+      "positionAbsolute": {
+        "x": -129.9993757823354,
+        "y": -242.45147607158395
+      },
+      "dragging": false
+    },
+    {
+      "id": "fork-1740457531304",
+      "type": "fork",
+      "position": {
+        "x": -136.9773959627172,
+        "y": 44.196023897726775
+      },
+      "data": {
+        "label": "FORK",
+        "value": 0
+      },
+      "width": 32,
+      "height": 32,
+      "selected": false,
+      "positionAbsolute": {
+        "x": -136.9773959627172,
+        "y": 44.196023897726775
+      },
+      "dragging": false
+    },
+    {
+      "id": "jump-control-1740457549626",
+      "type": "jump-control",
+      "position": {
+        "x": 166.39349987893263,
+        "y": -435.9486709137656
+      },
+      "data": {
+        "label": "JUMP-CONTROL",
+        "funct3": 0,
+        "opcode": 0,
+        "zero": 1,
+        "jump": 0,
+        "jalr": 0
+      },
+      "width": 178,
+      "height": 167,
+      "selected": false,
+      "positionAbsolute": {
+        "x": 166.39349987893263,
+        "y": -435.9486709137656
+      },
+      "dragging": false
+    },
+    {
+      "id": "add-1740457601453",
+      "type": "add",
+      "position": {
+        "x": 793.5275281648062,
+        "y": -81.82279006607097
+      },
+      "data": {
+        "label": "ADD",
+        "value": 0
+      },
+      "width": 80,
+      "height": 80,
+      "selected": false,
+      "positionAbsolute": {
+        "x": 793.5275281648062,
+        "y": -81.82279006607097
+      },
+      "dragging": false
+    },
+    {
+      "id": "fork-1740457651094",
+      "type": "fork",
+      "position": {
+        "x": 346.96440450636896,
+        "y": 717.345705101098
+      },
+      "data": {
+        "label": "FORK",
+        "value": 0
+      },
+      "width": 32,
+      "height": 32,
+      "selected": false,
+      "positionAbsolute": {
+        "x": 346.96440450636896,
+        "y": 717.345705101098
+      },
+      "dragging": false
+    },
+    {
+      "id": "mux-1740457672408",
+      "type": "mux",
+      "position": {
+        "x": 973.9215037387455,
+        "y": -298.3208295614846
+      },
+      "data": {
+        "label": "MUX",
+        "value": 4,
+        "select": "0"
+      },
+      "width": 108,
+      "height": 123,
+      "selected": false,
+      "positionAbsolute": {
+        "x": 973.9215037387455,
+        "y": -298.3208295614846
+      },
+      "dragging": false
+    },
+    {
+      "id": "fork-1740458306711",
+      "type": "fork",
+      "position": {
+        "x": -224.74938581079866,
+        "y": 720.5286440103118
+      },
+      "data": {
+        "label": "FORK",
+        "value": "0"
+      },
+      "width": 32,
+      "height": 32,
+      "selected": false,
+      "positionAbsolute": {
+        "x": -224.74938581079866,
+        "y": 720.5286440103118
+      },
+      "dragging": false
+    },
+    {
+      "id": "mux-1740464449901",
+      "type": "mux",
+      "position": {
+        "x": 228.77213465013767,
+        "y": -182.76485937675847
+      },
+      "data": {
+        "label": "MUX",
+        "value": 0,
+        "select": "0"
+      },
+      "width": 108,
+      "height": 123,
+      "selected": false,
+      "positionAbsolute": {
+        "x": 228.77213465013767,
+        "y": -182.76485937675847
+      },
+      "dragging": false
+    },
+    {
+      "id": "fork-1740464547221",
+      "type": "fork",
+      "position": {
+        "x": 611.2339277208744,
+        "y": 369.8471820644534
+      },
+      "data": {
+        "label": "FORK",
+        "value": 0
+      },
+      "width": 32,
+      "height": 32,
+      "selected": false,
+      "positionAbsolute": {
+        "x": 611.2339277208744,
+        "y": 369.8471820644534
+      },
+      "dragging": false
+    },
+    {
+      "id": "fork-1740914252490",
+      "type": "fork",
+      "position": {
+        "x": 559.6082410306024,
+        "y": -213.65378859526504
+      },
+      "data": {
+        "label": "FORK",
+        "value": 4
+      },
+      "width": 32,
+      "height": 32,
+      "selected": false,
+      "positionAbsolute": {
+        "x": 559.6082410306024,
+        "y": -213.65378859526504
+      },
+      "dragging": false
+    },
+    {
+      "id": "mux-1743841921971",
+      "type": "mux",
+      "position": {
+        "x": 710.3714747110963,
+        "y": 639.3445428563022
+      },
+      "data": {
+        "label": "MUX",
+        "value": 0,
+        "select": "0"
+      },
+      "width": 108,
+      "height": 123,
+      "selected": false,
+      "positionAbsolute": {
+        "x": 710.3714747110963,
+        "y": 639.3445428563022
+      },
+      "dragging": false
+    },
+    {
+      "id": "mux-1743842151951",
+      "type": "mux",
+      "position": {
+        "x": 729.7651707374424,
+        "y": 393.97649687523017
+      },
+      "data": {
+        "label": "MUX",
+        "value": 0,
+        "select": "0",
+        "portCount": 3
+      },
+      "width": 108,
+      "height": 147,
+      "selected": false,
+      "positionAbsolute": {
+        "x": 729.7651707374424,
+        "y": 393.97649687523017
+      },
+      "dragging": false
+    },
+    {
+      "id": "constant-1743842223462",
+      "type": "constant",
+      "position": {
+        "x": 554.9715831304827,
+        "y": 474.1581919813883
+      },
+      "data": {
+        "label": "CONSTANT"
+      },
+      "width": 96,
+      "height": 39,
+      "selected": false,
+      "positionAbsolute": {
+        "x": 554.9715831304827,
+        "y": 474.1581919813883
+      },
+      "dragging": false
+    }
+  ],
+  "edges": [
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "instr-distributer-1740456827777",
+      "sourceHandle": "rs1",
+      "target": "register-1740456812349",
+      "targetHandle": "readReg1",
+      "id": "einstr-distributer-1740456827777-register-1740456812349-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "instr-distributer-1740456827777",
+      "sourceHandle": "rs2",
+      "target": "register-1740456812349",
+      "targetHandle": "readReg2",
+      "id": "einstr-distributer-1740456827777-register-1740456812349-2",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "instr-distributer-1740456827777",
+      "sourceHandle": "opcode",
+      "target": "fork-1740456999685",
+      "targetHandle": "input",
+      "id": "einstr-distributer-1740456827777-fork-1740456999685-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "control-1740456985517",
+      "sourceHandle": "memWrite",
+      "target": "memory-1740457029513",
+      "targetHandle": "memWrite",
+      "id": "econtrol-1740456985517-memory-1740457029513-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "control-1740456985517",
+      "sourceHandle": "memRead",
+      "target": "memory-1740457029513",
+      "targetHandle": "memRead",
+      "id": "econtrol-1740456985517-memory-1740457029513-2",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "instr-distributer-1740456827777",
+      "sourceHandle": "funct7",
+      "target": "alu-control-1740457192016",
+      "targetHandle": "funct7",
+      "id": "einstr-distributer-1740456827777-alu-control-1740457192016-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "instr-distributer-1740456827777",
+      "sourceHandle": "funct3",
+      "target": "fork-1740457222103",
+      "targetHandle": "input",
+      "id": "einstr-distributer-1740456827777-fork-1740457222103-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "fork-1740457222103",
+      "sourceHandle": "output-2",
+      "target": "alu-control-1740457192016",
+      "targetHandle": "funct3",
+      "id": "efork-1740457222103-alu-control-1740457192016-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "control-1740456985517",
+      "sourceHandle": "aluOp",
+      "target": "alu-control-1740457192016",
+      "targetHandle": "aluOp",
+      "id": "econtrol-1740456985517-alu-control-1740457192016-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "register-1740456812349",
+      "sourceHandle": "readData2",
+      "target": "fork-1740457285226",
+      "targetHandle": "input",
+      "id": "eregister-1740456812349-fork-1740457285226-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "fork-1740457285226",
+      "sourceHandle": "output-1",
+      "target": "memory-1740457029513",
+      "targetHandle": "writeData",
+      "id": "efork-1740457285226-memory-1740457029513-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "alu-control-1740457192016",
+      "sourceHandle": "aluControl",
+      "target": "alu-1740457259779",
+      "targetHandle": "control",
+      "id": "ealu-control-1740457192016-alu-1740457259779-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "alu-1740457259779",
+      "sourceHandle": "result",
+      "target": "fork-1740457413673",
+      "targetHandle": "input",
+      "id": "ealu-1740457259779-fork-1740457413673-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "fork-1740457413673",
+      "sourceHandle": "output-2",
+      "target": "memory-1740457029513",
+      "targetHandle": "address",
+      "id": "efork-1740457413673-memory-1740457029513-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "fork-1740457413673",
+      "sourceHandle": "output-1",
+      "target": "mux-1740457249603",
+      "targetHandle": "in0",
+      "id": "efork-1740457413673-mux-1740457249603-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "memory-1740457029513",
+      "sourceHandle": "readData",
+      "target": "mux-1740457249603",
+      "targetHandle": "in1",
+      "id": "ememory-1740457029513-mux-1740457249603-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "mux-1740457249603",
+      "sourceHandle": "out",
+      "target": "register-1740456812349",
+      "targetHandle": "writeData",
+      "id": "emux-1740457249603-register-1740456812349-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "pc-1740456929935",
+      "sourceHandle": "address",
+      "target": "fork-1740457481300",
+      "targetHandle": "input",
+      "id": "epc-1740456929935-fork-1740457481300-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "fork-1740457481300",
+      "sourceHandle": "output-2",
+      "target": "instruction-memory-1740456942935",
+      "targetHandle": "pc",
+      "id": "efork-1740457481300-instruction-memory-1740456942935-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "constant-1740457494777",
+      "sourceHandle": "value",
+      "target": "add-1740457499578",
+      "targetHandle": "input-a",
+      "id": "econstant-1740457494777-add-1740457499578-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "fork-1740457481300",
+      "sourceHandle": "output-1",
+      "target": "fork-1740457531304",
+      "targetHandle": "input",
+      "id": "efork-1740457481300-fork-1740457531304-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "fork-1740457531304",
+      "sourceHandle": "output-1",
+      "target": "add-1740457499578",
+      "targetHandle": "input-b",
+      "id": "efork-1740457531304-add-1740457499578-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "fork-1740456999685",
+      "sourceHandle": "output-1",
+      "target": "jump-control-1740457549626",
+      "targetHandle": "opcode",
+      "id": "efork-1740456999685-jump-control-1740457549626-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "fork-1740457222103",
+      "sourceHandle": "output-1",
+      "target": "jump-control-1740457549626",
+      "targetHandle": "funct3",
+      "id": "efork-1740457222103-jump-control-1740457549626-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "alu-1740457259779",
+      "sourceHandle": "zero",
+      "target": "jump-control-1740457549626",
+      "targetHandle": "zero",
+      "id": "ealu-1740457259779-jump-control-1740457549626-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "imm-gen-1740456815567",
+      "sourceHandle": "immediate",
+      "target": "fork-1740457651094",
+      "targetHandle": "input",
+      "id": "eimm-gen-1740456815567-fork-1740457651094-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "fork-1740457651094",
+      "sourceHandle": "output-1",
+      "target": "add-1740457601453",
+      "targetHandle": "input-b",
+      "id": "efork-1740457651094-add-1740457601453-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "add-1740457601453",
+      "sourceHandle": "output",
+      "target": "mux-1740457672408",
+      "targetHandle": "in1",
+      "id": "eadd-1740457601453-mux-1740457672408-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "jump-control-1740457549626",
+      "sourceHandle": "jump",
+      "target": "mux-1740457672408",
+      "targetHandle": "select",
+      "id": "ejump-control-1740457549626-mux-1740457672408-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#3182ce",
+        "strokeWidth": 3
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "mux-1740457672408",
+      "sourceHandle": "out",
+      "target": "pc-1740456929935",
+      "targetHandle": "next",
+      "id": "emux-1740457672408-pc-1740456929935-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "control-1740456985517",
+      "sourceHandle": "regWrite",
+      "target": "register-1740456812349",
+      "targetHandle": "regWrite",
+      "id": "econtrol-1740456985517-register-1740456812349-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "control-1740456985517",
+      "sourceHandle": "memToReg",
+      "target": "mux-1740457249603",
+      "targetHandle": "select",
+      "id": "econtrol-1740456985517-mux-1740457249603-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "instr-distributer-1740456827777",
+      "sourceHandle": "rd",
+      "target": "register-1740456812349",
+      "targetHandle": "writeReg",
+      "id": "einstr-distributer-1740456827777-register-1740456812349-3",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "instruction-memory-1740456942935",
+      "sourceHandle": "instruction",
+      "target": "fork-1740458306711",
+      "targetHandle": "input",
+      "id": "einstruction-memory-1740456942935-fork-1740458306711-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "fork-1740458306711",
+      "sourceHandle": "output-1",
+      "target": "instr-distributer-1740456827777",
+      "targetHandle": null,
+      "id": "efork-1740458306711-instr-distributer-1740456827777-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "fork-1740458306711",
+      "sourceHandle": "output-2",
+      "target": "imm-gen-1740456815567",
+      "targetHandle": "instruction",
+      "id": "efork-1740458306711-imm-gen-1740456815567-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "jump-control-1740457549626",
+      "sourceHandle": "jalr",
+      "target": "mux-1740464449901",
+      "targetHandle": "select",
+      "id": "ejump-control-1740457549626-mux-1740464449901-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "fork-1740457531304",
+      "sourceHandle": "output-2",
+      "target": "mux-1740464449901",
+      "targetHandle": "in0",
+      "id": "efork-1740457531304-mux-1740464449901-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "mux-1740464449901",
+      "sourceHandle": "out",
+      "target": "add-1740457601453",
+      "targetHandle": "input-a",
+      "id": "emux-1740464449901-add-1740457601453-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "register-1740456812349",
+      "sourceHandle": "readData1",
+      "target": "fork-1740464547221",
+      "targetHandle": "input",
+      "id": "eregister-1740456812349-fork-1740464547221-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "fork-1740464547221",
+      "sourceHandle": "output-1",
+      "target": "mux-1740464449901",
+      "targetHandle": "in1",
+      "id": "efork-1740464547221-mux-1740464449901-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "add-1740457499578",
+      "sourceHandle": "output",
+      "target": "fork-1740914252490",
+      "targetHandle": "input",
+      "id": "eadd-1740457499578-fork-1740914252490-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "fork-1740914252490",
+      "sourceHandle": "output-1",
+      "target": "mux-1740457672408",
+      "targetHandle": "in0",
+      "id": "efork-1740914252490-mux-1740457672408-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "fork-1740914252490",
+      "sourceHandle": "output-2",
+      "target": "mux-1740457249603",
+      "targetHandle": "in2",
+      "id": "efork-1740914252490-mux-1740457249603-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "fork-1740457651094",
+      "sourceHandle": "output-2",
+      "target": "mux-1743841921971",
+      "targetHandle": "in1",
+      "id": "efork-1740457651094-mux-1743841921971-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "fork-1740457285226",
+      "sourceHandle": "output-2",
+      "target": "mux-1743841921971",
+      "targetHandle": "in0",
+      "id": "efork-1740457285226-mux-1743841921971-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "control-1740456985517",
+      "sourceHandle": "aluSrc2",
+      "target": "mux-1743841921971",
+      "targetHandle": "select",
+      "id": "econtrol-1740456985517-mux-1743841921971-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "mux-1743841921971",
+      "sourceHandle": "out",
+      "target": "alu-1740457259779",
+      "targetHandle": "b",
+      "id": "emux-1743841921971-alu-1740457259779-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "fork-1740464547221",
+      "sourceHandle": "output-2",
+      "target": "mux-1743842151951",
+      "targetHandle": "in0",
+      "id": "efork-1740464547221-mux-1743842151951-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "mux-1743842151951",
+      "sourceHandle": "out",
+      "target": "alu-1740457259779",
+      "targetHandle": "a",
+      "id": "emux-1743842151951-alu-1740457259779-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "control-1740456985517",
+      "sourceHandle": "aluSrc1",
+      "target": "mux-1743842151951",
+      "targetHandle": "select",
+      "id": "econtrol-1740456985517-mux-1743842151951-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "fork-1740457481300",
+      "sourceHandle": "output-3",
+      "target": "mux-1743842151951",
+      "targetHandle": "in1",
+      "id": "efork-1740457481300-mux-1743842151951-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "constant-1743842223462",
+      "sourceHandle": "value",
+      "target": "mux-1743842151951",
+      "targetHandle": "in2",
+      "id": "econstant-1743842223462-mux-1743842151951-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "control-1740456985517",
+      "sourceHandle": "memWidth",
+      "target": "memory-1740457029513",
+      "targetHandle": "memWidth",
+      "selectable": true,
+      "focusable": true,
+      "updatable": true,
+      "id": "econtrol-1740456985517-memory-1740457029513-3",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "fork-1740456999685",
+      "sourceHandle": "output-2",
+      "target": "control-1740456985517",
+      "targetHandle": "opcode",
+      "selectable": true,
+      "focusable": true,
+      "updatable": true,
+      "id": "efork-1740456999685-control-1740456985517-1",
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 1
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "fork-1740457222103",
+      "sourceHandle": "output-3",
+      "target": "control-1740456985517",
+      "targetHandle": "funct3",
+      "selectable": true,
+      "focusable": true,
+      "updatable": true,
+      "id": "efork-1740457222103-control-1740456985517-1",
+      "selected": false
+    }
+  ],
+  "isSimulating": false,
+  "editorCode": "",
+  "assembledInstructions": [],
+  "savedAt": "2025-04-22T14:16:21.852Z"
+}
