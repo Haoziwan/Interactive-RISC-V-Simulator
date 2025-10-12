@@ -9,7 +9,7 @@ interface ControlNodeData {
   regWrite?: number;
   memRead?: number;
   memWrite?: number;
-  memWidth?: number; // 0=byte, 1=half-word, 2=word
+  addressingControl?: number; // 3 bits: [signExtend, memWidth1, memWidth0]
   aluOp?: number;
   aluSrc1?: number;
   aluSrc2?: number;
@@ -92,7 +92,7 @@ export function ControlNode({ data, id, selected }: { data: ControlNodeData; id:
           regWrite: 0,
           memRead: 0,
           memWrite: 0,
-          memWidth: 2, // Default to word width
+          addressingControl: 0b110, // Default to word width with sign extension
           aluOp: 0,
           aluSrc1: 0,
           aluSrc2: 0,
@@ -106,7 +106,7 @@ export function ControlNode({ data, id, selected }: { data: ControlNodeData; id:
               regWrite: 1,
               memRead: 0,
               memWrite: 0,
-              memWidth: 2, // Word width (not used for R-type)
+              addressingControl: 0b110, // Word width with sign extension (not used for R-type)
               aluOp: parseInt('10', 2),
               aluSrc1: 0,
               aluSrc2: 0,
@@ -118,7 +118,7 @@ export function ControlNode({ data, id, selected }: { data: ControlNodeData; id:
               regWrite: 1,
               memRead: 0,
               memWrite: 0,
-              memWidth: 2, // Word width (not used for I-type ALU)
+              addressingControl: 0b110, // Word width with sign extension (not used for I-type ALU)
               aluOp: parseInt('11', 2),
               aluSrc1: 0,
               aluSrc2: 1,
@@ -128,27 +128,41 @@ export function ControlNode({ data, id, selected }: { data: ControlNodeData; id:
           case '0000011': // I-type Load
             // 根据 funct3 确定内存访问宽度
             let loadWidth = 2; // Default to word (lw)
+            let addressingControl = 0b110; // Default to word with sign extension
             if (currentFunct3) {
+              // Determine sign extension based on funct3
+              let signExtend = 1; // Default to sign extension
               switch (currentFunct3) {
                 case '000': // lb
+                  loadWidth = 0; // Byte
+                  signExtend = 1; // Signed
+                  break;
                 case '100': // lbu
                   loadWidth = 0; // Byte
+                  signExtend = 0; // Unsigned
                   break;
                 case '001': // lh
+                  loadWidth = 1; // Half-word
+                  signExtend = 1; // Signed
+                  break;
                 case '101': // lhu
                   loadWidth = 1; // Half-word
+                  signExtend = 0; // Unsigned
                   break;
                 case '010': // lw
                 default:
                   loadWidth = 2; // Word
+                  signExtend = 1; // Signed
                   break;
               }
+              // Combine sign extension and memory width into addressing control
+              addressingControl = (signExtend << 2) | loadWidth;
             }
             controlSignals = {
               regWrite: 1,
               memRead: 1,
               memWrite: 0,
-              memWidth: loadWidth,
+              addressingControl: addressingControl,
               aluOp: parseInt('00', 2),
               aluSrc1: 0,
               aluSrc2: 1,
@@ -158,7 +172,10 @@ export function ControlNode({ data, id, selected }: { data: ControlNodeData; id:
           case '0100011': // S-type
             // 根据 funct3 确定内存访问宽度
             let storeWidth = 2; // Default to word (sw)
+            let storeAddressingControl = 0b110; // Default to word with sign extension
             if (currentFunct3) {
+              // For store instructions, we still need to determine the width
+              // but sign extension bit is not used for stores
               switch (currentFunct3) {
                 case '000': // sb
                   storeWidth = 0; // Byte
@@ -171,12 +188,14 @@ export function ControlNode({ data, id, selected }: { data: ControlNodeData; id:
                   storeWidth = 2; // Word
                   break;
               }
+              // For stores, sign extension bit is not used, set to 1 by default
+              storeAddressingControl = (1 << 2) | storeWidth;
             }
             controlSignals = {
               regWrite: 0,
               memRead: 0,
               memWrite: 1,
-              memWidth: storeWidth,
+              addressingControl: storeAddressingControl,
               aluOp: parseInt('00', 2),
               aluSrc1: 0,
               aluSrc2: 1,
@@ -188,7 +207,7 @@ export function ControlNode({ data, id, selected }: { data: ControlNodeData; id:
               regWrite: 0,
               memRead: 0,
               memWrite: 0,
-              memWidth: 2, // Word width (not used for B-type)
+              addressingControl: 0b110, // Word width with sign extension (not used for B-type)
               aluOp: parseInt('01', 2),
               aluSrc1: 0,
               aluSrc2: 0,
@@ -201,7 +220,7 @@ export function ControlNode({ data, id, selected }: { data: ControlNodeData; id:
               regWrite: 1,
               memRead: 0,
               memWrite: 0,
-              memWidth: 2, // Word width (not used for J-type)
+              addressingControl: 0b110, // Word width with sign extension (not used for J-type)
               aluOp: parseInt('00', 2),
               aluSrc1: 0,
               aluSrc2: 1,
@@ -213,7 +232,7 @@ export function ControlNode({ data, id, selected }: { data: ControlNodeData; id:
               regWrite: 1,
               memRead: 0,
               memWrite: 0,
-              memWidth: 2, // Word width (not used for U-type)
+              addressingControl: 0b110, // Word width with sign extension (not used for U-type)
               aluOp: parseInt('00', 2),
               aluSrc1: 2, // LUI指令时aluSrc1为2
               aluSrc2: 1,
@@ -225,7 +244,7 @@ export function ControlNode({ data, id, selected }: { data: ControlNodeData; id:
               regWrite: 1,
               memRead: 0,
               memWrite: 0,
-              memWidth: 2, // Word width (not used for U-type)
+              addressingControl: 0b110, // Word width with sign extension (not used for U-type)
               aluOp: parseInt('00', 2),
               aluSrc1: 1, // AUIPC指令时aluSrc1为1
               aluSrc2: 1,
@@ -237,7 +256,7 @@ export function ControlNode({ data, id, selected }: { data: ControlNodeData; id:
               regWrite: 0,
               memRead: 0,
               memWrite: 0,
-              memWidth: 2, // Default to word width
+              addressingControl: 0b110, // Default to word width with sign extension
               aluOp: parseInt('00', 2),
               aluSrc1: 0,
               aluSrc2: 0,
@@ -336,10 +355,10 @@ export function ControlNode({ data, id, selected }: { data: ControlNodeData; id:
                 <span>{data.memWrite ?? 0}</span>
                 <Handle type="source" position={Position.Right} id="memWrite" className="w-3 h-3 bg-green-400 absolute" style={{ right: '-10px', top: '50%', transform: 'translateY(-50%)' }} title="MemWrite" />
               </div>
-              <div id="memWidth-row" className="flex justify-between items-center relative h-6">
-                <span>MemWidth:</span>
-                <span>{data.memWidth ?? 2}</span>
-                <Handle type="source" position={Position.Right} id="memWidth" className="w-3 h-3 bg-green-400 absolute" style={{ right: '-10px', top: '50%', transform: 'translateY(-50%)' }} title="MemWidth" />
+              <div id="addressingControl-row" className="flex justify-between items-center relative h-6">
+                <span>AddressingControl:</span>
+                <span>{data.addressingControl ?? 0b110}</span>
+                <Handle type="source" position={Position.Right} id="addressingControl" className="w-3 h-3 bg-green-400 absolute" style={{ right: '-10px', top: '50%', transform: 'translateY(-50%)' }} title="AddressingControl" />
               </div>
               <div id="aluOp-row" className="flex justify-between items-center relative h-6">
                 <span>ALUOp:</span>
@@ -365,7 +384,7 @@ export function ControlNode({ data, id, selected }: { data: ControlNodeData; id:
             <Handle type="source" position={Position.Right} id="aluSrc2" className="w-3 h-3 bg-green-400 absolute" style={{ right: '-10px', top: '29%' }} title="ALUSrc2" />
             <Handle type="source" position={Position.Right} id="memRead" className="w-3 h-3 bg-green-400 absolute" style={{ right: '-10px', top: '36%' }} title="MemRead" />
             <Handle type="source" position={Position.Right} id="memWrite" className="w-3 h-3 bg-green-400 absolute" style={{ right: '-10px', top: '43%' }} title="MemWrite" />
-            <Handle type="source" position={Position.Right} id="memWidth" className="w-3 h-3 bg-green-400 absolute" style={{ right: '-10px', top: '50%' }} title="MemWidth" />
+            <Handle type="source" position={Position.Right} id="addressingControl" className="w-3 h-3 bg-green-400 absolute" style={{ right: '-10px', top: '50%' }} title="AddressingControl" />
             <Handle type="source" position={Position.Right} id="aluOp" className="w-3 h-3 bg-green-400 absolute" style={{ right: '-10px', top: '57%' }} title="ALUOp" />
             <Handle type="source" position={Position.Right} id="memToReg" className="w-3 h-3 bg-green-400 absolute" style={{ right: '-10px', top: '64%' }} title="MemToReg" />
           </>

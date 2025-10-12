@@ -676,6 +676,12 @@ export function ConfigPanel() {
                   <li><span className="font-medium">Write Data:</span> 32-bit data to be written to memory when MemWrite is active</li>
                   <li><span className="font-medium">MemWrite:</span> 1-bit control signal enabling memory write operations when high (1)</li>
                   <li><span className="font-medium">MemRead:</span> 1-bit control signal enabling memory read operations when high (1)</li>
+                  <li><span className="font-medium">AddressingControl:</span> 3-bit control signal [SignExtend, MemWidth1, MemWidth0] determining memory access type:
+                    <ul className="list-circle pl-5 mt-1">
+                      <li>Bit 2 (SignExtend): 1 for sign extension, 0 for zero extension</li>
+                      <li>Bits 1:0 (MemWidth): 00=byte, 01=half-word, 10=word</li>
+                    </ul>
+                  </li>
                   <li><span className="font-medium">Clock:</span> System clock signal that synchronizes write operations</li>
                   <li><span className="font-medium">Read Data:</span> 32-bit data output from the specified address when MemRead is active</li>
                 </ul>
@@ -766,6 +772,12 @@ export function ConfigPanel() {
                   <li><span className="font-medium">MemWrite:</span> Enable signal for memory writing</li>
                   <li><span className="font-medium">Branch:</span> Control signal indicating branch instruction</li>
                   <li><span className="font-medium">ALUOp[1:0]:</span> Control signal for ALU operation type</li>
+                  <li><span className="font-medium">AddressingControl:</span> 3-bit control signal [SignExtend, MemWidth1, MemWidth0] determining memory access type:
+                    <ul className="list-circle pl-5 mt-1">
+                      <li>Bit 2 (SignExtend): 1 for sign extension, 0 for zero extension</li>
+                      <li>Bits 1:0 (MemWidth): 00=byte, 01=half-word, 10=word</li>
+                    </ul>
+                  </li>
                 </ul>
                 <h4 className="text-xs font-medium text-blue-800 mt-2 mb-1">Execution Logic</h4>
                 <div className="text-xs text-blue-700">

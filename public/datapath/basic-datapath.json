@@ -1,5 +1,5 @@
 {
-  "name": "circuit-2025-04-22T14-16-21-852Z",
+  "name": "circuit-2025-10-12T09-43-45-711Z",
   "nodes": [
     {
       "id": "register-1740456812349",
@@ -58,7 +58,7 @@
       },
       "data": {
         "label": "INSTR-DISTRIBUTER",
-        "value": "0",
+        "value": 0,
         "opcode": 0,
         "rd": 0,
         "funct3": 0,
@@ -108,7 +108,7 @@
         "label": "INSTRUCTION-MEMORY",
         "instructions": [],
         "pc": 0,
-        "value": "0"
+        "value": null
       },
       "width": 273,
       "height": 95,
@@ -144,7 +144,7 @@
         "funct3": "000"
       },
       "width": 160,
-      "height": 371,
+      "height": 435,
       "selected": false,
       "positionAbsolute": {
         "x": 383.6185504674355,
@@ -189,7 +189,7 @@
         "memWidth": 2
       },
       "width": 206,
-      "height": 215,
+      "height": 191,
       "selected": false,
       "dragging": false,
       "positionAbsolute": {
@@ -502,7 +502,7 @@
       },
       "data": {
         "label": "FORK",
-        "value": "0"
+        "value": 0
       },
       "width": 32,
       "height": 32,
@@ -656,7 +656,10 @@
       "target": "register-1740456812349",
       "targetHandle": "readReg1",
       "id": "einstr-distributer-1740456827777-register-1740456812349-1",
-      "selected": false
+      "selected": false,
+      "data": {
+        "isHighlighted": false
+      }
     },
     {
       "type": "smoothstep",
@@ -676,7 +679,10 @@
       "target": "register-1740456812349",
       "targetHandle": "readReg2",
       "id": "einstr-distributer-1740456827777-register-1740456812349-2",
-      "selected": false
+      "selected": false,
+      "data": {
+        "isHighlighted": false
+      }
     },
     {
       "type": "smoothstep",
@@ -696,7 +702,10 @@
       "target": "fork-1740456999685",
       "targetHandle": "input",
       "id": "einstr-distributer-1740456827777-fork-1740456999685-1",
-      "selected": false
+      "selected": false,
+      "data": {
+        "isHighlighted": false
+      }
     },
     {
       "type": "smoothstep",
@@ -716,7 +725,10 @@
       "target": "memory-1740457029513",
       "targetHandle": "memWrite",
       "id": "econtrol-1740456985517-memory-1740457029513-1",
-      "selected": false
+      "selected": false,
+      "data": {
+        "isHighlighted": false
+      }
     },
     {
       "type": "smoothstep",
@@ -736,7 +748,10 @@
       "target": "memory-1740457029513",
       "targetHandle": "memRead",
       "id": "econtrol-1740456985517-memory-1740457029513-2",
-      "selected": false
+      "selected": false,
+      "data": {
+        "isHighlighted": false
+      }
     },
     {
       "type": "smoothstep",
@@ -756,7 +771,10 @@
       "target": "alu-control-1740457192016",
       "targetHandle": "funct7",
       "id": "einstr-distributer-1740456827777-alu-control-1740457192016-1",
-      "selected": false
+      "selected": false,
+      "data": {
+        "isHighlighted": false
+      }
     },
     {
       "type": "smoothstep",
@@ -776,7 +794,10 @@
       "target": "fork-1740457222103",
       "targetHandle": "input",
       "id": "einstr-distributer-1740456827777-fork-1740457222103-1",
-      "selected": false
+      "selected": false,
+      "data": {
+        "isHighlighted": false
+      }
     },
     {
       "type": "smoothstep",
@@ -796,7 +817,10 @@
       "target": "alu-control-1740457192016",
       "targetHandle": "funct3",
       "id": "efork-1740457222103-alu-control-1740457192016-1",
-      "selected": false
+      "selected": false,
+      "data": {
+        "isHighlighted": false
+      }
     },
     {
       "type": "smoothstep",
@@ -816,7 +840,10 @@
       "target": "alu-control-1740457192016",
       "targetHandle": "aluOp",
       "id": "econtrol-1740456985517-alu-control-1740457192016-1",
-      "selected": false
+      "selected": false,
+      "data": {
+        "isHighlighted": false
+      }
     },
     {
       "type": "smoothstep",
@@ -836,7 +863,10 @@
       "target": "fork-1740457285226",
       "targetHandle": "input",
       "id": "eregister-1740456812349-fork-1740457285226-1",
-      "selected": false
+      "selected": false,
+      "data": {
+        "isHighlighted": false
+      }
     },
     {
       "type": "smoothstep",
@@ -856,7 +886,10 @@
       "target": "memory-1740457029513",
       "targetHandle": "writeData",
       "id": "efork-1740457285226-memory-1740457029513-1",
-      "selected": false
+      "selected": false,
+      "data": {
+        "isHighlighted": false
+      }
     },
     {
       "type": "smoothstep",
@@ -876,7 +909,10 @@
       "target": "alu-1740457259779",
       "targetHandle": "control",
       "id": "ealu-control-1740457192016-alu-1740457259779-1",
-      "selected": false
+      "selected": false,
+      "data": {
+        "isHighlighted": false
+      }
     },
     {
       "type": "smoothstep",
@@ -896,7 +932,10 @@
       "target": "fork-1740457413673",
       "targetHandle": "input",
       "id": "ealu-1740457259779-fork-1740457413673-1",
-      "selected": false
+      "selected": false,
+      "data": {
+        "isHighlighted": false
+      }
     },
     {
       "type": "smoothstep",
@@ -916,7 +955,10 @@
       "target": "memory-1740457029513",
       "targetHandle": "address",
       "id": "efork-1740457413673-memory-1740457029513-1",
-      "selected": false
+      "selected": false,
+      "data": {
+        "isHighlighted": false
+      }
     },
     {
       "type": "smoothstep",
@@ -936,7 +978,10 @@
       "target": "mux-1740457249603",
       "targetHandle": "in0",
       "id": "efork-1740457413673-mux-1740457249603-1",
-      "selected": false
+      "selected": false,
+      "data": {
+        "isHighlighted": false
+      }
     },
     {
       "type": "smoothstep",
@@ -956,7 +1001,10 @@
       "target": "mux-1740457249603",
       "targetHandle": "in1",
       "id": "ememory-1740457029513-mux-1740457249603-1",
-      "selected": false
+      "selected": false,
+      "data": {
+        "isHighlighted": false
+      }
     },
     {
       "type": "smoothstep",
@@ -976,7 +1024,10 @@
       "target": "register-1740456812349",
       "targetHandle": "writeData",
       "id": "emux-1740457249603-register-1740456812349-1",
-      "selected": false
+      "selected": false,
+      "data": {
+        "isHighlighted": false
+      }
     },
     {
       "type": "smoothstep",
@@ -996,7 +1047,10 @@
       "target": "fork-1740457481300",
       "targetHandle": "input",
       "id": "epc-1740456929935-fork-1740457481300-1",
-      "selected": false
+      "selected": false,
+      "data": {
+        "isHighlighted": false
+      }
     },
     {
       "type": "smoothstep",
@@ -1016,7 +1070,10 @@
       "target": "instruction-memory-1740456942935",
       "targetHandle": "pc",
       "id": "efork-1740457481300-instruction-memory-1740456942935-1",
-      "selected": false
+      "selected": false,
+      "data": {
+        "isHighlighted": false
+      }
     },
     {
       "type": "smoothstep",
@@ -1036,7 +1093,10 @@
       "target": "add-1740457499578",
       "targetHandle": "input-a",
       "id": "econstant-1740457494777-add-1740457499578-1",
-      "selected": false
+      "selected": false,
+      "data": {
+        "isHighlighted": false
+      }
     },
     {
       "type": "smoothstep",
@@ -1056,7 +1116,10 @@
       "target": "fork-1740457531304",
       "targetHandle": "input",
       "id": "efork-1740457481300-fork-1740457531304-1",
-      "selected": false
+      "selected": false,
+      "data": {
+        "isHighlighted": false
+      }
     },
     {
       "type": "smoothstep",
@@ -1076,7 +1139,10 @@
       "target": "add-1740457499578",
       "targetHandle": "input-b",
       "id": "efork-1740457531304-add-1740457499578-1",
-      "selected": false
+      "selected": false,
+      "data": {
+        "isHighlighted": false
+      }
     },
     {
       "type": "smoothstep",
@@ -1096,7 +1162,10 @@
       "target": "jump-control-1740457549626",
       "targetHandle": "opcode",
       "id": "efork-1740456999685-jump-control-1740457549626-1",
-      "selected": false
+      "selected": false,
+      "data": {
+        "isHighlighted": false
+      }
     },
     {
       "type": "smoothstep",
@@ -1116,7 +1185,10 @@
       "target": "jump-control-1740457549626",
       "targetHandle": "funct3",
       "id": "efork-1740457222103-jump-control-1740457549626-1",
-      "selected": false
+      "selected": false,
+      "data": {
+        "isHighlighted": false
+      }
     },
     {
       "type": "smoothstep",
@@ -1136,7 +1208,10 @@
       "target": "jump-control-1740457549626",
       "targetHandle": "zero",
       "id": "ealu-1740457259779-jump-control-1740457549626-1",
-      "selected": false
+      "selected": false,
+      "data": {
+        "isHighlighted": false
+      }
     },
     {
       "type": "smoothstep",
@@ -1156,7 +1231,10 @@
       "target": "fork-1740457651094",
       "targetHandle": "input",
       "id": "eimm-gen-1740456815567-fork-1740457651094-1",
-      "selected": false
+      "selected": false,
+      "data": {
+        "isHighlighted": false
+      }
     },
     {
       "type": "smoothstep",
@@ -1176,7 +1254,10 @@
       "target": "add-1740457601453",
       "targetHandle": "input-b",
       "id": "efork-1740457651094-add-1740457601453-1",
-      "selected": false
+      "selected": false,
+      "data": {
+        "isHighlighted": false
+      }
     },
     {
       "type": "smoothstep",
@@ -1196,7 +1277,10 @@
       "target": "mux-1740457672408",
       "targetHandle": "in1",
       "id": "eadd-1740457601453-mux-1740457672408-1",
-      "selected": false
+      "selected": false,
+      "data": {
+        "isHighlighted": false
+      }
     },
     {
       "type": "smoothstep",
@@ -1216,14 +1300,17 @@
       "target": "mux-1740457672408",
       "targetHandle": "select",
       "id": "ejump-control-1740457549626-mux-1740457672408-1",
-      "selected": false
+      "selected": false,
+      "data": {
+        "isHighlighted": false
+      }
     },
     {
       "type": "smoothstep",
       "animated": false,
       "style": {
-        "stroke": "#3182ce",
-        "strokeWidth": 3
+        "stroke": "#999",
+        "strokeWidth": 1
       },
       "markerEnd": {
         "type": "arrow",
@@ -1236,7 +1323,10 @@
       "target": "pc-1740456929935",
       "targetHandle": "next",
       "id": "emux-1740457672408-pc-1740456929935-1",
-      "selected": false
+      "selected": false,
+      "data": {
+        "isHighlighted": false
+      }
     },
     {
       "type": "smoothstep",
@@ -1256,7 +1346,10 @@
       "target": "register-1740456812349",
       "targetHandle": "regWrite",
       "id": "econtrol-1740456985517-register-1740456812349-1",
-      "selected": false
+      "selected": false,
+      "data": {
+        "isHighlighted": false
+      }
     },
     {
       "type": "smoothstep",
@@ -1276,7 +1369,10 @@
       "target": "mux-1740457249603",
       "targetHandle": "select",
       "id": "econtrol-1740456985517-mux-1740457249603-1",
-      "selected": false
+      "selected": false,
+      "data": {
+        "isHighlighted": false
+      }
     },
     {
       "type": "smoothstep",
@@ -1296,7 +1392,10 @@
       "target": "register-1740456812349",
       "targetHandle": "writeReg",
       "id": "einstr-distributer-1740456827777-register-1740456812349-3",
-      "selected": false
+      "selected": false,
+      "data": {
+        "isHighlighted": false
+      }
     },
     {
       "type": "smoothstep",
@@ -1316,7 +1415,10 @@
       "target": "fork-1740458306711",
       "targetHandle": "input",
       "id": "einstruction-memory-1740456942935-fork-1740458306711-1",
-      "selected": false
+      "selected": false,
+      "data": {
+        "isHighlighted": false
+      }
     },
     {
       "type": "smoothstep",
@@ -1336,7 +1438,10 @@
       "target": "instr-distributer-1740456827777",
       "targetHandle": null,
       "id": "efork-1740458306711-instr-distributer-1740456827777-1",
-      "selected": false
+      "selected": false,
+      "data": {
+        "isHighlighted": false
+      }
     },
     {
       "type": "smoothstep",
@@ -1356,7 +1461,10 @@
       "target": "imm-gen-1740456815567",
       "targetHandle": "instruction",
       "id": "efork-1740458306711-imm-gen-1740456815567-1",
-      "selected": false
+      "selected": false,
+      "data": {
+        "isHighlighted": false
+      }
     },
     {
       "type": "smoothstep",
@@ -1376,7 +1484,10 @@
       "target": "mux-1740464449901",
       "targetHandle": "select",
       "id": "ejump-control-1740457549626-mux-1740464449901-1",
-      "selected": false
+      "selected": false,
+      "data": {
+        "isHighlighted": false
+      }
     },
     {
       "type": "smoothstep",
@@ -1396,7 +1507,10 @@
       "target": "mux-1740464449901",
       "targetHandle": "in0",
       "id": "efork-1740457531304-mux-1740464449901-1",
-      "selected": false
+      "selected": false,
+      "data": {
+        "isHighlighted": false
+      }
     },
     {
       "type": "smoothstep",
@@ -1416,7 +1530,10 @@
       "target": "add-1740457601453",
       "targetHandle": "input-a",
       "id": "emux-1740464449901-add-1740457601453-1",
-      "selected": false
+      "selected": false,
+      "data": {
+        "isHighlighted": false
+      }
     },
     {
       "type": "smoothstep",
@@ -1436,7 +1553,10 @@
       "target": "fork-1740464547221",
       "targetHandle": "input",
       "id": "eregister-1740456812349-fork-1740464547221-1",
-      "selected": false
+      "selected": false,
+      "data": {
+        "isHighlighted": false
+      }
     },
     {
       "type": "smoothstep",
@@ -1456,7 +1576,10 @@
       "target": "mux-1740464449901",
       "targetHandle": "in1",
       "id": "efork-1740464547221-mux-1740464449901-1",
-      "selected": false
+      "selected": false,
+      "data": {
+        "isHighlighted": false
+      }
     },
     {
       "type": "smoothstep",
@@ -1476,7 +1599,10 @@
       "target": "fork-1740914252490",
       "targetHandle": "input",
       "id": "eadd-1740457499578-fork-1740914252490-1",
-      "selected": false
+      "selected": false,
+      "data": {
+        "isHighlighted": false
+      }
     },
     {
       "type": "smoothstep",
@@ -1496,7 +1622,10 @@
       "target": "mux-1740457672408",
       "targetHandle": "in0",
       "id": "efork-1740914252490-mux-1740457672408-1",
-      "selected": false
+      "selected": false,
+      "data": {
+        "isHighlighted": false
+      }
     },
     {
       "type": "smoothstep",
@@ -1516,7 +1645,10 @@
       "target": "mux-1740457249603",
       "targetHandle": "in2",
       "id": "efork-1740914252490-mux-1740457249603-1",
-      "selected": false
+      "selected": false,
+      "data": {
+        "isHighlighted": false
+      }
     },
     {
       "type": "smoothstep",
@@ -1536,7 +1668,10 @@
       "target": "mux-1743841921971",
       "targetHandle": "in1",
       "id": "efork-1740457651094-mux-1743841921971-1",
-      "selected": false
+      "selected": false,
+      "data": {
+        "isHighlighted": false
+      }
     },
     {
       "type": "smoothstep",
@@ -1556,7 +1691,10 @@
       "target": "mux-1743841921971",
       "targetHandle": "in0",
       "id": "efork-1740457285226-mux-1743841921971-1",
-      "selected": false
+      "selected": false,
+      "data": {
+        "isHighlighted": false
+      }
     },
     {
       "type": "smoothstep",
@@ -1576,7 +1714,10 @@
       "target": "mux-1743841921971",
       "targetHandle": "select",
       "id": "econtrol-1740456985517-mux-1743841921971-1",
-      "selected": false
+      "selected": false,
+      "data": {
+        "isHighlighted": false
+      }
     },
     {
       "type": "smoothstep",
@@ -1596,7 +1737,10 @@
       "target": "alu-1740457259779",
       "targetHandle": "b",
       "id": "emux-1743841921971-alu-1740457259779-1",
-      "selected": false
+      "selected": false,
+      "data": {
+        "isHighlighted": false
+      }
     },
     {
       "type": "smoothstep",
@@ -1616,7 +1760,10 @@
       "target": "mux-1743842151951",
       "targetHandle": "in0",
       "id": "efork-1740464547221-mux-1743842151951-1",
-      "selected": false
+      "selected": false,
+      "data": {
+        "isHighlighted": false
+      }
     },
     {
       "type": "smoothstep",
@@ -1636,7 +1783,10 @@
       "target": "alu-1740457259779",
       "targetHandle": "a",
       "id": "emux-1743842151951-alu-1740457259779-1",
-      "selected": false
+      "selected": false,
+      "data": {
+        "isHighlighted": false
+      }
     },
     {
       "type": "smoothstep",
@@ -1656,7 +1806,10 @@
       "target": "mux-1743842151951",
       "targetHandle": "select",
       "id": "econtrol-1740456985517-mux-1743842151951-1",
-      "selected": false
+      "selected": false,
+      "data": {
+        "isHighlighted": false
+      }
     },
     {
       "type": "smoothstep",
@@ -1676,7 +1829,10 @@
       "target": "mux-1743842151951",
       "targetHandle": "in1",
       "id": "efork-1740457481300-mux-1743842151951-1",
-      "selected": false
+      "selected": false,
+      "data": {
+        "isHighlighted": false
+      }
     },
     {
       "type": "smoothstep",
@@ -1696,30 +1852,10 @@
       "target": "mux-1743842151951",
       "targetHandle": "in2",
       "id": "econstant-1743842223462-mux-1743842151951-1",
-      "selected": false
-    },
-    {
-      "type": "smoothstep",
-      "animated": false,
-      "style": {
-        "stroke": "#999",
-        "strokeWidth": 1
-      },
-      "markerEnd": {
-        "type": "arrow",
-        "width": 20,
-        "height": 20,
-        "color": "#999"
-      },
-      "source": "control-1740456985517",
-      "sourceHandle": "memWidth",
-      "target": "memory-1740457029513",
-      "targetHandle": "memWidth",
-      "selectable": true,
-      "focusable": true,
-      "updatable": true,
-      "id": "econtrol-1740456985517-memory-1740457029513-3",
-      "selected": false
+      "selected": false,
+      "data": {
+        "isHighlighted": false
+      }
     },
     {
       "type": "smoothstep",
@@ -1742,7 +1878,10 @@
       "focusable": true,
       "updatable": true,
       "id": "efork-1740456999685-control-1740456985517-1",
-      "selected": false
+      "selected": false,
+      "data": {
+        "isHighlighted": false
+      }
     },
     {
       "type": "smoothstep",
@@ -1765,11 +1904,37 @@
       "focusable": true,
       "updatable": true,
       "id": "efork-1740457222103-control-1740456985517-1",
+      "selected": false,
+      "data": {
+        "isHighlighted": false
+      }
+    },
+    {
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#999",
+        "strokeWidth": 3
+      },
+      "markerEnd": {
+        "type": "arrow",
+        "width": 20,
+        "height": 20,
+        "color": "#999"
+      },
+      "source": "control-1740456985517",
+      "sourceHandle": "addressingControl",
+      "target": "memory-1740457029513",
+      "targetHandle": "addressingControl",
+      "selectable": true,
+      "focusable": true,
+      "updatable": true,
+      "id": "econtrol-1740456985517-memory-1740457029513-3",
       "selected": false
     }
   ],
   "isSimulating": false,
   "editorCode": "",
   "assembledInstructions": [],
-  "savedAt": "2025-04-22T14:16:21.852Z"
+  "savedAt": "2025-10-12T09:43:45.711Z"
 }

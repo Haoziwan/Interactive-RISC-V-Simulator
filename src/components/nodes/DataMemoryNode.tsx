@@ -8,7 +8,7 @@ interface DataMemoryNodeData {
   writeData?: number;
   memRead?: number;
   memWrite?: number;
-  memWidth?: number; // 0=byte, 1=half-word, 2=word
+  addressingControl?: number; // 3 bits: [signExtend, memWidth1, memWidth0]
   size?: number;
   readData?: number;
 }
@@ -222,20 +222,24 @@ export function DataMemoryNode({ data, id, selected }: { data: DataMemoryNodeDat
     const memReadEdge = edges.find(edge => edge.target === id && edge.targetHandle === 'memRead');
     const writeDataEdge = edges.find(edge => edge.target === id && edge.targetHandle === 'writeData');
     const memWriteEdge = edges.find(edge => edge.target === id && edge.targetHandle === 'memWrite');
-    const memWidthEdge = edges.find(edge => edge.target === id && edge.targetHandle === 'memWidth');
+    const addressingControlEdge = edges.find(edge => edge.target === id && edge.targetHandle === 'addressingControl');
 
     const newAddress = Number(getInputValue(addressEdge) ?? data.address ?? 0);
     const newMemRead = Number(getInputValue(memReadEdge) ?? data.memRead ?? 0);
     const newWriteData = Number(getInputValue(writeDataEdge) ?? data.writeData ?? 0);
     const newMemWrite = Number(getInputValue(memWriteEdge) ?? data.memWrite ?? 0);
-    const newMemWidth = Number(getInputValue(memWidthEdge) ?? data.memWidth ?? 2); // Default to word (2)
+    const newAddressingControl = Number(getInputValue(addressingControlEdge) ?? data.addressingControl ?? 0b110); // Default to word with sign extension (2)
+
+    // Decode addressing control: [signExtend, memWidth1, memWidth0]
+    const signExtend = (newAddressingControl >> 2) & 0x1;
+    const memWidth = newAddressingControl & 0x3; // 0=byte, 1=half-word, 2=word
 
     // 只有当输入值发生实际变化时才更新
     const hasChanges = newAddress !== (data.address || 0) ||
                       newMemRead !== (data.memRead || 0) ||
                       newWriteData !== (data.writeData || 0) ||
                       newMemWrite !== (data.memWrite || 0) ||
-                      newMemWidth !== (data.memWidth ?? 2);
+                      newAddressingControl !== (data.addressingControl ?? 0b110);
 
     if (hasChanges) {
       // 更新节点数据（更新所有输入端口状态）
@@ -244,21 +248,25 @@ export function DataMemoryNode({ data, id, selected }: { data: DataMemoryNodeDat
 
       if (newMemRead > 0) {
         // 根据内存宽度读取不同大小的数据
-        switch (newMemWidth) {
+        switch (memWidth) {
           case 0: // 字节 (lb/lbu)
             readData = memory[addressHex] || 0;
-            // 符号扩展 (lb) - 如果最高位为1，则扩展为负数
-            if (readData & 0x80) {
+            // 符号扩展 or 零扩展
+            if (signExtend && (readData & 0x80)) {
               readData = readData | 0xFFFFFF00; // 符号扩展
+            } else if (!signExtend) {
+              readData = readData & 0xFF; // 零扩展
             }
             break;
           case 1: // 半字 (lh/lhu)
             const byte0 = memory[addressHex] || 0;
             const byte1 = memory[`0x${(newAddress + 1).toString(16).padStart(8, '0')}`] || 0;
             readData = (byte1 << 8) | byte0;
-            // 符号扩展 (lh) - 如果最高位为1，则扩展为负数
-            if (readData & 0x8000) {
+            // 符号扩展 or 零扩展
+            if (signExtend && (readData & 0x8000)) {
               readData = readData | 0xFFFF0000; // 符号扩展
+            } else if (!signExtend) {
+              readData = readData & 0xFFFF; // 零扩展
             }
             break;
           case 2: // 字 (lw)
@@ -281,7 +289,7 @@ export function DataMemoryNode({ data, id, selected }: { data: DataMemoryNodeDat
         memRead: newMemRead,
         writeData: newWriteData,
         memWrite: newMemWrite,
-        memWidth: newMemWidth,
+        addressingControl: newAddressingControl,
         readData: readData
       });
     }
@@ -303,7 +311,8 @@ export function DataMemoryNode({ data, id, selected }: { data: DataMemoryNodeDat
     const address = data.address || 0;
     const writeData = data.writeData || 0;
     const memWrite = data.memWrite || 0;
-    const memWidth = data.memWidth ?? 2; // Default to word (2)
+    const addressingControl = data.addressingControl ?? 0b110; // Default to word with sign extension
+    const memWidth = addressingControl & 0x3; // 0=byte, 1=half-word, 2=word
 
     if (memWrite > 0) {
       // 首先写入缓存
@@ -364,10 +373,10 @@ export function DataMemoryNode({ data, id, selected }: { data: DataMemoryNodeDat
       <Handle
         type="target"
         position={Position.Top}
-        id="memWidth"
+        id="addressingControl"
         className="w-3 h-3 bg-yellow-400"
         style={{ left: '80%' }}
-        title="Memory Width (0=byte, 1=half, 2=word)"
+        title="Addressing Control [signExtend, memWidth1, memWidth0]"
       />
       <Handle
         type="target"
@@ -405,7 +414,8 @@ export function DataMemoryNode({ data, id, selected }: { data: DataMemoryNodeDat
             <div className="text-gray-500">Read Data: {data.readData || 0}</div>
             <div className="text-gray-500">MemRead: {data.memRead || 0}</div>
             <div className="text-gray-500">MemWrite: {data.memWrite || 0}</div>
-            <div className="text-gray-500">MemWidth: {data.memWidth ?? 2} ({data.memWidth === 0 ? 'byte' : data.memWidth === 1 ? 'half' : 'word'})</div>
+            <div className="text-gray-500">SignExtend: {data.addressingControl !== undefined ? (data.addressingControl >> 2) & 0x1 : 1}</div>
+            <div className="text-gray-500">MemWidth: {data.addressingControl !== undefined ? data.addressingControl & 0x3 : 2} ({(data.addressingControl !== undefined ? data.addressingControl & 0x3 : 2) === 0 ? 'byte' : (data.addressingControl !== undefined ? data.addressingControl & 0x3 : 2) === 1 ? 'half' : 'word'})</div>
           </>
         )}
         {/* Add placeholder div when UI updates are disabled to maintain height */}
