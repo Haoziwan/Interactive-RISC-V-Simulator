@@ -560,9 +560,9 @@ export const useCircuitStore = create<CircuitState>()((set, get) => ({
                 // get().toggleSimulation();
               }
             } else {
-               get().addOutputMessage("Input cancelled.\n");
-               // Optionally halt or set an error flag
-               // get().toggleSimulation();
+              get().addOutputMessage("Input cancelled.\n");
+              // Optionally halt or set an error flag
+              // get().toggleSimulation();
             }
             break;
           case 8: // Read String
@@ -611,13 +611,13 @@ export const useCircuitStore = create<CircuitState>()((set, get) => ({
 
           default:
             get().addOutputMessage(`Unsupported ECALL operation: ${syscallNumber}\n`);
-            // Consider halting simulation for unsupported calls
-            // get().toggleSimulation();
+          // Consider halting simulation for unsupported calls
+          // get().toggleSimulation();
         }
       }
 
       // 如果已经执行到最后一条指令，自动暂停模拟，pipeline还需要多执行几句
-      if (currentPc > maxPc + 4*4 || currentPc < 0) {
+      if (currentPc > maxPc + 4 * 4 || currentPc < 0) {
         if (state.simulationTimer !== null) {
           window.clearInterval(state.simulationTimer);
         }
@@ -632,9 +632,12 @@ export const useCircuitStore = create<CircuitState>()((set, get) => ({
       } else {
         get().updatePerformanceStats('');
       }
-      // 保存当前状态到历史记录
+     
+
+      // 1. 优化历史记录保存：使用浅拷贝代替 JSON 深拷贝
+      // Zustand 的更新模式保证了旧的 node 对象不会被修改，只会被替换，因此浅拷贝数组是安全的。
       const currentState = {
-        nodes: JSON.parse(JSON.stringify(state.nodes)),
+        nodes: [...state.nodes], // 浅拷贝
         registers: { ...state.registers },
         memory: { ...state.memory },
         pcValue: state.pcValue,
@@ -642,11 +645,18 @@ export const useCircuitStore = create<CircuitState>()((set, get) => ({
         stepCount: state.stepCount
       };
 
-      // 设置处理中标志
+      // 2. 限制历史记录长度：防止内存溢出
+      const MAX_HISTORY_LENGTH = 100; // 仅保留最近 100 步，可根据需要调整
+      let newHistory = [...state.simulationHistory, currentState];
+      if (newHistory.length > MAX_HISTORY_LENGTH) {
+        newHistory = newHistory.slice(newHistory.length - MAX_HISTORY_LENGTH);
+      }
+
+      // 设置处理中标志并更新状态
       const newState = {
         stepCount: state.stepCount + 1,
         isProcessing: true,
-        simulationHistory: [...state.simulationHistory, currentState]
+        simulationHistory: newHistory
       };
 
       // 更新所有组件状态
@@ -791,9 +801,9 @@ export const useCircuitStore = create<CircuitState>()((set, get) => ({
     if (!instruction) {
       // If pipeline statistics are disabled, return early without updating pipeline-specific stats
       if (stats.enablePipelineStats) {
-            // Update CPI and IPC
-      stats.cpi = stats.cycleCount / (stats.instructionsExecuted || 1);
-      stats.ipc = stats.instructionsExecuted / (stats.cycleCount || 1);
+        // Update CPI and IPC
+        stats.cpi = stats.cycleCount / (stats.instructionsExecuted || 1);
+        stats.ipc = stats.instructionsExecuted / (stats.cycleCount || 1);
         return { performanceStats: stats };
       }
 
