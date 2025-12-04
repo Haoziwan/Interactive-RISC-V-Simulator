@@ -540,15 +540,15 @@ export const parseInstruction = (line: string, currentAddress: number, labelMap:
         rs1: parseRegister(parts[2]),
         rs2: parseRegister(parts[3]),
         funct3: op === 'add' || op === 'sub' || op === 'mul' ? '000' :
-               op === 'sll' || op === 'mulh' ? '001' :
-               op === 'slt' || op === 'mulhsu' ? '010' :
-               op === 'sltu' || op === 'mulhu' ? '011' :
-               op === 'xor' || op === 'div' ? '100' :
-               op === 'srl' || op === 'sra' || op === 'divu' ? '101' :
-               op === 'or' || op === 'rem' ? '110' : '111',
+          op === 'sll' || op === 'mulh' ? '001' :
+            op === 'slt' || op === 'mulhsu' ? '010' :
+              op === 'sltu' || op === 'mulhu' ? '011' :
+                op === 'xor' || op === 'div' ? '100' :
+                  op === 'srl' || op === 'sra' || op === 'divu' ? '101' :
+                    op === 'or' || op === 'rem' ? '110' : '111',
         funct7: op === 'mul' || op === 'mulh' || op === 'mulhsu' || op === 'mulhu' ||
-                op === 'div' || op === 'divu' || op === 'rem' || op === 'remu' ? '0000001' :
-                op === 'sub' || op === 'sra' ? '0100000' : '0000000'
+          op === 'div' || op === 'divu' || op === 'rem' || op === 'remu' ? '0000001' :
+          op === 'sub' || op === 'sra' ? '0100000' : '0000000'
       };
     }
     case 'addi':
@@ -561,10 +561,10 @@ export const parseInstruction = (line: string, currentAddress: number, labelMap:
     case 'srli':
     case 'srai': {
       if (parts.length !== 4) throw new AssemblerError(`${op} instruction requires 3 operands`, {
-    errorType: 'Operand Error',
-    instruction: lineWithoutComment,
-    suggestion: `${op} instruction format: ${op} rd, rs1, imm (e.g., ${op} x1, x2, 10)`
-  });
+        errorType: 'Operand Error',
+        instruction: lineWithoutComment,
+        suggestion: `${op} instruction format: ${op} rd, rs1, imm (e.g., ${op} x1, x2, 10)`
+      });
       return {
         type: 'I',
         opcode: '0010011',
@@ -572,12 +572,12 @@ export const parseInstruction = (line: string, currentAddress: number, labelMap:
         rs1: parseRegister(parts[2]),
         imm: parseImmediate(parts[3], 12, labelMap, equMap),
         funct3: op === 'addi' ? '000' :
-               op === 'slli' ? '001' :
-               op === 'slti' ? '010' :
-               op === 'sltiu' ? '011' :
-               op === 'xori' ? '100' :
-               op === 'srli' || op === 'srai' ? '101' :
-               op === 'ori' ? '110' : '111',
+          op === 'slli' ? '001' :
+            op === 'slti' ? '010' :
+              op === 'sltiu' ? '011' :
+                op === 'xori' ? '100' :
+                  op === 'srli' || op === 'srai' ? '101' :
+                    op === 'ori' ? '110' : '111',
         funct7: op === 'srai' ? '0100000' : op === 'slli' || op === 'srli' ? '0000000' : undefined
       };
     }
@@ -591,10 +591,10 @@ export const parseInstruction = (line: string, currentAddress: number, labelMap:
       // Support regular offsets, %lo expressions, and symbol names (for equ constants)
       const match = memStr.match(/(%lo\([a-zA-Z0-9_\.]+\)|\-?[0-9]+|[a-zA-Z][a-zA-Z0-9_]*)\(([a-zA-Z0-9]+)\)/);
       if (!match) throw new AssemblerError(`Invalid memory access format: ${memStr}`, {
-    errorType: 'Memory Access Format Error',
-    instruction: lineWithoutComment,
-    suggestion: 'Memory access format should be: offset(register), %lo(symbol)(register), or CONSTANT(register), e.g., 4(x2), %lo(data_var)(x2), or OFFSET(x2)'
-  });
+        errorType: 'Memory Access Format Error',
+        instruction: lineWithoutComment,
+        suggestion: 'Memory access format should be: offset(register), %lo(symbol)(register), or CONSTANT(register), e.g., 4(x2), %lo(data_var)(x2), or OFFSET(x2)'
+      });
       return {
         type: 'I',
         opcode: '0000011',
@@ -602,9 +602,9 @@ export const parseInstruction = (line: string, currentAddress: number, labelMap:
         rs1: parseRegister(match[2]),
         imm: parseImmediate(match[1], 12, labelMap, equMap),
         funct3: op === 'lb' ? '000' :
-               op === 'lh' ? '001' :
-               op === 'lw' ? '010' :
-               op === 'lbu' ? '100' : '101'
+          op === 'lh' ? '001' :
+            op === 'lw' ? '010' :
+              op === 'lbu' ? '100' : '101'
       };
     }
     case 'sb':
@@ -615,10 +615,10 @@ export const parseInstruction = (line: string, currentAddress: number, labelMap:
       // Support regular offsets, %lo expressions, and symbol names (for equ constants)
       const match = memStr.match(/(%lo\([a-zA-Z0-9_\.]+\)|\-?[0-9]+|[a-zA-Z][a-zA-Z0-9_]*)\(([a-zA-Z0-9]+)\)/);
       if (!match) throw new AssemblerError(`Invalid memory access format: ${memStr}`, {
-    errorType: 'Memory Access Format Error',
-    instruction: lineWithoutComment,
-    suggestion: 'Memory access format should be: offset(register), %lo(symbol)(register), or CONSTANT(register), e.g., 4(x2), %lo(data_var)(x2), or OFFSET(x2)'
-  });
+        errorType: 'Memory Access Format Error',
+        instruction: lineWithoutComment,
+        suggestion: 'Memory access format should be: offset(register), %lo(symbol)(register), or CONSTANT(register), e.g., 4(x2), %lo(data_var)(x2), or OFFSET(x2)'
+      });
       return {
         type: 'S',
         opcode: '0100011',
@@ -626,7 +626,7 @@ export const parseInstruction = (line: string, currentAddress: number, labelMap:
         rs2: parseRegister(rs2),
         imm: parseImmediate(match[1], 12, labelMap, equMap),
         funct3: op === 'sb' ? '000' :
-               op === 'sh' ? '001' : '010'
+          op === 'sh' ? '001' : '010'
       };
     }
     case 'beq':
@@ -636,10 +636,10 @@ export const parseInstruction = (line: string, currentAddress: number, labelMap:
     case 'bltu':
     case 'bgeu': {
       if (parts.length !== 4) throw new AssemblerError(`${op} instruction requires 3 operands`, {
-    errorType: 'Operand Error',
-    instruction: lineWithoutComment,
-    suggestion: `${op} instruction format: ${op} rs1, rs2, offset/label (e.g., ${op} x1, x2, label)`
-  });
+        errorType: 'Operand Error',
+        instruction: lineWithoutComment,
+        suggestion: `${op} instruction format: ${op} rs1, rs2, offset/label (e.g., ${op} x1, x2, label)`
+      });
       const targetLabel = parts[3];
       let offset: number;
 
@@ -656,10 +656,10 @@ export const parseInstruction = (line: string, currentAddress: number, labelMap:
         rs2: parseRegister(parts[2]),
         imm: offset,
         funct3: op === 'beq' ? '000' :
-               op === 'bne' ? '001' :
-               op === 'blt' ? '100' :
-               op === 'bge' ? '101' :
-               op === 'bltu' ? '110' : '111'
+          op === 'bne' ? '001' :
+            op === 'blt' ? '100' :
+              op === 'bge' ? '101' :
+                op === 'bltu' ? '110' : '111'
       };
     }
     case 'lui':
@@ -692,10 +692,10 @@ export const parseInstruction = (line: string, currentAddress: number, labelMap:
     }
     case 'jalr': {
       if (parts.length !== 4) throw new AssemblerError(`${op} instruction requires 3 operands`, {
-    errorType: 'Operand Error',
-    instruction: lineWithoutComment,
-    suggestion: `${op} instruction format: ${op} rd, rs1, imm (e.g., ${op} x1, x2, 0)`
-  });
+        errorType: 'Operand Error',
+        instruction: lineWithoutComment,
+        suggestion: `${op} instruction format: ${op} rd, rs1, imm (e.g., ${op} x1, x2, 0)`
+      });
       return {
         type: 'I',
         opcode: '1100111',
@@ -737,10 +737,10 @@ export const parseInstruction = (line: string, currentAddress: number, labelMap:
     }
     default:
       throw new AssemblerError(`Unsupported instruction: ${op}`, {
-    errorType: 'Unknown Instruction',
-    instruction: lineWithoutComment,
-    suggestion: 'Please check if the instruction spelling is correct, or refer to the list of supported instructions'
-  });
+        errorType: 'Unknown Instruction',
+        instruction: lineWithoutComment,
+        suggestion: 'Please check if the instruction spelling is correct, or refer to the list of supported instructions'
+      });
   }
 };
 
@@ -943,6 +943,21 @@ export class Assembler {
         inDataSegment = true;
         currentAddr = this.GP_BASE; // Data segment starts from GP_BASE
         continue;
+      } else if (entry.instr?.startsWith('.section')) {
+        // Parse .section directive: .section .text, .section .data, etc.
+        const sectionMatch = entry.instr.match(/^\.section\s+(\.?\w+)/);
+        if (sectionMatch) {
+          const sectionName = sectionMatch[1].replace(/^\./, ''); // Remove leading dot if present
+          if (sectionName === 'text' || sectionName === 'text.startup') {
+            inDataSegment = false;
+            currentAddr = 0; // Code segment starts from 0
+          } else if (sectionName === 'data' || sectionName === 'rodata' || sectionName === 'bss' || sectionName === 'sdata') {
+            inDataSegment = true;
+            currentAddr = this.GP_BASE; // Data segment starts from GP_BASE
+          }
+          // Ignore other sections like .note, .comment, etc.
+        }
+        continue;
       }
 
       // If there is a label, record its address
@@ -1005,7 +1020,7 @@ export class Assembler {
         }
 
         // Skip directive instructions like .globl that don't generate code
-        if (entry.instr.startsWith('.globl')) {
+        if (entry.instr.startsWith('.globl') || entry.instr.startsWith('.global')) {
           continue;
         }
 
@@ -1085,6 +1100,26 @@ export class Assembler {
           return acc;
         }, 0);
         continue;
+      } else if (entry.instr?.startsWith('.section')) {
+        // Parse .section directive: .section .text, .section .data, etc.
+        const sectionMatch = entry.instr.match(/^\.section\s+(\.?\w+)/);
+        if (sectionMatch) {
+          const sectionName = sectionMatch[1].replace(/^\./, ''); // Remove leading dot if present
+          if (sectionName === 'text' || sectionName === 'text.startup') {
+            currentSection = 'text';
+            this.currentAddress = result.filter(inst => inst.segment === 'text').reduce((acc, inst) => acc + 4, 0);
+          } else if (sectionName === 'data' || sectionName === 'rodata' || sectionName === 'bss' || sectionName === 'sdata') {
+            currentSection = 'data';
+            this.currentAddress = this.GP_BASE + result.filter(inst => inst.segment === 'data').reduce((acc, inst) => {
+              if (inst.data) {
+                return acc + inst.data.length;
+              }
+              return acc;
+            }, 0);
+          }
+          // Ignore other sections like .note, .comment, etc.
+        }
+        continue;
       }
 
       // Skip pure label lines
@@ -1093,7 +1128,7 @@ export class Assembler {
       const instruction = entry.instr;
 
       // Skip directive instructions like .globl that don't generate code
-      if (instruction.startsWith('.globl')) {
+      if (instruction.startsWith('.globl') || instruction.startsWith('.global')) {
         continue;
       }
 
@@ -1107,7 +1142,7 @@ export class Assembler {
               try {
                 // Process placeholders for la instruction and global load/store instructions
                 if (expandedLine.includes('%LA_HI_') || expandedLine.includes('%LA_LO_') ||
-                    expandedLine.includes('%LOAD_OFFSET_') || expandedLine.includes('%STORE_OFFSET_')) {
+                  expandedLine.includes('%LOAD_OFFSET_') || expandedLine.includes('%STORE_OFFSET_')) {
                   // Extract symbol name from placeholder
                   let match = expandedLine.match(/%LA_(HI|LO)_([a-zA-Z0-9_\.]+)%/);
                   let loadMatch = expandedLine.match(/%LOAD_OFFSET_([a-zA-Z0-9_\.]+)%/);
@@ -1246,11 +1281,11 @@ export class Assembler {
                       rs1: parseRegister(rs1), // Base register from the instruction
                       imm: offset,
                       funct3: op === 'lb' ? '000' :
-                             op === 'lh' ? '001' :
-                             op === 'lw' ? '010' :
-                             op === 'lbu' ? '100' :
-                             op === 'lhu' ? '101' :
-                             op === 'lwu' ? '110' : '011' // ld uses '011'
+                        op === 'lh' ? '001' :
+                          op === 'lw' ? '010' :
+                            op === 'lbu' ? '100' :
+                              op === 'lhu' ? '101' :
+                                op === 'lwu' ? '110' : '011' // ld uses '011'
                     };
 
                     const loadHex = generateMachineCode(loadInst);
@@ -1319,8 +1354,8 @@ export class Assembler {
                       rs2: parseRegister(rs2),
                       imm: offset,
                       funct3: op === 'sb' ? '000' :
-                             op === 'sh' ? '001' :
-                             op === 'sw' ? '010' : '011' // sd uses '011'
+                        op === 'sh' ? '001' :
+                          op === 'sw' ? '010' : '011' // sd uses '011'
                     };
 
                     const storeHex = generateMachineCode(storeInst);
