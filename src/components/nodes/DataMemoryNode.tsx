@@ -17,7 +17,6 @@ export function DataMemoryNode({ data, id, selected }: { data: DataMemoryNodeDat
   const memory = useCircuitStore((state) => state.memory);
   const updateMemory = useCircuitStore((state) => state.updateMemory);
   const updateNodeData = useCircuitStore((state) => state.updateNodeData);
-  const disableUIUpdates = useCircuitStore((state) => state.disableUIUpdates);
   const stepCount = useCircuitStore((state) => state.stepCount);
   const nodes = useNodes();
   const edges = useEdges();
@@ -236,10 +235,10 @@ export function DataMemoryNode({ data, id, selected }: { data: DataMemoryNodeDat
 
     // 只有当输入值发生实际变化时才更新
     const hasChanges = newAddress !== (data.address || 0) ||
-                      newMemRead !== (data.memRead || 0) ||
-                      newWriteData !== (data.writeData || 0) ||
-                      newMemWrite !== (data.memWrite || 0) ||
-                      newAddressingControl !== (data.addressingControl ?? 0b110);
+      newMemRead !== (data.memRead || 0) ||
+      newWriteData !== (data.writeData || 0) ||
+      newMemWrite !== (data.memWrite || 0) ||
+      newAddressingControl !== (data.addressingControl ?? 0b110);
 
     if (hasChanges) {
       // 更新节点数据（更新所有输入端口状态）
@@ -350,9 +349,8 @@ export function DataMemoryNode({ data, id, selected }: { data: DataMemoryNodeDat
   }, [stepCount]);
 
   return (
-    <div className={`px-4 py-2 shadow-md rounded-md bg-white border-2 ${
-      selected ? 'border-blue-500' : 'border-gray-200'
-    }`}>
+    <div className={`px-4 py-2 shadow-md rounded-md bg-white border-2 ${selected ? 'border-blue-500' : 'border-gray-200'
+      }`}>
       {/* Control ports on left */}
       <Handle
         type="target"
@@ -407,21 +405,13 @@ export function DataMemoryNode({ data, id, selected }: { data: DataMemoryNodeDat
 
       <div className="ml-2">
         <div className="text-lg font-bold">Data Memory</div>
-        {!disableUIUpdates && (
-          <>
-            <div className="text-gray-500">Address: 0x{(data.address || 0).toString(16).padStart(8, '0')}</div>
-            <div className="text-gray-500">Write Data: {data.writeData || 0}</div>
-            <div className="text-gray-500">Read Data: {data.readData || 0}</div>
-            <div className="text-gray-500">MemRead: {data.memRead || 0}</div>
-            <div className="text-gray-500">MemWrite: {data.memWrite || 0}</div>
-            <div className="text-gray-500">SignExtend: {data.addressingControl !== undefined ? (data.addressingControl >> 2) & 0x1 : 1}</div>
-            <div className="text-gray-500">MemWidth: {data.addressingControl !== undefined ? data.addressingControl & 0x3 : 2} ({(data.addressingControl !== undefined ? data.addressingControl & 0x3 : 2) === 0 ? 'byte' : (data.addressingControl !== undefined ? data.addressingControl & 0x3 : 2) === 1 ? 'half' : 'word'})</div>
-          </>
-        )}
-        {/* Add placeholder div when UI updates are disabled to maintain height */}
-        {disableUIUpdates && (
-          <div style={{ height: '120px' }}></div>
-        )}
+        <div className="text-gray-500">Address: 0x{(data.address || 0).toString(16).padStart(8, '0')}</div>
+        <div className="text-gray-500">Write Data: {data.writeData || 0}</div>
+        <div className="text-gray-500">Read Data: {data.readData || 0}</div>
+        <div className="text-gray-500">MemRead: {data.memRead || 0}</div>
+        <div className="text-gray-500">MemWrite: {data.memWrite || 0}</div>
+        <div className="text-gray-500">SignExtend: {data.addressingControl !== undefined ? (data.addressingControl >> 2) & 0x1 : 1}</div>
+        <div className="text-gray-500">MemWidth: {data.addressingControl !== undefined ? data.addressingControl & 0x3 : 2} ({(data.addressingControl !== undefined ? data.addressingControl & 0x3 : 2) === 0 ? 'byte' : (data.addressingControl !== undefined ? data.addressingControl & 0x3 : 2) === 1 ? 'half' : 'word'})</div>
       </div>
     </div>
   );

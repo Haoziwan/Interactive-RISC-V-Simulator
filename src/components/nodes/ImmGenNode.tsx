@@ -16,7 +16,6 @@ export function ImmGenNode({ data, id, selected }: {
   selected?: boolean
 }) {
   const updateNodeData = useCircuitStore((state) => state.updateNodeData);
-  const disableUIUpdates = useCircuitStore((state) => state.disableUIUpdates);
   const nodes = useNodes();
   const edges = useEdges();
 
@@ -163,9 +162,8 @@ export function ImmGenNode({ data, id, selected }: {
   }, [edges, nodes, id, data]);
 
   return (
-    <div className={`relative px-4 py-2 shadow-md rounded-md bg-white border-2 ${
-      selected ? 'border-blue-500' : 'border-gray-200'
-    }`}>
+    <div className={`relative px-4 py-2 shadow-md rounded-md bg-white border-2 ${selected ? 'border-blue-500' : 'border-gray-200'
+      }`}>
 
       {/* Input port on left */}
       <Handle
@@ -180,16 +178,8 @@ export function ImmGenNode({ data, id, selected }: {
       <div className="flex items-center">
         <div className="ml-2">
           <div className="text-lg font-bold">Immediate Gen</div>
-          {!disableUIUpdates && (
-            <>
-              <div className="text-gray-500">Format: {data.format || 'R'}</div>
-              <div className="text-gray-500">Immediate: {data.immediate !== undefined ? data.immediate : 0}</div>
-            </>
-          )}
-          {/* Add placeholder div when UI updates are disabled to maintain height */}
-          {disableUIUpdates && (
-            <div style={{ height: '50px' }}></div>
-          )}
+          <div className="text-gray-500">Format: {data.format || 'R'}</div>
+          <div className="text-gray-500">Immediate: {data.immediate !== undefined ? data.immediate : 0}</div>
         </div>
       </div>
 

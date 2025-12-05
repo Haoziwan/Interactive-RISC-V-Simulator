@@ -17,7 +17,6 @@ interface RegisterFileNodeData {
 
 export function RegisterFileNode({ data, id, selected }: { data: RegisterFileNodeData; id: string; selected?: boolean }) {
   const updateNodeData = useCircuitStore((state) => state.updateNodeData);
-  const disableUIUpdates = useCircuitStore((state) => state.disableUIUpdates);
   const stepCount = useCircuitStore((state) => state.stepCount);
   const registers = useCircuitStore((state) => state.registers);
   const updateRegisters = useCircuitStore((state) => state.updateRegisters);
@@ -78,12 +77,12 @@ export function RegisterFileNode({ data, id, selected }: { data: RegisterFileNod
 
     // Update node data if inputs changed or register values changed
     const hasChanges = newReadReg1 !== (data.readReg1 || 0) ||
-                      newReadReg2 !== (data.readReg2 || 0) ||
-                      newWriteReg !== (data.writeReg || 0) ||
-                      newWriteData !== (data.writeData || 0) ||
-                      newRegWrite !== (data.regWrite || false) ||
-                      readData1 !== data.readData1 ||
-                      readData2 !== data.readData2;
+      newReadReg2 !== (data.readReg2 || 0) ||
+      newWriteReg !== (data.writeReg || 0) ||
+      newWriteData !== (data.writeData || 0) ||
+      newRegWrite !== (data.regWrite || false) ||
+      readData1 !== data.readData1 ||
+      readData2 !== data.readData2;
 
     if (hasChanges) {
 
@@ -126,9 +125,8 @@ export function RegisterFileNode({ data, id, selected }: { data: RegisterFileNod
   }, [showConfig, data.writeFirst]);
 
   return (
-    <div className={`px-4 py-2 shadow-md rounded-md bg-white border-2 ${
-      selected ? 'border-blue-500' : 'border-gray-200'
-    }`}>
+    <div className={`px-4 py-2 shadow-md rounded-md bg-white border-2 ${selected ? 'border-blue-500' : 'border-gray-200'
+      }`}>
       {/* Control port at top */}
       <Handle
         type="target"
@@ -249,20 +247,12 @@ export function RegisterFileNode({ data, id, selected }: { data: RegisterFileNod
       <div className="flex items-center">
         <div className="ml-2">
           <div className="text-lg font-bold">Register File</div>
-          {!disableUIUpdates && (
-            <>
-              <div className="text-gray-500">Read Reg 1: x{readReg1} = {data.readData1 || 0}</div>
-              <div className="text-gray-500">Read Reg 2: x{readReg2} = {data.readData2 || 0}</div>
-              <div className="text-gray-500">Write Reg: x{writeReg}</div>
-              <div className="text-gray-500">Write Data: {writeData}</div>
-              <div className="text-gray-500">RegWrite: {regWrite ? '1' : '0'}</div>
-              <div className="text-gray-500">WriteFirst: {data.writeFirst ? 'true' : 'false'}</div>
-            </>
-          )}
-          {/* Add placeholder div when UI updates are disabled to maintain height */}
-          {disableUIUpdates && (
-            <div style={{ height: '120px' }}></div>
-          )}
+          <div className="text-gray-500">Read Reg 1: x{readReg1} = {data.readData1 || 0}</div>
+          <div className="text-gray-500">Read Reg 2: x{readReg2} = {data.readData2 || 0}</div>
+          <div className="text-gray-500">Write Reg: x{writeReg}</div>
+          <div className="text-gray-500">Write Data: {writeData}</div>
+          <div className="text-gray-500">RegWrite: {regWrite ? '1' : '0'}</div>
+          <div className="text-gray-500">WriteFirst: {data.writeFirst ? 'true' : 'false'}</div>
         </div>
       </div>
     </div>

@@ -13,7 +13,6 @@ interface ALUControlNodeData {
 
 export function ALUControlNode({ data, id, selected }: { data: ALUControlNodeData; id: string; selected?: boolean }) {
   const updateNodeData = useCircuitStore((state) => state.updateNodeData);
-  const disableUIUpdates = useCircuitStore((state) => state.disableUIUpdates);
   const nodes = useNodes();
   const edges = useEdges();
 
@@ -163,9 +162,8 @@ export function ALUControlNode({ data, id, selected }: { data: ALUControlNodeDat
     updateInputConnections();
   }, [edges, id]);
   return (
-    <div className={`relative px-4 py-2 shadow-md rounded-md bg-white border-2 ${
-      selected ? 'border-blue-500' : 'border-gray-200'
-    }`}>
+    <div className={`relative px-4 py-2 shadow-md rounded-md bg-white border-2 ${selected ? 'border-blue-500' : 'border-gray-200'
+      }`}>
 
       <Handle
         type="target"
@@ -195,18 +193,10 @@ export function ALUControlNode({ data, id, selected }: { data: ALUControlNodeDat
       <div className="flex items-center">
         <div className="ml-2">
           <div className="text-lg font-bold">ALU Control</div>
-          {!disableUIUpdates && (
-            <>
-              <div className="text-gray-500">ALUOp: {data.aluOp?.toString(2).padStart(2, '0') || '00'}</div>
-              <div className="text-gray-500">Funct3: {data.funct3?.toString(2).padStart(3, '0') || '000'}</div>
-              <div className="text-gray-500">Funct7: {data.funct7?.toString(2).padStart(7, '0') || '0000000'}</div>
-              <div className="text-gray-500">ALU Control: {data.aluControl?.toString(2).padStart(4, '0') || '0000'}</div>
-            </>
-          )}
-          {/* Add placeholder div when UI updates are disabled to maintain height */}
-          {disableUIUpdates && (
-            <div style={{ height: '80px' }}></div>
-          )}
+          <div className="text-gray-500">ALUOp: {data.aluOp?.toString(2).padStart(2, '0') || '00'}</div>
+          <div className="text-gray-500">Funct3: {data.funct3?.toString(2).padStart(3, '0') || '000'}</div>
+          <div className="text-gray-500">Funct7: {data.funct7?.toString(2).padStart(7, '0') || '0000000'}</div>
+          <div className="text-gray-500">ALU Control: {data.aluControl?.toString(2).padStart(4, '0') || '0000'}</div>
         </div>
       </div>
 

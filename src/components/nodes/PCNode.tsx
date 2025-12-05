@@ -11,7 +11,6 @@ interface PCNodeData {
 
 export function PCNode({ data, id, selected }: { data: PCNodeData; id: string; selected?: boolean }) {
   const updateNodeData = useCircuitStore((state) => state.updateNodeData);
-  const disableUIUpdates = useCircuitStore((state) => state.disableUIUpdates);
   const stepCount = useCircuitStore((state) => state.stepCount);
   const updatePcValue = useCircuitStore((state) => state.updatePcValue);
   const pcValue = useCircuitStore((state) => state.pcValue);
@@ -96,9 +95,8 @@ export function PCNode({ data, id, selected }: { data: PCNodeData; id: string; s
   }, [stepCount]);
 
   return (
-    <div className={`px-4 py-2 shadow-md rounded-md bg-white border-2 ${
-      selected ? 'border-blue-500' : 'border-gray-200'
-    }`}>
+    <div className={`px-4 py-2 shadow-md rounded-md bg-white border-2 ${selected ? 'border-blue-500' : 'border-gray-200'
+      }`}>
       <Handle
         type="target"
         position={Position.Left}
@@ -120,17 +118,9 @@ export function PCNode({ data, id, selected }: { data: PCNodeData; id: string; s
       <div className="flex items-center">
         <div className="ml-2">
           <div className="text-lg font-bold">PC</div>
-          {!disableUIUpdates && (
-            <>
-              <div className="text-gray-500">Current: 0x{value.toString(16).padStart(8, '0')}</div>
-              <div className="text-gray-500">Next: 0x{inputValue.toString(16).padStart(8, '0')}</div>
-              <div className="text-gray-500">PCWrite: {pcWrite}</div>
-            </>
-          )}
-          {/* Add placeholder div when UI updates are disabled to maintain height */}
-          {disableUIUpdates && (
-            <div style={{ height: '70px' }}></div>
-          )}
+          <div className="text-gray-500">Current: 0x{value.toString(16).padStart(8, '0')}</div>
+          <div className="text-gray-500">Next: 0x{inputValue.toString(16).padStart(8, '0')}</div>
+          <div className="text-gray-500">PCWrite: {pcWrite}</div>
         </div>
       </div>
 

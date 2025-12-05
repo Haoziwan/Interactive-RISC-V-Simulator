@@ -24,7 +24,6 @@ export function ForwardingUnitNode({ data, id, selected }: {
   selected?: boolean
 }) {
   const updateNodeData = useCircuitStore((state) => state.updateNodeData);
-  const disableUIUpdates = useCircuitStore((state) => state.disableUIUpdates);
   const nodes = useNodes();
   const edges = useEdges();
 
@@ -186,11 +185,11 @@ export function ForwardingUnitNode({ data, id, selected }: {
 
     // 检查输入值是否发生变化
     const hasChanges = rs1Value !== inputsRef.current.rs1 ||
-                      rs2Value !== inputsRef.current.rs2 ||
-                      exMemRdValue !== inputsRef.current.exMemRd ||
-                      memWbRdValue !== inputsRef.current.memWbRd ||
-                      exMemRegWriteValue !== inputsRef.current.exMemRegWrite ||
-                      memWbRegWriteValue !== inputsRef.current.memWbRegWrite;
+      rs2Value !== inputsRef.current.rs2 ||
+      exMemRdValue !== inputsRef.current.exMemRd ||
+      memWbRdValue !== inputsRef.current.memWbRd ||
+      exMemRegWriteValue !== inputsRef.current.exMemRegWrite ||
+      memWbRegWriteValue !== inputsRef.current.memWbRegWrite;
 
     if (hasChanges) {
       // 更新缓存的输入值
@@ -236,9 +235,8 @@ export function ForwardingUnitNode({ data, id, selected }: {
   }, [deps]); // 只在依赖项真正变化时更新
 
   return (
-    <div className={`px-4 py-2 shadow-md rounded-md bg-white border-2 ${
-      selected ? 'border-blue-500' : 'border-gray-200'
-    }`}>
+    <div className={`px-4 py-2 shadow-md rounded-md bg-white border-2 ${selected ? 'border-blue-500' : 'border-gray-200'
+      }`}>
       <div className="text-sm font-bold mb-2">Forwarding Unit</div>
 
       {/* 输入端口 */}
@@ -291,56 +289,47 @@ export function ForwardingUnitNode({ data, id, selected }: {
         title="MEM/WB.RegWrite - Two instructions ago's register write control signal"
       />
 
-      {/* 显示当前状态和输入值 - only when UI updates are not disabled */}
-      {!disableUIUpdates && (
-        <div className="text-xs text-gray-600 mt-2 border-t pt-1 border-gray-100">
-          <div className="font-semibold">Inputs:</div>
-          <div className="flex justify-between">
-            <span>ID/EX.Rs1:</span>
-            <span>{data.rs1 || 0}</span>
-          </div>
-          <div className="flex justify-between">
-            <span>ID/EX.Rs2:</span>
-            <span>{data.rs2 || 0}</span>
-          </div>
-          <div className="flex justify-between">
-            <span>EX/MEM.Rd:</span>
-            <span>{data.exMemRd || 0}</span>
-          </div>
-          <div className="flex justify-between">
-            <span>MEM/WB.Rd:</span>
-            <span>{data.memWbRd || 0}</span>
-          </div>
-          <div className="flex justify-between">
-            <span>EX/MEM.RegWrite:</span>
-            <span>{data.exMemRegWrite || 0}</span>
-          </div>
-          <div className="flex justify-between">
-            <span>MEM/WB.RegWrite:</span>
-            <span>{data.memWbRegWrite || 0}</span>
-          </div>
+      {/* 显示当前状态和输入值 */}
+      <div className="text-xs text-gray-600 mt-2 border-t pt-1 border-gray-100">
+        <div className="font-semibold">Inputs:</div>
+        <div className="flex justify-between">
+          <span>ID/EX.Rs1:</span>
+          <span>{data.rs1 || 0}</span>
         </div>
-      )}
-
-      {/* 显示输出状态 - only when UI updates are not disabled */}
-      {!disableUIUpdates && (
-        <div className="text-xs text-gray-600 mt-2 border-t pt-1 border-gray-100">
-          <div className="font-semibold">Outputs:</div>
-          <div className="flex justify-between">
-            <span>Forward A:</span>
-            <span>{data.forwardA || 0}</span>
-          </div>
-          <div className="flex justify-between">
-            <span>Forward B:</span>
-            <span>{data.forwardB || 0}</span>
-          </div>
+        <div className="flex justify-between">
+          <span>ID/EX.Rs2:</span>
+          <span>{data.rs2 || 0}</span>
         </div>
-      )}
+        <div className="flex justify-between">
+          <span>EX/MEM.Rd:</span>
+          <span>{data.exMemRd || 0}</span>
+        </div>
+        <div className="flex justify-between">
+          <span>MEM/WB.Rd:</span>
+          <span>{data.memWbRd || 0}</span>
+        </div>
+        <div className="flex justify-between">
+          <span>EX/MEM.RegWrite:</span>
+          <span>{data.exMemRegWrite || 0}</span>
+        </div>
+        <div className="flex justify-between">
+          <span>MEM/WB.RegWrite:</span>
+          <span>{data.memWbRegWrite || 0}</span>
+        </div>
+      </div>
 
-      {/* Add placeholder div when UI updates are disabled to maintain height */}
-      {disableUIUpdates && (
-        <div style={{ height: '150px' }}></div>
-      )}
+      {/* 显示输出状态 */}
+      <div className="text-xs text-gray-600 mt-2 border-t pt-1 border-gray-100">
+        <div className="font-semibold">Outputs:</div>
+        <div className="flex justify-between">
+          <span>Forward A:</span>
+          <span>{data.forwardA || 0}</span>
+        </div>
+        <div className="flex justify-between">
+          <span>Forward B:</span>
+          <span>{data.forwardB || 0}</span>
+        </div>
+      </div>
 
       {/* 输出端口 */}
       <Handle

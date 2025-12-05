@@ -17,18 +17,17 @@ export function MuxNode({ data, id, selected }: {
   selected?: boolean
 }) {
   const updateNodeData = useCircuitStore((state) => state.updateNodeData);
-  const disableUIUpdates = useCircuitStore((state) => state.disableUIUpdates);
   const [inputs, setInputs] = React.useState<number[]>([]);
   const [showConfig, setShowConfig] = useState(false);
   const [tempPortCount, setTempPortCount] = useState(data.portCount || 2);
   const nodes = useNodes();
   const edges = useEdges();
-  const inputsRef = React.useRef<{[key: string]: number}>({});
+  const inputsRef = React.useRef<{ [key: string]: number }>({});
   const portCount = data.portCount || 2;
 
   // Monitor input connection changes and update output value
   const updateInputConnections = () => {
-    const newInputs: {[key: string]: number} = {};
+    const newInputs: { [key: string]: number } = {};
     let hasChanges = false;
 
     // Get source node value
@@ -67,28 +66,28 @@ export function MuxNode({ data, id, selected }: {
     }
 
     // Process select signal
-      const selectEdge = edges.find(edge => edge.target === id && edge.targetHandle === 'select');
-      const selectValue = getSourceNodeValue(selectEdge);
-      const currentSelect = selectValue !== null ? String(selectValue) : (data.select || '0');
+    const selectEdge = edges.find(edge => edge.target === id && edge.targetHandle === 'select');
+    const selectValue = getSourceNodeValue(selectEdge);
+    const currentSelect = selectValue !== null ? String(selectValue) : (data.select || '0');
 
-      if (hasChanges || currentSelect !== data.select) {
-        // Update values in ref
-        inputsRef.current = newInputs;
+    if (hasChanges || currentSelect !== data.select) {
+      // Update values in ref
+      inputsRef.current = newInputs;
 
-        // Calculate selected input port index
-        const selectIndex = parseInt(currentSelect) % portCount;
-        const outputValue = newInputs[`in${selectIndex}`] || 0;
+      // Calculate selected input port index
+      const selectIndex = parseInt(currentSelect) % portCount;
+      const outputValue = newInputs[`in${selectIndex}`] || 0;
 
-        // Update node data
-        updateNodeData(id, {
-          ...data,
-          value: outputValue,
-          select: currentSelect
-        });
+      // Update node data
+      updateNodeData(id, {
+        ...data,
+        value: outputValue,
+        select: currentSelect
+      });
 
-        // Update state
-        setInputs(Object.values(newInputs));
-      }
+      // Update state
+      setInputs(Object.values(newInputs));
+    }
   };
   // Monitor input connection changes
   React.useEffect(() => {
@@ -96,9 +95,8 @@ export function MuxNode({ data, id, selected }: {
   }, [edges, id, nodes, data, portCount]);
 
   return (
-    <div className={`relative px-4 py-2 shadow-md rounded-md bg-white border-2 ${
-      selected ? 'border-blue-500' : 'border-gray-200'
-    }`}>
+    <div className={`relative px-4 py-2 shadow-md rounded-md bg-white border-2 ${selected ? 'border-blue-500' : 'border-gray-200'
+      }`}>
       <div className="flex items-center justify-between mb-2">
         <div className="text-lg font-bold">MUX</div>
         <button
@@ -165,25 +163,18 @@ export function MuxNode({ data, id, selected }: {
         </div>
       )}
 
-      {!disableUIUpdates && (
-        <div className="text-sm text-gray-500 space-y-1">
-          {Array.from({ length: portCount }).map((_, i) => (
-            <div key={i} className="flex justify-between">
-              <span>Input {i}: </span>
-              <span>{inputs[i] || 0}</span>
-            </div>
-          ))}
-          <div className="flex justify-between">
-            <span>Select: </span>
-            <span>{data.select || '0'}</span>
+      <div className="text-sm text-gray-500 space-y-1">
+        {Array.from({ length: portCount }).map((_, i) => (
+          <div key={i} className="flex justify-between">
+            <span>Input {i}: </span>
+            <span>{inputs[i] || 0}</span>
           </div>
+        ))}
+        <div className="flex justify-between">
+          <span>Select: </span>
+          <span>{data.select || '0'}</span>
         </div>
-      )}
-
-      {/* Add placeholder div when UI updates are disabled to maintain height */}
-      {disableUIUpdates && (
-        <div style={{ height: `${Math.max(60, portCount * 20)}px` }}></div>
-      )}
+      </div>
 
       {/* Input ports */}
       {Array.from({ length: portCount }).map((_, i) => (

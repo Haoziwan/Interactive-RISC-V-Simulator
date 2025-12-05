@@ -93,7 +93,6 @@ interface CircuitState {
   }>;
   outputMessages: string[];
   performanceStats: PerformanceStats;
-  disableUIUpdates: boolean;
   updatePcValue: (value: number) => void;
   updateMemory: (memory: { [key: string]: number }) => void;
   clearMemory: () => void;
@@ -124,7 +123,6 @@ interface CircuitState {
   updatePerformanceStats: (instruction: string) => void;
   resetPerformanceStats: () => void;
   togglePipelineStats: () => void;
-  toggleUIUpdates: () => void;
   cache: {
     config: {
       size: number;      // Total cache size in bytes
@@ -174,7 +172,6 @@ export const useCircuitStore = create<CircuitState>()((set, get) => ({
   currentInstructionIndex: 0,
   simulationHistory: [],
   outputMessages: [],
-  disableUIUpdates: false,
   performanceStats: {
     // Configuration
     enablePipelineStats: false,
@@ -632,7 +629,7 @@ export const useCircuitStore = create<CircuitState>()((set, get) => ({
       } else {
         get().updatePerformanceStats('');
       }
-     
+
 
       // 1. 优化历史记录保存：使用浅拷贝代替 JSON 深拷贝
       // Zustand 的更新模式保证了旧的 node 对象不会被修改，只会被替换，因此浅拷贝数组是安全的。
@@ -807,7 +804,7 @@ export const useCircuitStore = create<CircuitState>()((set, get) => ({
         return { performanceStats: stats };
       }
 
-      return { };
+      return {};
     }
 
     // Update instruction count
@@ -911,9 +908,7 @@ export const useCircuitStore = create<CircuitState>()((set, get) => ({
     }
   })),
 
-  toggleUIUpdates: () => set((state) => ({
-    disableUIUpdates: !state.disableUIUpdates
-  })),
+
   cache: {
     config: {
       size: 256,       // Total cache size in bytes (16 lines * 1 way * 16 bytes)
@@ -1035,7 +1030,7 @@ export const useCircuitStore = create<CircuitState>()((set, get) => ({
       if (writeback) {
         stats.writebacks++;
       }
-      if(!hit && !writeback) {
+      if (!hit && !writeback) {
         stats.misses++;
       }
       const total = stats.hits + stats.misses;

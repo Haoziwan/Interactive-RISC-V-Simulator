@@ -96,8 +96,6 @@ export function CircuitCanvas() {
     resetSimulation,
     stepSimulation,
     updateNodes,
-    disableUIUpdates,
-    toggleUIUpdates
   } = useCircuitStore();
   const [edgeType, setEdgeType] = useState('smoothstep');
   const [connectionMode, setConnectionMode] = useState<ConnectionMode>(ConnectionMode.Loose);
@@ -335,17 +333,17 @@ export function CircuitCanvas() {
             ...e.style,
             // Keep the selected edge blue, highlight connected edges, others remain default
             stroke: e.selected ? '#3b82f6' :
-                   connectedEdges.some(ce => ce.id === e.id) ? '#ff6b00' : edgeColor,
+              connectedEdges.some(ce => ce.id === e.id) ? '#ff6b00' : edgeColor,
             // Increase width for highlighted edges
             strokeWidth: e.selected ? edgeWidth + 1 :
-                        connectedEdges.some(ce => ce.id === e.id) ? edgeWidth + 1 : edgeWidth,
+              connectedEdges.some(ce => ce.id === e.id) ? edgeWidth + 1 : edgeWidth,
           },
           markerEnd: {
             type: 'arrow' as MarkerType,
             width: 20,
             height: 20,
             color: e.selected ? '#3b82f6' :
-                   connectedEdges.some(ce => ce.id === e.id) ? '#ff6b00' : edgeColor,
+              connectedEdges.some(ce => ce.id === e.id) ? '#ff6b00' : edgeColor,
           },
         }))
       }));
@@ -386,8 +384,8 @@ export function CircuitCanvas() {
             ...defaultEdgeOptions.style,
             // Priority: selected > highlighted > default
             stroke: edge.selected ? '#3b82f6' :
-                   edge.data?.isHighlighted ? '#ff6b00' :
-                   edgeColor,
+              edge.data?.isHighlighted ? '#ff6b00' :
+                edgeColor,
             strokeWidth: edge.selected || edge.data?.isHighlighted ? edgeWidth + 1 : edgeWidth,
             // Add dashed style if it's an editable edge and selected to indicate edit mode
             strokeDasharray: (edge.type === 'editableEdge' && edge.selected) ? '5,5' : undefined,
@@ -398,8 +396,8 @@ export function CircuitCanvas() {
             height: 20,
             // Match the stroke color
             color: edge.selected ? '#3b82f6' :
-                  edge.data?.isHighlighted ? '#ff6b00' :
-                  edgeColor,
+              edge.data?.isHighlighted ? '#ff6b00' :
+                edgeColor,
           },
           // Preserve any existing data, including intermediatePoints and lineType
           data: {
@@ -580,19 +578,6 @@ export function CircuitCanvas() {
                     title="Toggle edge animation"
                   />
                   <label htmlFor="edge-animation" className="text-xs text-gray-600">Animation</label>
-                </div>
-
-                {/* UI Updates Toggle */}
-                <div className="flex items-center space-x-2">
-                  <input
-                    type="checkbox"
-                    checked={disableUIUpdates}
-                    onChange={() => toggleUIUpdates()}
-                    className="rounded border-gray-300"
-                    id="disable-ui-updates"
-                    title="Disable UI updates for better performance"
-                  />
-                  <label htmlFor="disable-ui-updates" className="text-xs text-gray-600">Disable UI Updates</label>
                 </div>
               </div>
             )}

@@ -12,7 +12,6 @@ interface BranchHazardUnitNodeData {
 
 export function BranchHazardUnitNode({ data, id, selected }: { data: BranchHazardUnitNodeData; id: string; selected?: boolean }) {
   const updateNodeData = useCircuitStore((state) => state.updateNodeData);
-  const disableUIUpdates = useCircuitStore((state) => state.disableUIUpdates);
   const nodes = useNodes();
   const edges = useEdges();
 
@@ -86,9 +85,8 @@ export function BranchHazardUnitNode({ data, id, selected }: { data: BranchHazar
   }, [nodes, edges, id]);
 
   return (
-    <div className={`relative px-4 py-2 shadow-md rounded-md bg-white border-2 ${
-      selected ? 'border-blue-500' : 'border-gray-200'
-    }`}>
+    <div className={`relative px-4 py-2 shadow-md rounded-md bg-white border-2 ${selected ? 'border-blue-500' : 'border-gray-200'
+      }`}>
       <div className="text-lg font-bold mb-2">Branch Hazard Unit</div>
 
       <Handle
@@ -100,37 +98,30 @@ export function BranchHazardUnitNode({ data, id, selected }: { data: BranchHazar
         title="Branch Taken Signal"
       />
 
-      {/* 显示当前状态 - only when UI updates are not disabled */}
-      {!disableUIUpdates && (
-        <div className={`text-xs mt-2 pt-1 border-t ${data.hazardDetected ? 'text-red-600 border-red-200' : 'text-gray-600 border-gray-100'}`}>
-          <div className="font-semibold">Inputs:</div>
-          <div className="flex justify-between">
-            <span>Branch Taken:</span>
-            <span>{data.branchTaken !== undefined ? data.branchTaken : 0}</span>
-          </div>
-
-          <div className="font-semibold mt-2">Outputs:</div>
-          <div className="flex justify-between">
-            <span>IF/ID Flush:</span>
-            <span>{data.ifIdFlush !== undefined ? data.ifIdFlush : 0}</span>
-          </div>
-          <div className="flex justify-between">
-            <span>ID/EX Flush:</span>
-            <span>{data.idExFlush !== undefined ? data.idExFlush : 0}</span>
-          </div>
-          <div className="mt-1 text-center">
-            {data.hazardDetected ?
-              <span className="bg-red-100 text-red-800 px-2 py-0.5 rounded font-medium">Control Hazard Detected!</span> :
-              <span className="bg-green-100 text-green-800 px-2 py-0.5 rounded font-medium">No Control Hazard</span>
-            }
-          </div>
+      {/* 显示当前状态 */}
+      <div className={`text-xs mt-2 pt-1 border-t ${data.hazardDetected ? 'text-red-600 border-red-200' : 'text-gray-600 border-gray-100'}`}>
+        <div className="font-semibold">Inputs:</div>
+        <div className="flex justify-between">
+          <span>Branch Taken:</span>
+          <span>{data.branchTaken !== undefined ? data.branchTaken : 0}</span>
         </div>
-      )}
 
-      {/* Add placeholder div when UI updates are disabled to maintain height */}
-      {disableUIUpdates && (
-        <div style={{ height: '120px' }}></div>
-      )}
+        <div className="font-semibold mt-2">Outputs:</div>
+        <div className="flex justify-between">
+          <span>IF/ID Flush:</span>
+          <span>{data.ifIdFlush !== undefined ? data.ifIdFlush : 0}</span>
+        </div>
+        <div className="flex justify-between">
+          <span>ID/EX Flush:</span>
+          <span>{data.idExFlush !== undefined ? data.idExFlush : 0}</span>
+        </div>
+        <div className="mt-1 text-center">
+          {data.hazardDetected ?
+            <span className="bg-red-100 text-red-800 px-2 py-0.5 rounded font-medium">Control Hazard Detected!</span> :
+            <span className="bg-green-100 text-green-800 px-2 py-0.5 rounded font-medium">No Control Hazard</span>
+          }
+        </div>
+      </div>
 
       <Handle
         type="source"

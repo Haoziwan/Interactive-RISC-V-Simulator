@@ -15,7 +15,6 @@ export function InstructionMemoryNode({ data, id, selected }: {
   selected?: boolean
 }) {
   const updateNodeData = useCircuitStore((state) => state.updateNodeData);
-  const disableUIUpdates = useCircuitStore((state) => state.disableUIUpdates);
   const assembledInstructions = useCircuitStore((state) => state.assembledInstructions);
   const nodes = useNodes();
   const edges = useEdges();
@@ -74,9 +73,8 @@ export function InstructionMemoryNode({ data, id, selected }: {
   const endIdx = Math.min((data.instructions?.length || 0) - 1, pcValue + 2);
   const displayInstructions = data.instructions?.slice(startIdx, endIdx + 1) || [];
   return (
-    <div className={`relative px-4 py-2 shadow-md rounded-md bg-white border-2 ${
-      selected ? 'border-blue-500' : 'border-gray-200'
-    }`}>
+    <div className={`relative px-4 py-2 shadow-md rounded-md bg-white border-2 ${selected ? 'border-blue-500' : 'border-gray-200'
+      }`}>
 
       {/* Input port on left */}
       <Handle
@@ -91,51 +89,44 @@ export function InstructionMemoryNode({ data, id, selected }: {
       <div className="flex items-center justify-between">
         <div>
           <div className="text-lg font-bold">Instruction Memory</div>
-          {!disableUIUpdates && (
-            <div className="text-sm text-gray-500">
-              <div>Size: {data.size || 4096} bytes</div>
-              <div>Output: {(data.value === "0" || !data.value) ? 'No instruction' : data.value}</div>
-              <div className="mt-2 space-y-1 font-mono">
-                {displayInstructions.map((inst, idx) => {
-                  const actualIdx = startIdx + idx;
-                  const isCurrentInst = actualIdx === pcValue;
-                  return (
-                    <div
-                      key={actualIdx}
-                      className={`flex items-center ${isCurrentInst ? 'text-blue-600 font-bold' : 'text-gray-600'}`}
-                    >
-                      <span className="w-24 inline-block">
-                        {`0x${(actualIdx * 4).toString(16).padStart(8, '0')}`}
-                      </span>
-                      <span>
-                        {isCurrentInst ? '→ ' : '  '}
-                        {inst || 'No instruction'}
-                      </span>
-                    </div>
-                  );
-                })}
-              </div>
-              {data.instructions && data.instructions.length > 0 && (
-                <div className="mt-2 text-xs text-gray-400">
-                  Total Instructions: {data.instructions.length}
-                </div>
-              )}
+          <div className="text-sm text-gray-500">
+            <div>Size: {data.size || 4096} bytes</div>
+            <div>Output: {(data.value === "0" || !data.value) ? 'No instruction' : data.value}</div>
+            <div className="mt-2 space-y-1 font-mono">
+              {displayInstructions.map((inst, idx) => {
+                const actualIdx = startIdx + idx;
+                const isCurrentInst = actualIdx === pcValue;
+                return (
+                  <div
+                    key={actualIdx}
+                    className={`flex items-center ${isCurrentInst ? 'text-blue-600 font-bold' : 'text-gray-600'}`}
+                  >
+                    <span className="w-24 inline-block">
+                      {`0x${(actualIdx * 4).toString(16).padStart(8, '0')}`}
+                    </span>
+                    <span>
+                      {isCurrentInst ? '→ ' : '  '}
+                      {inst || 'No instruction'}
+                    </span>
+                  </div>
+                );
+              })}
             </div>
-          )}
-          {/* Add placeholder div when UI updates are disabled to maintain height */}
-          {disableUIUpdates && (
-            <div style={{ height: '160px' }}></div>
-          )}
+            {data.instructions && data.instructions.length > 0 && (
+              <div className="mt-2 text-xs text-gray-400">
+                Total Instructions: {data.instructions.length}
+              </div>
+            )}
+          </div>
         </div>
         <button
           type="button"
           onClick={handleLoadInstructions}
           disabled={assembledInstructions.length === 0}
-          className={`px-3 py-1.5 text-sm rounded ${
-            assembledInstructions.length > 0
+          className={`px-3 py-1.5 text-sm rounded ${assembledInstructions.length > 0
               ? 'bg-blue-500 text-white hover:bg-blue-600'
               : 'bg-gray-200 text-gray-500 cursor-not-allowed'
-          }`}
+            }`}
           title={assembledInstructions.length === 0 ? "Please assemble code in editor first" : "Load recently assembled instructions"}
         >
           Load

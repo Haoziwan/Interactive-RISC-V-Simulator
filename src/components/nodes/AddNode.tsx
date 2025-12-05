@@ -9,7 +9,6 @@ interface AddNodeData {
 
 export function AddNode({ data, id, selected }: { data: AddNodeData; id: string; selected?: boolean }) {
   const updateNodeData = useCircuitStore((state) => state.updateNodeData);
-  const disableUIUpdates = useCircuitStore((state) => state.disableUIUpdates);
   const [inputA, setInputA] = React.useState<number>(0);
   const [inputB, setInputB] = React.useState<number>(0);
   const nodes = useNodes();
@@ -51,7 +50,7 @@ export function AddNode({ data, id, selected }: { data: AddNodeData; id: string;
 
     // 只有当输入值发生实际变化时才更新
     const hasChanges = (newInputA !== null && newInputA !== inputsRef.current.a) ||
-                      (newInputB !== null && newInputB !== inputsRef.current.b);
+      (newInputB !== null && newInputB !== inputsRef.current.b);
 
     if (hasChanges) {
       const finalInputA = newInputA ?? inputsRef.current.a;
@@ -93,12 +92,10 @@ export function AddNode({ data, id, selected }: { data: AddNodeData; id: string;
         />
         {/* + symbol inside */}
         <text x="40" y="30" fontSize="24" textAnchor="middle" dominantBaseline="middle" fill="#374151">+</text>
-        {/* Output value - only show when UI updates are not disabled */}
-        {!disableUIUpdates && (
-          <text x="40" y="55" fontSize="18" textAnchor="middle" dominantBaseline="middle" fill="#374151" fontWeight="bold">
-            {data.value ?? 0}
-          </text>
-        )}
+        {/* Output value */}
+        <text x="40" y="55" fontSize="18" textAnchor="middle" dominantBaseline="middle" fill="#374151" fontWeight="bold">
+          {data.value ?? 0}
+        </text>
       </svg>
 
       {/* Input handles */}

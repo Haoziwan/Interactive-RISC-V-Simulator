@@ -11,7 +11,6 @@ interface SingleRegisterNodeData {
 
 export function SingleRegisterNode({ data, id, selected }: { data: SingleRegisterNodeData; id: string; selected?: boolean }) {
   const updateNodeData = useCircuitStore((state) => state.updateNodeData);
-  const disableUIUpdates = useCircuitStore((state) => state.disableUIUpdates);
   const stepCount = useCircuitStore((state) => state.stepCount);
   const value = data.value ?? 0;
   const name = data.name || 'R';
@@ -86,9 +85,7 @@ export function SingleRegisterNode({ data, id, selected }: { data: SingleRegiste
     <div className={`px-4 py-2 shadow-md rounded-md bg-white border-2 ${selected ? 'border-blue-500' : 'border-gray-200'}`}>
       <div className="flex flex-col items-center">
         <div className="text-sm font-medium text-gray-900 mb-2">{name}</div>
-        {!disableUIUpdates && (
-          <div className="text-xl font-bold text-gray-700">{value}</div>
-        )}
+        <div className="text-xl font-bold text-gray-700">{value}</div>
       </div>
       <Handle
         type="target"

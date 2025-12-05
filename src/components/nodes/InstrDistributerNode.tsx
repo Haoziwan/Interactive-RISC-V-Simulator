@@ -16,7 +16,6 @@ interface InstrDistributerNodeData {
 
 export function InstrDistributerNode({ data, id, selected }: { data: InstrDistributerNodeData; id: string; selected?: boolean }) {
   const updateNodeData = useCircuitStore((state) => state.updateNodeData);
-  const disableUIUpdates = useCircuitStore((state) => state.disableUIUpdates);
   const nodes = useNodes();
   const edges = useEdges();
   const prevValueRef = useRef<string | undefined>(undefined);
@@ -85,142 +84,84 @@ export function InstrDistributerNode({ data, id, selected }: { data: InstrDistri
       />
 
       <div className="flex flex-col space-y-2 px-2">
-        {/* Show field values when UI updates are enabled */}
-        {!disableUIUpdates && (
-          <>
-            <div className="flex justify-between items-center text-xs">
-              <span className="text-gray-500">opcode:</span>
-              <span className="font-mono">{opcode}</span>
-              <Handle
-                type="source"
-                position={Position.Right}
-                id="opcode"
-                className="w-2 h-2 bg-green-400"
-                style={{ top: '1.5rem' }}
-                title="Operation Code"
-              />
-            </div>
+        {/* Show field values */}
+        <div className="flex justify-between items-center text-xs">
+          <span className="text-gray-500">opcode:</span>
+          <span className="font-mono">{opcode}</span>
+          <Handle
+            type="source"
+            position={Position.Right}
+            id="opcode"
+            className="w-2 h-2 bg-green-400"
+            style={{ top: '1.5rem' }}
+            title="Operation Code"
+          />
+        </div>
 
-            <div className="flex justify-between items-center text-xs">
-              <span className="text-gray-500">rd:</span>
-              <span className="font-mono">{rd}</span>
-              <Handle
-                type="source"
-                position={Position.Right}
-                id="rd"
-                className="w-2 h-2 bg-green-400"
-                style={{ top: '3rem' }}
-                title="Destination Register"
-              />
-            </div>
+        <div className="flex justify-between items-center text-xs">
+          <span className="text-gray-500">rd:</span>
+          <span className="font-mono">{rd}</span>
+          <Handle
+            type="source"
+            position={Position.Right}
+            id="rd"
+            className="w-2 h-2 bg-green-400"
+            style={{ top: '3rem' }}
+            title="Destination Register"
+          />
+        </div>
 
-            <div className="flex justify-between items-center text-xs">
-              <span className="text-gray-500">funct3:</span>
-              <span className="font-mono">{funct3}</span>
-              <Handle
-                type="source"
-                position={Position.Right}
-                id="funct3"
-                className="w-2 h-2 bg-green-400"
-                style={{ top: '4.5rem' }}
-                title="Function Code 3"
-              />
-            </div>
+        <div className="flex justify-between items-center text-xs">
+          <span className="text-gray-500">funct3:</span>
+          <span className="font-mono">{funct3}</span>
+          <Handle
+            type="source"
+            position={Position.Right}
+            id="funct3"
+            className="w-2 h-2 bg-green-400"
+            style={{ top: '4.5rem' }}
+            title="Function Code 3"
+          />
+        </div>
 
-            <div className="flex justify-between items-center text-xs">
-              <span className="text-gray-500">rs1:</span>
-              <span className="font-mono">{rs1}</span>
-              <Handle
-                type="source"
-                position={Position.Right}
-                id="rs1"
-                className="w-2 h-2 bg-green-400"
-                style={{ top: '6rem' }}
-                title="Source Register 1"
-              />
-            </div>
+        <div className="flex justify-between items-center text-xs">
+          <span className="text-gray-500">rs1:</span>
+          <span className="font-mono">{rs1}</span>
+          <Handle
+            type="source"
+            position={Position.Right}
+            id="rs1"
+            className="w-2 h-2 bg-green-400"
+            style={{ top: '6rem' }}
+            title="Source Register 1"
+          />
+        </div>
 
-            <div className="flex justify-between items-center text-xs">
-              <span className="text-gray-500">rs2:</span>
-              <span className="font-mono">{rs2}</span>
-              <Handle
-                type="source"
-                position={Position.Right}
-                id="rs2"
-                className="w-2 h-2 bg-green-400"
-                style={{ top: '7.5rem' }}
-                title="Source Register 2"
-              />
-            </div>
+        <div className="flex justify-between items-center text-xs">
+          <span className="text-gray-500">rs2:</span>
+          <span className="font-mono">{rs2}</span>
+          <Handle
+            type="source"
+            position={Position.Right}
+            id="rs2"
+            className="w-2 h-2 bg-green-400"
+            style={{ top: '7.5rem' }}
+            title="Source Register 2"
+          />
+        </div>
 
-            <div className="flex justify-between items-center text-xs">
-              <span className="text-gray-500">funct7:</span>
-              <span className="font-mono">{funct7}</span>
-              <Handle
-                type="source"
-                position={Position.Right}
-                id="funct7"
-                className="w-2 h-2 bg-green-400"
-                style={{ top: '9rem' }}
-                title="Function Code 7"
-              />
-            </div>
-          </>
-        )}
-
-        {/* Only show handles when UI updates are disabled */}
-        {disableUIUpdates && (
-          <div className="relative" style={{ height: '180px' }}>
-            <Handle
-              type="source"
-              position={Position.Right}
-              id="opcode"
-              className="w-2 h-2 bg-green-400 absolute"
-              style={{ top: '1.5rem', right: '-10px' }}
-              title="Operation Code"
-            />
-            <Handle
-              type="source"
-              position={Position.Right}
-              id="rd"
-              className="w-2 h-2 bg-green-400 absolute"
-              style={{ top: '3rem', right: '-10px' }}
-              title="Destination Register"
-            />
-            <Handle
-              type="source"
-              position={Position.Right}
-              id="funct3"
-              className="w-2 h-2 bg-green-400 absolute"
-              style={{ top: '4.5rem', right: '-10px' }}
-              title="Function Code 3"
-            />
-            <Handle
-              type="source"
-              position={Position.Right}
-              id="rs1"
-              className="w-2 h-2 bg-green-400 absolute"
-              style={{ top: '6rem', right: '-10px' }}
-              title="Source Register 1"
-            />
-            <Handle
-              type="source"
-              position={Position.Right}
-              id="rs2"
-              className="w-2 h-2 bg-green-400 absolute"
-              style={{ top: '7.5rem', right: '-10px' }}
-              title="Source Register 2"
-            />
-            <Handle
-              type="source"
-              position={Position.Right}
-              id="funct7"
-              className="w-2 h-2 bg-green-400 absolute"
-              style={{ top: '9rem', right: '-10px' }}
-              title="Function Code 7"
-            />
-          </div>
-        )}
+        <div className="flex justify-between items-center text-xs">
+          <span className="text-gray-500">funct7:</span>
+          <span className="font-mono">{funct7}</span>
+          <Handle
+            type="source"
+            position={Position.Right}
+            id="funct7"
+            className="w-2 h-2 bg-green-400"
+            style={{ top: '9rem' }}
+            title="Function Code 7"
+          />
+        </div>
       </div>
     </div>
   );

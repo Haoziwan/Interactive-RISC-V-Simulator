@@ -20,7 +20,6 @@ export function HazardDetectionUnitNode({ data, id, selected }: {
   selected?: boolean
 }) {
   const updateNodeData = useCircuitStore((state) => state.updateNodeData);
-  const disableUIUpdates = useCircuitStore((state) => state.disableUIUpdates);
   const nodes = useNodes();
   const edges = useEdges();
 
@@ -75,8 +74,8 @@ export function HazardDetectionUnitNode({ data, id, selected }: {
     // 加载使用冒险检测
     // 当ID/EX阶段的MemRead=1，且ID/EX阶段的Rt与IF/ID阶段的Rs或Rt相等时，需要插入停顿
     if (idExMemReadValue === 1 &&
-        (idExRtValue === ifIdRsValue || idExRtValue === ifIdRtValue) &&
-        idExRtValue !== 0) {
+      (idExRtValue === ifIdRsValue || idExRtValue === ifIdRtValue) &&
+      idExRtValue !== 0) {
       pcWrite = 0;    // 暂停PC更新
       ifIdWrite = 0;  // 暂停IF/ID寄存器更新
       controlMux = 1; // 将控制信号置为0（生成NOP）
@@ -85,9 +84,9 @@ export function HazardDetectionUnitNode({ data, id, selected }: {
 
     // 检查输入值是否发生变化
     const hasChanges = idExMemReadValue !== inputsRef.current.idExMemRead ||
-                      idExRtValue !== inputsRef.current.idExRt ||
-                      ifIdRsValue !== inputsRef.current.ifIdRs ||
-                      ifIdRtValue !== inputsRef.current.ifIdRt;
+      idExRtValue !== inputsRef.current.idExRt ||
+      ifIdRsValue !== inputsRef.current.ifIdRs ||
+      ifIdRtValue !== inputsRef.current.ifIdRt;
 
     if (hasChanges) {
       // 更新缓存的输入值
@@ -122,12 +121,11 @@ export function HazardDetectionUnitNode({ data, id, selected }: {
   const hazardDetected = data.hazardDetected || false;
 
   return (
-    <div className={`px-4 py-2 shadow-md rounded-md bg-white border-2 ${
-      selected ? 'border-blue-500' : hazardDetected ? 'border-red-500' : 'border-gray-200'
-    }`}>
+    <div className={`px-4 py-2 shadow-md rounded-md bg-white border-2 ${selected ? 'border-blue-500' : hazardDetected ? 'border-red-500' : 'border-gray-200'
+      }`}>
       <div className="text-sm font-bold mb-2 flex items-center justify-between">
         <span>Hazard Detection</span>
-        {!disableUIUpdates && hazardDetected && (
+        {hazardDetected && (
           <span className="ml-2 px-1 py-0.5 text-xs bg-red-100 text-red-800 rounded">Hazard!</span>
         )}
       </div>
@@ -166,58 +164,49 @@ export function HazardDetectionUnitNode({ data, id, selected }: {
         title="IF/ID.Rt"
       />
 
-      {/* 显示输入值 - only when UI updates are not disabled */}
-      {!disableUIUpdates && (
-        <>
-          <div className="text-xs text-gray-600 mt-2 border-t pt-1 border-gray-100">
-            <div className="font-semibold">Inputs:</div>
-            <div className="flex justify-between">
-              <span>ID/EX.MemRead:</span>
-              <span>{data.idExMemRead || 0}</span>
-            </div>
-            <div className="flex justify-between">
-              <span>ID/EX.Rt:</span>
-              <span>{data.idExRt || 0}</span>
-            </div>
-            <div className="flex justify-between">
-              <span>IF/ID.Rs:</span>
-              <span>{data.ifIdRs || 0}</span>
-            </div>
-            <div className="flex justify-between">
-              <span>IF/ID.Rt:</span>
-              <span>{data.ifIdRt || 0}</span>
-            </div>
-          </div>
+      {/* 显示输入值 */}
+      <div className="text-xs text-gray-600 mt-2 border-t pt-1 border-gray-100">
+        <div className="font-semibold">Inputs:</div>
+        <div className="flex justify-between">
+          <span>ID/EX.MemRead:</span>
+          <span>{data.idExMemRead || 0}</span>
+        </div>
+        <div className="flex justify-between">
+          <span>ID/EX.Rt:</span>
+          <span>{data.idExRt || 0}</span>
+        </div>
+        <div className="flex justify-between">
+          <span>IF/ID.Rs:</span>
+          <span>{data.ifIdRs || 0}</span>
+        </div>
+        <div className="flex justify-between">
+          <span>IF/ID.Rt:</span>
+          <span>{data.ifIdRt || 0}</span>
+        </div>
+      </div>
 
-          {/* 显示当前状态 */}
-          <div className={`text-xs mt-2 pt-1 border-t ${hazardDetected ? 'text-red-600 border-red-200' : 'text-gray-600 border-gray-100'}`}>
-            <div className="font-semibold">Outputs:</div>
-            <div className="flex justify-between">
-              <span>PC Write:</span>
-              <span>{data.pcWrite !== undefined ? data.pcWrite : 1}</span>
-            </div>
-            <div className="flex justify-between">
-              <span>IF/ID Write:</span>
-              <span>{data.ifIdWrite !== undefined ? data.ifIdWrite : 1}</span>
-            </div>
-            <div className="flex justify-between">
-              <span>Control Mux:</span>
-              <span>{data.controlMux !== undefined ? data.controlMux : 0}</span>
-            </div>
-            <div className="mt-1 text-center">
-              {hazardDetected ?
-                <span className="bg-red-100 text-red-800 px-2 py-0.5 rounded font-medium">Load-Use Hazard Detected!</span> :
-                <span className="bg-green-100 text-green-800 px-2 py-0.5 rounded font-medium">No Hazard</span>
-              }
-            </div>
-          </div>
-        </>
-      )}
-
-      {/* Add placeholder div when UI updates are disabled to maintain height */}
-      {disableUIUpdates && (
-        <div style={{ height: '180px' }}></div>
-      )}
+      {/* 显示当前状态 */}
+      <div className={`text-xs mt-2 pt-1 border-t ${hazardDetected ? 'text-red-600 border-red-200' : 'text-gray-600 border-gray-100'}`}>
+        <div className="font-semibold">Outputs:</div>
+        <div className="flex justify-between">
+          <span>PC Write:</span>
+          <span>{data.pcWrite !== undefined ? data.pcWrite : 1}</span>
+        </div>
+        <div className="flex justify-between">
+          <span>IF/ID Write:</span>
+          <span>{data.ifIdWrite !== undefined ? data.ifIdWrite : 1}</span>
+        </div>
+        <div className="flex justify-between">
+          <span>Control Mux:</span>
+          <span>{data.controlMux !== undefined ? data.controlMux : 0}</span>
+        </div>
+        <div className="mt-1 text-center">
+          {hazardDetected ?
+            <span className="bg-red-100 text-red-800 px-2 py-0.5 rounded font-medium">Load-Use Hazard Detected!</span> :
+            <span className="bg-green-100 text-green-800 px-2 py-0.5 rounded font-medium">No Hazard</span>
+          }
+        </div>
+      </div>
 
       {/* 输出端口 */}
       <Handle

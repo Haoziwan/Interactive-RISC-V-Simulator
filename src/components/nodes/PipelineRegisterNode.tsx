@@ -15,7 +15,6 @@ interface PipelineRegisterNodeData {
 export function PipelineRegisterNode({ data, id, selected }: { data: PipelineRegisterNodeData; id: string; selected?: boolean }) {
   const updateNodeData = useCircuitStore((state) => state.updateNodeData);
   const stepCount = useCircuitStore((state) => state.stepCount);
-  const disableUIUpdates = useCircuitStore((state) => state.disableUIUpdates);
   const name = data.name || 'IF/ID';
   const reset = data.reset ?? false;
   const portCount = data.portCount ?? 1;
@@ -203,7 +202,7 @@ export function PipelineRegisterNode({ data, id, selected }: { data: PipelineReg
 
   return (
     <div className={`relative py-4 shadow-md rounded-md bg-white border-2 w-[120px] ${selected ? 'border-blue-500' : 'border-gray-200'}`}
-         style={{ height: registerHeight }}>
+      style={{ height: registerHeight }}>
       <div className="flex flex-col items-center h-full">
         <div className="flex items-center justify-between w-full px-2 mb-4">
           <div className="text-sm font-medium text-gray-900">{name}</div>
@@ -250,17 +249,15 @@ export function PipelineRegisterNode({ data, id, selected }: { data: PipelineReg
           )}
         </div>
 
-        {/* 状态显示 - only when UI updates are not disabled */}
-        {!disableUIUpdates && (
-          <div className="w-full mb-4 px-2">
-            {name === 'IF/ID' && (
-              <div className="text-xs text-gray-600">Write: {writeEnable}</div>
-            )}
-            {(name === 'IF/ID' || name === 'ID/EX') && (
-              <div className="text-xs text-gray-600">Flush: {flush}</div>
-            )}
-          </div>
-        )}
+        {/* 状态显示 */}
+        <div className="w-full mb-4 px-2">
+          {name === 'IF/ID' && (
+            <div className="text-xs text-gray-600">Write: {writeEnable}</div>
+          )}
+          {(name === 'IF/ID' || name === 'ID/EX') && (
+            <div className="text-xs text-gray-600">Flush: {flush}</div>
+          )}
+        </div>
 
         {showConfig && (
           <div className="absolute z-10 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 p-2">
@@ -361,16 +358,12 @@ export function PipelineRegisterNode({ data, id, selected }: { data: PipelineReg
                   style={{ left: -6 }}
                   title={`Input ${index}`}
                 />
-                {!disableUIUpdates && (
-                  <>
-                    <div className="text-xs text-gray-500 mx-2">
-                      In: {inputValues[index]}
-                    </div>
-                    <div className="text-xs font-medium text-gray-700 mx-2">
-                      {values[index]}
-                    </div>
-                  </>
-                )}
+                <div className="text-xs text-gray-500 mx-2">
+                  In: {inputValues[index]}
+                </div>
+                <div className="text-xs font-medium text-gray-700 mx-2">
+                  {values[index]}
+                </div>
                 <Handle
                   type="source"
                   position={Position.Right}

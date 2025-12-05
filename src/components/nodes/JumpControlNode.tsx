@@ -13,7 +13,6 @@ interface JumpControlNodeData {
 
 export function JumpControlNode({ data, id, selected }: { data: JumpControlNodeData; id: string; selected?: boolean }) {
   const updateNodeData = useCircuitStore((state) => state.updateNodeData);
-  const disableUIUpdates = useCircuitStore((state) => state.disableUIUpdates);
   const nodes = useNodes();
   const edges = useEdges();
 
@@ -127,9 +126,8 @@ export function JumpControlNode({ data, id, selected }: { data: JumpControlNodeD
     updateInputConnections();
   }, [nodes, edges, id]);
   return (
-    <div className={`relative px-4 py-2 shadow-md rounded-md bg-white border-2 ${
-      selected ? 'border-blue-500' : 'border-gray-200'
-    }`}>
+    <div className={`relative px-4 py-2 shadow-md rounded-md bg-white border-2 ${selected ? 'border-blue-500' : 'border-gray-200'
+      }`}>
       <Handle
         type="target"
         position={Position.Left}
@@ -158,19 +156,11 @@ export function JumpControlNode({ data, id, selected }: { data: JumpControlNodeD
       <div className="flex items-center">
         <div className="ml-2">
           <div className="text-lg font-bold">Jump Control</div>
-          {!disableUIUpdates && (
-            <>
-              <div className="text-gray-500">Funct3: {data.funct3?.toString(2).padStart(3, '0') || '000'}</div>
-              <div className="text-gray-500">Opcode: {data.opcode?.toString(2).padStart(7, '0') || '0000000'}</div>
-              <div className="text-gray-500">Zero: {data.zero || 0}</div>
-              <div className="text-gray-500">Jump: {data.jump || 0}</div>
-              <div className="text-gray-500">Jalr: {data.jalr || 0}</div>
-            </>
-          )}
-          {/* Add placeholder div when UI updates are disabled to maintain height */}
-          {disableUIUpdates && (
-            <div style={{ height: '100px' }}></div>
-          )}
+          <div className="text-gray-500">Funct3: {data.funct3?.toString(2).padStart(3, '0') || '000'}</div>
+          <div className="text-gray-500">Opcode: {data.opcode?.toString(2).padStart(7, '0') || '0000000'}</div>
+          <div className="text-gray-500">Zero: {data.zero || 0}</div>
+          <div className="text-gray-500">Jump: {data.jump || 0}</div>
+          <div className="text-gray-500">Jalr: {data.jalr || 0}</div>
         </div>
       </div>
 
