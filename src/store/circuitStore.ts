@@ -366,17 +366,51 @@ export const useCircuitStore = create<CircuitState>()((set, get) => ({
     }
 
     if (newIsSimulating) {
-      // 启动新的定时器
-      const timer = window.setInterval(() => {
-        get().stepSimulation();
-      }, state.simulationInterval);
+      if (state.simulationInterval === 0) {
+        // 当 interval 为 0 时，使用 requestAnimationFrame 配合批量执行以提高速度
+        const BATCH_SIZE = 100; // 每帧执行的步数
+        let rafId: number;
 
-      set({
-        isSimulating: true,
-        simulationTimer: timer
-      });
+        const runBatch = () => {
+          const currentState = get();
+          if (!currentState.isSimulating) return;
+
+          // 批量执行多步
+          for (let i = 0; i < BATCH_SIZE; i++) {
+            if (!get().isSimulating) break;
+            get().stepSimulation();
+          }
+
+          // 继续下一帧
+          if (get().isSimulating) {
+            rafId = requestAnimationFrame(runBatch);
+          }
+        };
+
+        rafId = requestAnimationFrame(runBatch);
+
+        set({
+          isSimulating: true,
+          simulationTimer: rafId as unknown as number
+        });
+      } else {
+        // 使用 setInterval
+        const timer = window.setInterval(() => {
+          get().stepSimulation();
+        }, state.simulationInterval);
+
+        set({
+          isSimulating: true,
+          simulationTimer: timer
+        });
+      }
     } else {
-      // 暂停模拟
+      // 暂停模拟 - 需要同时处理 setInterval 和 requestAnimationFrame
+      if (state.simulationInterval === 0) {
+        cancelAnimationFrame(state.simulationTimer as number);
+      } else {
+        window.clearInterval(state.simulationTimer as number);
+      }
       set({
         isSimulating: false,
         simulationTimer: null
