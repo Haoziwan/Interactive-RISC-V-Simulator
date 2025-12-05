@@ -10,7 +10,7 @@ import { OutputPanel } from './components/OutputPanel';
 import { InstructionFormatButton } from './components/InstructionFormatPanel';
 import { CacheView } from './components/CacheView';
 import { PerformanceView } from './components/PerformanceView';
-import { ChevronDown, ChevronRight, Code, Database, Cpu, Play, Pause, RotateCcw, StepForward, StepBack, Layers, BarChart } from 'lucide-react';
+import { ChevronDown, ChevronRight, Code, Database, Cpu, Play, Pause, RotateCcw, StepForward, StepBack, Layers, BarChart, Github } from 'lucide-react';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { useCircuitStore } from './store/circuitStore';
 
@@ -114,16 +114,17 @@ function App() {
       <header className="bg-white border-b border-gray-200 flex-shrink-0 shadow-sm">
         <div className="container mx-auto px-4">
           <div className="flex items-center h-14">
-            <div className="flex items-center mr-8 min-w-[160px]">
+            <div className="flex items-center mr-8 min-w-[200px] gap-2">
               <a
                 href="https://github.com/Haoziwan/Interactive-RISC-V-Simulator"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center hover:opacity-80 transition-opacity"
+                className="flex items-center text-gray-600 hover:text-gray-900 transition-colors"
                 title="View on GitHub"
               >
-                <h1 className="text-lg font-bold bg-gradient-to-r from-blue-600 to-blue-400 bg-clip-text text-transparent whitespace-nowrap">RISC-V Simulator</h1>
+                <Github className="w-5 h-5" />
               </a>
+              <h1 className="text-lg font-bold bg-gradient-to-r from-blue-600 to-blue-400 bg-clip-text text-transparent whitespace-nowrap">RISC-V Simulator</h1>
             </div>
             <div className="flex-1 flex justify-center items-center space-x-2">
               <div className="flex bg-gray-50 rounded-lg p-1 space-x-1">
