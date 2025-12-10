@@ -1,5 +1,5 @@
 import { Handle, Position, useNodes, useEdges } from 'reactflow';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useCircuitStore } from '../../store/circuitStore';
 
 interface NodeData {
@@ -17,6 +17,9 @@ export function LabelNode({ data, id, selected }: { data: LabelNodeData; id: str
   const value = data.value ?? 0;
   const nodes = useNodes();
   const edges = useEdges();
+
+  // Only listen to edges connected to this node
+  const relevantEdges = useMemo(() => edges.filter(e => e.target === id), [edges, id]);
 
   const handleValueChange = (newValue: number | string) => {
     // 避免重复更新相同的值
@@ -36,10 +39,10 @@ export function LabelNode({ data, id, selected }: { data: LabelNodeData; id: str
     }
   }, [data.value]); // 移除value依赖，避免循环更新
 
-  // 监听输入连接的变化
+  // Monitor input connection changes
   const updateInputConnections = () => {
-    // 找到连接到此节点的边
-    const inputEdge = edges.find(edge => edge.target === id);
+    // Find edges connected to this node
+    const inputEdge = relevantEdges.find(edge => edge.targetHandle === 'input') || relevantEdges[0];
 
     if (!inputEdge) {
       // 如果没有输入连接，设置默认值0
@@ -73,10 +76,10 @@ export function LabelNode({ data, id, selected }: { data: LabelNodeData; id: str
     }
   };
 
-  // 监听输入连接的变化
+  // Monitor input connection changes
   useEffect(() => {
     updateInputConnections();
-  }, [nodes, edges, id]); // 移除value依赖，避免循环更新
+  }, [nodes, relevantEdges]);
 
   return (
     <div className={`px-2 py-1 shadow-md rounded-md bg-white border-2 ${

@@ -1,5 +1,5 @@
 import { Handle, Position, useNodes, useEdges } from 'reactflow';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useMemo } from 'react';
 import { useCircuitStore } from '../../store/circuitStore';
 
 // RISC-V 32I ALU operations
@@ -46,6 +46,9 @@ export function ALUNode({ data, id, selected }: { data: ALUNodeData; id: string;
     b: data.b ?? 0,
     operation: data.operation ?? ALUOperation.ADD
   });
+
+  // Only listen to edges connected to this node
+  const relevantEdges = useMemo(() => edges.filter(e => e.target === id), [edges, id]);
 
   const calculateResult = (a: number, b: number, operation: ALUOperation): {
     result: number;
@@ -201,11 +204,11 @@ export function ALUNode({ data, id, selected }: { data: ALUNodeData; id: string;
     return null;
   };
 
-  // 更新节点数据
+  // Update node data
   const updateInputConnections = () => {
-    const inputAEdge = edges.find(edge => edge.target === id && edge.targetHandle === 'a');
-    const inputBEdge = edges.find(edge => edge.target === id && edge.targetHandle === 'b');
-    const controlEdge = edges.find(edge => edge.target === id && edge.targetHandle === 'control');
+    const inputAEdge = relevantEdges.find(edge => edge.targetHandle === 'a');
+    const inputBEdge = relevantEdges.find(edge => edge.targetHandle === 'b');
+    const controlEdge = relevantEdges.find(edge => edge.targetHandle === 'control');
 
     const newA = getInputValue(inputAEdge);
     const newB = getInputValue(inputBEdge);
@@ -243,10 +246,10 @@ export function ALUNode({ data, id, selected }: { data: ALUNodeData; id: string;
     }
   };
 
-  // 监听输入连接的变化
+  // Monitor input connection changes
   useEffect(() => {
     updateInputConnections();
-  }, [edges]);
+  }, [relevantEdges, nodes]);
 
   // Get operation name for display
   const getOperationName = (op: ALUOperation): string => {

@@ -22,6 +22,9 @@ export function JumpControlNode({ data, id, selected }: { data: JumpControlNodeD
     zero: 0
   });
 
+  // Only listen to edges connected to this node
+  const relevantEdges = React.useMemo(() => edges.filter(e => e.target === id), [edges, id]);
+
   // 获取输入端口的值
   const getInputValue = (edge: any) => {
     if (!edge) return null;
@@ -42,9 +45,9 @@ export function JumpControlNode({ data, id, selected }: { data: JumpControlNodeD
     }
     return null;
   };
-  // 监听输入连接的变化并处理所有逻辑
+  // Monitor input connections and handle all logic
   const updateInputConnections = () => {
-    const inputEdges = edges.filter(edge => edge.target === id);
+    const inputEdges = relevantEdges;
     let hasChanges = false;
 
     inputEdges.forEach(edge => {
@@ -121,10 +124,10 @@ export function JumpControlNode({ data, id, selected }: { data: JumpControlNodeD
       });
     }
   };
-  // 监听输入连接的变化
+  // Monitor input connection changes
   React.useEffect(() => {
     updateInputConnections();
-  }, [nodes, edges, id]);
+  }, [relevantEdges, nodes]);
   return (
     <div className={`relative px-4 py-2 shadow-md rounded-md bg-white border-2 ${selected ? 'border-blue-500' : 'border-gray-200'
       }`}>

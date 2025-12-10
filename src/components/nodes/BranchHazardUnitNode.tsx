@@ -15,10 +15,13 @@ export function BranchHazardUnitNode({ data, id, selected }: { data: BranchHazar
   const nodes = useNodes();
   const edges = useEdges();
 
-  // 使用ref保存输入值，避免不必要的重渲染
+  // Use ref to cache input values to avoid unnecessary re-renders
   const inputsRef = React.useRef({
     branchTaken: 0
   });
+
+  // Only listen to edges connected to this node
+  const relevantEdges = React.useMemo(() => edges.filter(e => e.target === id), [edges, id]);
 
   // 获取源节点的值
   const getSourceNodeValue = (edge: any) => {
@@ -41,10 +44,10 @@ export function BranchHazardUnitNode({ data, id, selected }: { data: BranchHazar
     return null;
   };
 
-  // 更新节点状态
+  // Update node state
   const updateNodeState = () => {
-    // 获取各个输入边
-    const branchTakenEdge = edges.find(edge => edge.target === id && edge.targetHandle === 'branchTaken');
+    // Get input edges
+    const branchTakenEdge = relevantEdges.find(edge => edge.targetHandle === 'branchTaken');
 
     // 获取输入值
     const branchTakenValue = getSourceNodeValue(branchTakenEdge) ?? 0;
@@ -79,10 +82,10 @@ export function BranchHazardUnitNode({ data, id, selected }: { data: BranchHazar
     }
   };
 
-  // 监听输入连接的变化
+  // Monitor input connection changes
   React.useEffect(() => {
     updateNodeState();
-  }, [nodes, edges, id]);
+  }, [relevantEdges, nodes]);
 
   return (
     <div className={`relative px-4 py-2 shadow-md rounded-md bg-white border-2 ${selected ? 'border-blue-500' : 'border-gray-200'

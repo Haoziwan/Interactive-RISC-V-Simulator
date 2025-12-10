@@ -1,6 +1,6 @@
 import { Handle, Position, useNodes, useEdges } from 'reactflow';
 import { useCircuitStore } from '../../store/circuitStore';
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 
 interface PipelineRegisterNodeData {
   label: string;
@@ -26,6 +26,9 @@ export function PipelineRegisterNode({ data, id, selected }: { data: PipelineReg
   const [tempConfig, setTempConfig] = useState<{ name?: string; portCount?: number }>({ name, portCount });
   const nodes = useNodes();
   const edges = useEdges();
+
+  // Only listen to edges connected to this node
+  const relevantEdges = useMemo(() => edges.filter(e => e.target === id), [edges, id]);
 
   const handleValueChange = (newValues: (number | string)[]) => {
     updateNodeData(id, {
@@ -62,9 +65,9 @@ export function PipelineRegisterNode({ data, id, selected }: { data: PipelineReg
     const newInputValues = [...inputValues];
     let hasChanges = false;
 
-    // 检查writeEnable信号（仅对IF/ID寄存器有效）
+    // Check writeEnable signal (only effective for IF/ID register)
     if (name === 'IF/ID') {
-      const writeEnableEdge = edges.find(edge => edge.target === id && edge.targetHandle === 'writeEnable');
+      const writeEnableEdge = relevantEdges.find(edge => edge.targetHandle === 'writeEnable');
       let writeEnableValue = 1; // 默认可写入
 
       if (writeEnableEdge) {
@@ -136,10 +139,10 @@ export function PipelineRegisterNode({ data, id, selected }: { data: PipelineReg
     }
   };
 
-  // 监听输入连接的变化
+  // Monitor input connections changes
   React.useEffect(() => {
     updateInputConnections();
-  }, [nodes, edges, id, portCount]);
+  }, [nodes, relevantEdges, portCount]);
 
   // 监听时钟信号(stepCount)
   React.useEffect(() => {

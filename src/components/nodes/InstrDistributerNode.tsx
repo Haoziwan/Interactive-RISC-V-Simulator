@@ -1,5 +1,5 @@
 import { Handle, Position, useNodes, useEdges } from 'reactflow';
-import React, { useRef } from 'react';
+import React, { useRef, useMemo } from 'react';
 import { useCircuitStore } from '../../store/circuitStore';
 
 interface InstrDistributerNodeData {
@@ -19,9 +19,13 @@ export function InstrDistributerNode({ data, id, selected }: { data: InstrDistri
   const nodes = useNodes();
   const edges = useEdges();
   const prevValueRef = useRef<string | undefined>(undefined);
+
+  // Only listen to edges connected to this node
+  const relevantEdges = useMemo(() => edges.filter(e => e.target === id), [edges, id]);
+
   const updateInputConnections = () => {
-    // 找到连接到此节点的边
-    const inputEdge = edges.find(edge => edge.target === id);
+    // Find edges connected to this node
+    const inputEdge = relevantEdges[0];
     if (inputEdge) {
       // 找到源节点
       const sourceNode = nodes.find(node => node.id === inputEdge.source);
@@ -57,10 +61,10 @@ export function InstrDistributerNode({ data, id, selected }: { data: InstrDistri
       }
     }
   };
-  // 监听输入连接的变化
+  // Monitor input connection changes
   React.useEffect(() => {
     updateInputConnections();
-  }, [edges, id, nodes]);
+  }, [relevantEdges, nodes]);
   const instruction = data.value
     ? parseInt(data.value, 16).toString(2).padStart(32, '0')
     : '0'.repeat(32);

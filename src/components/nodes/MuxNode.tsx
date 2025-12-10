@@ -1,5 +1,5 @@
 import { Handle, Position } from 'reactflow';
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useNodes, useEdges } from 'reactflow';
 import { useCircuitStore } from '../../store/circuitStore';
 
@@ -24,6 +24,9 @@ export function MuxNode({ data, id, selected }: {
   const edges = useEdges();
   const inputsRef = React.useRef<{ [key: string]: number }>({});
   const portCount = data.portCount || 2;
+
+  // Only listen to edges connected to this node
+  const relevantEdges = useMemo(() => edges.filter(e => e.target === id), [edges, id]);
 
   // Monitor input connection changes and update output value
   const updateInputConnections = () => {
@@ -53,7 +56,7 @@ export function MuxNode({ data, id, selected }: {
 
     // Process all input ports
     for (let i = 0; i < portCount; i++) {
-      const inputEdge = edges.find(edge => edge.target === id && edge.targetHandle === `in${i}`);
+      const inputEdge = relevantEdges.find(edge => edge.targetHandle === `in${i}`);
       const newValue = getSourceNodeValue(inputEdge);
       if (newValue !== null) {
         newInputs[`in${i}`] = newValue;
@@ -66,7 +69,7 @@ export function MuxNode({ data, id, selected }: {
     }
 
     // Process select signal
-    const selectEdge = edges.find(edge => edge.target === id && edge.targetHandle === 'select');
+    const selectEdge = relevantEdges.find(edge => edge.targetHandle === 'select');
     const selectValue = getSourceNodeValue(selectEdge);
     const currentSelect = selectValue !== null ? String(selectValue) : (data.select || '0');
 
@@ -92,7 +95,7 @@ export function MuxNode({ data, id, selected }: {
   // Monitor input connection changes
   React.useEffect(() => {
     updateInputConnections();
-  }, [edges, id, nodes, portCount]);
+  }, [relevantEdges, nodes, portCount]);
 
   return (
     <div className={`relative px-4 py-2 shadow-md rounded-md bg-white border-2 ${selected ? 'border-blue-500' : 'border-gray-200'

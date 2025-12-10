@@ -1,6 +1,6 @@
 import { Handle, Position, useNodes, useEdges } from 'reactflow';
 import { useCircuitStore } from '../../store/circuitStore';
-import React, { useRef } from 'react';
+import React, { useRef, useMemo } from 'react';
 
 interface AddNodeData {
   label: string;
@@ -15,11 +15,13 @@ export function AddNode({ data, id, selected }: { data: AddNodeData; id: string;
   const edges = useEdges();
   const inputsRef = useRef({ a: 0, b: 0 });
 
-  // 监听输入连接的变化并更新输出值
+  // Only listen to edges connected to this node
+  const relevantEdges = useMemo(() => edges.filter(e => e.target === id), [edges, id]);
+
+  // Monitor input connection changes and update output value
   const updateInputConnections = () => {
-    // 找到连接到此节点的边
-    const inputEdgeA = edges.find(edge => edge.target === id && edge.targetHandle === 'input-a');
-    const inputEdgeB = edges.find(edge => edge.target === id && edge.targetHandle === 'input-b');
+    const inputEdgeA = relevantEdges.find(edge => edge.targetHandle === 'input-a');
+    const inputEdgeB = relevantEdges.find(edge => edge.targetHandle === 'input-b');
 
     // 获取源节点的值
     const getSourceNodeValue = (edge: any) => {
@@ -72,10 +74,10 @@ export function AddNode({ data, id, selected }: { data: AddNodeData; id: string;
     }
   };
 
-  // 监听输入连接的变化
+  // Monitor input connection changes
   React.useEffect(() => {
     updateInputConnections();
-  }, [edges, id, nodes]);
+  }, [relevantEdges, nodes]);
 
   return (
     <div className="relative" style={{ width: '80px', height: '80px' }}>

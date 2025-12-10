@@ -22,11 +22,14 @@ export function ControlNode({ data, id, selected }: { data: ControlNodeData; id:
   const nodes = useNodes();
   const edges = useEdges();
 
+  // Only listen to edges connected to this node
+  const relevantEdges = React.useMemo(() => edges.filter(e => e.target === id), [edges, id]);
+
   const [displayOpcode, setDisplayOpcode] = React.useState<string>('0000000');
 
-  // 更新输入连接的函数
+  // Update input connections
   const updateInputConnections = () => {
-    const inputEdges = edges.filter(edge => edge.target === id);
+    const inputEdges = relevantEdges;
     let hasChanges = false;
     let currentControlMux = data.controlMux ?? 0;
     let currentOpcode = data.opcode;
@@ -278,7 +281,7 @@ export function ControlNode({ data, id, selected }: { data: ControlNodeData; id:
 
   React.useEffect(() => {
     updateInputConnections();
-  }, [edges, nodes, id]);
+  }, [relevantEdges, nodes]);
 
   return (
     <div className={`px-2 py-4 shadow-md rounded-md bg-white border-2 w-40 ${selected ? 'border-blue-500' : 'border-gray-200'

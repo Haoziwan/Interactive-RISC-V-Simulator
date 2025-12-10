@@ -27,7 +27,7 @@ export function ForwardingUnitNode({ data, id, selected }: {
   const nodes = useNodes();
   const edges = useEdges();
 
-  // 使用ref来缓存输入值，避免不必要的更新
+  // Use ref to cache input values to avoid unnecessary updates
   const inputsRef = React.useRef({
     rs1: 0,
     rs2: 0,
@@ -37,13 +37,16 @@ export function ForwardingUnitNode({ data, id, selected }: {
     memWbRegWrite: 0
   });
 
+  // Only listen to edges connected to this node
+  const relevantEdges = React.useMemo(() => edges.filter(e => e.target === id), [edges, id]);
+
   const updateInputConnections = () => {
-    const rs1Edge = edges.find(edge => edge.target === id && edge.targetHandle === 'rs1');
-    const rs2Edge = edges.find(edge => edge.target === id && edge.targetHandle === 'rs2');
-    const exMemRdEdge = edges.find(edge => edge.target === id && edge.targetHandle === 'exMemRd');
-    const memWbRdEdge = edges.find(edge => edge.target === id && edge.targetHandle === 'memWbRd');
-    const exMemRegWriteEdge = edges.find(edge => edge.target === id && edge.targetHandle === 'exMemRegWrite');
-    const memWbRegWriteEdge = edges.find(edge => edge.target === id && edge.targetHandle === 'memWbRegWrite');
+    const rs1Edge = relevantEdges.find(edge => edge.targetHandle === 'rs1');
+    const rs2Edge = relevantEdges.find(edge => edge.targetHandle === 'rs2');
+    const exMemRdEdge = relevantEdges.find(edge => edge.targetHandle === 'exMemRd');
+    const memWbRdEdge = relevantEdges.find(edge => edge.targetHandle === 'memWbRd');
+    const exMemRegWriteEdge = relevantEdges.find(edge => edge.targetHandle === 'exMemRegWrite');
+    const memWbRegWriteEdge = relevantEdges.find(edge => edge.targetHandle === 'memWbRegWrite');
 
     let rs1Value = 0, rs2Value = 0, exMemRdValue = 0, memWbRdValue = 0, exMemRegWriteValue = 0, memWbRegWriteValue = 0;
 

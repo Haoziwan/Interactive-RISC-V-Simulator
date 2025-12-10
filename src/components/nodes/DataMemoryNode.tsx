@@ -24,6 +24,9 @@ export function DataMemoryNode({ data, id, selected }: { data: DataMemoryNodeDat
   const updateCacheStats = useCircuitStore((state) => state.updateCacheStats);
   const initializeCache = useCircuitStore((state) => state.initializeCache);
 
+  // Only listen to edges connected to this node
+  const relevantEdges = React.useMemo(() => edges.filter(e => e.target === id), [edges, id]);
+
   // 获取输入端口的值
   const getInputValue = (edge: any) => {
     if (!edge) return null;
@@ -216,12 +219,12 @@ export function DataMemoryNode({ data, id, selected }: { data: DataMemoryNodeDat
   }, [cache.sets.length, initializeCache]);
 
   const updateInputConnections = () => {
-    // 找到连接到此节点的边
-    const addressEdge = edges.find(edge => edge.target === id && edge.targetHandle === 'address');
-    const memReadEdge = edges.find(edge => edge.target === id && edge.targetHandle === 'memRead');
-    const writeDataEdge = edges.find(edge => edge.target === id && edge.targetHandle === 'writeData');
-    const memWriteEdge = edges.find(edge => edge.target === id && edge.targetHandle === 'memWrite');
-    const addressingControlEdge = edges.find(edge => edge.target === id && edge.targetHandle === 'addressingControl');
+    // Find edges connected to this node
+    const addressEdge = relevantEdges.find(edge => edge.targetHandle === 'address');
+    const memReadEdge = relevantEdges.find(edge => edge.targetHandle === 'memRead');
+    const writeDataEdge = relevantEdges.find(edge => edge.targetHandle === 'writeData');
+    const memWriteEdge = relevantEdges.find(edge => edge.targetHandle === 'memWrite');
+    const addressingControlEdge = relevantEdges.find(edge => edge.targetHandle === 'addressingControl');
 
     const newAddress = Number(getInputValue(addressEdge) ?? data.address ?? 0);
     const newMemRead = Number(getInputValue(memReadEdge) ?? data.memRead ?? 0);
@@ -294,10 +297,10 @@ export function DataMemoryNode({ data, id, selected }: { data: DataMemoryNodeDat
     }
   };
 
-  // 监听输入连接的变化（组合逻辑部分：所有输入端口更新）
+  // Monitor input connection changes (combinational logic: all input ports update)
   React.useEffect(() => {
     updateInputConnections();
-  }, [edges, id, nodes, memory]);
+  }, [relevantEdges, nodes, memory]);
 
   // 监听时钟信号执行缓存模拟读取和内存写入（时序逻辑部分）
   React.useEffect(() => {

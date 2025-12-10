@@ -19,6 +19,9 @@ export function ImmGenNode({ data, id, selected }: {
   const nodes = useNodes();
   const edges = useEdges();
 
+  // Only listen to edges connected to this node
+  const relevantEdges = React.useMemo(() => edges.filter(e => e.target === id), [edges, id]);
+
   // 从32位指令中提取立即数
   const generateImmediate = (instruction: string, format: string): number => {
     if (!instruction || instruction.length !== 32) return 0;
@@ -119,9 +122,9 @@ export function ImmGenNode({ data, id, selected }: {
     }
   };
 
-  // 监听输入连接的变化
+  // Monitor input connection changes
   const updateInputConnections = () => {
-    const instructionEdge = edges.find(edge => edge.target === id && edge.targetHandle === 'instruction');
+    const instructionEdge = relevantEdges.find(edge => edge.targetHandle === 'instruction');
 
     if (instructionEdge) {
       const sourceNode = nodes.find(node => node.id === instructionEdge.source);
@@ -156,10 +159,10 @@ export function ImmGenNode({ data, id, selected }: {
       }
     }
   };
-  // 监听输入连接的变化
+  // Monitor input connection changes
   React.useEffect(() => {
     updateInputConnections();
-  }, [edges, nodes, id]);
+  }, [relevantEdges, nodes]);
 
   return (
     <div className={`relative px-4 py-2 shadow-md rounded-md bg-white border-2 ${selected ? 'border-blue-500' : 'border-gray-200'

@@ -21,6 +21,9 @@ export function ForkNode({ data, id, selected }: { data: ForkNodeData; id: strin
   const [tempPortCount, setTempPortCount] = React.useState(data.portCount || 2);
   const portCount = data.portCount || 2;
 
+  // Only listen to edges connected to this node
+  const relevantEdges = React.useMemo(() => edges.filter(e => e.target === id), [edges, id]);
+
   // 获取源节点的值
   const getSourceNodeValue = (edge: any) => {
     if (!edge) return null;
@@ -48,8 +51,8 @@ export function ForkNode({ data, id, selected }: { data: ForkNodeData; id: strin
     return null;
   };
   const updateInputConnections = () => {
-    // 找到连接到此节点的边
-    const inputEdge = edges.find(edge => edge.target === id && edge.targetHandle === 'input');
+    // Find edges connected to this node
+    const inputEdge = relevantEdges.find(edge => edge.targetHandle === 'input');
     const newValue = getSourceNodeValue(inputEdge);
 
     // 只有当输入值发生实际变化时才更新
@@ -64,10 +67,10 @@ export function ForkNode({ data, id, selected }: { data: ForkNodeData; id: strin
       });
     }
   };
-  // 监听输入连接的变化
+  // Monitor input connection changes
   React.useEffect(() => {
     updateInputConnections();
-  }, [edges, id, nodes]);
+  }, [relevantEdges, nodes]);
   return (
     <div className={`relative w-8 shadow-md rounded-full bg-white border-2 ${selected ? 'border-blue-500' : 'border-gray-200'}`} style={{ height: `${Math.max(32, portCount * 16)}px` }}>
       <button

@@ -16,9 +16,12 @@ export function ALUControlNode({ data, id, selected }: { data: ALUControlNodeDat
   const nodes = useNodes();
   const edges = useEdges();
 
-  // 监听输入连接的变化
+  // Only listen to edges connected to this node
+  const relevantEdges = React.useMemo(() => edges.filter(e => e.target === id), [edges, id]);
+
+  // Monitor input connection changes
   const updateInputConnections = () => {
-    const inputEdges = edges.filter(edge => edge.target === id);
+    const inputEdges = relevantEdges;
     let inputAluOp = data.aluOp ?? 0;
     let inputFunct3 = data.funct3 ?? 0;
     let inputFunct7 = data.funct7 ?? 0;
@@ -157,10 +160,11 @@ export function ALUControlNode({ data, id, selected }: { data: ALUControlNodeDat
     }
   };
 
-  // 优化useEffect的依赖数组
+  // Optimized useEffect dependency array
   React.useEffect(() => {
     updateInputConnections();
-  }, [edges, id]);
+  }, [relevantEdges, nodes]);
+
   return (
     <div className={`relative px-4 py-2 shadow-md rounded-md bg-white border-2 ${selected ? 'border-blue-500' : 'border-gray-200'
       }`}>

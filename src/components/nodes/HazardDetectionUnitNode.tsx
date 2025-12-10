@@ -23,13 +23,16 @@ export function HazardDetectionUnitNode({ data, id, selected }: {
   const nodes = useNodes();
   const edges = useEdges();
 
-  // 使用ref来缓存输入值，避免不必要的更新
+  // Use ref to cache input values to avoid unnecessary updates
   const inputsRef = React.useRef({
     idExMemRead: 0,
     idExRt: 0,
     ifIdRs: 0,
     ifIdRt: 0
   });
+
+  // Only listen to edges connected to this node
+  const relevantEdges = React.useMemo(() => edges.filter(e => e.target === id), [edges, id]);
 
   const updateInputConnections = () => {
     // 获取源节点值的辅助函数
@@ -53,11 +56,11 @@ export function HazardDetectionUnitNode({ data, id, selected }: {
       return null;
     };
 
-    // 获取各个输入边
-    const idExMemReadEdge = edges.find(edge => edge.target === id && edge.targetHandle === 'idExMemRead');
-    const idExRtEdge = edges.find(edge => edge.target === id && edge.targetHandle === 'idExRt');
-    const ifIdRsEdge = edges.find(edge => edge.target === id && edge.targetHandle === 'ifIdRs');
-    const ifIdRtEdge = edges.find(edge => edge.target === id && edge.targetHandle === 'ifIdRt');
+    // Get input edges
+    const idExMemReadEdge = relevantEdges.find(edge => edge.targetHandle === 'idExMemRead');
+    const idExRtEdge = relevantEdges.find(edge => edge.targetHandle === 'idExRt');
+    const ifIdRsEdge = relevantEdges.find(edge => edge.targetHandle === 'ifIdRs');
+    const ifIdRtEdge = relevantEdges.find(edge => edge.targetHandle === 'ifIdRt');
 
     // 获取输入值
     const idExMemReadValue = getSourceNodeValue(idExMemReadEdge) ?? 0;
@@ -112,10 +115,10 @@ export function HazardDetectionUnitNode({ data, id, selected }: {
     }
   };
 
-  // 使用deps数组来跟踪依赖项的变化
+  // Track dependency changes with optimized useEffect
   React.useEffect(() => {
     updateInputConnections();
-  }, [nodes, edges]); // 直接监听nodes和edges的变化
+  }, [relevantEdges, nodes]);
 
   // 是否检测到冒险
   const hazardDetected = data.hazardDetected || false;

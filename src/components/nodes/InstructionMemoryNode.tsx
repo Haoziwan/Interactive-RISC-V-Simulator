@@ -19,6 +19,9 @@ export function InstructionMemoryNode({ data, id, selected }: {
   const nodes = useNodes();
   const edges = useEdges();
 
+  // Only listen to edges connected to this node
+  const relevantEdges = React.useMemo(() => edges.filter(e => e.target === id), [edges, id]);
+
   const handleLoadInstructions = () => {
     if (assembledInstructions.length > 0) {
       updateNodeData(id, {
@@ -29,8 +32,8 @@ export function InstructionMemoryNode({ data, id, selected }: {
     }
   };
   const updateInputConnections = () => {
-    // 找到连接到此节点的边
-    const pcEdge = edges.find(edge => edge.target === id && edge.targetHandle === 'pc');
+    // Find edges connected to this node
+    const pcEdge = relevantEdges.find(edge => edge.targetHandle === 'pc');
     if (pcEdge) {
       // 找到源节点
       const sourceNode = nodes.find(node => node.id === pcEdge.source);
@@ -47,10 +50,10 @@ export function InstructionMemoryNode({ data, id, selected }: {
     }
   };
 
-  // 监听PC输入连接的变化
+  // Monitor PC input connection changes
   React.useEffect(() => {
     updateInputConnections();
-  }, [nodes, edges, id]);
+  }, [nodes, relevantEdges]);
   // 监听PC值变化，更新输出指令
   React.useEffect(() => {
     const pcValue = data.pc || 0;

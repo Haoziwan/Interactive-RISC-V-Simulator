@@ -30,6 +30,9 @@ export function RegisterFileNode({ data, id, selected }: { data: RegisterFileNod
 
   const nodes = useNodes();
   const edges = useEdges();
+
+  // Only listen to edges connected to this node
+  const relevantEdges = React.useMemo(() => edges.filter(e => e.target === id), [edges, id]);
   // Get input port value (combinational logic)
   const getInputValue = (edge: any) => {
     if (!edge) return null;
@@ -56,11 +59,11 @@ export function RegisterFileNode({ data, id, selected }: { data: RegisterFileNod
   // Update input values and read data (combinational logic)
   const updateInputConnections = () => {
     // Find edges connected to this node
-    const readReg1Edge = edges.find(edge => edge.target === id && edge.targetHandle === 'readReg1');
-    const readReg2Edge = edges.find(edge => edge.target === id && edge.targetHandle === 'readReg2');
-    const writeRegEdge = edges.find(edge => edge.target === id && edge.targetHandle === 'writeReg');
-    const writeDataEdge = edges.find(edge => edge.target === id && edge.targetHandle === 'writeData');
-    const regWriteEdge = edges.find(edge => edge.target === id && edge.targetHandle === 'regWrite');
+    const readReg1Edge = relevantEdges.find(edge => edge.targetHandle === 'readReg1');
+    const readReg2Edge = relevantEdges.find(edge => edge.targetHandle === 'readReg2');
+    const writeRegEdge = relevantEdges.find(edge => edge.targetHandle === 'writeReg');
+    const writeDataEdge = relevantEdges.find(edge => edge.targetHandle === 'writeData');
+    const regWriteEdge = relevantEdges.find(edge => edge.targetHandle === 'regWrite');
 
     const newReadReg1 = Number(getInputValue(readReg1Edge) ?? data.readReg1 ?? 0);
     const newReadReg2 = Number(getInputValue(readReg2Edge) ?? data.readReg2 ?? 0);
@@ -103,7 +106,7 @@ export function RegisterFileNode({ data, id, selected }: { data: RegisterFileNod
   // Monitor changes in input connections
   React.useEffect(() => {
     updateInputConnections();
-  }, [edges, nodes, id, registers]);
+  }, [relevantEdges, nodes, registers]);
 
   // Monitor clock signal (stepCount) and handle register write (sequential logic)
   React.useEffect(() => {
