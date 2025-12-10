@@ -92,7 +92,7 @@ export function MuxNode({ data, id, selected }: {
   // Monitor input connection changes
   React.useEffect(() => {
     updateInputConnections();
-  }, [edges, id, nodes, data, portCount]);
+  }, [edges, id, nodes, portCount]);
 
   return (
     <div className={`relative px-4 py-2 shadow-md rounded-md bg-white border-2 ${selected ? 'border-blue-500' : 'border-gray-200'

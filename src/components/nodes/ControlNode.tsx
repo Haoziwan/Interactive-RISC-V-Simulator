@@ -278,7 +278,7 @@ export function ControlNode({ data, id, selected }: { data: ControlNodeData; id:
 
   React.useEffect(() => {
     updateInputConnections();
-  }, [edges, nodes, id, data]);
+  }, [edges, nodes, id]);
 
   return (
     <div className={`px-2 py-4 shadow-md rounded-md bg-white border-2 w-40 ${selected ? 'border-blue-500' : 'border-gray-200'

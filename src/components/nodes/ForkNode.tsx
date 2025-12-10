@@ -67,7 +67,7 @@ export function ForkNode({ data, id, selected }: { data: ForkNodeData; id: strin
   // 监听输入连接的变化
   React.useEffect(() => {
     updateInputConnections();
-  }, [edges, id, nodes, data]);
+  }, [edges, id, nodes]);
   return (
     <div className={`relative w-8 shadow-md rounded-full bg-white border-2 ${selected ? 'border-blue-500' : 'border-gray-200'}`} style={{ height: `${Math.max(32, portCount * 16)}px` }}>
       <button

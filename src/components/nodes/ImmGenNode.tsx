@@ -159,7 +159,7 @@ export function ImmGenNode({ data, id, selected }: {
   // 监听输入连接的变化
   React.useEffect(() => {
     updateInputConnections();
-  }, [edges, nodes, id, data]);
+  }, [edges, nodes, id]);
 
   return (
     <div className={`relative px-4 py-2 shadow-md rounded-md bg-white border-2 ${selected ? 'border-blue-500' : 'border-gray-200'

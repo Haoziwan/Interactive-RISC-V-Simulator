@@ -75,7 +75,7 @@ export function AddNode({ data, id, selected }: { data: AddNodeData; id: string;
   // 监听输入连接的变化
   React.useEffect(() => {
     updateInputConnections();
-  }, [edges, id, nodes, data]);
+  }, [edges, id, nodes]);
 
   return (
     <div className="relative" style={{ width: '80px', height: '80px' }}>
